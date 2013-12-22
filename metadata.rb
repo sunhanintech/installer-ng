@@ -9,3 +9,4 @@ version          '0.0.1'
 
 depends 'iis', '~> 1.5.0'  # Required because 1.6.0 is broken, and php depends on it!
 depends 'php', '~> 1.3.0'
+depends 'apt', '~> 2.0.0'
