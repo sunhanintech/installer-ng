@@ -1,0 +1,11 @@
+name             'scalr-core'
+maintainer       'Thomas Orozco'
+maintainer_email 'thomas@scalr.com'
+license          'All rights reserved'
+description      'Installs/Configures Scalr Core'
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          '0.0.1'
+
+
+depends 'iis', '~> 1.5.0'
+depends 'php', '~> 1.3.0'
