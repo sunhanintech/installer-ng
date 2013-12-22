@@ -16,4 +16,4 @@ php_pear 'pecl_http' do
   version '1.7.6'
 end
 
-php_enable_mod 'http'
+scalr_core_phpmod 'pecl_http'

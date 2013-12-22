@@ -11,4 +11,4 @@ php_pear 'yaml' do
   version '1.1.1'
 end
 
-php_enable_mod 'yaml'
+scalr_core_phpmod 'yaml'
