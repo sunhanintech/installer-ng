@@ -6,7 +6,7 @@ description      'Installs/Configures Scalr Core'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.0.1'
 
-%w{ debian ubuntu centos redhat }.each do |os|
+%w{ ubuntu centos redhat }.each do |os|
     supports os
 end
 

@@ -1,17 +1,11 @@
 require 'spec_helper'
 
-php = "/usr/local/bin/php"
+php = "/usr/bin/php"
 
-%W{posix_getpid pcntl_fork shm_attach msg_get_queue snmpget ssh2_exec
-   curl_exec socket_create yaml_parse simplexml_load_string mysqli_connect
-   gettext mcrypt_encrypt hash json_encode openssl_verify}.each do |fn|
+%W{socket_create gettext simplexml_load_string mcrypt_encrypt mhash_count pcntl_fork posix_getpid
+   mysqli_connect simplexml_load_string is_soap_fault snmpget curl_exec msg_send shm_attach sem_get
+   ssh2_exec yaml_parse json_encode openssl_verify}.each do |fn|
   describe command("#{php} -r \"echo function_exists('#{fn}');\"") do
-    it { should return_stdout '1' }
-  end
-end
-
-%W{HTTPRequest DOMDocument SoapClient}.each do |cls|
-  describe command("#{php} -r \"echo class_exists('#{cls}');\"") do
     it { should return_stdout '1' }
   end
 end

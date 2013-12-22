@@ -1,15 +1,15 @@
-dep_pkgs = value_for_platform(
-  %W{centos redhat } => %W{},
-  %W{debian ubuntu}  => %W{libmagic-dev libssh2-1-dev}
-)
+case node[:platform_family]
 
-dep_pkgs.each do |pkg|
-  package pkg do
-    action :install
-  end
+when 'rhel'
+  package 'libssh2-devel'
+when 'debian'
+  package 'libssh2-1-dev'
 end
+
 
 php_pear 'ssh2' do
   action :install
   version '0.12'
 end
+
+php_enable_mod 'ssh2'

@@ -1,15 +1,14 @@
-dep_pkgs = value_for_platform(
-  %W{centos redhat } => %W{},
-  %W{debian ubuntu}  => %W{libmagic-dev libyaml-dev}
-)
+case node[:platform_family]
 
-dep_pkgs.each do |pkg|
-  package pkg do
-    action :install
-  end
+when 'rhel'
+  package 'libyaml-devel'
+when 'debian'
+  package 'libyaml-dev'
 end
 
 php_pear 'yaml' do
   action :install
   version '1.1.1'
 end
+
+php_enable_mod 'yaml'
