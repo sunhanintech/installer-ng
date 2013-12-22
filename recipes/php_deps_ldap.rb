@@ -6,8 +6,9 @@ end
 
 # Symlink broken library
 #TODO Only on Ubuntu?
-libldap = 'libldap.so'
 
-link "/usr/lib/#{libldap}" do
-  to "/usr/lib/x86_64-linux-gnu/#{libldap}"
+%W{libldap.so liblber.so}.each do |lib|
+  link "/usr/lib/#{lib}" do
+    to "/usr/lib/x86_64-linux-gnu/#{lib}"
+  end
 end
