@@ -7,6 +7,10 @@ Vagrant.configure("2") do |config|
   config.vm.box = "opscode-ubuntu-12.04"
   config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box"
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   config.omnibus.chef_version = "11.8.2"
   config.vm.network :private_network, ip: "33.33.33.10"
   config.vm.boot_timeout = 120
