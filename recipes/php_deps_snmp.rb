@@ -1,5 +1,9 @@
-node[:phpdeps][:snmp].each do |pkg|
-    package pkg do
-      action :install
-    end
+case node[:platform]
+
+when 'redhat', 'centos'
+  package 'net-snmp-devel'
+
+when 'ubuntu', 'debian'
+  package 'libsnmp-dev'
+
 end
