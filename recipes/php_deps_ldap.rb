@@ -5,7 +5,7 @@ when 'redhat', 'centos'
 
 when 'ubuntu', 'debian'
   package 'libldap2-dev'
-  # The LDAP libraries are not where PHP (or anyone, for that matter) expects them. 
+  # The LDAP libraries are not where PHP (or anyone, for that matter) expects them.
   # Fix it with a symlink
   %W{libldap.so liblber.so}.each do |lib|
     link "/usr/lib/#{lib}" do
