@@ -1,4 +1,12 @@
 # Compile PHP from source, because packages.
+
+# Scalr attributes
+default[:scalr][:core][:group] = "scalr"
+default[:scalr][:core][:users][:cron] = "root"
+default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'debian' => 'www-data')
+
+
+# PHP attributes
 include_attribute 'php'
 
 default['php']['version'] = '5.5.7'
