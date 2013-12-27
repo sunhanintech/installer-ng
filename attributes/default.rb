@@ -14,6 +14,14 @@ default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 default[:scalr][:core][:location] = File.join(default[:scalr][:core][:package][:deploy_to], 'current',
                                               "#{default[:scalr][:core][:package][:name]}-#{default[:scalr][:core][:package][:version]}")
 
+default[:scalr][:database][:username] = 'scalr'
+default[:scalr][:database][:password] = 'scalr'
+default[:scalr][:database][:dbname] = 'scalr'
+default[:scalr][:database][:client_host] = 'localhost'
+
+default[:scalr][:database][:host] = 'localhost'
+default[:scalr][:database][:port] = 3306
+
 
 # PHP attributes
 include_attribute 'php'
