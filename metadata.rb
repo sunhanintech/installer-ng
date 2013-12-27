@@ -15,3 +15,4 @@ depends 'iis', '~> 1.5.0'  # Required because 1.6.0 is broken, and php depends o
 depends 'php', '~> 1.3.0'
 depends 'apt', '~> 2.3.0'
 depends 'yum', '~> 3.0.0'
+depends 'artifact', '~> 1.11.0'

@@ -1,9 +1,18 @@
 # Compile PHP from source, because packages.
 
 # Scalr attributes
-default[:scalr][:core][:group] = "scalr"
-default[:scalr][:core][:users][:cron] = "root"
+default[:scalr][:core][:group] = 'scalr'
+default[:scalr][:core][:users][:cron] = 'root'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'debian' => 'www-data')
+
+default[:scalr][:core][:package][:name] = 'scalr'
+default[:scalr][:core][:package][:version] = '4.5.1'
+default[:scalr][:core][:package][:checksum] = '3c0323acd0fbcbd151a9f1879b0a703976ec7d0a73e00d0804e44fa89797f8ba'
+default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{default[:scalr][:core][:package][:version]}.tar.gz"
+default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
+
+default[:scalr][:core][:location] = File.join(default[:scalr][:core][:package][:deploy_to], 'current',
+                                              "#{default[:scalr][:core][:package][:name]}-#{default[:scalr][:core][:package][:version]}")
 
 
 # PHP attributes
