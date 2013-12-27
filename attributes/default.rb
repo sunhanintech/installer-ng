@@ -30,7 +30,8 @@ default['php']['directives'] = {
 case node['platform']
 when 'redhat', 'centos'
   default['php']['packages'] = %W{php php-devel php-cli php-mysql php-mcrypt php-snmp php-process php-dom php-soap php-pear}
+  default['php']['cnf_dirs'] = %W{/etc/php.d}
 when 'ubuntu'
   default['php']['packages'] = %W{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
-  default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
+  default['php']['cnf_dirs'] = %W{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
 end
