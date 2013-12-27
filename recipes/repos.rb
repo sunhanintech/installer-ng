@@ -32,5 +32,11 @@ when 'ubuntu'  #TODO: Find out how we support Debian here?
     key          'E5267A6C'
     deb_src      true
   end
-end
 
+  apt_repository 'multiverse' do
+    uri 'http://archive.ubuntu.com/ubuntu/'
+    distribution node['lsb']['codename']
+    components   ['main']
+    keyserver    'keyserver.ubuntu.com'
+  end
+end
