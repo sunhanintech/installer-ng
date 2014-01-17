@@ -36,7 +36,7 @@ when 'ubuntu'  #TODO: Find out how we support Debian here?
   apt_repository 'multiverse' do
     uri 'http://archive.ubuntu.com/ubuntu/'
     distribution node['lsb']['codename']
-    components   ['main']
+    components   ['multiverse']
     keyserver    'keyserver.ubuntu.com'
   end
 end
