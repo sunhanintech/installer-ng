@@ -1,3 +1,5 @@
+# As a side effect, this will generate ID and Cryptokey
+
 node[:scalr][:core][:users].values.each do |usr|
   execute "Validate Scalr Install as #{usr}" do
     user usr
