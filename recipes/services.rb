@@ -22,6 +22,7 @@ daemons.each do |daemon|
   service daemon[:daemon_name] do
     provider Chef::Provider::Service::Upstart
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
+    subscribes :restart, "execute[Mark install]", :delayed
     action :nothing
   end
 end
