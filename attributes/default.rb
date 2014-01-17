@@ -26,6 +26,15 @@ default[:scalr][:database][:client_host] = 'localhost'
 default[:scalr][:database][:host] = 'localhost'
 default[:scalr][:database][:port] = 3306
 
+# Email settings
+default[:scalr][:email][:from] = 'scalr@scalr.example.com'
+default[:scalr][:email][:name] = 'Scalr Service'
+
+# Host settings
+default[:scalr][:endpoint][:scheme] = 'http'
+default[:scalr][:endpoint][:host] = '127.0.0.1'
+default[:scalr][:endpoint][:host_ip] = default[:scalr][:endpoint][:host]  #TODO: Check this is correct and I shouldn't use node[].
+
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
 default[:scalr][:rrd][:img_dir] = "#{node[:scalr][:core][:location]}/app/www/graphics"
