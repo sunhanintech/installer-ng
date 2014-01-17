@@ -8,7 +8,8 @@ end
 action :enable do
   Chef::Log.info "Enabling php5 mod: #{new_resource.mod}"
   if use_mod?
-    shell_out! 'php5enmod', new_resource.mod
+    p = shell_out 'php5enmod', new_resource.mod
+    p.invalid! if p.stderr.include? "Module #{new_resource.mod} ini file doesn't exist"
     new_resource.updated_by_last_action true
   end
 end
