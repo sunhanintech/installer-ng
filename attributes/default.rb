@@ -40,6 +40,7 @@ default[:scalr][:endpoint][:host_ip] = default[:scalr][:endpoint][:host]  #TODO:
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
 default[:scalr][:rrd][:img_dir] = "#{node[:scalr][:core][:location]}/app/www/graphics"
 default[:scalr][:rrd][:img_url] = '/graphics'
+default[:scalr][:rrd][:port] = 8080
 
 # PHP attributes
 include_attribute 'php'

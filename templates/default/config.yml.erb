@@ -58,6 +58,7 @@ scalr:
     connections:
       plotter:
         host: 'http://<%= node[:scalr][:endpoint][:host] %>'
+        port: <%= node[:scalr][:rrd][:port] %>
     rrd_dir: <%= node[:scalr][:rrd][:rrd_dir] %>
     img_dir: <%= node[:scalr][:rrd][:img_dir] %>
     img_url: <%= node[:scalr][:rrd][:img_url] %>

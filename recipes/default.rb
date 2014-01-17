@@ -20,6 +20,9 @@ include_recipe 'scalr-core::rrdcached'
 # Database Configuration
 include_recipe 'scalr-core::database'
 
+# Firewall configuration
+include_recipe 'scalr-core::firewall'
+
 # Service Launch
 include_recipe 'scalr-core::web'
 include_recipe 'scalr-core::services'
