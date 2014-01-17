@@ -33,7 +33,7 @@ scalr:
     host: <%= node[:scalr][:endpoint][:host] %>
 
   aws:
-    ip_pool: ['<% node[:scalr][:endpoint][:host_ip] %>/32']
+    ip_pool: ['<%= node[:scalr][:endpoint][:host_ip] %>/32']
 
   billing:
     enabled: no
