@@ -9,8 +9,16 @@ artifact_deploy node[:scalr][:core][:package][:name] do
   group 'root'
 end
 
-directory "#{node[:scalr][:core][:location]}/cache" do
-  owner node[:scalr][:core][:users][:service]
-  group node[:scalr][:core][:group]
-  action :create
+
+[
+  "#{node[:scalr][:core][:location]}/cache",
+  node[:scalr][:core][:log_dir],
+  node[:scalr][:core][:pid_dir]
+].each do |dir|
+  directory dir do
+    owner node[:scalr][:core][:users][:service]
+    group node[:scalr][:core][:group]
+    mode 0770
+    action :create
+  end
 end
