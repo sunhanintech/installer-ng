@@ -21,10 +21,11 @@ default[:scalr][:core][:pid_dir] = '/var/run/scalr'
 default[:scalr][:database][:username] = 'scalr'
 default[:scalr][:database][:password] = 'scalr'
 default[:scalr][:database][:dbname] = 'scalr'
-default[:scalr][:database][:client_host] = 'localhost'
-
 default[:scalr][:database][:host] = 'localhost'
 default[:scalr][:database][:port] = 3306
+
+default[:scalr][:database][:client_host] = 'localhost'  # Where will the client connect from?
+default['mysql']['bind_address'] = 'localhost'
 
 # Email settings
 default[:scalr][:email][:from] = 'scalr@scalr.example.com'
