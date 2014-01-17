@@ -26,6 +26,10 @@ default[:scalr][:database][:client_host] = 'localhost'
 default[:scalr][:database][:host] = 'localhost'
 default[:scalr][:database][:port] = 3306
 
+# Load reporting settings
+default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
+default[:scalr][:rrd][:img_dir] = "#{node[:scalr][:core][:location]}/app/www/graphics"
+default[:scalr][:rrd][:img_url] = '/graphics'
 
 # PHP attributes
 include_attribute 'php'
