@@ -11,10 +11,10 @@ version          '0.0.1'
 end
 
 
-depends 'iis', '~> 1.5.0'  # Required because 1.6.0 is broken, and php depends on it!
-depends 'php', '~> 1.3.0'
 depends 'apt', '~> 2.3.0'
 depends 'yum', '~> 3.0.0'
+depends 'iis', '~> 1.5.0'  # Required because 1.6.0 is broken, and php depends on it!
+depends 'php', '~> 1.3.0'
 depends 'python', '~> 1.4.0'
 depends 'artifact', '~> 1.11.0'
 depends 'database', '~> 1.4.0'
