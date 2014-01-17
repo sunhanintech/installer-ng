@@ -17,6 +17,10 @@ default[:scalr][:core][:configuration] = "#{default[:scalr][:core][:location]}/a
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
 
+# User settings
+default[:scalr][:admin][:username] = 'admin'
+default[:scalr][:admin][:password] = 'scalr'
+
 # Database settings
 default[:scalr][:database][:username] = 'scalr'
 default[:scalr][:database][:password] = 'scalr'

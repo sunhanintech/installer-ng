@@ -30,3 +30,6 @@ include_recipe 'scalr-core::cron'
 
 # Validate
 include_recipe 'scalr-core::validate'
+
+# Set admin login
+include_recipe 'scalr-core::admin'
