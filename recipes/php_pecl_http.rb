@@ -10,10 +10,17 @@ when 'debian'
   package 'libcurl4-openssl-dev'
 end
 
-
-php_pear 'pecl_http' do
+php_pear 'pecl_http' do  # Can't I just override the provider here?
   action :install
   version '1.7.6'
 end
 
-scalr_core_phpmod 'pecl_http'
+# Php Pear does not recognize this as a PECL.
+cookbook_file "#{node['php']['ext_conf_dir']}/http.ini" do
+  owner 'root'
+  group 'root'
+  mode 0644
+  source "http.ini"
+end
+
+scalr_core_phpmod 'http'
