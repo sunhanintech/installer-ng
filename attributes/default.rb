@@ -2,8 +2,8 @@
 
 # Scalr attributes
 default[:scalr][:core][:group] = 'scalr'
-default[:scalr][:core][:users][:cron] = 'root'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'debian' => 'www-data')
+default[:scalr][:core][:users][:service] = 'root'
 
 default[:scalr][:core][:package][:name] = 'scalr'
 default[:scalr][:core][:package][:version] = '4.5.1'

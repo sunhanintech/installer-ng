@@ -8,3 +8,9 @@ artifact_deploy node[:scalr][:core][:package][:name] do
   owner 'root'
   group 'root'
 end
+
+directory "#{node[:scalr][:core][:location]}/cache" do
+  owner node[:scalr][:core][:users][:service]
+  group node[:scalr][:core][:group]
+  action :create
+end

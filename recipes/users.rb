@@ -1,6 +1,6 @@
 users = node[:scalr][:core][:users]
 
-user users[:cron]
+user users[:service]
 
 user users[:web] do
   system true
