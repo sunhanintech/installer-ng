@@ -1,5 +1,3 @@
-# Compile PHP from source, because packages.
-
 # Scalr attributes
 default[:scalr][:core][:group] = 'scalr'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'debian' => 'www-data')
@@ -14,6 +12,12 @@ default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 default[:scalr][:core][:location] = File.join(default[:scalr][:core][:package][:deploy_to], 'current',
                                               "#{default[:scalr][:core][:package][:name]}-#{default[:scalr][:core][:package][:version]}")
 
+default[:scalr][:core][:configuration] = "#{default[:scalr][:core][:location]}/app/etc/config.yml" # This isn't really configurable.. is that the right way to do it?
+
+default[:scalr][:core][:log_dir] = '/var/log/scalr'
+default[:scalr][:core][:pid_dir] = '/var/run/scalr'
+
+# Database settings
 default[:scalr][:database][:username] = 'scalr'
 default[:scalr][:database][:password] = 'scalr'
 default[:scalr][:database][:dbname] = 'scalr'
@@ -42,4 +46,9 @@ when 'redhat', 'centos'
 when 'ubuntu'
   default['php']['packages'] = %W{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
   default['php']['cnf_dirs'] = %W{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
+  default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
 end
+
+
+# Apache attributes
+default['apache']['default_modules'] = %w{status alias autoindex dir env mime negotiation setenvif}

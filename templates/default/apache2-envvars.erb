@@ -1,0 +1,13 @@
+# this won't be correct after changing uid
+unset HOME
+
+export APACHE_RUN_USER=<%= node[:scalr][:core][:users][:web] %>
+export APACHE_RUN_GROUP=<%= node[:scalr][:core][:group] %>
+
+export APACHE_PID_FILE=<%= node['apache']['pid_file'] %>
+export APACHE_RUN_DIR=/var/run/apache2
+export APACHE_LOCK_DIR=/var/lock/apache2
+# Only /var/log/apache2 is handled by /etc/logrotate.d/apache2.
+export APACHE_LOG_DIR=/var/log/apache2
+
+export LANG=C
