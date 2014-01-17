@@ -24,3 +24,6 @@ include_recipe 'scalr-core::database'
 include_recipe 'scalr-core::web'
 include_recipe 'scalr-core::services'
 include_recipe 'scalr-core::cron'
+
+# Validate
+include_recipe 'scalr-core::validate'
