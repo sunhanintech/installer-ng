@@ -22,3 +22,18 @@ end
     action :create
   end
 end
+
+
+# Ensure those files are created and not world-readable
+# before we add the data in them!
+
+crypto_key_file = "#{node[:scalr][:core][:location]}/app/etc/.cryptokey"
+id_file = "#{node[:scalr][:core][:location]}/app/etc/id"
+
+[crypto_key_file, id_file].each do |f|
+  file f do
+    owner node[:scalr][:core][:users][:service]
+    group node[:scalr][:core][:group]
+    mode 0640
+  end
+end
