@@ -12,7 +12,9 @@ default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 default[:scalr][:core][:location] = File.join(default[:scalr][:core][:package][:deploy_to], 'current',
                                               "#{default[:scalr][:core][:package][:name]}-#{default[:scalr][:core][:package][:version]}")
 
-default[:scalr][:core][:configuration] = "#{default[:scalr][:core][:location]}/app/etc/config.yml" # This isn't really configurable.. is that the right way to do it?
+# This isn't really configurable.. is that the right way to do it?
+default[:scalr][:core][:configuration] = "#{default[:scalr][:core][:location]}/app/etc/config.yml"
+default[:scalr][:core][:log_configuration] = "#{default[:scalr][:core][:location]}/app/etc/log4php.xml"
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
