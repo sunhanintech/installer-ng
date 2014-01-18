@@ -10,12 +10,12 @@ scalr:
   email:
     address: <%= node[:scalr][:email][:from] %>
     name: <%= node[:scalr][:email][:name] %>
-      
+
   auth_mode: scalr
 
-  instances_connection_policy: public
+  instances_connection_policy: <%= node[:scalr][:instances_connection_policy] %>
 
-  allowed_clouds: 
+  allowed_clouds:
   - ec2
   - gce
   - eucalyptus
