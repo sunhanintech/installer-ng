@@ -46,7 +46,7 @@ default[:scalr][:endpoint][:host_ip] = default[:scalr][:endpoint][:host]  #TODO:
 default[:scalr][:endpoint][:set_hostname] = false  # If you host can't resolve its IP to a name (gethostbyaddr fails), use this.
 
 # Instance connection settings
-default[:scalr][:instances_connection_policy] = 'public'
+default[:scalr][:instances_connection_policy] = 'auto'
 
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
