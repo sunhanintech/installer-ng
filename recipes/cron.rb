@@ -1,5 +1,7 @@
 #TODO: Reduce duplication user
-cmd = "/usr/bin/php -q #{node[:scalr][:core][:location]}/app/cron/cron.php"
+php = '/usr/bin/php -q'
+cmd = "#{php} #{node[:scalr][:core][:location]}/app/cron/cron.php"
+ng_cmd = "#{php} #{node[:scalr][:core][:location]}/app/cron-ng/cron.php"
 
 cron "Scheduler" do
   user node[:scalr][:core][:users][:service]
@@ -15,7 +17,7 @@ end
 cron "Scaling" do
   user node[:scalr][:core][:users][:service]
   minute "*/2"
-  command "#{cmd} --Scaling"
+  command "#{ng_cmd} --Scaling"
 end
 
 cron "SzrMessaging" do
@@ -33,13 +35,13 @@ end
 cron "MetricCheck" do
   user node[:scalr][:core][:users][:service]
   minute "*/15"
-  command "#{cmd} --MetricCheck"
+  command "#{ng_cmd} --MetricCheck"
 end
 
 cron "Poller" do
   user node[:scalr][:core][:users][:service]
   minute "*/2"
-  command "#{cmd} --Poller"
+  command "#{ng_cmd} --Poller"
 end
 
 cron "DNSManagerPoll" do
@@ -69,17 +71,17 @@ end
 cron "DbMsrMaintenance" do
   user node[:scalr][:core][:users][:service]
   minute "*/5"
-  command "#{cmd} --DbMsrMaintenance"
+  command "#{ng_cmd} --DbMsrMaintenance"
 end
 
 cron "LeaseManager" do
   user node[:scalr][:core][:users][:service]
   minute "*/20"
-  command "#{cmd} --LeaseManager"
+  command "#{ng_cmd} --LeaseManager"
 end
 
 cron "ServerTerminate" do
   user node[:scalr][:core][:users][:service]
   minute "*/1"
-  command "#{cmd} --ServerTerminate"
+  command "#{ng_cmd} --ServerTerminate"
 end
