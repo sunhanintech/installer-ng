@@ -14,7 +14,7 @@ end
 id_file = "#{node[:scalr][:core][:location]}/app/etc/id"
 mark_string = "ix"
 
-execute "Mark install" do
+execute "Mark Install" do
   command "echo \"#{mark_string}$(cat #{id_file})\" > #{id_file}"
   not_if {
     begin
