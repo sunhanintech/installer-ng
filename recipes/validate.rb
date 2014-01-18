@@ -12,10 +12,10 @@ end
 
 
 id_file = "#{node[:scalr][:core][:location]}/app/etc/id"
-mark_string = "ic"
+mark_string = "ix"
 
 execute "Mark install" do
-  command "echo \"i$(cat #{id_file})\" > #{id_file}"
+  command "echo \"#{mark_string}$(cat #{id_file})\" > #{id_file}"
   not_if {
     begin
       line = File.new(id_file).gets
