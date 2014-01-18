@@ -11,3 +11,15 @@ template node[:scalr][:core][:log_configuration] do
   owner node[:scalr][:core][:users][:service]
   group node[:scalr][:core][:group]
 end
+
+ruby_block "Set Endpoint Hostname" do
+  block do
+    line = "#{node[:scalr][:endpoint][:host_ip]} #{node[:scalr][:endpoint][:host]}"
+
+    file = Chef::Util::FileEdit.new("/etc/hosts")
+    file.insert_line_if_no_match(Regexp.escape(line), line)
+    file.write_file
+  end
+
+  only_if node[:scalr][:endpoint][:set_host]
+end

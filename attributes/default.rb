@@ -39,8 +39,11 @@ default[:scalr][:email][:name] = 'Scalr Service'
 
 # Host settings
 default[:scalr][:endpoint][:scheme] = 'http'
-default[:scalr][:endpoint][:host] = '127.0.0.1'
+default[:scalr][:endpoint][:host] = '127.0.0.1' #TODO: This should probably the other way around anyway.
 default[:scalr][:endpoint][:host_ip] = default[:scalr][:endpoint][:host]  #TODO: Check this is correct and I shouldn't use node[].
+
+# Hostname
+default[:scalr][:endpoint][:set_hostname] = false  # If you host can't resolve its IP to a name (gethostbyaddr fails), use this.
 
 # Instance connection settings
 default[:scalr][:instances_connection_policy] = 'public'
