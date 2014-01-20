@@ -6,15 +6,15 @@ default[:scalr][:core][:users][:service] = 'root'
 default[:scalr][:core][:package][:name] = 'scalr'
 default[:scalr][:core][:package][:version] = '4.5.1'
 default[:scalr][:core][:package][:checksum] = '3c0323acd0fbcbd151a9f1879b0a703976ec7d0a73e00d0804e44fa89797f8ba'
-default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{default[:scalr][:core][:package][:version]}.tar.gz"
+default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{node.scalr.core.package.version}.tar.gz"
 default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 
-default[:scalr][:core][:location] = File.join(default[:scalr][:core][:package][:deploy_to], 'current',
-                                              "#{default[:scalr][:core][:package][:name]}-#{default[:scalr][:core][:package][:version]}")
+default[:scalr][:core][:location] = File.join(node.scalr.core.package.deploy_to, 'current',
+                                              "#{node.scalr.core.package.name}-#{node.scalr.core.package.version}")
 
 # This isn't really configurable.. is that the right way to do it?
-default[:scalr][:core][:configuration] = "#{default[:scalr][:core][:location]}/app/etc/config.yml"
-default[:scalr][:core][:log_configuration] = "#{default[:scalr][:core][:location]}/app/etc/log4php.xml"
+default[:scalr][:core][:configuration] = "#{node.scalr.core.location}/app/etc/config.yml"
+default[:scalr][:core][:log_configuration] = "#{node.scalr.core.location}/app/etc/log4php.xml"
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
@@ -39,8 +39,8 @@ default[:scalr][:email][:name] = 'Scalr Service'
 
 # Host settings
 default[:scalr][:endpoint][:scheme] = 'http'
-default[:scalr][:endpoint][:host] = '127.0.0.1' #TODO: This should probably the other way around anyway.
-default[:scalr][:endpoint][:host_ip] = default[:scalr][:endpoint][:host]  #TODO: Check this is correct and I shouldn't use node[].
+default[:scalr][:endpoint][:host_ip] = '127.0.0.1'
+default[:scalr][:endpoint][:host] = node.scalr.endpoint.host_ip
 
 # Hostname
 default[:scalr][:endpoint][:set_hostname] = false  # If you host can't resolve its IP to a name (gethostbyaddr fails), use this.
@@ -50,7 +50,7 @@ default[:scalr][:instances_connection_policy] = 'auto'
 
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
-default[:scalr][:rrd][:img_dir] = "#{node[:scalr][:core][:location]}/app/www/graphics"
+default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www/graphics"
 default[:scalr][:rrd][:img_url] = '/graphics'
 default[:scalr][:rrd][:port] = 8080
 
