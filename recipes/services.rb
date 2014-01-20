@@ -13,6 +13,7 @@ daemons.each do |daemon|
   args[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{args[:daemon_name]}.pid"
   args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:daemon_name]}.log"
   args[:user] = node[:scalr][:core][:users][:service]
+  args[:group] = node[:scalr][:core][:group]
 
   init_file = "/etc/init.d/#{args[:daemon_name]}"
 
