@@ -1,6 +1,6 @@
 case node[:platform]
 
-when 'redhat', 'centos'
+when 'redhat', 'centos', 'fedora'
   yum_repository 'epel' do
     description 'Extra Packages for Enterprise Linux'
     mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch'

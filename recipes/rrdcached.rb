@@ -18,7 +18,7 @@ template "/etc/default/rrdcached" do
   source "rrdcached.erb"
 end
 
-%W{x1x6 x2x7 x3x8 x4x9 x5x0}.each do |dir|
+%w{x1x6 x2x7 x3x8 x4x9 x5x0}.each do |dir|
   directory "#{node[:scalr][:rrd][:rrd_dir]}/#{dir}" do
     owner node[:scalr][:core][:users][:service]
     group node[:scalr][:core][:group]

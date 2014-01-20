@@ -1,16 +1,15 @@
-#TODO: Package names on RHEL!
-pkgs = %W{python-setuptools python-dev m2crypto snmp libsnmp-python python-rrdtool python-pip}
-
-pkgs.each do |pkg|
-  package pkg
-end
-
 include_recipe "python::#{node['python']['install_method']}"
 include_recipe "python::pip"
 
-python_pip 'setuptools' do  # If setuptools is < 0.8, then a wheel install will fail!
-  action :upgrade
-  options '--no-use-wheel'
+case node[:platform]
+when 'redhat', 'centos', 'fedora'
+  pkgs = %w{python-setuptools m2crypto libevent-devel net-snmp-python rrdtool-python}
+when 'ubuntu'  #TODO: Debian...
+  pkgs = %w{python-setuptools m2crypto libevent-dev libsnmp-python python-rrdtool}
+end
+
+pkgs.each do |pkg|
+  package pkg
 end
 
 execute "Install Scalrpy" do

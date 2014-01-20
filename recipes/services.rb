@@ -1,4 +1,6 @@
-python = "/usr/bin/python"
+if node[:platform_family] == 'fedora'
+  package 'redhat-lsb'  #TODO: Is that installed on Red Hat already?
+end
 
 daemons = [
   {:daemon_name => 'msgsender', :daemon_module => 'msg_sender', :daemon_desc => 'Scalr Messaging Daemon', :daemon_extra_args => '' },

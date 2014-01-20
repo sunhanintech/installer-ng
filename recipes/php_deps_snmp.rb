@@ -1,6 +1,6 @@
 case node[:platform]
 
-when 'redhat', 'centos'
+when 'redhat', 'centos', 'fedora'
   package 'net-snmp-devel'
 
 when 'ubuntu', 'debian'

@@ -1,6 +1,6 @@
 # Scalr attributes
 default[:scalr][:core][:group] = 'scalr'
-default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'debian' => 'www-data')
+default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'fedora' => 'apache', 'debian' => 'www-data')
 default[:scalr][:core][:users][:service] = 'root'
 
 default[:scalr][:core][:package][:name] = 'scalr'
@@ -67,15 +67,19 @@ default['php']['directives'] = {
 }  #TODO: Does not work!
 
 case node['platform']
-when 'redhat', 'centos'
-  default['php']['packages'] = %W{php php-devel php-cli php-mysql php-mcrypt php-snmp php-process php-dom php-soap php-pear}
-  default['php']['cnf_dirs'] = %W{/etc/php.d}
+when 'redhat', 'centos', 'fedora'
+  default['php']['packages'] = %w{php php-devel php-cli php-mysql php-mcrypt php-snmp php-process php-dom php-soap php-pear}
+  default['php']['cnf_dirs'] = %w{/etc/php.d}
 when 'ubuntu'
-  default['php']['packages'] = %W{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
-  default['php']['cnf_dirs'] = %W{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
+  default['php']['packages'] = %w{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
+  default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
 end
 
+
+if node['platform'] == 'fedora' and node['platform_version'].to_f >= 19.0
+  default['mysql']['client']['packages'] = %w[community-mysql community-mysql-devel]
+end
 
 # Apache attributes
 default['apache']['default_modules'] = %w{status alias autoindex dir env mime negotiation setenvif}

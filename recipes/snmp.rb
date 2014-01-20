@@ -1,8 +1,8 @@
 case node[:platform]
-when 'redhat', 'centos'
-  pkgs = %W{net-snmp net-snmp-utils}
+when 'redhat', 'centos', 'fedora'
+  pkgs = %w{net-snmp net-snmp-utils}
 when 'ubuntu'  #TODO: Debian...
-  pkgs = %W{snmp snmp-mibs-downloader}
+  pkgs = %w{snmp snmp-mibs-downloader}
 end
 
 pkgs.each do |pkg|
