@@ -20,6 +20,9 @@ include_recipe 'scalr-core::rrdcached'
 # Database Configuration
 include_recipe 'scalr-core::database'
 
+# Set sysctl requirements
+include_recipe 'scalr-core::sysctl'
+
 # Firewall configuration
 include_recipe 'scalr-core::firewall'
 
