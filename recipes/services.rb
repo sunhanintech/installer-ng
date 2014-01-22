@@ -32,6 +32,7 @@ daemons.each do |daemon|
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
     subscribes :restart, "execute[Mark Install]", :delayed
     subscribes :restart, "ruby_block[Set Endpoint Hostname]", :delayed
-    action :nothing
+    subscribes :restart, "artifact_deploy[#{node[:scalr][:core][:package][:name]}]", :delayed
+    action value_for_platform_family(['rhel', 'fedora'] => :enable, 'debian' => :nothing)
   end
 end
