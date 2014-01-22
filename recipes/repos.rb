@@ -1,10 +1,28 @@
-case node[:platform]
+case node[:platform_family]
 
-when 'redhat', 'centos', 'fedora'
+when 'rhel', 'fedora'
+  package 'yum-plugin-priorities'
+
+  cookbook_file '/etc/yum/pluginconf.d/priorities.conf' do
+    source 'yum-priorities.conf'
+  end
+
   yum_repository 'epel' do
     description 'Extra Packages for Enterprise Linux'
     mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch'
-    gpgkey 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+    gpgkey 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'  #TODO: Include those keys in my package and use a file:/// url. HTTP is unsafe here.
+    includepkgs 'libyaml* libmcrypt*'
+    action :create
+  end
+
+  yum_repository 'rpmforge-extras' do
+    description 'RHEL $releasever - RPMforge.net - extras'
+    baseurl 'http://apt.sw.be/redhat/el6/en/$basearch/extras'
+    mirrorlist 'http://apt.sw.be/redhat/el6/en/mirrors-rpmforge-extras'
+    gpgkey 'http://apt.sw.be/RPM-GPG-KEY.dag.txt'
+    enabled true
+    includepkgs '*rrdtool*'
+    priority '1'
     action :create
   end
 
@@ -12,6 +30,7 @@ when 'redhat', 'centos', 'fedora'
     description 'Remi RPM'
     mirrorlist 'http://rpms.famillecollet.com/enterprise/6/remi/mirror'
     gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
+    includepkgs 'php-*'
     action :create
   end
 
@@ -19,10 +38,11 @@ when 'redhat', 'centos', 'fedora'
     description 'Remi RPM PHP'
     mirrorlist 'http://rpms.famillecollet.com/enterprise/6/php55/mirror'
     gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
+    includepkgs 'php-*'
     action :create
   end
   
-when 'ubuntu'  #TODO: Find out how we support Debian here?
+when 'debian'  #TODO: Find out how we support Debian here?
   # Ondrej PPA
   apt_repository 'ondrej' do
     uri          'http://ppa.launchpad.net/ondrej/php5/ubuntu'
