@@ -11,7 +11,7 @@ end
 
 
 [
-  "#{node[:scalr][:core][:location]}/cache",
+  "#{node[:scalr][:core][:location]}/app/cache",
   node[:scalr][:core][:log_dir],
   node[:scalr][:core][:pid_dir]
 ].each do |dir|
