@@ -1,6 +1,9 @@
 # System
 include_recipe 'apt'
 include_recipe 'scalr-core::repos'
+# Time
+include_recipe 'timezone-ii'
+include_recipe 'ntp'
 
 # Users
 include_recipe 'scalr-core::users'

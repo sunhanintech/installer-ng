@@ -54,6 +54,9 @@ default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www/graphics"
 default[:scalr][:rrd][:img_url] = '/graphics'
 default[:scalr][:rrd][:port] = 8080
 
+# Time attributes
+default['tz'] = 'UTC'
+
 # PHP attributes
 include_attribute 'php'
 
