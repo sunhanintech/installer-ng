@@ -1,0 +1,10 @@
+DISABLE=0
+MAXWAIT=30
+ENABLE_COREFILES=0
+
+RRDC_USER=<%= node[:scalr][:core][:users][:service] %>
+
+OPTIONS="-s <%= node[:scalr][:core][:group] %>"
+OPTIONS="$OPTIONS -l unix:/var/run/rrdcached.sock"
+OPTIONS="$OPTIONS -j /var/lib/rrdcached/journal/ -F"
+OPTIONS="$OPTIONS -b <%= node[:scalr][:rrd][:rrd_dir] %> -B"
