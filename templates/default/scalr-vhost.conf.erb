@@ -6,8 +6,10 @@
   <Directory <%= node[:scalr][:core][:location] %>/app/www>
     Options -Indexes +FollowSymLinks +MultiViews
     AllowOverride All
+    AuthType None
     Order allow,deny
-    allow from all
+    Allow from all
+    Satisfy Any
     Require all granted
   </Directory>
 
