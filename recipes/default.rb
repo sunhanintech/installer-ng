@@ -1,12 +1,18 @@
 # System
-include_recipe 'apt'
 include_recipe 'scalr-core::repos'
+include_recipe 'apt'
+
 # Time
 include_recipe 'timezone-ii'
 include_recipe 'ntp'
 
 # Users
 include_recipe 'scalr-core::users'
+
+# Services
+# Note: must be defined first, otherwise Chef will complain that the init
+# files are missing. We're not launching them yet, though.
+include_recipe 'scalr-core::services'
 
 # Scalr Code
 include_recipe 'scalr-core::package'
@@ -34,7 +40,6 @@ include_recipe 'scalr-core::firewall'
 
 # Service Launch
 include_recipe 'scalr-core::web'
-include_recipe 'scalr-core::services'
 include_recipe 'scalr-core::cron'
 
 # Validate
