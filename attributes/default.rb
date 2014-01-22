@@ -9,7 +9,7 @@ default[:scalr][:core][:package][:checksum] = '3c0323acd0fbcbd151a9f1879b0a70397
 default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{node.scalr.core.package.version}.tar.gz"
 default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 
-default[:scalr][:core][:location] = File.join(node.scalr.core.package.deploy_to, 'current',
+default[:scalr][:core][:location] = File.join(node.scalr.core.package.deploy_to, 'releases', node.scalr.core.package.version,
                                               "#{node.scalr.core.package.name}-#{node.scalr.core.package.version}")
 
 # This isn't really configurable.. is that the right way to do it?

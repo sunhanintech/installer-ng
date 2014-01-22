@@ -8,6 +8,9 @@ include_recipe 'scalr-core::users'
 # Scalr Code
 include_recipe 'scalr-core::package'
 
+# Set selinux policy
+include_recipe 'scalr-core::selinux'
+
 # Scalr Configuration
 include_recipe 'scalr-core::configuration'
 
