@@ -26,8 +26,8 @@ when 'debian'
     group 'root'
   end
 
-  service 'procps' do
+  execute "sysctl -p #{sysctl_file}" do
     action :nothing
-    subscribes :restart, "file[#{sysctl_file}]", :delayed
+    subscribes :run, "file[#{sysctl_file}]", :delayed
   end
 end
