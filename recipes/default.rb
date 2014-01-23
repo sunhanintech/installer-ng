@@ -20,9 +20,6 @@ include_recipe 'scalr-core::package'
 # Set selinux policy
 include_recipe 'scalr-core::selinux'
 
-# Scalr Configuration
-include_recipe 'scalr-core::configuration'
-
 # Runtime dependencies
 include_recipe 'scalr-core::php'
 include_recipe 'scalr-core::snmp'
@@ -43,6 +40,7 @@ include_recipe 'scalr-core::web'
 include_recipe 'scalr-core::cron'
 
 # Scalr-specific PHP ini settngs
+include_recipe 'scalr-core::configuration'
 include_recipe "scalr-core::php_settings"
 
 # Validate
