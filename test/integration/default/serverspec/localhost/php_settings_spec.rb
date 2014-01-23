@@ -25,6 +25,7 @@ describe 'Scalr PHP Configuration' do
       expect(command php_cli_for_setting(php_ini, 'short_open_tag')).to return_stdout 'string(1) "1"'
       expect(command php_cli_for_setting(php_ini, 'disable_functions')).to return_stdout 'string(0) ""'
       expect(command php_cli_for_setting(php_ini, 'register_globals')).to return_stdout 'bool(false)'
+      expect(command php_cli_for_setting(php_ini, 'date.timezone')).to return_stdout 'string(3) "UTC"'
     end
 
     #TODO: This doesn't actually test the Apache2 SAPI on Debian. Needs fixing. Maybe just hit the URL.
