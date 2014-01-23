@@ -23,7 +23,7 @@ end
 cron "SzrMessaging" do
   user node[:scalr][:core][:users][:service]
   minute "*/2"
-  command "#{cmd} --SzrMessaging"
+  command "#{cmd} --SzrMessaging --piddir #{node[:scalr][:core][:pid_dir]}"
 end
 
 cron "BundleTasksManager" do
