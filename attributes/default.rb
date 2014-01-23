@@ -72,7 +72,7 @@ default['php']['directives'] = {
 
 # Apache attributes
 default['apache']['default_modules'] = %w{
-  alias autoindex deflate dir env filter headers mime negotiation rewrite
+  alias autoindex deflate dir env filter headers mime negotiation php5 rewrite
   setenvif status log_config logio
   authz_host authz_user
 }
@@ -90,6 +90,7 @@ when 'debian'
   default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
   default['apache']['extra_modules'] = %w{authz_core authz_owner}
+  default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
 end
 
 if node['platform'] == 'fedora' and node['platform_version'].to_f >= 19.0

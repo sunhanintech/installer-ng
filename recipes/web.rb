@@ -1,28 +1,21 @@
-#TODO: Change pid dir to Scalr's? : )
+if node[:platform_family] == 'debian'
+  # We need to update the pid dir here, or we'll be unable to stop Apache.
+  # We can't instruct the cookbook to ignore that failure and killall instead,
+  # so here goes.
+  template "#{node['apache']['dir']}/envvars" do
+    source "apache2-envvars.erb"
+  end
 
-template "#{node['apache']['dir']}/envvars" do
-  source "apache2-envvars.erb"
 end
 
 include_recipe 'apache2'
-include_recipe 'apache2::mod_rewrite'
-include_recipe 'apache2::mod_php5'
 
-# Override the default Apache 2 configuration template
-# as it includes the LockFile directive which isn't supported
-# on our Apache version
-# TODO: Check RHEL6 / CentOS.
-if node[:platform_family] == 'debian'
-  begin
-    t = resources("template[apache2.conf]")
-    t.source "apache2.conf.erb"
-    t.cookbook "scalr-core"
-  rescue Chef::Exceptions::ResourceNotFound
-    Chef::Log.warn "could not find template apache2.conf to modify"
-  end
-end
+t = resources("template[apache2.conf]")
+t.source "#{node[:platform_family]}-apache2.conf.erb"
+t.cookbook "scalr-core"
 
 node['apache']['extra_modules'].each do |mod|
+  # Those don't have recipes in the apache2 cookbook
   apache_module mod
 end
 
