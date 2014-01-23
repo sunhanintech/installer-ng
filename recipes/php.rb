@@ -5,9 +5,6 @@
 # PHP itself, and its extensions
 include_recipe "php"
 
-# Scalr-specific PHP ini settngs
-include_recipe "scalr-core::php_settings"
-
 # PECLs required by Scalr
 include_recipe "scalr-core::php_pecl_http"
 include_recipe "scalr-core::php_pecl_ssh2"
