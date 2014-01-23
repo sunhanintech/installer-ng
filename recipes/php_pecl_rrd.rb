@@ -1,11 +1,4 @@
-case node[:platform_family]
-
-when 'rhel'
-  package 'rrdtool-devel'
-when 'debian'
-  package 'librrd-dev'
-end
-
+package value_for_platform_family(['rhel', 'fedora'] => 'rrdtool-devel', 'debian' => 'librrd-dev')
 
 php_pear 'rrd' do
   action :install

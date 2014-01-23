@@ -1,7 +1,7 @@
-case node[:platform]
-when 'redhat', 'centos', 'fedora'
+case node[:platform_family]
+when 'rhel', 'fedora'
   pkgs = %w{net-snmp net-snmp-utils}
-when 'ubuntu'  #TODO: Debian...
+when 'debian'
   pkgs = %w{snmp snmp-mibs-downloader}
 end
 
