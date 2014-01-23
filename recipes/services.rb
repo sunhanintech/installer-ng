@@ -12,7 +12,8 @@ daemons = [
 daemons.each do |daemon|
   args = daemon.clone
   args[:executable] = "/usr/bin/python" # TODO: Dynamic?
-  args[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{args[:daemon_name]}.pid"
+  args[:piddir] = node[:scalr][:core][:pid_dir]
+  args[:pidfile] = "#{args[:piddir]}/#{args[:daemon_name]}.pid"
   args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:daemon_name]}.log"
   args[:user] = node[:scalr][:core][:users][:service]
   args[:group] = node[:scalr][:core][:group]

@@ -20,6 +20,9 @@
 case "${1}" in
    start)
       log_action_begin_msg "Starting..."
+      mkdir --mode=0770 --parents <%= @piddir %>
+      chown <%= @user %>:<%= @group %> <%= @piddir %>
+
       /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @daemon_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @daemon_extra_args %>
       ;;
 
