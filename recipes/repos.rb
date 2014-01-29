@@ -4,7 +4,7 @@ when 'rhel', 'fedora'
   package 'yum-plugin-priorities'
 
   cookbook_file '/etc/yum/pluginconf.d/priorities.conf' do
-    source 'yum-priorities.conf'
+    source "#{node[:platform_family]}-yum-priorities.conf"
   end
 
   yum_repository 'epel' do

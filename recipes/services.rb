@@ -21,7 +21,7 @@ daemons.each do |daemon|
   init_file = "/etc/init.d/#{args[:daemon_name]}"
 
   template init_file do
-    source "init-service.erb"
+    source "#{node[:platform_family]}-init-service.erb"
     mode 0755
     owner "root"
     group "root"

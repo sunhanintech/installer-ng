@@ -23,7 +23,7 @@ template value_for_platform_family(
   ['rhel', 'fedora'] => '/etc/sysconfig/rrdcached',
   'debian' => '/etc/default/rrdcached'
 ) do
-  source "rrdcached.erb"
+  source "#{node[:platform_family]}-rrdcached.erb"
   notifies :restart, "service[rrdcached]", :delayed
 end
 
