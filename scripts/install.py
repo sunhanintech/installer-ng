@@ -11,7 +11,63 @@ import shutil
 from distutils import spawn
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
-COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v0.2.0/package.tar.gz"
+COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v0.2.1/package.tar.gz"
+
+SCALR_NAME = "scalr"
+SCALR_VERSION = "4.5.1"
+SCLAR_PKG_URL = "https://github.com/Scalr/scalr/archive/v{0}.tar.gz".format(SCALR_VERSION)
+SCALR_PKG_CHECKSUM = "3c0323acd0fbcbd151a9f1879b0a703976ec7d0a73e00d0804e44fa89797f8ba"
+
+SCALR_DEPLOY_TO = "/opt/scalr"
+SCALR_LOCATION = os.path.join(SCALR_DEPLOY_TO, "releases", SCALR_VERSION, "{0}-{1}".format(SCALR_NAME, SCALR_VERSION))
+
+INSTALL_DONE_MSG = """
+
+
+
+
+Scalr has successfully finished installing!
+
+Scalr is installed at: {install_path}
+
+
+-- Configuration --
+
+Some optional modules have not been installed: DNS, LDAP
+
+
+-- MySQL credentials --
+
+root : {root_mysql_password}
+scalr: {scalr_mysql_password}
+
+
+-- Login credentials --
+
+Username: {scalr_admin_username}
+Password: {scalr_admin_password}
+
+
+-- Quickstart Roles --
+
+Scalr provides, free of charge, up-to-date role images for AWS. Those will help you get started with Scalr.
+
+To get access, you will need to provide the Scalr team with your Scalr installation ID.
+Your Scalr installation ID is located in this file: {scalr_id_file}
+We've read the file for you, its contents are: {scalr_id}
+
+Please submit those contents to this form http://goo.gl/qD4mpa
+
+Once done, please run this command `php {sync_shared_roles_script}`
+
+
+-- Credentials file --
+
+All the credentials that were used are stored in {solo_json_path}.
+
+Consider making a backup of those, and deleting this file.
+
+"""
 
 
 if sys.version_info >= (3, 0, 0):
@@ -90,7 +146,7 @@ class UserInput(object):
 class RandomPasswordGenerator(object):
     def __init__(self, random_source):
         self.random_source = random_source
-        self._chars = string.letters + string.digits + "$#"  # 64 divides 256
+        self._chars = string.letters + string.digits + "+="  # 64 divides 256
 
     def make_password(self, length):
         pw_chars = []
@@ -115,7 +171,7 @@ def generate_chef_solo_config(ui, pwgen):
     output["scalr"] = {}
 
     host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
-                             " use to connect to this server",
+                             " use to connect to this server. ",
                              "This is not a valid IP")
 
     local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
@@ -142,6 +198,16 @@ def generate_chef_solo_config(ui, pwgen):
     output["scalr"]["database"] = {}
     output["scalr"]["database"]["password"] = pwgen.make_password(30)
 
+    output["scalr"]["core"] = {}
+    output["scalr"]["core"]["package"] = {
+            "name": SCALR_NAME,
+            "version": SCALR_VERSION,
+            "checksum": SCALR_PKG_CHECKSUM,
+            "url": SCLAR_PKG_URL,
+            "deploy_to": SCALR_DEPLOY_TO,
+            "location": SCALR_LOCATION,
+    }
+
     return output
 
 
@@ -155,8 +221,10 @@ class InstallWrapper(object):
         self.file_cache_path = os.path.join(work_dir, "cache")
         self.cookbook_path = os.path.join(work_dir, "cookbooks")
 
-        self.solo_json_path = os.path.join(work_dir, "solo.json")
         self.solo_rb_path = os.path.join(work_dir, "solo.rb")
+
+        # We don't change that file across runs.
+        self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
 
         os.makedirs(self.cookbook_path)  # This should not exist yet
 
@@ -171,11 +239,23 @@ class InstallWrapper(object):
                                " Please install one")
         return name
 
+    def generate_config(self):
+        self.solo_json_config = generate_chef_solo_config(self.ui, self.pwgen)
+
+    def load_config(self):
+        with open(self.solo_json_path) as f:
+            self.solo_json_config = json.load(f)
+
     def create_configuration_files(self):
         print("Outputting configuration")
-        solo_json_config = generate_chef_solo_config(self.ui, self.pwgen)
-        with open(self.solo_json_path, "w") as f:
-            json.dump(solo_json_config, f)
+
+        if os.path.exists(self.solo_json_path):
+            self.load_config()
+            print("JSON Configuration already exists. Using it.")
+        else:
+            self.generate_config()
+            with open(self.solo_json_path, "w") as f:
+                json.dump(self.solo_json_config, f)
 
         solo_rb_lines = [
             "file_cache_path '{0}'".format(self.file_cache_path),
@@ -207,11 +287,35 @@ class InstallWrapper(object):
         subprocess.check_call(["chef-solo", "-c", self.solo_rb_path, "-j",
                                self.solo_json_path])
 
+    def finish(self):
+        install_path = self.solo_json_config["scalr"]["core"]["package"]["location"]
+
+        id_file_path = os.path.join(install_path, "app", "etc", "id")
+        with open(id_file_path) as f:
+            scalr_id = f.read().strip()
+
+        sync_shared_roles_script = os.path.join(install_path, "app", "tools",
+                                                 "sync_shared_roles.php")
+
+        print(INSTALL_DONE_MSG.format(
+            install_path=install_path,
+            root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
+            scalr_mysql_password=self.solo_json_config["scalr"]["database"]["password"],
+            scalr_admin_username=self.solo_json_config["scalr"]["admin"]["username"],
+            scalr_admin_password=self.solo_json_config["scalr"]["admin"]["password"],
+            scalr_id_file=id_file_path,
+            scalr_id=scalr_id,
+            sync_shared_roles_script=sync_shared_roles_script,
+            solo_json_path=self.solo_json_path
+        ))
+
+
     def install(self):
         self.create_configuration_files()
         self.install_chef()
         self.download_cookbooks()
         self.install_scalr()
+        self.finish()
 
 
 def main(work_dir, ui, pwgen):
