@@ -35,6 +35,8 @@ installation process isn't interrupted if your SSH connection drops.
 Visit your server on port 80 to get started. The output of the install script
 will contain your login credentials.
 
+All generated credentials are also logged to `/root/solo.json`, so you can
+retrieve them there.
 
 Supported OSes
 ==============
