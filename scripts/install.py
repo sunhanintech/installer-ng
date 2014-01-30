@@ -10,6 +10,7 @@ import json
 import shutil
 from distutils import spawn
 
+
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v0.2.1/package.tar.gz"
 
@@ -24,28 +25,31 @@ SCALR_LOCATION = os.path.join(SCALR_DEPLOY_TO, "releases", SCALR_VERSION, "{0}-{
 INSTALL_DONE_MSG = """
 
 
-
-
 Scalr has successfully finished installing!
 
-Scalr is installed at: {install_path}
+-- Accessing Scalr --
 
+Scalr is installed at: `{install_path}`
+
+Launch Scalr by browsing to `http://{scalr_host}`
+
+If you can't access that host, update your firewall rules and / or security groups.
 
 -- Configuration --
 
-Some optional modules have not been installed: DNS, LDAP
+Some optional modules have not been installed: DNS, LDAP.
 
 
 -- MySQL credentials --
 
-root : {root_mysql_password}
-scalr: {scalr_mysql_password}
+root : `{root_mysql_password}`
+scalr: `{scalr_mysql_password}`
 
 
 -- Login credentials --
 
-Username: {scalr_admin_username}
-Password: {scalr_admin_password}
+Username: `{scalr_admin_username}`
+Password: `{scalr_admin_password}`
 
 
 -- Quickstart Roles --
@@ -53,17 +57,17 @@ Password: {scalr_admin_password}
 Scalr provides, free of charge, up-to-date role images for AWS. Those will help you get started with Scalr.
 
 To get access, you will need to provide the Scalr team with your Scalr installation ID.
-Your Scalr installation ID is located in this file: {scalr_id_file}
-We've read the file for you, its contents are: {scalr_id}
+Your Scalr installation ID is located in this file: `{scalr_id_file}`
+We've read the file for you, its contents are:      `{scalr_id}`
 
-Please submit those contents to this form http://goo.gl/qD4mpa
+Please submit those contents to this form `http://goo.gl/qD4mpa`
 
 Once done, please run this command `php {sync_shared_roles_script}`
 
 
 -- Credentials file --
 
-All the credentials that were used are stored in {solo_json_path}.
+All the credentials that were used are stored in `{solo_json_path}`.
 
 Consider making a backup of those, and deleting this file.
 
@@ -299,6 +303,7 @@ class InstallWrapper(object):
 
         print(INSTALL_DONE_MSG.format(
             install_path=install_path,
+            scalr_host=self.solo_json_config["scalr"]["endpoint"]["host"],
             root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
             scalr_mysql_password=self.solo_json_config["scalr"]["database"]["password"],
             scalr_admin_username=self.solo_json_config["scalr"]["admin"]["username"],
