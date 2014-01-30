@@ -24,8 +24,8 @@ SCALR_LOCATION = os.path.join(SCALR_DEPLOY_TO, "releases", SCALR_VERSION, "{0}-{
 
 INSTALL_DONE_MSG = """
 
+Congratulations! Scalr has successfully finished installing!
 
-Scalr has successfully finished installing!
 
 -- Accessing Scalr --
 
@@ -33,7 +33,8 @@ Scalr is installed at: `{install_path}`
 
 Launch Scalr by browsing to `http://{scalr_host}`
 
-If you can't access that host, update your firewall rules and / or security groups.
+If you can't access Scalr, update your firewall rules and / or security groups.
+
 
 -- Configuration --
 
