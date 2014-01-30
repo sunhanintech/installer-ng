@@ -27,6 +27,34 @@ INSTALL_DONE_MSG = """
 Congratulations! Scalr has successfully finished installing!
 
 
+-- Configuration --
+
+Some optional modules have not been installed: DNS, LDAP.
+
+
+-- Credentials file --
+
+All the credentials that were used are stored in `{solo_json_path}`.
+
+Consider making a backup of those, and deleting this file.
+
+
+-- MySQL credentials --
+
+Use these credentials to access Scalr's MySQL database.
+
+root : `{root_mysql_password}`
+scalr: `{scalr_mysql_password}`
+
+
+-- Login credentials --
+
+Use these credentials to login to Scalr's web control panel.
+
+Username: `{scalr_admin_username}`
+Password: `{scalr_admin_password}`
+
+
 -- Accessing Scalr --
 
 Scalr is installed at: `{install_path}`
@@ -35,22 +63,7 @@ Launch Scalr by browsing to `http://{scalr_host}`
 
 If you can't access Scalr, update your firewall rules and / or security groups.
 
-
--- Configuration --
-
-Some optional modules have not been installed: DNS, LDAP.
-
-
--- MySQL credentials --
-
-root : `{root_mysql_password}`
-scalr: `{scalr_mysql_password}`
-
-
--- Login credentials --
-
-Username: `{scalr_admin_username}`
-Password: `{scalr_admin_password}`
+If you need help, check out Scalr's online documentation: `http://wiki.scalr.com`
 
 
 -- Quickstart Roles --
@@ -64,13 +77,6 @@ We've read the file for you, its contents are:      `{scalr_id}`
 Please submit those contents to this form `http://goo.gl/qD4mpa`
 
 Once done, please run this command `php {sync_shared_roles_script}`
-
-
--- Credentials file --
-
-All the credentials that were used are stored in `{solo_json_path}`.
-
-Consider making a backup of those, and deleting this file.
 
 """
 
