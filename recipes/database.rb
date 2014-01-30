@@ -26,7 +26,7 @@ mysql_database_user node[:scalr][:database][:username] do
 end
 
 
-mysql_conn_params = "-h#{node[:scalr][:database][:host]} -u#{node[:scalr][:database][:username]} -p#{node[:scalr][:database][:password]} -D#{node[:scalr][:database][:dbname]}"
+mysql_conn_params = "-h'#{node[:scalr][:database][:host]}' -u'#{node[:scalr][:database][:username]}' -p'#{node[:scalr][:database][:password]}' -D'#{node[:scalr][:database][:dbname]}'"
 
 execute "Load Scalr Database Structure" do
   command "mysql #{mysql_conn_params} < #{node[:scalr][:core][:location]}/sql/structure.sql"
