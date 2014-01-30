@@ -16,7 +16,7 @@ Usage
 ### Download ###
 
 Log in to the server you'd like to install Scalr on, and run the following
-commands, preferably as root.
+command, preferably as root.
 
     curl -O https://raw.github.com/Scalr/installer-ng/master/scripts/install.py
 
