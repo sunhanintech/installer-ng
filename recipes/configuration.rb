@@ -14,12 +14,12 @@ end
 
 ruby_block "Set Endpoint Hostname" do
   block do
-    line = "#{node[:scalr][:endpoint][:host_ip]} #{node[:scalr][:endpoint][:host]}"
+    if node[:scalr][:endpoint][:set_hostname]
+      line = "#{node[:scalr][:endpoint][:local_ip]} #{node[:scalr][:endpoint][:local_ip]}"
 
-    file = Chef::Util::FileEdit.new("/etc/hosts")
-    file.insert_line_if_no_match(Regexp.escape(line), line)
-    file.write_file
+      file = Chef::Util::FileEdit.new("/etc/hosts")
+      file.insert_line_if_no_match(Regexp.escape(line), line)
+      file.write_file
+    end
   end
-
-  only_if node[:scalr][:endpoint][:set_host]
 end

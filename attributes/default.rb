@@ -42,7 +42,8 @@ default[:scalr][:endpoint][:scheme] = 'http'
 default[:scalr][:endpoint][:host_ip] = '127.0.0.1'
 default[:scalr][:endpoint][:host] = node.scalr.endpoint.host_ip
 
-# Hostname
+# Plotter settings #TODO: Deprecate when updating to 4.5
+default[:scalr][:endpoint][:local_ip] = '127.0.0.1'
 default[:scalr][:endpoint][:set_hostname] = false  # If you host can't resolve its IP to a name (gethostbyaddr fails), use this.
 
 # Instance connection settings
