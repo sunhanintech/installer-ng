@@ -17,7 +17,7 @@ COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v0.2
 SCALR_NAME = "scalr"
 SCALR_VERSION = "4.5.1"
 SCLAR_PKG_URL = "https://github.com/Scalr/scalr/archive/v{0}.tar.gz".format(SCALR_VERSION)
-SCALR_PKG_CHECKSUM = "3c0323acd0fbcbd151a9f1879b0a703976ec7d0a73e00d0804e44fa89797f8ba"
+SCALR_PKG_CHECKSUM = "fea5a5bcf8e63c7d0fcc164c1a21f204a50857eaf2cf73136fe5c410e6718ff2"
 
 SCALR_DEPLOY_TO = "/opt/scalr"
 SCALR_LOCATION = os.path.join(SCALR_DEPLOY_TO, "releases", SCALR_VERSION, "{0}-{1}".format(SCALR_NAME, SCALR_VERSION))

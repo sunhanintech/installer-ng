@@ -5,7 +5,7 @@ default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apac
 
 default[:scalr][:core][:package][:name] = 'scalr'
 default[:scalr][:core][:package][:version] = '4.5.1'
-default[:scalr][:core][:package][:checksum] = '3c0323acd0fbcbd151a9f1879b0a703976ec7d0a73e00d0804e44fa89797f8ba'
+default[:scalr][:core][:package][:checksum] = 'fea5a5bcf8e63c7d0fcc164c1a21f204a50857eaf2cf73136fe5c410e6718ff2'
 default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{node.scalr.core.package.version}.tar.gz"
 default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
 
