@@ -35,9 +35,6 @@ deploy_revision node[:scalr][:package][:name] do
   create_dirs_before_symlink.clear
   purge_before_symlink.clear
   symlinks.clear
-  before_symlink do
-    node.override[:scalr][:core][:hard_location] = release_path  # No symlink.
-  end
 end
 
 [

@@ -4,17 +4,17 @@ if File.directory?('/selinux')
   selinux_disabled = 'sestatus | grep -qi disabled'
 
   execute "Allow httpd access to app path" do
-    command lazy { "semanage fcontext -a -t httpd_sys_content_t '#{node[:scalr][:core][:hard_location]}/app(/.*)?'" }
+    command lazy { "semanage fcontext -a -t httpd_sys_content_t '#{File.readlink(node[:scalr][:core][:location])}/app(/.*)?'" }
     not_if selinux_disabled
   end
 
   execute "Allow httpd access to cache path" do 
-    command lazy { "semanage fcontext -a -t httpd_sys_content_t '#{node[:scalr][:core][:hard_location]}/app/cache(/.*)?'" }
+    command lazy { "semanage fcontext -a -t httpd_sys_content_t '#{File.readlink(node[:scalr][:core][:location])}/app/cache(/.*)?'" }
     not_if selinux_disabled
   end
 
   execute "Commit selinux changes" do
-    command lazy { "restorecon -R #{node[:scalr][:core][:hard_location]}/app/" }
+    command lazy { "restorecon -R #{File.readlink(node[:scalr][:core][:location])}/app/" }
     not_if selinux_disabled
   end
 
