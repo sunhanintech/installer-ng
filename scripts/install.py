@@ -347,7 +347,7 @@ class InstallWrapper(object):
                                self.solo_json_path])
 
     def finish(self):
-        install_path = os.path.join(self.solo_json_config["scalr"]["location"], "current")
+        install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
 
         id_file_path = os.path.join(install_path, "app", "etc", "id")
         with open(id_file_path) as f:
