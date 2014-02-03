@@ -13,5 +13,9 @@ Gemfile.lock
 bin/*
 .bundle/*
 
+# Kitchen
 .kitchen/
 .kitchen.local.yml
+
+# Python
+*.pyc
