@@ -1,9 +1,10 @@
-[node[:scalr][:rrd][:rrd_dir], '/var/lib/rrdcached/journal'].each do |dir|
+[node[:scalr][:rrd][:rrd_dir], node[:scalr][:rrd][:img_dir], '/var/lib/rrdcached/journal'].each do |dir|
   directory dir do
     owner node[:scalr][:core][:users][:service]
     group node[:scalr][:core][:group]
-    notifies :restart, "service[rrdcached]", :delayed
+    mode 0755
     recursive true
+    notifies :restart, "service[rrdcached]", :delayed
   end
 end
 
@@ -12,7 +13,6 @@ end
     owner node[:scalr][:core][:users][:service]
     group node[:scalr][:core][:group]
     mode 0755
-    action :create
     notifies :restart, "service[rrdcached]", :delayed
   end
 end
