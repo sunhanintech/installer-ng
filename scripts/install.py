@@ -14,7 +14,7 @@ from distutils import spawn
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 
-COOKBOOK_VERSION = "0.2.1"
+COOKBOOK_VERSION = "1.0.0-beta1"
 COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}/package.tar.gz".format(COOKBOOK_VERSION)
 
 SCALR_NAME = "scalr"

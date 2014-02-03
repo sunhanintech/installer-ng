@@ -100,3 +100,7 @@ Vagrantfile
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml
+
+# Helpers #
+###########
+scripts
