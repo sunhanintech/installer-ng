@@ -5,17 +5,21 @@ package "git"
 if  node[:scalr][:deployment][:ssh_key_path].length > 0 and node[:scalr][:deployment][:ssh_key].length > 0
   template node[:scalr][:deployment][:ssh_wrapper_path] do
     source    "chef_ssh_deploy_wrapper.erb"
-    owner     node[:scalr][:core][:users][:service]
-    group     node[:scalr][:core][:group]
+    owner     Process.uid
+    group     Process.gid
     mode      0770
   end
 
   file node[:scalr][:deployment][:ssh_key_path] do
     content   node[:scalr][:deployment][:ssh_key]
-    owner     node[:scalr][:core][:users][:service]
-    group     node[:scalr][:core][:group]
-    mode      0660
+    owner     Process.uid
+    group     Process.gid
+    mode      0600
   end
+
+  ssh_wrapper = node[:scalr][:deployment][:ssh_wrapper_path]
+else
+  ssh_wrapper = ""  # Don't use an SSH wrapper if there is nothing to wrap!
 end
 
 # Deploy Scalr Core
@@ -23,7 +27,7 @@ deploy_revision node[:scalr][:package][:name] do
   repo                        node[:scalr][:package][:repo]
   deploy_to                   node[:scalr][:package][:deploy_to]
   revision                    node[:scalr][:package][:revision]
-  ssh_wrapper                 node[:scalr][:deployment][:ssh_wrapper_path]
+  ssh_wrapper                 ssh_wrapper
   user                        node[:scalr][:core][:users][:service]
   group                       node[:scalr][:core][:group]
   rollback_on_error           true

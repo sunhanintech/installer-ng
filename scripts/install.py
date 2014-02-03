@@ -252,13 +252,16 @@ def generate_chef_solo_config(options, ui, pwgen):
         repo = ui.prompt("Enter the repository to clone", "")
         ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                     "Invalid key. Please try again.")
-        ssh_key_path = os.path.join(os.path.expanduser("~"), ".ssh", "scalr-deploy.pem")
+        ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
 
     output["scalr"]["package"] = {
         "name": SCALR_NAME,
         "deploy_to": SCALR_DEPLOY_TO,
         "revision": revision,
         "repo": repo,
+    }
+
+    output["scalr"]["deployment"] = {
         "ssh_key": ssh_key,
         "ssh_key_path": ssh_key_path,
     }
@@ -401,10 +404,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     finally:
-        os.chdir(current_dir)
+        if options.advanced:
+            print("WARNING: Your SSH key may be stored on this server")
+            print("Please check the attributes file, and SSH key file")
 
-    # We don't use this in finally, because we don't want to clean up if we
-    # didn't actually finish (to let the user debug).
-    # The passwords are worthless if we're not done anyway.
-    print("Cleaning up")
-    shutil.rmtree(work_dir)
+        os.chdir(current_dir)
