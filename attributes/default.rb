@@ -3,16 +3,18 @@ default[:scalr][:core][:group] = 'scalr'
 default[:scalr][:core][:users][:service] = 'root'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'fedora' => 'apache', 'debian' => 'www-data')
 
-default[:scalr][:core][:package][:name] = 'scalr'
-default[:scalr][:core][:package][:version] = '4.5.1'
-default[:scalr][:core][:package][:checksum] = 'fea5a5bcf8e63c7d0fcc164c1a21f204a50857eaf2cf73136fe5c410e6718ff2'
-default[:scalr][:core][:package][:url] = "https://github.com/Scalr/scalr/archive/v#{node.scalr.core.package.version}.tar.gz"
-default[:scalr][:core][:package][:deploy_to] = '/opt/scalr'
+default[:scalr][:package][:name] = 'scalr'
+default[:scalr][:package][:revision] = 'HEAD'
+default[:scalr][:package][:repo] = 'https://github.com/Scalr/scalr.git'
+default[:scalr][:package][:deploy_to] = '/opt/scalr'
 
-default[:scalr][:core][:location] = File.join(node.scalr.core.package.deploy_to, 'releases', node.scalr.core.package.version,
-                                              "#{node.scalr.core.package.name}-#{node.scalr.core.package.version}")
+# Only used if deploying from a private repo
+default[:scalr][:deployment][:ssh_key_path] = ''
+default[:scalr][:deployment][:ssh_key] = ''
+default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 
-# This isn't really configurable.. is that the right way to do it?
+# Useful locations for Scalr
+default[:scalr][:core][:location] = File.join(node.scalr.package.deploy_to, 'current')
 default[:scalr][:core][:configuration] = "#{node.scalr.core.location}/app/etc/config.yml"
 default[:scalr][:core][:log_configuration] = "#{node.scalr.core.location}/app/etc/log4php.xml"
 
@@ -55,6 +57,15 @@ default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www/graphics"
 default[:scalr][:rrd][:img_url] = '/graphics'
 default[:scalr][:rrd][:port] = 8080
 
+# Scalr Daemon Attributes
+default[:scalr][:daemons] = [
+  {:daemon_name => 'msgsender', :daemon_module => 'msg_sender', :daemon_desc => 'Scalr Messaging Daemon', :daemon_extra_args => '' },
+  {:daemon_name => 'dbqueue', :daemon_module => 'dbqueue_event', :daemon_desc => 'Scalr DB Queue Event Poller', :daemon_extra_args => '' },
+  {:daemon_name => 'plotter', :daemon_module => 'load_statistics', :daemon_desc => 'Scalr Load Stats Plotter', :daemon_extra_args => '--plotter' },
+  {:daemon_name => 'poller', :daemon_module => 'load_statistics', :daemon_desc => 'Scalr Load Stats Poller', :daemon_extra_args => '--poller' },
+]
+
+
 # Time attributes
 default['tz'] = 'UTC'
 
@@ -68,7 +79,7 @@ default['php']['directives'] = {
   :short_open_tags => 'On',
   :safe_mode => 'Off',
   :register_gloabls => 'Off'
-}  #TODO: Does not work!
+}  #TODO: Does not work! TODO: Remove?
 
 
 # Apache attributes

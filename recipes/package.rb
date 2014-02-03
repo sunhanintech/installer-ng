@@ -1,14 +1,44 @@
-# Deploy Scalr Core
+# Prepare our SSH wrapper
+# It will only be used if we deploy from SSH
+package "git"
 
-artifact_deploy node[:scalr][:core][:package][:name] do
-  artifact_location node[:scalr][:core][:package][:url]
-  artifact_checksum node[:scalr][:core][:package][:checksum]
-  version node[:scalr][:core][:package][:version]
-  deploy_to node[:scalr][:core][:package][:deploy_to]
-  owner node[:scalr][:core][:users][:service]
-  group node[:scalr][:core][:group]
+if  node[:scalr][:deployment][:ssh_key_path].length > 0 and node[:scalr][:deployment][:ssh_key].length > 0
+  template node[:scalr][:deployment][:ssh_wrapper_path] do
+    source    "chef_ssh_deploy_wrapper.erb"
+    owner     Process.uid
+    group     Process.gid
+    mode      0770
+  end
+
+  file node[:scalr][:deployment][:ssh_key_path] do
+    content   node[:scalr][:deployment][:ssh_key]
+    owner     Process.uid
+    group     Process.gid
+    mode      0600
+  end
+
+  ssh_wrapper = node[:scalr][:deployment][:ssh_wrapper_path]
+else
+  ssh_wrapper = ""  # Don't use an SSH wrapper if there is nothing to wrap!
 end
 
+# Deploy Scalr Core
+deploy_revision node[:scalr][:package][:name] do
+  repo                        node[:scalr][:package][:repo]
+  deploy_to                   node[:scalr][:package][:deploy_to]
+  revision                    node[:scalr][:package][:revision]
+  ssh_wrapper                 ssh_wrapper
+  user                        node[:scalr][:core][:users][:service]
+  group                       node[:scalr][:core][:group]
+  rollback_on_error           true
+  symlink_before_migrate.clear
+  create_dirs_before_symlink.clear
+  purge_before_symlink.clear
+  symlinks.clear
+  before_symlink do
+    node.override[:scalr][:core][:hard_location] = release_path  # No symlink.
+  end
+end
 
 [
   "#{node[:scalr][:core][:location]}/app/cache",

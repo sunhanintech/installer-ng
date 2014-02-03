@@ -5,6 +5,7 @@ import sys
 import socket
 import tempfile
 import subprocess
+import optparse
 import string
 import json
 import shutil
@@ -12,15 +13,19 @@ from distutils import spawn
 
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
-COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v0.2.1/package.tar.gz"
+
+COOKBOOK_VERSION = "1.0.0"
+COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}/package.tar.gz".format(COOKBOOK_VERSION)
 
 SCALR_NAME = "scalr"
-SCALR_VERSION = "4.5.1"
-SCLAR_PKG_URL = "https://github.com/Scalr/scalr/archive/v{0}.tar.gz".format(SCALR_VERSION)
-SCALR_PKG_CHECKSUM = "fea5a5bcf8e63c7d0fcc164c1a21f204a50857eaf2cf73136fe5c410e6718ff2"
-
+SCALR_REVISION = "HEAD"
+SCALR_REPO = "https://github.com/Scalr/scalr.git"
 SCALR_DEPLOY_TO = "/opt/scalr"
-SCALR_LOCATION = os.path.join(SCALR_DEPLOY_TO, "releases", SCALR_VERSION, "{0}-{1}".format(SCALR_NAME, SCALR_VERSION))
+
+OPENSSL_START_KEY = "-----BEGIN RSA PRIVATE KEY-----"
+OPENSSL_END_KEY = "-----END RSA PRIVATE KEY-----"
+OPENSSL_PROC_TYPE = "Proc-Type: "
+OPENSSL_ENCRYPTED = "ENCRYPTED"
 
 INSTALL_DONE_MSG = """
 
@@ -117,6 +122,34 @@ class UserInput(object):
                 self.print_fn("")  # Newline
                 return ret
 
+    def prompt_ssh_key(self, q, error_msg):
+        key = ""
+
+        while not key:
+            first_line = self.prompt_fn(q + ">\n")
+            if first_line != OPENSSL_START_KEY:
+                self.print_fn("{0} (This is not an SSH private key)"
+                              .format(error_msg))
+                continue
+
+            lines = [first_line]
+            while 1:
+                line = self.prompt_fn("")
+                lines.append(line)
+
+                if line == OPENSSL_END_KEY:
+                    lines.append("")  # Newline
+                    key = "\n".join(lines)
+                    break
+
+                if (line.startswith(OPENSSL_PROC_TYPE) and
+                    OPENSSL_ENCRYPTED in line):
+                    self.print_fn("{0} (This is an encrypted key"
+                                  .format(error_msg))
+                    break
+
+        return key
+
     def prompt_select_from_options(self, q, options, error_msg):
         opts_string = ", ".join(map(format_symbol, options))
 
@@ -166,7 +199,7 @@ class RandomPasswordGenerator(object):
         return "".join(pw_chars)
 
 
-def generate_chef_solo_config(ui, pwgen):
+def generate_chef_solo_config(options, ui, pwgen):
     output = {
         "run_list":  ["recipe[scalr-core::default]"],
     }
@@ -209,22 +242,37 @@ def generate_chef_solo_config(ui, pwgen):
     output["scalr"]["database"] = {}
     output["scalr"]["database"]["password"] = pwgen.make_password(30)
 
-    output["scalr"]["core"] = {}
-    output["scalr"]["core"]["package"] = {
-            "name": SCALR_NAME,
-            "version": SCALR_VERSION,
-            "checksum": SCALR_PKG_CHECKSUM,
-            "url": SCLAR_PKG_URL,
-            "deploy_to": SCALR_DEPLOY_TO,
-            "location": SCALR_LOCATION,
+    if not options.advanced:
+        revision = SCALR_REVISION
+        repo = SCALR_REPO
+        ssh_key = ''
+        ssh_key_path = ''
+    else:
+        revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
+        repo = ui.prompt("Enter the repository to clone", "")
+        ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
+                                    "Invalid key. Please try again.")
+        ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
+
+    output["scalr"]["package"] = {
+        "name": SCALR_NAME,
+        "deploy_to": SCALR_DEPLOY_TO,
+        "revision": revision,
+        "repo": repo,
+    }
+
+    output["scalr"]["deployment"] = {
+        "ssh_key": ssh_key,
+        "ssh_key_path": ssh_key_path,
     }
 
     return output
 
 
 class InstallWrapper(object):
-    def __init__(self, work_dir, ui, pwgen):
+    def __init__(self, work_dir, options, ui, pwgen):
         self.work_dir = work_dir
+        self.options = options
         self.ui = ui
         self.pwgen = pwgen
 
@@ -251,7 +299,7 @@ class InstallWrapper(object):
         return name
 
     def generate_config(self):
-        self.solo_json_config = generate_chef_solo_config(self.ui, self.pwgen)
+        self.solo_json_config = generate_chef_solo_config(self.options, self.ui, self.pwgen)
 
     def load_config(self):
         with open(self.solo_json_path) as f:
@@ -299,7 +347,7 @@ class InstallWrapper(object):
                                self.solo_json_path])
 
     def finish(self):
-        install_path = self.solo_json_config["scalr"]["core"]["package"]["location"]
+        install_path = os.path.join(self.solo_json_config["scalr"]["location"], "current")
 
         id_file_path = os.path.join(install_path, "app", "etc", "id")
         with open(id_file_path) as f:
@@ -330,8 +378,8 @@ class InstallWrapper(object):
         self.finish()
 
 
-def main(work_dir, ui, pwgen):
-    wrapper = InstallWrapper(work_dir, ui, pwgen)
+def main(work_dir, options, ui, pwgen):
+    wrapper = InstallWrapper(work_dir, options, ui, pwgen)
     wrapper.install()
 
 
@@ -340,6 +388,11 @@ if __name__ == "__main__":
         print("This script should run as root")
         sys.exit(1)
 
+    parser = optparse.OptionParser()
+    parser.add_option("-a", "--advanced", action='store_true', default=False,
+                      help="Advanced configuration options")
+    options, args = parser.parse_args()
+
     current_dir = os.getcwd()
     work_dir = tempfile.mkdtemp()
 
@@ -347,14 +400,12 @@ if __name__ == "__main__":
         os.chdir(work_dir)
         ui = UserInput(raw_input, print)
         pwgen = RandomPasswordGenerator(os.urandom)
-        attributes = main(work_dir, ui, pwgen)
+        attributes = main(work_dir, options, ui, pwgen)
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     finally:
-        os.chdir(current_dir)
+        if options.advanced:
+            print("WARNING: Your SSH key may be stored on this server")
+            print("Please check the attributes file, and SSH key file")
 
-    # We don't use this in finally, because we don't want to clean up if we
-    # didn't actually finish (to let the user debug).
-    # The passwords are worthless if we're not done anyway.
-    print("Cleaning up")
-    shutil.rmtree(work_dir)
+        os.chdir(current_dir)
