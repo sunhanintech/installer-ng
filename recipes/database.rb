@@ -37,3 +37,13 @@ execute "Load Scalr Database Data" do
   command "mysql #{mysql_conn_params} < #{node[:scalr][:core][:location]}/sql/data.sql"
   not_if "mysql #{mysql_conn_params} -e \"SELECT id FROM scaling_metrics WHERE name='LoadAverages'\" | grep 1"  # Data from Scalr 4.5.1
 end
+
+if node[:scalr][:is_enterprise]
+  execute "Upgrade Scalr Database" do
+    user node[:scalr][:core][:users][:service]
+    group node[:scalr][:core][:group]
+    returns 0
+    command "php upgrade.php"
+    cwd "#{node[:scalr][:core][:location]}/app/bin"
+  end
+end

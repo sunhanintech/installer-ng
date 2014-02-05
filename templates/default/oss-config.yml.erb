@@ -1,0 +1,64 @@
+scalr:
+  connections:
+    mysql: &connections_mysql
+      host: <%= node[:scalr][:database][:host] %>
+      port: <%= node[:scalr][:database][:port] %>
+      name: <%= node[:scalr][:database][:dbname] %>
+      user: <%= node[:scalr][:database][:username] %>
+      pass: <%= node[:scalr][:database][:password] %>
+
+  email:
+    address: <%= node[:scalr][:email][:from] %>
+    name: <%= node[:scalr][:email][:name] %>
+
+  auth_mode: scalr
+
+  instances_connection_policy: <%= node[:scalr][:instances_connection_policy] %>
+
+  allowed_clouds:
+  - ec2
+  - gce
+  - eucalyptus
+  - cloudstack
+  - idcf
+  - openstack
+  - ocs
+  - ecs
+  - rackspacenguk
+  - rackspacengus
+  - nebula
+
+  endpoint:
+    scheme: <%= node[:scalr][:endpoint][:scheme] %>
+    host: <%= node[:scalr][:endpoint][:host] %>
+
+  aws:
+    ip_pool: ['<%= node[:scalr][:endpoint][:host_ip] %>/32']
+
+  billing:
+    enabled: no
+
+  dns:
+    mysql:
+      host: 'localhost'
+      port: ~
+      name: 'scalr'
+      user: 'scalr'
+      pass: 'scalr'
+    static:
+      enabled: no
+      nameservers: ['ns1.example-dns.net', 'ns2.example-dns.net']
+      domain_name: 'example-dns.net'
+    global:
+      enabled: no
+      nameservers: ['ns1.example.net', 'ns2.example.net', 'ns3.example.net', 'ns4.example.net']
+      default_domain_name: 'provide.domain.here.in'
+
+  load_statistics:
+    connections:
+      plotter:
+        host: 'http://<%= node[:scalr][:endpoint][:local_ip] %>'
+        port: <%= node[:scalr][:rrd][:port] %>
+    rrd_dir: <%= node[:scalr][:rrd][:rrd_dir] %>
+    img_dir: <%= node[:scalr][:rrd][:img_dir] %>
+    img_url: <%= node[:scalr][:rrd][:img_url] %>

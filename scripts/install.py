@@ -20,6 +20,7 @@ COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}
 SCALR_NAME = "scalr"
 SCALR_REVISION = "HEAD"
 SCALR_REPO = "https://github.com/Scalr/scalr.git"
+SCALR_RELEASE = "oss"
 SCALR_DEPLOY_TO = "/opt/scalr"
 
 OPENSSL_START_KEY = "-----BEGIN RSA PRIVATE KEY-----"
@@ -245,20 +246,24 @@ def generate_chef_solo_config(options, ui, pwgen):
     if not options.advanced:
         revision = SCALR_REVISION
         repo = SCALR_REPO
+        release = SCALR_RELEASE
         ssh_key = ''
         ssh_key_path = ''
     else:
         revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
         repo = ui.prompt("Enter the repository to clone", "")
+        release = ui.prompt_select_from_options("What Scalr release is this?",
+            ["oss", "ee"], "This is not a valid choice")
         ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                     "Invalid key. Please try again.")
         ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
 
     output["scalr"]["package"] = {
-        "name": SCALR_NAME,
-        "deploy_to": SCALR_DEPLOY_TO,
         "revision": revision,
         "repo": repo,
+        "release": release,
+        "name": SCALR_NAME,
+        "deploy_to": SCALR_DEPLOY_TO,
     }
 
     output["scalr"]["deployment"] = {
