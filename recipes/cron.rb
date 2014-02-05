@@ -20,10 +20,23 @@ cron "Scaling" do
   command "#{ng_cmd} --Scaling"
 end
 
-cron "SzrMessaging" do
-  user node[:scalr][:core][:users][:service]
-  minute "*/2"
-  command "#{cmd} --SzrMessaging --piddir #{node[:scalr][:core][:pid_dir]}"
+if node[:scalr][:is_enterprise]
+  messaging_crons = %w{
+    SzrMessagingAll SzrMessagingAll2
+    SzrMessagingBeforeHostUp SzrMessagingBeforeHostUp2
+    SzrMessagingHostInit SzrMessagingHostInit2
+    SzrMessagingHostUp SzrMessagingHostUp2
+  }
+else
+  messaging_crons = %w{SzrMessaging}
+end
+
+messaging_crons.each do |messaging_cron|
+  cron messaging_cron do
+    user node[:scalr][:core][:users][:service]
+    minute "*/2"
+    command "#{cmd} --#{messaging_cron} --piddir #{node[:scalr][:core][:pid_dir]}"
+  end
 end
 
 cron "BundleTasksManager" do

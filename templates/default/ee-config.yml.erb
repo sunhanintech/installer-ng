@@ -57,8 +57,21 @@ scalr:
   load_statistics:
     connections:
       plotter:
-        host: 'http://<%= node[:scalr][:endpoint][:host] %>'
+        bind_address: '<%= node[:scalr][:endpoint][:local_ip] %>'
         port: <%= node[:scalr][:rrd][:port] %>
     rrd_dir: <%= node[:scalr][:rrd][:rrd_dir] %>
     img_dir: <%= node[:scalr][:rrd][:img_dir] %>
     img_url: <%= node[:scalr][:rrd][:img_url] %>
+
+  scalarizr_update:
+    mode: 'client'
+    default_repo: 'stable'
+    repos:
+      latest:
+        deb_repo_url: 'http://apt.scalr.net/debian scalr/'
+        rpm_repo_url: 'http://rpm.scalr.net/rpm/rhel/$releasever/$basearch'
+        win_repo_url: 'http://win.scalr.net'
+      stable:
+        deb_repo_url: 'http://apt-delayed.scalr.net/debian scalr/'
+        rpm_repo_url: 'http://rpm-delayed.scalr.net/rpm/rhel/$releasever/$basearch'
+        win_repo_url: 'http://win-delayed.scalr.net'

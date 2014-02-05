@@ -1,5 +1,5 @@
 template node[:scalr][:core][:configuration] do
-  source "config.yml.erb"
+  source "#{node[:scalr][:package][:release]}-config.yml.erb"
   mode 0640
   owner node[:scalr][:core][:users][:service]
   group node[:scalr][:core][:group]
@@ -12,9 +12,10 @@ template node[:scalr][:core][:log_configuration] do
   group node[:scalr][:core][:group]
 end
 
+
 ruby_block "Set Endpoint Hostname" do
   block do
-    if node[:scalr][:endpoint][:set_hostname]
+    if not node[:scalr][:is_enterprise] and node[:scalr][:endpoint][:set_hostname]
       line = "#{node[:scalr][:endpoint][:local_ip]} #{node[:scalr][:endpoint][:local_ip]}"
 
       file = Chef::Util::FileEdit.new("/etc/hosts")

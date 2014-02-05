@@ -3,10 +3,14 @@ default[:scalr][:core][:group] = 'scalr'
 default[:scalr][:core][:users][:service] = 'root'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'fedora' => 'apache', 'debian' => 'www-data')
 
+#TODO -> Move to :deployment
 default[:scalr][:package][:name] = 'scalr'
 default[:scalr][:package][:revision] = 'HEAD'
 default[:scalr][:package][:repo] = 'https://github.com/Scalr/scalr.git'
 default[:scalr][:package][:deploy_to] = '/opt/scalr'
+default[:scalr][:package][:release] = 'oss'  # oss | ee
+
+default[:scalr][:is_enterprise] = node.scalr.package.release == 'ee'
 
 # Only used if deploying from a private repo
 default[:scalr][:deployment][:ssh_key_path] = ''
