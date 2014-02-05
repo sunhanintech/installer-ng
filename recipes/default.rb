@@ -18,10 +18,6 @@ include_recipe 'scalr-core::stub-services'
 # node[:scalr][:core][:location] is not available before this.
 include_recipe 'scalr-core::package'
 
-# Scalr-specific PHP ini settngs
-include_recipe 'scalr-core::configuration'
-include_recipe "scalr-core::php_settings"
-
 # Set selinux policy
 include_recipe 'scalr-core::selinux'
 
@@ -30,6 +26,10 @@ include_recipe 'scalr-core::php'
 include_recipe 'scalr-core::snmp'
 include_recipe 'scalr-core::scalrpy'
 include_recipe 'scalr-core::rrdcached'
+
+# Scalr configuration and PHP settings
+include_recipe 'scalr-core::configuration'
+include_recipe "scalr-core::php_settings"
 
 # Database Configuration
 include_recipe 'scalr-core::database'
