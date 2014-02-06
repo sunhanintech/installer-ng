@@ -391,7 +391,7 @@ class InstallWrapper(object):
 
     def install_scalr(self):
         print("Launching Chef Solo")
-        subprocess.check_call(["chef-solo", "-c", self.solo_rb_path, "-j",
+        subprocess.check_call([CHEF_SOLO_BIN, "-c", self.solo_rb_path, "-j",
                                self.solo_json_path])
 
     def finish(self):
