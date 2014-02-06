@@ -14,6 +14,12 @@ from distutils import spawn
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 
+CHEF_SOLO_BIN = "/opt/chef/bin/chef-solo"
+CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
+
+MINIMUM_CHEF_VERSION = "11.8.0"
+MINIMUM_RUBY_VERSION = "1.9.0"
+
 COOKBOOK_VERSION = "1.1.1"
 COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}/package.tar.gz".format(COOKBOOK_VERSION)
 
@@ -89,6 +95,21 @@ Once done, please run this command `php {sync_shared_roles_script}`
 
 if sys.version_info >= (3, 0, 0):
     raw_input = input
+
+
+def check_output(*popenargs, **kwargs):
+    # Python 2.6 support
+    if 'stdout' in kwargs:
+        raise ValueError('stdout argument not allowed, it will be overridden.')
+    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+    if retcode:
+        cmd = kwargs.get("args")
+        if cmd is None:
+            cmd = popenargs[0]
+        raise subprocess.CalledProcessError(retcode, cmd, output=output)
+    return output
 
 
 def format_symbol(s):
@@ -330,12 +351,34 @@ class InstallWrapper(object):
         with open(self.solo_rb_path, "w") as f:
             f.write("\n".join(solo_rb_lines))
 
+    def _has_compliant_chef(self):
+        # Check for Chef version and ruby version
+        try:
+            chef_version = check_output([CHEF_SOLO_BIN, "-v"])
+            _, ver = chef_version.split(" ")
+            if ver < MINIMUM_CHEF_VERSION:
+                return False
+
+            ruby_version = check_output([CHEF_RUBY_BIN, "-v"])
+            _, ver, _ = ruby_version.split(" ", 2)
+            if ver < MINIMUM_RUBY_VERSION:
+                return False
+
+        except (ValueError, OSError, subprocess.CalledProcessError):
+            # ValueError: we didn't recognize the version string
+            # OSError: it's not installed
+            # CalledProcessError: something crashed
+            return False
+
+        else:
+            return True
+
     def install_chef(self):
-        print("Installing Chef Solo")
-        if spawn.find_executable("chef-solo") is not None:
+        if self._has_compliant_chef():
             # Chef is already installed!
             return
 
+        print("Installing Chef Solo")
         install = self._download(CHEF_INSTALL_URL)
         subprocess.check_call(["bash", install])
 
