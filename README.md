@@ -5,6 +5,9 @@ An experimental installer for [Scalr Open Source][0].
 
 This installer supports Ubuntu 12.04, Red Hat Enterprise Linux 6, and CentOS 6.
 
+If you run into any issues, or have suggestions, get in touch with us at
+onboarding@scalr.com, or [file an issue][1].
+
 
 Usage
 =====
@@ -16,7 +19,7 @@ command, preferably as root.
 
     curl -O https://raw.github.com/Scalr/installer-ng/master/scripts/install.py
 
-### Install ###
+### Install Scalr ###
 
 Run the following, as root.
 
@@ -26,13 +29,13 @@ Note: we recommend that you run this command using GNU screen, so that the
 installation process isn't interrupted if your SSH connection drops.
 
 
-### Use ###
+### Use Scalr ###
 
 Visit your server on port 80 to get started. The output of the install script
-will contain your login credentials.
+contains your login credentials.
 
 All generated credentials are also logged to `/root/solo.json`, so you can
-retrieve them there.
+also retrieve them there.
 
 Supported OSes
 ==============
@@ -49,3 +52,4 @@ Apache 2.0
 
 
   [0]: https://github.com/Scalr/scalr
+  [1]: https://github.com/Scalr/installer-ng/issues
