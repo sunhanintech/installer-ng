@@ -2,7 +2,7 @@ package value_for_platform_family(['rhel', 'fedora'] => 'rrdtool-devel', 'debian
 
 php_pear 'rrd' do
   action :install
-  version '1.1.1'
+  version '1.1.3'
 end
 
 scalr_core_phpmod 'rrd'
