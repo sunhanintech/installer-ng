@@ -38,6 +38,8 @@ INSTALL_DONE_MSG = """
 
 Congratulations! Scalr has successfully finished installing!
 
+Installer cookbook version: `{cookbook_version}`.
+
 
 -- Configuration --
 
@@ -99,8 +101,8 @@ if sys.version_info >= (3, 0, 0):
 
 def check_output(*popenargs, **kwargs):
     # Python 2.6 support
-    if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, it will be overridden.')
+    if "stdout" in kwargs:
+        raise ValueError("stdout argument not allowed, it will be overridden.")
     process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
     output, unused_err = process.communicate()
     retcode = process.poll()
@@ -268,8 +270,8 @@ def generate_chef_solo_config(options, ui, pwgen):
         revision = SCALR_REVISION
         repo = SCALR_REPO
         release = SCALR_RELEASE
-        ssh_key = ''
-        ssh_key_path = ''
+        ssh_key = ""
+        ssh_key_path = ""
     else:
         revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
         repo = ui.prompt("Enter the repository to clone", "")
@@ -414,7 +416,8 @@ class InstallWrapper(object):
             scalr_id_file=id_file_path,
             scalr_id=scalr_id,
             sync_shared_roles_script=sync_shared_roles_script,
-            solo_json_path=self.solo_json_path
+            solo_json_path=self.solo_json_path,
+            cookbook_version=COOKBOOK_VERSION
         ))
 
 
