@@ -229,11 +229,18 @@ def generate_chef_solo_config(options, ui, pwgen):
     }
 
     # MySQL configuration
-    output["mysql"] = {
-        "server_root_password": pwgen.make_password(30),
-        "server_debian_password": pwgen.make_password(30),
-        "server_repl_password": pwgen.make_password(30),
-    }
+    output["mysql"] = {}
+
+    mysql_passwords = ["server_root_password", "server_debian_password",
+                       "server_repl_password"]
+
+    for mysql_password in mysql_passwords:
+        if options.passwords:
+            pw = ui.prompt("Enter password for: {0}".format(mysql_password),
+                           "")
+        else:
+            pw = pwgen.make_password(30)
+        output["mysql"][mysql_password] = pw
 
     # Scalr configuration
     output["scalr"] = {}
@@ -440,8 +447,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     parser = optparse.OptionParser()
-    parser.add_option("-a", "--advanced", action='store_true', default=False,
+    parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
+    parser.add_option("-p", "--passwords", action="store_true", default=False,
+                      help="Use custom passwords")
     options, args = parser.parse_args()
 
     current_dir = os.getcwd()
