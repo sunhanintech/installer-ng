@@ -17,7 +17,7 @@ CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 CHEF_SOLO_BIN = "/opt/chef/bin/chef-solo"
 CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 
-MINIMUM_CHEF_VERSION = "11.8.0"
+MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
 COOKBOOK_VERSION = "1.1.2"
