@@ -88,7 +88,7 @@ To get access, you will need to provide the Scalr team with your Scalr installat
 Your Scalr installation ID is located in this file: `{scalr_id_file}`
 We've read the file for you, its contents are:      `{scalr_id}`
 
-Please submit those contents to this form `http://goo.gl/qD4mpa`
+Please submit those contents to this form `http://hub.am/1fDAc2B`
 
 Once done, please run this command `php {sync_shared_roles_script}`
 
