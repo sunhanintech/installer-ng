@@ -1,7 +1,3 @@
-NOTE: This installer is still in beta, so if you are using an OS that the
-[legacy installer](https://github.com/Scalr/installer) supports (Ubuntu), you
-may want to use that instead.
-
 Scalr Next Generation Installer
 ===============================
 
