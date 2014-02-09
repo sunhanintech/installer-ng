@@ -61,14 +61,6 @@ root : `{root_mysql_password}`
 scalr: `{scalr_mysql_password}`
 
 
--- Login credentials --
-
-Use these credentials to login to Scalr's web control panel.
-
-Username: `{scalr_admin_username}`
-Password: `{scalr_admin_password}`
-
-
 -- Accessing Scalr --
 
 Scalr is installed at: `{install_path}`
@@ -78,6 +70,14 @@ Launch Scalr by browsing to `http://{scalr_host}`
 If you can't access Scalr, update your firewall rules and / or security groups.
 
 If you need help, check out Scalr's online documentation: `http://wiki.scalr.com`
+
+
+-- Login credentials --
+
+Use these credentials to login to Scalr's web control panel.
+
+Username: `{scalr_admin_username}`
+Password: `{scalr_admin_password}`
 
 
 -- Quickstart Roles --
