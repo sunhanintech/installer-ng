@@ -349,7 +349,7 @@ class InstallWrapper(object):
         else:
             self.generate_config()
             with open(self.solo_json_path, "w") as f:
-                json.dump(self.solo_json_config, f)
+                json.dump(self.solo_json_config, f, indent=2, separators=(',', ': '))
 
         solo_rb_lines = [
             "file_cache_path '{0}'".format(self.file_cache_path),
