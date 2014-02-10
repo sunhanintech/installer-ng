@@ -228,7 +228,7 @@ class RandomPasswordGenerator(object):
 
 def generate_chef_solo_config(options, ui, pwgen):
     output = {
-        "run_list":  ["recipe[scalr-core::default]"],
+        "run_list":  ["recipe[apt::default]", "recipe[scalr-core::default]"],
     }
 
     # MySQL configuration
