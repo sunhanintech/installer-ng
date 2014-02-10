@@ -2,6 +2,7 @@
 from __future__ import print_function
 import os
 import sys
+import traceback
 import socket
 import tempfile
 import subprocess
@@ -11,6 +12,8 @@ import json
 import shutil
 from distutils import spawn
 
+
+ISSUES_URL = "https://github.com/scalr/installer-ng/issues"
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 
@@ -463,6 +466,11 @@ if __name__ == "__main__":
         attributes = main(work_dir, options, ui, pwgen)
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
+    except Exception:
+        traceback.print_exc()
+        print("Whoops! Looks like the installer hit a snag!")
+        print("Please copy as much of the output as possible, and then")
+        print("file an issue here: {0}".format(format_symbol(ISSUES_URL)))
     finally:
         if options.advanced:
             print("WARNING: Your SSH key may be stored on this server")
