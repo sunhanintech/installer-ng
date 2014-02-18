@@ -35,7 +35,7 @@ messaging_crons.each do |messaging_cron|
   cron messaging_cron do
     user node[:scalr][:core][:users][:service]
     minute "*/2"
-    command "#{cmd} --#{messaging_cron} --piddir #{node[:scalr][:core][:pid_dir]}"
+    command "#{cmd} --#{messaging_cron}"
   end
 end
 
