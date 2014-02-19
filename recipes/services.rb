@@ -34,6 +34,6 @@ node[:scalr][:daemons].each do |daemon|
     subscribes :restart, "execute[Mark Install]", :delayed
     subscribes :restart, "ruby_block[Set Endpoint Hostname]", :delayed
     subscribes :restart, "deploy_revision[#{node[:scalr][:package][:name]}]", :delayed
-    action value_for_platform_family(['rhel', 'fedora'] => :enable, 'debian' => :nothing)
+    action     :enable
   end
 end
