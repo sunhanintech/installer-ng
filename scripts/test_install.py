@@ -72,6 +72,11 @@ class IOTestCase(unittest.TestCase):
         self.input.inputs.extend(["0", "::1", "127.0.0.1"])
         ret = self.io.prompt_ipv4("?", "!")
         self.assertEqual("127.0.0.1", ret)
+
+    def test_prompt_email(self):
+        self.input.inputs.extend(["abc", "test@e@test.com", "a@my.test.com"])
+        ret = self.io.prompt_email("?", "!")
+        self.assertEqual("a@my.test.com", ret)
     
     def test_prompt_ssh_key(self):
         keys_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
