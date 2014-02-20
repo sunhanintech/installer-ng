@@ -6,10 +6,14 @@ import traceback
 import socket
 import tempfile
 import subprocess
+import urllib
+import urllib2
+import re
 import optparse
 import string
 import json
 import shutil
+
 from distutils import spawn
 
 
@@ -31,6 +35,13 @@ SCALR_REVISION = "HEAD"
 SCALR_REPO = "https://github.com/Scalr/scalr.git"
 SCALR_RELEASE = "oss"
 SCALR_DEPLOY_TO = "/opt/scalr"
+
+EMAIL_RE = re.compile(r"[^@]+@[^@]+\.[^@]+")
+
+NOTIFICATION_ATTR_EMAIL = "email"
+NOTIFICATION_ATTR_ID = "scalr_installation_id"
+NOTIFICATION_FORM_URL = " https://forms.hubspot.com/uploads/form/v2/342633/6bd4c87d-cd6b-4541-b8bb-043d65a5555a"
+NOTIFICATION_FORM_STATUS_SUCCESS = 204
 
 OPENSSL_START_KEY = "-----BEGIN RSA PRIVATE KEY-----"
 OPENSSL_END_KEY = "-----END RSA PRIVATE KEY-----"
@@ -213,6 +224,15 @@ class UserInput(object):
 
         return self.prompt(q, error_msg, coerce_fn)
 
+    def prompt_email(self, q, error_msg):
+        def coerce_fn(r):
+            if not EMAIL_RE.match(r):
+                raise InvalidInput("{0} is not a valid email "
+                                   "address".format(format_symbol(r)))
+            return r
+
+        return self.prompt(q, error_msg, coerce_fn)
+
 
 class RandomPasswordGenerator(object):
     def __init__(self, random_source):
@@ -363,6 +383,21 @@ class InstallWrapper(object):
         with open(self.solo_rb_path, "w") as f:
             f.write("\n".join(solo_rb_lines))
 
+    def prompt_for_notifications(self):
+        self.user_email = None
+
+        if self.options.noprompt:
+            return
+
+        signup = ui.prompt_yes_no("Would you like to be notified of "
+                                  "Scalr security updates and critical bug "
+                                  "fixes? Notifications are delivered by "
+                                  "email.", "This isn't a valid choice")
+        if signup:
+            email = ui.prompt_email("Please enter your email address",
+                                    "This is not a valid email")
+            self.user_email = email
+
     def _has_compliant_chef(self):
         # Check for Chef version and ruby version
         try:
@@ -407,6 +442,7 @@ class InstallWrapper(object):
                                self.solo_json_path])
 
     def finish(self):
+        # Multiple paths
         install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
 
         id_file_path = os.path.join(install_path, "app", "etc", "id")
@@ -415,7 +451,29 @@ class InstallWrapper(object):
 
         sync_shared_roles_script = os.path.join(install_path, "app", "tools",
                                                  "sync_shared_roles.php")
+        # Subscribe to security notifications
+        if self.user_email is not None:
+            # The user wants security and critical updates notifications
+            # Submit the user's email for notifications
+            # Submit the Scalr installation ID for deduplication
+            data = urllib.urlencode({
+                NOTIFICATION_ATTR_EMAIL: self.user_email,
+                NOTIFICATION_ATTR_ID: scalr_id})
 
+            error_message = "WARNING! Failed to subscribe to notifications"
+
+            try:
+                res = urllib2.urlopen(NOTIFICATION_FORM_URL, data)
+            except urllib2.URLError as e:
+                print(error_message)
+                print(e.reason)
+            else:
+                if res.getcode() != NOTIFICATION_FORM_STATUS_SUCCESS:
+                    print(error_message)
+                else:
+                    print("Successfully signed up for notifications")
+
+        # Output message
         print(INSTALL_DONE_MSG.format(
             install_path=install_path,
             scalr_host=self.solo_json_config["scalr"]["endpoint"]["host"],
@@ -433,6 +491,7 @@ class InstallWrapper(object):
 
     def install(self):
         self.create_configuration_files()
+        self.prompt_for_notifications()
         self.install_chef()
         self.download_cookbooks()
         self.install_scalr()
@@ -454,6 +513,8 @@ if __name__ == "__main__":
                       help="Advanced configuration options")
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
+    parser.add_option("-n", "--noprompt", action="store_true", default=False,
+                      help="Do not prompt for notifications.")
     options, args = parser.parse_args()
 
     current_dir = os.getcwd()
