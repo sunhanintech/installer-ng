@@ -1,7 +1,7 @@
 Scalr Next Generation Installer
 ===============================
 
-An experimental installer for [Scalr Open Source][0].
+An installer for [Scalr Open Source][0].
 
 This installer supports Ubuntu 12.04, Red Hat Enterprise Linux 6, and CentOS 6.
 
@@ -34,7 +34,7 @@ installation process isn't interrupted if your SSH connection drops.
 Visit your server on port 80 to get started. The output of the install script
 contains your login credentials.
 
-All generated credentials are also logged to `/root/solo.json`, so you can
+All generated credentials are logged to `/root/solo.json`, so you can
 also retrieve them there.
 
 Supported OSes
