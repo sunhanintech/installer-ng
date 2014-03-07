@@ -27,7 +27,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-COOKBOOK_VERSION = "1.1.4"
+COOKBOOK_VERSION = "1.1.5"
 COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}/package.tar.gz".format(COOKBOOK_VERSION)
 
 SCALR_NAME = "scalr"
@@ -323,6 +323,11 @@ def generate_chef_solo_config(options, ui, pwgen):
         "ssh_key": ssh_key,
         "ssh_key_path": ssh_key_path,
     }
+
+    # System parameters
+    ## Disable apparmor in the ntp cookbook if it's not installed
+    if spawn.find_executable("aa-status") is None:
+        output['ntp'] = {'apparmor_enabled': False}
 
     return output
 
