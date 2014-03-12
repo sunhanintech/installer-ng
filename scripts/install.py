@@ -251,6 +251,23 @@ def generate_chef_solo_config(options, ui, pwgen):
         "run_list":  ["recipe[apt::default]", "recipe[scalr-core::default]"],
     }
 
+    # What are we installing?
+
+    if not options.advanced:
+        revision = SCALR_REVISION
+        repo = SCALR_REPO
+        release = SCALR_RELEASE
+        ssh_key = ""
+        ssh_key_path = ""
+    else:
+        revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
+        repo = ui.prompt("Enter the repository to clone", "")
+        release = ui.prompt_select_from_options("What Scalr release is this?",
+            ["oss", "ee"], "This is not a valid choice")
+        ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
+                                    "Invalid key. Please try again.")
+        ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
+
     # MySQL configuration
     output["mysql"] = {}
 
@@ -272,10 +289,14 @@ def generate_chef_solo_config(options, ui, pwgen):
                              " use to connect to this server. ",
                              "This is not a valid IP")
 
-    local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
-                              " this instance through. If you are not using"
-                              " NAT or a Cloud Elastic IP, this should be the"
-                              " same IP", "This is not a valid IP")
+    if release == 'ee':
+        local_ip = ''
+    else:
+        local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
+                                  " this instance through. If you are not"
+                                  " using NAT or a Cloud Elastic IP, this"
+                                  " should be the same IP",
+                                  "This is not a valid IP")
 
     output["scalr"]["endpoint"] = {
         "host": host_ip,
@@ -295,21 +316,6 @@ def generate_chef_solo_config(options, ui, pwgen):
 
     output["scalr"]["database"] = {}
     output["scalr"]["database"]["password"] = pwgen.make_password(30)
-
-    if not options.advanced:
-        revision = SCALR_REVISION
-        repo = SCALR_REPO
-        release = SCALR_RELEASE
-        ssh_key = ""
-        ssh_key_path = ""
-    else:
-        revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
-        repo = ui.prompt("Enter the repository to clone", "")
-        release = ui.prompt_select_from_options("What Scalr release is this?",
-            ["oss", "ee"], "This is not a valid choice")
-        ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
-                                    "Invalid key. Please try again.")
-        ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
 
     output["scalr"]["package"] = {
         "revision": revision,

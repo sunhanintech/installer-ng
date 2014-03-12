@@ -57,12 +57,16 @@ scalr:
   load_statistics:
     connections:
       plotter:
-        host: 'http://<%= node[:scalr][:endpoint][:local_ip] %>'
-        bind_address: '<%= node[:scalr][:endpoint][:local_ip] %>'
+        scheme: 'http'
+        bind_address: '0.0.0.0'
         port: <%= node[:scalr][:rrd][:port] %>
-    rrd_dir: <%= node[:scalr][:rrd][:rrd_dir] %>
-    img_dir: <%= node[:scalr][:rrd][:img_dir] %>
-    img_url: <%= node[:scalr][:rrd][:img_url] %>
+      rrd:
+        dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
+        rrdcached_sock_path: '/var/run/rrdcached.sock'
+      img:
+        dir: <%= node[:scalr][:rrd][:img_dir] %>
+        scheme: 'http'
+        host: '<%= node[:scalr][:endpoint][:host] %>'
 
   scalarizr_update:
     mode: 'client'
