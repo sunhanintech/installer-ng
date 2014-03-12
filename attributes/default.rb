@@ -78,12 +78,6 @@ include_attribute 'php'
 
 default['php']['version'] = '5.5.7'
 default['php']['install_method'] = 'package'
-default['php']['directives'] = {
-  :disable_functions => '',
-  :short_open_tags => 'On',
-  :safe_mode => 'Off',
-  :register_gloabls => 'Off'
-}  #TODO: Does not work! TODO: Remove?
 
 
 # Apache attributes
@@ -105,6 +99,7 @@ when 'debian'
   default['php']['packages'] = %w{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
   default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
+
   default['apache']['extra_modules'] = %w{authz_core authz_owner}
   default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
 end
