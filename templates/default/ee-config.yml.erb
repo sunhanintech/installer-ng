@@ -60,13 +60,13 @@ scalr:
         scheme: 'http'
         bind_address: '0.0.0.0'
         port: <%= node[:scalr][:rrd][:port] %>
-      rrd:
-        dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
-        rrdcached_sock_path: '/var/run/rrdcached.sock'
-      img:
-        dir: <%= node[:scalr][:rrd][:img_dir] %>
-        scheme: 'http'
-        host: '<%= node[:scalr][:endpoint][:host] %>'
+    rrd:
+      dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
+      rrdcached_sock_path: '/var/run/rrdcached.sock'
+    img:
+      dir: '<%= node[:scalr][:rrd][:img_dir] %>'
+      scheme: 'http'
+      host: '<%= node[:scalr][:endpoint][:host] %>'
 
   scalarizr_update:
     mode: 'client'
