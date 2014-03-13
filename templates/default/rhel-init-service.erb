@@ -17,7 +17,7 @@ case "${1}" in
 
    stop)
       echo_passed "Stopping..."
-      killproc -p <%= @pidfile %> <%= @executable %>
+      killproc -p <%= @pidfile %> <%= @executable %> SIGINT
       ;;
 
    restart)
