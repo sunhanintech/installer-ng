@@ -65,9 +65,9 @@ scalr:
       dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
       rrdcached_sock_path: '/var/run/rrdcached.sock'
     img:
-      dir: '<%= node[:scalr][:rrd][:img_dir] %>'
       scheme: 'http'
-      host: '<%= node[:scalr][:endpoint][:host] %>'
+      host: '<%= node[:scalr][:endpoint][:host] %>/graphics'
+      dir: '<%= node[:scalr][:rrd][:img_dir] %>'
 
   scalarizr_update:
     mode: 'client'
