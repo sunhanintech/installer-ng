@@ -3,9 +3,9 @@ include_recipe "python::pip"
 
 case node[:platform]
 when 'redhat', 'centos', 'fedora'
-  pkgs = %w{python-setuptools m2crypto libevent-devel net-snmp-python rrdtool-python}
+  pkgs = %w{libffi-devel libevent-devel m2crypto python-setuptools net-snmp-python rrdtool-python}
 when 'ubuntu'  #TODO: Debian...
-  pkgs = %w{python-setuptools m2crypto libevent-dev libsnmp-python python-rrdtool}
+  pkgs = %w{libffi-dev libevent-dev python-m2crypto python-setuptools libsnmp-python python-rrdtool}
 end
 
 pkgs.each do |pkg|
