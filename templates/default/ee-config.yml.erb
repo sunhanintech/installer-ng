@@ -66,7 +66,8 @@ scalr:
       rrdcached_sock_path: '/var/run/rrdcached.sock'
     img:
       scheme: 'http'
-      host: '<%= node[:scalr][:endpoint][:host] %>/graphics'
+      host: '<%= node[:scalr][:endpoint][:host] %>'
+      path: '/graphics'
       dir: '<%= node[:scalr][:rrd][:img_dir] %>'
 
   scalarizr_update:
