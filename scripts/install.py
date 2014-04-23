@@ -359,7 +359,7 @@ class InstallWrapper(object):
     def _download(self, url):
         name = url.rsplit("/", 1)[1]
         if spawn.find_executable("curl") is not None:
-            subprocess.check_call(["curl", "-O", "-L", url])
+            subprocess.check_call(["curl", "--fail", "-O", "-L", url])
         elif spawn.find_executable("wget") is not None:
             subprocess.check_call(["wget", "-O", name, url])
         else:
