@@ -57,8 +57,9 @@ default[:scalr][:instances_connection_policy] = 'auto'
 
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
-default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www/graphics"
+default[:scalr][:rrd][:rrdcached_sock] = '/var/run/rrdcached.sock'
 default[:scalr][:rrd][:img_url] = '/graphics'
+default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www#{node.scalr.rrd.img_url}"
 default[:scalr][:rrd][:port] = 8080
 
 # Scalr Daemon Attributes
