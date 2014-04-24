@@ -27,7 +27,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-COOKBOOK_VERSION = "1.4.0"
+COOKBOOK_VERSION = "1.6.3"
 COOKBOOK_PKG_URL = "https://github.com/Scalr/installer-ng/releases/download/v{0}/package.tar.gz".format(COOKBOOK_VERSION)
 
 SCALR_NAME = "scalr"
@@ -359,7 +359,7 @@ class InstallWrapper(object):
     def _download(self, url):
         name = url.rsplit("/", 1)[1]
         if spawn.find_executable("curl") is not None:
-            subprocess.check_call(["curl", "-O", "-L", url])
+            subprocess.check_call(["curl", "--fail", "-O", "-L", url])
         elif spawn.find_executable("wget") is not None:
             subprocess.check_call(["wget", "-O", name, url])
         else:
