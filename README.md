@@ -12,6 +12,11 @@ onboarding@scalr.com, or [file an issue][1].
 Usage
 =====
 
+### Choosing a Server ###
+
+We strongly suggest that you use a fresh install of your OS of choice to
+install Scalr. A cloud instance is a great choice.
+
 ### Download ###
 
 Log in to the server you'd like to install Scalr on, and run the following
