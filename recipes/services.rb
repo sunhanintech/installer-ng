@@ -29,6 +29,7 @@ node[:scalr][:daemons].each do |daemon|
   end
 
   service daemon[:daemon_name] do
+    supports   :restart => true
     subscribes :restart, "template[#{init_file}]", :delayed
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
     subscribes :restart, "execute[Mark Install]", :delayed
