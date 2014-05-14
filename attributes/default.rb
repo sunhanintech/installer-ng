@@ -70,6 +70,12 @@ default[:scalr][:daemons] = [
   {:daemon_name => 'poller', :daemon_module => 'load_statistics', :daemon_desc => 'Scalr Load Stats Poller', :daemon_extra_args => '--poller' },
 ]
 
+if node.scalr.is_enterprise
+  default[:scalr][:daemons].push(
+    {:daemon_name => 'szrupdater', :daemon_module => 'szr_upd_service', :daemon_desc => 'Scalarizr Update Client', :daemon_extra_args => '--interval=120' }
+  )
+end
+
 
 # Time attributes
 default['tz'] = 'UTC'
