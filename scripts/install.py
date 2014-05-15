@@ -27,7 +27,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-COOKBOOK_VERSION = "2.0.0"
+COOKBOOK_VERSION = "2.1.1"
 COOKBOOK_PKG_URL = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz".format(COOKBOOK_VERSION)
 
 SCALR_NAME = "scalr"
