@@ -47,3 +47,15 @@ if node[:scalr][:is_enterprise]
     cwd "#{node[:scalr][:core][:location]}/app/bin"
   end
 end
+
+execute "Load MySQL TZ Info" do
+  command "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql #{mysql_conn_params}"
+end
+
+template "/etc/mysql/conf.d/tz.cnf" do
+  source "mysql-tz.cnf.erb"
+  mode 0755
+  owner "root"
+  group "root"
+  notifies :restart, "service[mysql]", :delayed
+end
