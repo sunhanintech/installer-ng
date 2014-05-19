@@ -1,6 +1,7 @@
 #!/bin/bash
 release=$1
 
+ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 set -o errexit
@@ -76,6 +77,7 @@ echo "Uploading to S3"
 mv $PACKAGE_FILE $RELEASE_PACKAGE_FILE
 s3put --bucket=installer.scalr.com --prefix=$(dirname $RELEASE_PACKAGE_FILE) --key_prefix="releases" --grant=public-read --callback=10 $RELEASE_PACKAGE_FILE
 
+cd $ORIGINAL_DIR
 git checkout $ORIGINAL_BRANCH
 
 echo "Done. Released: $release"
