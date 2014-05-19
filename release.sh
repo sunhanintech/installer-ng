@@ -10,7 +10,7 @@ exit_invalid_release () {
   echo "$release: Not a valid release"
   exit 1
 }
-echo "$release". | grep --silent --extended-regexp "^(\d+.){3}$" || exit_invalid_release
+echo "$release" | grep --silent --extended-regexp '^(\d+\.){2}\d([a-b]\d+)?$' || exit_invalid_release
 
 exit_dirty_files () {
   echo "Dirty files in repo, aborting"
