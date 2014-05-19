@@ -83,7 +83,7 @@ default[:scalr][:crons] = [
   {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
   {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
   {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
-  {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'ServerTerminate'},
+  {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'RotateLogs'},
 ]
 
 if node.scalr.is_enterprise

@@ -9,6 +9,6 @@ node[:scalr][:crons].each do |cron|
     user node[:scalr][:core][:users][:service]
     hour    cron[:hour]
     minute  cron[:minute]
-    command "#{cmd} --#{cmd}"
+    command "#{cmd} --#{cron[:name]}"
   end
 end
