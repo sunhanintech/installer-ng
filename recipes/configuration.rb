@@ -5,14 +5,6 @@ template node[:scalr][:core][:configuration] do
   group node[:scalr][:core][:group]
 end
 
-template node[:scalr][:core][:log_configuration] do
-  source "log4php.xml.erb"
-  mode 0644
-  owner node[:scalr][:core][:users][:service]
-  group node[:scalr][:core][:group]
-end
-
-
 ruby_block "Set Endpoint Hostname" do
   block do
     if not node[:scalr][:is_enterprise] and node[:scalr][:endpoint][:set_hostname]
