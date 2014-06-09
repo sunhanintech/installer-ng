@@ -449,8 +449,14 @@ class InstallWrapper(object):
 
     def install_scalr(self):
         print("Launching Chef Solo")
-        subprocess.check_call([CHEF_SOLO_BIN, "-c", self.solo_rb_path, "-j",
-                               self.solo_json_path])
+        log_level = "debug" if self.options.verbose else "info"
+
+        subprocess.check_call([
+            CHEF_SOLO_BIN,
+            "--config", self.solo_rb_path,
+            "--json-attributes", self.solo_json_path,
+            "--log_level", log_level
+        ])
 
     def finish(self):
         # Multiple paths
@@ -526,6 +532,8 @@ if __name__ == "__main__":
                       help="Use custom passwords")
     parser.add_option("-n", "--noprompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
+    parser.add_option('-v', "--verbose", action="store_true", default=False,
+                      help="Verbose logging (debug)")
     options, args = parser.parse_args()
 
     current_dir = os.getcwd()
