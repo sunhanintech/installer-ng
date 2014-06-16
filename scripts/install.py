@@ -441,10 +441,11 @@ class InstallWrapper(object):
         subprocess.check_call(["bash", install])
 
     def download_cookbooks(self):
-        print("Downloading Scalr Cookbooks")
+        url = COOKBOOK_PKG_URL_FORMAT.format(self.options.release)
+        print("Downloading Scalr Cookbooks: {0}".format(url))
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
-        pkg = self._download(COOKBOOK_PKG_URL_FORMAT.format(self.options.release))
+        pkg = self._download(url)
         subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
 
     def install_scalr(self):
