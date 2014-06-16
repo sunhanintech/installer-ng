@@ -550,7 +550,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     except Exception:
-        traceback.print_exc()
+        print(traceback.format_exc())
         print("Whoops! Looks like the installer hit a snag!")
         print("Please copy as much of the output as possible, and then")
         print("file an issue here: {0}".format(format_symbol(ISSUES_URL)))
