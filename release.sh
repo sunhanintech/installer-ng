@@ -91,8 +91,8 @@ cd $ORIGINAL_DIR
 
 if [ -z "$no_push" ]; then
   echo "Pushing release branch"
-  git push origin $RELEASE_BRANCH:$RELEASE_BRANCH
-  git push --tags
+  git push origin "${RELEASE_BRANCH}:${RELEASE_BRANCH}"
+  git push origin "refs/tags/${RELEASE_NAME}:refs/tags/${RELEASE_NAME}"
 else
   echo "Not pushing release branch: -x is set"
 fi
