@@ -1,11 +1,25 @@
 #!/bin/bash
-release=$1
-
 ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 set -o errexit
 set -o nounset
+
+OPTIND=1
+
+no_push=
+
+while getopts "x" opt; do
+  case "$opt" in
+    x)  
+      no_push=1
+      ;;
+  esac
+done
+
+shift "$((OPTIND-1))"
+release=$1
+
 
 cd $( dirname "${BASH_SOURCE[0]}" )
 
@@ -47,10 +61,6 @@ make_local_release () {
 
 git tag | grep --extended-regexp "^$RELEASE_NAME$" || make_local_release
 
-echo "Pushing release branch"
-git push origin $RELEASE_BRANCH:$RELEASE_BRANCH
-git push --tags
-
 RELEASE_DIR="$TMPDIR/installer-ng-release-$release-$$"
 PACKAGE_NAME="package.tar.gz"
 PACKAGE_FILE="$RELEASE_DIR/$PACKAGE_NAME"
@@ -80,4 +90,11 @@ s3put --bucket=installer.scalr.com --prefix=$(dirname $RELEASE_PACKAGE_FILE) --k
 cd $ORIGINAL_DIR
 git checkout $ORIGINAL_BRANCH
 
-echo "Done. Released: $release"
+if [ -z "$no_push" ]; then
+  echo "Pushing release branch"
+  git push origin $RELEASE_BRANCH:$RELEASE_BRANCH
+  git push --tags
+fi
+
+echo "Done. Published: $release"
+
