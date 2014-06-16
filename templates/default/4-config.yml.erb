@@ -3,7 +3,7 @@ scalr:
     mysql: &connections_mysql
       host: <%= node[:scalr][:database][:host] %>
       port: <%= node[:scalr][:database][:port] %>
-      name: <%= node[:scalr][:database][:dbname] %>
+      name: <%= node[:scalr][:database][:scalr_dbname] %>
       user: <%= node[:scalr][:database][:username] %>
       pass: <%= node[:scalr][:database][:password] %>
 

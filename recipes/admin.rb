@@ -1,7 +1,7 @@
 require 'digest'
 
 #TODO: There's a bit of copy-paste going on here!
-mysql_conn_params = "-h'#{node[:scalr][:database][:host]}' -u'#{node[:scalr][:database][:username]}' -p'#{node[:scalr][:database][:password]}' -D'#{node[:scalr][:database][:dbname]}'"
+mysql_conn_params = "-h'#{node[:scalr][:database][:host]}' -u'#{node[:scalr][:database][:username]}' -p'#{node[:scalr][:database][:password]}' -D'#{node[:scalr][:database][:scalr_dbname]}'"
 
 h = Digest::SHA256.new
 h.update node[:scalr][:admin][:password]

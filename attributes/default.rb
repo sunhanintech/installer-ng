@@ -20,6 +20,7 @@ default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 # Useful locations for Scalr
 default[:scalr][:core][:location] = File.join(node.scalr.package.deploy_to, 'current')
 default[:scalr][:core][:configuration] = "#{node.scalr.core.location}/app/etc/config.yml"
+default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app/etc/.cryptokey"
 
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
 default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
@@ -35,9 +36,10 @@ default[:scalr][:admin][:password] = 'scalr'
 # Database settings
 default[:scalr][:database][:username] = 'scalr'
 default[:scalr][:database][:password] = 'scalr'
-default[:scalr][:database][:dbname] = 'scalr'
 default[:scalr][:database][:host] = 'localhost'
 default[:scalr][:database][:port] = 3306
+default[:scalr][:database][:scalr_dbname] = 'scalr'
+default[:scalr][:database][:analytics_dbname] = 'analytics'
 
 default[:scalr][:database][:client_host] = 'localhost'  # Where will the client connect from?
 default['mysql']['bind_address'] = 'localhost'
@@ -87,13 +89,18 @@ default[:scalr][:crons] = [
   {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
   {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
   {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'RotateLogs'},
+  {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
 ]
 
 # These new cron jobs were intoduced in 5.0
 if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
-  default[:scalr][:daemons].push(
-    {:daemon_name => 'szrupdater', :daemon_module => 'szr_upd_service', :daemon_desc => 'Scalarizr Update Client', :daemon_extra_args => '--interval=120' }
-  )
+  extra_daemons = [
+    {:daemon_name => 'szrupdater', :daemon_module => 'szr_upd_service', :daemon_desc => 'Scalarizr Update Client', :daemon_extra_args => '--interval=120' },
+    {:daemon_name => 'analytics_poller', :daemon_module => 'analytics_poller', :daemon_desc => 'Scalr Analytics Poller', :daemon_extra_args => '--interval=300' },
+    {:daemon_name => 'analytics_processor', :daemon_module => 'analytics_processing', :daemon_desc => 'Scalr Analytics Processor', :daemon_extra_args => '' },
+  ]
+
+  default[:scalr][:daemons].concat extra_daemons
 
   messaging_crons = %w{
     SzrMessagingAll SzrMessagingAll2
@@ -104,6 +111,7 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
 else
   messaging_crons = %w{SzrMessaging}
 end
+
 
 messaging_crons.each do |messaging_cron|
   default[:scalr][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
