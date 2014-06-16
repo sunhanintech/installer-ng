@@ -503,7 +503,7 @@ class InstallWrapper(object):
             scalr_id=scalr_id,
             sync_shared_roles_script=sync_shared_roles_script,
             solo_json_path=self.solo_json_path,
-            cookbook_version=COOKBOOK_VERSION
+            cookbook_version=self.options.release
         ))
 
 
