@@ -27,8 +27,8 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-COOKBOOK_VERSION = "2.2.0"
-COOKBOOK_PKG_URL = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz".format(COOKBOOK_VERSION)
+DEFAULT_COOKBOOK_VERSION = "2.2.0"
+COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 SCALR_NAME = "scalr"
 SCALR_REVISION = "HEAD"
@@ -444,7 +444,7 @@ class InstallWrapper(object):
         print("Downloading Scalr Cookbooks")
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
-        pkg = self._download(COOKBOOK_PKG_URL)
+        pkg = self._download(COOKBOOK_PKG_URL_FORMAT.format(self.options.release))
         subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
 
     def install_scalr(self):
@@ -528,6 +528,8 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
+    parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_VERSION,
+                      help="Installer release")
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
     parser.add_option("-n", "--noprompt", action="store_true", default=False,

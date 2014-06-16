@@ -51,7 +51,7 @@ make_local_release () {
   install_file="scripts/install.py"
 
   sed -E -i '' "s/(version[ ]+)'[0-9.]*'/\1'$final_release'/g" $metadata_file
-  sed -E -i '' "s/(COOKBOOK_VERSION[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
+  sed -E -i '' "s/(DEFAULT_COOKBOOK_VERSION[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
 
   git checkout -b $RELEASE_BRANCH
   git add $metadata_file $install_file
