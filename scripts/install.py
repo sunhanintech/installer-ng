@@ -27,8 +27,8 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-COOKBOOK_VERSION = "2.2.0"
-COOKBOOK_PKG_URL = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz".format(COOKBOOK_VERSION)
+DEFAULT_COOKBOOK_VERSION = "2.2.1b4"
+COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 SCALR_NAME = "scalr"
 SCALR_REVISION = "HEAD"
@@ -441,10 +441,11 @@ class InstallWrapper(object):
         subprocess.check_call(["bash", install])
 
     def download_cookbooks(self):
-        print("Downloading Scalr Cookbooks")
+        url = COOKBOOK_PKG_URL_FORMAT.format(self.options.release)
+        print("Downloading Scalr Cookbooks: {0}".format(url))
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
-        pkg = self._download(COOKBOOK_PKG_URL)
+        pkg = self._download(url)
         subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
 
     def install_scalr(self):
@@ -502,7 +503,7 @@ class InstallWrapper(object):
             scalr_id=scalr_id,
             sync_shared_roles_script=sync_shared_roles_script,
             solo_json_path=self.solo_json_path,
-            cookbook_version=COOKBOOK_VERSION
+            cookbook_version=self.options.release
         ))
 
 
@@ -528,6 +529,8 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
+    parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_VERSION,
+                      help="Installer release")
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
     parser.add_option("-n", "--noprompt", action="store_true", default=False,
@@ -547,7 +550,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     except Exception:
-        traceback.print_exc()
+        print(traceback.format_exc())
         print("Whoops! Looks like the installer hit a snag!")
         print("Please copy as much of the output as possible, and then")
         print("file an issue here: {0}".format(format_symbol(ISSUES_URL)))
