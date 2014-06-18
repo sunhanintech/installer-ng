@@ -41,7 +41,7 @@ node[:scalr][:daemons].each do |daemon|
     args[(key.to_sym rescue key) || key] = args.delete(key)
   end
 
-  args[:executable] = "/usr/bin/python" # TODO: Dynamic?
+  args[:executable] = node[:scalr][:python][:venv_python]
   args[:piddir] = node[:scalr][:core][:pid_dir]
   args[:pidfile] = "#{args[:piddir]}/#{args[:daemon_name]}.pid"
   args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:daemon_name]}.log"

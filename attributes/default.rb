@@ -21,6 +21,10 @@ default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 default[:scalr][:core][:location] = File.join(node.scalr.package.deploy_to, 'current')
 default[:scalr][:core][:configuration] = "#{node.scalr.core.location}/app/etc/config.yml"
 
+default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
+default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
+default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
+
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
 
