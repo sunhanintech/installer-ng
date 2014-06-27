@@ -289,8 +289,8 @@ def generate_chef_solo_config(options, ui, pwgen):
                              " use to connect to this server. ",
                              "This is not a valid IP")
 
-    if release == 'ee':
-        local_ip = ''
+    if release == "ee":
+        local_ip = ""
     else:
         local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
                                   " this instance through. If you are not"
@@ -328,6 +328,10 @@ def generate_chef_solo_config(options, ui, pwgen):
     output["scalr"]["deployment"] = {
         "ssh_key": ssh_key,
         "ssh_key_path": ssh_key_path,
+    }
+
+    output["apt"] = {
+        "compile_time_update": True
     }
 
     # System parameters
@@ -535,7 +539,7 @@ if __name__ == "__main__":
                       help="Use custom passwords")
     parser.add_option("-n", "--noprompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
-    parser.add_option('-v', "--verbose", action="store_true", default=False,
+    parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
     options, args = parser.parse_args()
 
