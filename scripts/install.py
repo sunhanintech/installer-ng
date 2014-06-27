@@ -392,7 +392,6 @@ class InstallWrapper(object):
         solo_rb_lines = [
             "file_cache_path '{0}'".format(self.file_cache_path),
             "cookbook_path '{0}'".format(self.cookbook_path),
-            "log_level {0}".format(":info"),
             ""
         ]
         with open(self.solo_rb_path, "w") as f:
