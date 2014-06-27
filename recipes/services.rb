@@ -2,7 +2,7 @@
 package 'monit'
 
 service 'monit' do
-  action :enable
+  action [:enable, :start]
 end
 
 case node[:platform_family]
@@ -65,7 +65,7 @@ node[:scalr][:daemons].each do |daemon|
     subscribes :restart, "execute[Mark Install]", :delayed
     subscribes :restart, "ruby_block[Set Endpoint Hostname]", :delayed
     subscribes :restart, "deploy_revision[#{node[:scalr][:package][:name]}]", :delayed
-    action     :enable
+    action     [:enable, :start]
   end
 
   # Monit
