@@ -28,5 +28,5 @@ template value_for_platform_family(
 end
 
 service 'rrdcached' do
-  action value_for_platform_family(['rhel', 'fedora'] => :enable, 'debian' => :nothing)
+  action [:enable, :start]
 end

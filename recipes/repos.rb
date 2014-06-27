@@ -11,7 +11,7 @@ when 'rhel', 'fedora'
     description 'Extra Packages for Enterprise Linux'
     mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch'
     gpgkey 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'  #TODO: Include those keys in my package and use a file:/// url. HTTP is unsafe here.
-    includepkgs 'libyaml* libmcrypt*'
+    includepkgs 'libyaml* libmcrypt* monit*'
     action :create
   end
 

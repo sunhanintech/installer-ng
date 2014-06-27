@@ -27,7 +27,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_VERSION = "2.2.1"
+DEFAULT_COOKBOOK_VERSION = "2.3.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 SCALR_NAME = "scalr"
@@ -289,8 +289,8 @@ def generate_chef_solo_config(options, ui, pwgen):
                              " use to connect to this server. ",
                              "This is not a valid IP")
 
-    if release == 'ee':
-        local_ip = ''
+    if release == "ee":
+        local_ip = ""
     else:
         local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
                                   " this instance through. If you are not"
@@ -328,6 +328,10 @@ def generate_chef_solo_config(options, ui, pwgen):
     output["scalr"]["deployment"] = {
         "ssh_key": ssh_key,
         "ssh_key_path": ssh_key_path,
+    }
+
+    output["apt"] = {
+        "compile_time_update": True
     }
 
     # System parameters
@@ -388,7 +392,6 @@ class InstallWrapper(object):
         solo_rb_lines = [
             "file_cache_path '{0}'".format(self.file_cache_path),
             "cookbook_path '{0}'".format(self.cookbook_path),
-            "log_level {0}".format(":info"),
             ""
         ]
         with open(self.solo_rb_path, "w") as f:
@@ -535,7 +538,7 @@ if __name__ == "__main__":
                       help="Use custom passwords")
     parser.add_option("-n", "--noprompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
-    parser.add_option('-v', "--verbose", action="store_true", default=False,
+    parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
     options, args = parser.parse_args()
 
