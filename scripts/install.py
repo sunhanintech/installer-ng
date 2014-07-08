@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+
 import os
 import sys
 import traceback
@@ -13,6 +14,7 @@ import optparse
 import string
 import json
 import shutil
+import contextlib
 
 from distutils import spawn
 
@@ -29,6 +31,8 @@ MINIMUM_RUBY_VERSION = "1.9.0"
 
 DEFAULT_COOKBOOK_VERSION = "2.3.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
+
+INSTALLER_UMASK = 0o22
 
 SCALR_NAME = "scalr"
 SCALR_REVISION = "HEAD"
@@ -111,6 +115,13 @@ Once done, please run this command `php {sync_shared_roles_script}`
 
 if sys.version_info >= (3, 0, 0):
     raw_input = input
+
+
+@contextlib.contextmanager
+def umask(mask):
+    old_mask = os.umask(mask)
+    yield
+    os.umask(old_mask)
 
 
 def check_output(*popenargs, **kwargs):
@@ -521,7 +532,8 @@ class InstallWrapper(object):
 
 def main(work_dir, options, ui, pwgen):
     wrapper = InstallWrapper(work_dir, options, ui, pwgen)
-    wrapper.install()
+    with umask(INSTALLER_UMASK):
+        wrapper.install()
 
 
 if __name__ == "__main__":
