@@ -7,28 +7,39 @@ when 'rhel', 'fedora'
     source "#{node[:platform_family]}-yum-priorities.conf"
   end
 
+  # TODO - Use HTTPS or a file for gpgkey
+
+  # EPEL uses a different key on 6 and 7.
+  # Since we are using platform_version, might as well use it everywhere.
+  rhel_version = node[:platform_version].to_i
+
   yum_repository 'epel' do
     description 'Extra Packages for Enterprise Linux'
-    mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch'
-    gpgkey 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'  #TODO: Include those keys in my package and use a file:/// url. HTTP is unsafe here.
+    mirrorlist "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-#{rhel_version}&arch=$basearch"
+    gpgkey "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-#{rhel_version}"
     includepkgs 'libyaml* libmcrypt* monit*'
     action :create
   end
 
-  yum_repository 'rpmforge-extras' do
-    description 'RHEL $releasever - RPMforge.net - extras'
-    baseurl 'http://apt.sw.be/redhat/el6/en/$basearch/extras'
-    mirrorlist 'http://apt.sw.be/redhat/el6/en/mirrors-rpmforge-extras'
+  yum_repository 'rpmforge' do
+    description "RHEL #{rhel_version} - RPMforge.net - base"
+    mirrorlist "http://apt.sw.be/redhat/el#{rhel_version}/en/mirrors-rpmforge"
     gpgkey 'http://apt.sw.be/RPM-GPG-KEY.dag.txt'
-    enabled true
+    includepkgs 'putty'
+    action :create
+  end
+
+  yum_repository 'rpmforge-extras' do
+    description "RHEL #{rhel_version} - RPMforge.net - extras"
+    mirrorlist "http://apt.sw.be/redhat/el#{rhel_version}/en/mirrors-rpmforge-extras"
+    gpgkey 'http://apt.sw.be/RPM-GPG-KEY.dag.txt'
     includepkgs '*rrdtool*'
-    priority '1'
     action :create
   end
 
   yum_repository 'remi' do
     description 'Remi RPM'
-    mirrorlist 'http://rpms.famillecollet.com/enterprise/6/remi/mirror'
+    mirrorlist "http://rpms.famillecollet.com/enterprise/#{rhel_version}/remi/mirror"
     gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
     includepkgs 'php-*'
     action :create
@@ -36,12 +47,12 @@ when 'rhel', 'fedora'
 
   yum_repository 'remi-php55' do
     description 'Remi RPM PHP'
-    mirrorlist 'http://rpms.famillecollet.com/enterprise/6/php55/mirror'
+    mirrorlist "http://rpms.famillecollet.com/enterprise/#{rhel_version}/php55/mirror"
     gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
     includepkgs 'php-*'
     action :create
   end
-  
+
 when 'debian'  #TODO: Find out how we support Debian here?
   # Ondrej PPA
   apt_repository 'ondrej' do

@@ -18,6 +18,9 @@ include_recipe 'scalr-core::stub-services'
 # node[:scalr][:core][:location] is not available before this.
 include_recipe 'scalr-core::package'
 
+# PuTTYgen (SSH Launcher support for Windows clients)
+include_recipe 'scalr-core::puttygen'
+
 # Set selinux policy
 include_recipe 'scalr-core::selinux'
 
