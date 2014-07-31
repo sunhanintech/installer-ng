@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import os
 import sys
+import select
 import traceback
 import socket
 import tempfile
@@ -33,6 +34,8 @@ DEFAULT_COOKBOOK_VERSION = "2.4.1"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
+OUT_LOG = "scalr.install.out.log"
+ERR_LOG = "scalr.install.err.log"
 
 SCALR_NAME = "scalr"
 SCALR_REVISION = "HEAD"
@@ -145,6 +148,10 @@ def format_symbol(s):
     input as-is.
     """
     return "`{0}`".format(s)
+
+
+class InstallerFailure(Exception):
+    pass
 
 
 class InvalidInput(Exception):
@@ -354,22 +361,36 @@ def generate_chef_solo_config(options, ui, pwgen):
 
 
 class InstallWrapper(object):
-    def __init__(self, work_dir, options, ui, pwgen):
+    def __init__(self, work_dir, options, ui, pwgen, out_file, err_file):
         self.work_dir = work_dir
         self.options = options
         self.ui = ui
         self.pwgen = pwgen
 
+        self._out_file = out_file
+        self._err_file = err_file
+
         # We only set those up once, but it's not very clean
         self.file_cache_path = os.path.join(work_dir, "cache")
         self.cookbook_path = os.path.join(work_dir, "cookbooks")
-
         self.solo_rb_path = os.path.join(work_dir, "solo.rb")
 
         # We don't change that file across runs.
         self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
 
         os.makedirs(self.cookbook_path)  # This should not exist yet
+
+    def _multiplex_write(self, s, files, nl):
+        for f in files:
+            f.write(s)
+            if nl:
+                f.write('\n')
+
+    def write_out(self, s, nl=False):
+        self._multiplex_write(s, [self._out_file, sys.stdout], nl)
+
+    def write_err(self, s, nl=False):
+        self._multiplex_write(s, [self._err_file, sys.stderr], nl)
 
     def _download(self, url):
         name = url.rsplit("/", 1)[1]
@@ -390,11 +411,11 @@ class InstallWrapper(object):
             self.solo_json_config = json.load(f)
 
     def create_configuration_files(self):
-        print("Outputting configuration")
+        self.write_out("Creating configuration", nl=True)
 
         if os.path.exists(self.solo_json_path):
             self.load_config()
-            print("JSON Configuration already exists. Using it.")
+            self.write_out("JSON Configuration already exists. Using it.", nl=True)
         else:
             self.generate_config()
             with open(self.solo_json_path, "w") as f:
@@ -450,28 +471,47 @@ class InstallWrapper(object):
             # Chef is already installed!
             return
 
-        print("Installing Chef Solo")
+        self.write_out("Installing Chef Solo", nl=True)
         install = self._download(CHEF_INSTALL_URL)
         subprocess.check_call(["bash", install])
 
     def download_cookbooks(self):
         url = COOKBOOK_PKG_URL_FORMAT.format(self.options.release)
-        print("Downloading Scalr Cookbooks: {0}".format(url))
+        self.write_out("Downloading Scalr Cookbooks: {0}".format(url), nl=True)
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
         pkg = self._download(url)
         subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
 
     def install_scalr(self):
-        print("Launching Chef Solo")
+        self.write_out("Launching Chef Solo", nl=True)
         log_level = "debug" if self.options.verbose else "info"
 
-        subprocess.check_call([
-            CHEF_SOLO_BIN,
-            "--config", self.solo_rb_path,
-            "--json-attributes", self.solo_json_path,
-            "--log_level", log_level
-        ])
+        args = [CHEF_SOLO_BIN,
+                "--config", self.solo_rb_path,
+                "--json-attributes", self.solo_json_path,
+                "--log_level", log_level]
+
+        p = subprocess.Popen(args, bufsize=1, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        fd_mapping = {
+            p.stdout.fileno(): (p.stdout, self.write_out),
+            p.stderr.fileno(): (p.stderr, self.write_err)
+        }
+
+        while True:
+            for_read, _, _ = select.select(fd_mapping.keys(), [], [])
+            for fd in for_read:
+                # By construction, fd is in fd_mapping
+                stream, handler = fd_mapping[fd]
+                handler(stream.readline())
+            if p.poll() is not None:
+                break
+
+        retcode = p.wait()  # This doesn't block, we have exited already
+        if retcode != 0:
+            raise InstallerFailure("The installer failed")
+
 
     def finish(self):
         # Multiple paths
@@ -497,16 +537,16 @@ class InstallWrapper(object):
             try:
                 res = urllib2.urlopen(NOTIFICATION_FORM_URL, data)
             except urllib2.URLError as e:
-                print(error_message)
-                print(e.reason)
+                self.write_out(error_message, nl=True)
+                self.write_out(e.reason, nl=True)
             else:
                 if res.getcode() != NOTIFICATION_FORM_STATUS_SUCCESS:
-                    print(error_message)
+                    self.write_out(error_message, nl=True)
                 else:
-                    print("Successfully signed up for notifications")
+                    self.write_out("Successfully signed up for notifications", nl=True)
 
         # Output message
-        print(INSTALL_DONE_MSG.format(
+        self.write_out(INSTALL_DONE_MSG.format(
             install_path=install_path,
             scalr_host=self.solo_json_config["scalr"]["endpoint"]["host"],
             root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
@@ -518,7 +558,7 @@ class InstallWrapper(object):
             sync_shared_roles_script=sync_shared_roles_script,
             solo_json_path=self.solo_json_path,
             cookbook_version=self.options.release
-        ))
+        ), nl=True)
 
 
     def install(self):
@@ -530,9 +570,9 @@ class InstallWrapper(object):
         self.finish()
 
 
-def main(work_dir, options, ui, pwgen):
-    wrapper = InstallWrapper(work_dir, options, ui, pwgen)
+def main(work_dir, options, ui, pwgen, out_file, err_file):
     with umask(INSTALLER_UMASK):
+        wrapper = InstallWrapper(work_dir, options, ui, pwgen, out_file, err_file)
         wrapper.install()
 
 
@@ -557,18 +597,26 @@ if __name__ == "__main__":
     current_dir = os.getcwd()
     work_dir = tempfile.mkdtemp()
 
+    out_log_path = os.path.join(current_dir, OUT_LOG)
+    out_log = open(out_log_path, "w")
+
+    err_log_path = os.path.join(current_dir, ERR_LOG)
+    err_log = open(err_log_path, "w")
+
     try:
         os.chdir(work_dir)
         ui = UserInput(raw_input, print)
         pwgen = RandomPasswordGenerator(os.urandom)
-        attributes = main(work_dir, options, ui, pwgen)
+        main(work_dir, options, ui, pwgen, out_log, err_log)
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     except Exception:
         print(traceback.format_exc())
         print("Whoops! Looks like the installer hit a snag!")
-        print("Please copy as much of the output as possible, and then")
-        print("file an issue here: {0}".format(format_symbol(ISSUES_URL)))
+        print("Please file an issue: {0}".format(format_symbol(ISSUES_URL)))
+        print("Please attach the following files, if present:")
+        print(format_symbol(out_log_path))
+        print(format_symbol(err_log_path))
     finally:
         if options.advanced:
             print("WARNING: Your SSH key may be stored on this server")
