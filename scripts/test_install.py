@@ -77,7 +77,7 @@ class IOTestCase(unittest.TestCase):
         self.input.inputs.extend(["abc", "test@e@test.com", "a+b@my.test.com"])
         ret = self.io.prompt_email("?", "!")
         self.assertEqual("a+b@my.test.com", ret)
-    
+
     def test_prompt_ssh_key(self):
         keys_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                  "test_data")
