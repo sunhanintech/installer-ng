@@ -17,7 +17,7 @@ when 'rhel', 'fedora'
     description 'Extra Packages for Enterprise Linux'
     mirrorlist "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-#{rhel_version}&arch=$basearch"
     gpgkey "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-#{rhel_version}"
-    includepkgs 'libyaml* libmcrypt* monit*'
+    includepkgs 'libyaml* monit*'
     action :create
   end
 
@@ -37,19 +37,11 @@ when 'rhel', 'fedora'
     action :create
   end
 
-  yum_repository 'remi' do
-    description 'Remi RPM'
-    mirrorlist "http://rpms.famillecollet.com/enterprise/#{rhel_version}/remi/mirror"
-    gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
-    includepkgs 'php-*'
-    action :create
-  end
-
-  yum_repository 'remi-php55' do
-    description 'Remi RPM PHP'
-    mirrorlist "http://rpms.famillecollet.com/enterprise/#{rhel_version}/php55/mirror"
-    gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
-    includepkgs 'php-*'
+  yum_repository 'webtatic' do
+    description 'Webtatic Repository EL6 - $basearch'
+    mirrorlist "http://mirror.webtatic.com/yum/el#{rhel_version}/$basearch/mirrorlist"
+    gpgkey 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy'
+    includepkgs 'libmysqlclient* libmcrypt* php*'
     action :create
   end
 
