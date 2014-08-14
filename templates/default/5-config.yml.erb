@@ -3,9 +3,25 @@ scalr:
     mysql: &connections_mysql
       host: <%= node[:scalr][:database][:host] %>
       port: <%= node[:scalr][:database][:port] %>
-      name: <%= node[:scalr][:database][:dbname] %>
+      name: <%= node[:scalr][:database][:scalr_dbname] %>
       user: <%= node[:scalr][:database][:username] %>
       pass: <%= node[:scalr][:database][:password] %>
+
+  analytics:
+    enabled: yes
+    connections:
+      analytics:
+        <<: *connections_mysql
+        name: <%= node[:scalr][:database][:analytics_dbname] %>
+      scalr:
+        <<: *connections_mysql
+    poller:
+      cryptokey: <%= node[:scalr][:core][:cryptokey_path] %>
+      log_file: '/var/log/scalr.analytics-poller.log'
+      pid_file: '/var/run/scalr.analytics-poller.pid'
+    processing:
+      log_file: '/var/log/scalr.analytics-processing.log'
+      pid_file: '/var/run/scalr.analytics-processing.pid'
 
   email:
     address: <%= node[:scalr][:email][:from] %>
