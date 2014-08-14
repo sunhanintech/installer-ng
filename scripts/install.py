@@ -39,7 +39,7 @@ ERR_LOG = "scalr.install.err.log"
 
 # Supported versions
 SCALR_VERSION_4_5 = "4.5"
-SCALR_VERSION_5_0
+SCALR_VERSION_5_0 = "5.0"
 SUPPORTED_VERSIONS = [SCALR_VERSION_4_5, SCALR_VERSION_5_0]
 
 # Deploy parmeters
