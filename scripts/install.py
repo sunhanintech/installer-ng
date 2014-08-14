@@ -38,8 +38,8 @@ OUT_LOG = "scalr.install.out.log"
 ERR_LOG = "scalr.install.err.log"
 
 SCALR_NAME = "scalr"
-SCALR_GIT_REV = "HEAD"
-SCALR_REPO = "https://github.com/Scalr/scalr.git"
+SCALR_GIT_REV = "4.5"
+SCALR_REPO = "git@github.com:Scalr/scalr.git"
 SCALR_DEPLOY_TO = "/opt/scalr"
 
 # Supported versions
