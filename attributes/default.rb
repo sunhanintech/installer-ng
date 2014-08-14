@@ -8,9 +8,9 @@ default[:scalr][:package][:name] = 'scalr'
 default[:scalr][:package][:revision] = 'HEAD'
 default[:scalr][:package][:repo] = 'https://github.com/Scalr/scalr.git'
 default[:scalr][:package][:deploy_to] = '/opt/scalr'
-default[:scalr][:package][:release] = 'oss'  # oss | ee
 
-default[:scalr][:is_enterprise] = node.scalr.package.release == 'ee'
+default[:scalr][:package][:version] = '4.5.0'
+default[:scalr][:package][:version_obj] = Gem::Version.new(node.scalr.package.version)
 
 # Only used if deploying from a private repo
 default[:scalr][:deployment][:ssh_key_path] = ''
@@ -85,7 +85,8 @@ default[:scalr][:crons] = [
   {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'RotateLogs'},
 ]
 
-if node.scalr.is_enterprise
+# These new cron jobs were intoduced in 5.0
+if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
   default[:scalr][:daemons].push(
     {:daemon_name => 'szrupdater', :daemon_module => 'szr_upd_service', :daemon_desc => 'Scalarizr Update Client', :daemon_extra_args => '--interval=120' }
   )

@@ -38,9 +38,9 @@ OUT_LOG = "scalr.install.out.log"
 ERR_LOG = "scalr.install.err.log"
 
 SCALR_NAME = "scalr"
-SCALR_REVISION = "HEAD"
+SCALR_GIT_REV = "HEAD"
 SCALR_REPO = "https://github.com/Scalr/scalr.git"
-SCALR_RELEASE = "oss"
+SCALR_VERSION = "4.5"
 SCALR_DEPLOY_TO = "/opt/scalr"
 
 EMAIL_RE = re.compile(r"[^@]+@[^@]+\.[^@]+")
@@ -272,16 +272,16 @@ def generate_chef_solo_config(options, ui, pwgen):
     # What are we installing?
 
     if not options.advanced:
-        revision = SCALR_REVISION
+        revision = SCALR_GIT_REV
         repo = SCALR_REPO
-        release = SCALR_RELEASE
+        version = SCALR_VERSION
         ssh_key = ""
         ssh_key_path = ""
     else:
         revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
         repo = ui.prompt("Enter the repository to clone", "")
-        release = ui.prompt_select_from_options("What Scalr release is this?",
-            ["oss", "ee"], "This is not a valid choice")
+        version = ui.prompt_select_from_options("What Scalr version is this?",
+            ["4.5", "5.0"], "This is not a valid choice")
         ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                     "Invalid key. Please try again.")
         ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
@@ -307,7 +307,8 @@ def generate_chef_solo_config(options, ui, pwgen):
                              " use to connect to this server. ",
                              "This is not a valid IP")
 
-    if release == "ee":
+    # TODO - Regex!
+    if version == "5.0":
         local_ip = ""
     else:
         local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
@@ -338,7 +339,7 @@ def generate_chef_solo_config(options, ui, pwgen):
     output["scalr"]["package"] = {
         "revision": revision,
         "repo": repo,
-        "release": release,
+        "version": version,
         "name": SCALR_NAME,
         "deploy_to": SCALR_DEPLOY_TO,
     }
