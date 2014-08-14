@@ -30,19 +30,29 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_VERSION = "2.5.0"
+DEFAULT_COOKBOOK_VERSION = "3.0.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
 OUT_LOG = "scalr.install.out.log"
 ERR_LOG = "scalr.install.err.log"
 
+# Supported versions
+SCALR_VERSION_4_5 = "4.5"
+SCALR_VERSION_5_0 = "5.0"
+SUPPORTED_VERSIONS = [SCALR_VERSION_4_5, SCALR_VERSION_5_0]
+
+# Deploy parmeters
 SCALR_NAME = "scalr"
-SCALR_REVISION = "HEAD"
-SCALR_REPO = "https://github.com/Scalr/scalr.git"
-SCALR_RELEASE = "oss"
 SCALR_DEPLOY_TO = "/opt/scalr"
 
+# Defaults
+DEFAULT_SCALR_REPO = "git://github.com/Scalr/scalr.git"
+DEFAULT_SCALR_GIT_REV = SCALR_VERSION_4_5
+DEFAULT_SCALR_VERSION = SCALR_VERSION_4_5
+
+
+# Notification configuration
 EMAIL_RE = re.compile(r"[^@]+@[^@]+\.[^@]+")
 
 NOTIFICATION_ATTR_EMAIL = "email"
@@ -272,16 +282,16 @@ def generate_chef_solo_config(options, ui, pwgen):
     # What are we installing?
 
     if not options.advanced:
-        revision = SCALR_REVISION
-        repo = SCALR_REPO
-        release = SCALR_RELEASE
+        revision = DEFAULT_SCALR_GIT_REV
+        repo = DEFAULT_SCALR_REPO
+        version = DEFAULT_SCALR_VERSION
         ssh_key = ""
         ssh_key_path = ""
     else:
         revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
         repo = ui.prompt("Enter the repository to clone", "")
-        release = ui.prompt_select_from_options("What Scalr release is this?",
-            ["oss", "ee"], "This is not a valid choice")
+        version = ui.prompt_select_from_options("What Scalr version is this?",
+            SUPPORTED_VERSIONS, "This is not a valid choice")
         ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                     "Invalid key. Please try again.")
         ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
@@ -307,14 +317,14 @@ def generate_chef_solo_config(options, ui, pwgen):
                              " use to connect to this server. ",
                              "This is not a valid IP")
 
-    if release == "ee":
-        local_ip = ""
-    else:
+    if version == SCALR_VERSION_4_5:
         local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
                                   " this instance through. If you are not"
                                   " using NAT or a Cloud Elastic IP, this"
                                   " should be the same IP",
                                   "This is not a valid IP")
+    else:
+        local_ip = ""
 
     output["scalr"]["endpoint"] = {
         "host": host_ip,
@@ -338,7 +348,7 @@ def generate_chef_solo_config(options, ui, pwgen):
     output["scalr"]["package"] = {
         "revision": revision,
         "repo": repo,
-        "release": release,
+        "version": version,
         "name": SCALR_NAME,
         "deploy_to": SCALR_DEPLOY_TO,
     }

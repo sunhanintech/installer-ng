@@ -39,7 +39,8 @@ execute "Load Scalr Database Data" do
   not_if "mysql #{mysql_conn_params} -e \"SELECT id FROM scaling_metrics WHERE name='LoadAverages'\" | grep 1"  # Data from Scalr 4.5.1
 end
 
-if node[:scalr][:is_enterprise]
+# Migrations were introduced in 5.0
+if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
   execute "Upgrade Scalr Database" do
     user node[:scalr][:core][:users][:service]
     group node[:scalr][:core][:group]
