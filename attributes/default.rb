@@ -89,7 +89,6 @@ default[:scalr][:crons] = [
   {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
   {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
   {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'RotateLogs'},
-  {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
 ]
 
 # These new cron jobs were intoduced in 5.0
@@ -101,6 +100,13 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
   ]
 
   default[:scalr][:daemons].concat extra_daemons
+
+  extra_crons = [
+    {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
+    {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
+  ]
+
+  default[:scalr][:crons].concat extra_crons
 
   messaging_crons = %w{
     SzrMessagingAll SzrMessagingAll2
