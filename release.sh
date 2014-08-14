@@ -43,7 +43,7 @@ git diff-files --quiet || exit_dirty_files
 echo "Creating release $release"
 
 echo "Creating release branch"
-RELEASE_NAME="v$release"
+RELEASE_TAG="v$release"
 RELEASE_BRANCH="release-$release"
 
 make_local_release () {
@@ -56,15 +56,26 @@ make_local_release () {
   git checkout -b $RELEASE_BRANCH
   git add $metadata_file $install_file
   git commit -m "Release: $release"
-  git tag $RELEASE_NAME HEAD
+  git tag $RELEASE_TAG HEAD
 }
 
-git tag | grep --extended-regexp "^$RELEASE_NAME$" || make_local_release
+git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
+  echo "Tag already exists. Deleting"
+  git tag -d "$RELEASE_TAG"
+}
+
+git branch | grep --extended-regexp "${RELEASE_BRANCH}$" && {
+  echo "Branch already exists. Deleting"
+  git branch -D "$RELEASE_BRANCH"
+}
+
+
+make_local_release
 
 RELEASE_DIR="$TMPDIR/installer-ng-release-$release-$$"
 PACKAGE_NAME="package.tar.gz"
 PACKAGE_FILE="$RELEASE_DIR/$PACKAGE_NAME"
-RELEASE_PACKAGE_FILE=$RELEASE_DIR/installer-ng-$RELEASE_NAME.tar.gz
+RELEASE_PACKAGE_FILE=$RELEASE_DIR/installer-ng-${RELEASE_TAG}.tar.gz
 
 echo "Releasing in $RELEASE_DIR"
 if [ -z $RELEASE_DIR ]; then
@@ -91,8 +102,9 @@ cd $ORIGINAL_DIR
 
 if [ -z "$no_push" ]; then
   echo "Pushing release branch"
-  git push origin "${RELEASE_BRANCH}:${RELEASE_BRANCH}"
-  git push origin "refs/tags/${RELEASE_NAME}:refs/tags/${RELEASE_NAME}"
+  git push --force origin "${RELEASE_BRANCH}:${RELEASE_BRANCH}"
+  echo "Pushing release tag"
+  git push --force origin "refs/tags/${RELEASE_TAG}:refs/tags/${RELEASE_TAG}"
 else
   echo "Not pushing release branch: -x is set"
 fi
