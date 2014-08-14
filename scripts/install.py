@@ -47,7 +47,7 @@ SCALR_NAME = "scalr"
 SCALR_DEPLOY_TO = "/opt/scalr"
 
 # Defaults
-DEFAULT_SCALR_REPO = "git@github.com:Scalr/scalr.git"
+DEFAULT_SCALR_REPO = "git://github.com/Scalr/scalr.git"
 DEFAULT_SCALR_GIT_REV = SCALR_VERSION_4_5
 DEFAULT_SCALR_VERSION = SCALR_VERSION_4_5
 
