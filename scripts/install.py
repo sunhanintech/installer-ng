@@ -37,16 +37,22 @@ INSTALLER_UMASK = 0o22
 OUT_LOG = "scalr.install.out.log"
 ERR_LOG = "scalr.install.err.log"
 
-SCALR_NAME = "scalr"
-SCALR_GIT_REV = "4.5"
-SCALR_REPO = "git@github.com:Scalr/scalr.git"
-SCALR_DEPLOY_TO = "/opt/scalr"
-
 # Supported versions
 SCALR_VERSION_4_5 = "4.5"
 SCALR_VERSION_5_0
 SUPPORTED_VERSIONS = [SCALR_VERSION_4_5, SCALR_VERSION_5_0]
 
+# Deploy parmeters
+SCALR_NAME = "scalr"
+SCALR_DEPLOY_TO = "/opt/scalr"
+
+# Defaults
+DEFAULT_SCALR_REPO = "git@github.com:Scalr/scalr.git"
+DEFAULT_SCALR_GIT_REV = SCALR_VERSION_4_5
+DEFAULT_SCALR_VERSION = SCALR_VERSION_4_5
+
+
+# Notification configuration
 EMAIL_RE = re.compile(r"[^@]+@[^@]+\.[^@]+")
 
 NOTIFICATION_ATTR_EMAIL = "email"
@@ -276,9 +282,9 @@ def generate_chef_solo_config(options, ui, pwgen):
     # What are we installing?
 
     if not options.advanced:
-        revision = SCALR_GIT_REV
-        repo = SCALR_REPO
-        version = SCALR_VERSION_4_5
+        revision = DEFAULT_SCALR_GIT_REV
+        repo = DEFAULT_SCALR_REPO
+        version = DEFAULT_SCALR_VERSION
         ssh_key = ""
         ssh_key_path = ""
     else:
