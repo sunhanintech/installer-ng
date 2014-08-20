@@ -37,6 +37,10 @@ Run the following, as root.
 
     python install.py
 
+If you'd like to install a specific Scalr version (e.g. a release candidate),
+use `python install.py --advanced`, and follow the instructions provided
+on-screen.
+
 Note: we recommend that you run this command using GNU screen, so that the
 installation process isn't interrupted if your SSH connection drops.
 
