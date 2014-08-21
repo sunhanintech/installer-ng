@@ -32,23 +32,21 @@ if node[:platform_family] == 'fedora'
 end
 
 
-node[:scalr][:daemons].each do |daemon|
+node[:scalr][:services].each do |svc|
   # We want to be able to mutate that array to add things to it
-  args = daemon.deep_to_hash
+  args = svc.deep_to_hash
 
-  # deep_to_hash gives us strings, but we want symbols.
-  args.keys.each do |key|
-    args[(key.to_sym rescue key) || key] = args.delete(key)
-  end
+  # Make sure we're only dealing with symbols here (recursively)
+  HashHelper.symbolize_keys_deep!(args)
 
   args[:executable] = node[:scalr][:python][:venv_python]
   args[:piddir] = node[:scalr][:core][:pid_dir]
-  args[:pidfile] = "#{args[:piddir]}/#{args[:daemon_name]}.pid"
-  args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:daemon_name]}.log"
+  args[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{svc[:service_name]}.pid"
+  args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{svc[:service_name]}.log"
   args[:user] = node[:scalr][:core][:users][:service]
   args[:group] = node[:scalr][:core][:group]
 
-  init_file = "/etc/init.d/#{args[:daemon_name]}"
+  init_file = "/etc/init.d/#{svc[:service_name]}"
 
   template init_file do
     source "#{node[:platform_family]}-init-service.erb"
@@ -58,24 +56,39 @@ node[:scalr][:daemons].each do |daemon|
     variables args
   end
 
-  service daemon[:daemon_name] do
+  action = if svc[:run][:daemon] then [:enable, :start] else [:nothing] end
+  log "Action for #{svc[:service_name]}: #{action}"
+
+  service svc[:service_name] do
     supports   :restart => true
     subscribes :restart, "template[#{init_file}]", :delayed
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
     subscribes :restart, "execute[Mark Install]", :delayed
     subscribes :restart, "ruby_block[Set Endpoint Hostname]", :delayed
     subscribes :restart, "deploy_revision[#{node[:scalr][:package][:name]}]", :delayed
-    action     [:enable, :start]
+    action     action
   end
 
   # Monit
 
-  template "#{monit_dir}/#{args[:daemon_name]}" do
-    source    'monit-service.erb'
-    mode       0644
-    owner     'root'
-    group     'root'
-    variables args
-    notifies  :restart, 'service[monit]', :delayed
+  if svc[:run][:daemon]
+    template "#{monit_dir}/#{svc[:service_name]}" do
+      source    'monit-service.erb'
+      mode       0644
+      owner     'root'
+      group     'root'
+      variables args
+      notifies  :restart, 'service[monit]', :delayed
+    end
+  end
+
+  # Crontab
+  if svc[:run][:cron]
+    cron svc[:service_name] do
+      user    node[:scalr][:core][:users][:service]
+      hour    svc[:run][:cron][:hour]
+      minute  svc[:run][:cron][:minute]
+      command "/usr/bin/env service #{svc[:service_name]} start"
+    end
   end
 end
