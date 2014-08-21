@@ -2,7 +2,7 @@
 #
 # processname: <%= @service_name %>
 # description: <%= @service_desc %>
-# chkconfig: <% if @run[:daemon] %>2345<% end %> 50 50
+# chkconfig: <% if @run[:daemon] %>2345<%else %>-<% end %> 50 50
 
 . /etc/init.d/functions
 
