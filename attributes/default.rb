@@ -68,17 +68,17 @@ default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www#{node.sca
 default[:scalr][:rrd][:port] = 8080
 
 # Scalr Daemon Attributes
-default[:scalr][:daemons] = [
-  {:daemon_name => 'msgsender', :daemon_module => 'msg_sender', :daemon_desc => 'Scalr Messaging Daemon', :daemon_extra_args => '', :run => {
+default[:scalr][:services] = [
+  {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon', :service_extra_args => '', :run => {
     :daemon => true
   }},
-  {:daemon_name => 'dbqueue', :daemon_module => 'dbqueue_event', :daemon_desc => 'Scalr DB Queue Event Poller', :daemon_extra_args => '', :run => {
+  {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller', :service_extra_args => '', :run => {
     :daemon => true
   }},
-  {:daemon_name => 'plotter', :daemon_module => 'load_statistics', :daemon_desc => 'Scalr Load Stats Plotter', :daemon_extra_args => '--plotter', :run => {
+  {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter', :service_extra_args => '--plotter', :run => {
     :daemon => true
   }},
-  {:daemon_name => 'poller', :daemon_module => 'load_statistics', :daemon_desc => 'Scalr Load Stats Poller', :daemon_extra_args => '--poller', :run => {
+  {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller', :service_extra_args => '--poller', :run => {
     :daemon => true
   }},
 ]
@@ -101,19 +101,19 @@ default[:scalr][:crons] = [
 
 # These new cron jobs were intoduced in 5.0
 if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
-  extra_daemons = [
-    {:daemon_name => 'szrupdater', :daemon_module => 'szr_upd_service', :daemon_desc => 'Scalarizr Update Client', :daemon_extra_args => '--interval=120', :run => {
+  extra_services = [
+    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => '--interval=120', :run => {
       :daemon => true
     }},
-    {:daemon_name => 'analytics_poller', :daemon_module => 'analytics_poller', :daemon_desc => 'Scalr Analytics Poller', :daemon_extra_args => '', :run => {
+    {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => {
       :cron => {:hour => '*', :minute => '*/5'}
     }},
-    {:daemon_name => 'analytics_processor', :daemon_module => 'analytics_processing', :daemon_desc => 'Scalr Analytics Processor', :daemon_extra_args => '', :run => {
+    {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => {
       :cron => {:hour => '*', :minute => '7,37'}
     }},
   ]
 
-  default[:scalr][:daemons].concat extra_daemons
+  default[:scalr][:services].concat extra_services
 
   extra_crons = [
     {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},

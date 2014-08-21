@@ -32,7 +32,7 @@ if node[:platform_family] == 'fedora'
 end
 
 
-node[:scalr][:daemons].each do |srv|
+node[:scalr][:services].each do |srv|
   # We want to be able to mutate that array to add things to it
   args = srv.deep_to_hash
 
@@ -43,12 +43,12 @@ node[:scalr][:daemons].each do |srv|
 
   args[:executable] = node[:scalr][:python][:venv_python]
   args[:piddir] = node[:scalr][:core][:pid_dir]
-  args[:pidfile] = "#{args[:piddir]}/#{args[:daemon_name]}.pid"
-  args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:daemon_name]}.log"
+  args[:pidfile] = "#{args[:piddir]}/#{args[:service_name]}.pid"
+  args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{args[:service_name]}.log"
   args[:user] = node[:scalr][:core][:users][:service]
   args[:group] = node[:scalr][:core][:group]
 
-  init_file = "/etc/init.d/#{args[:daemon_name]}"
+  init_file = "/etc/init.d/#{args[:service_name]}"
 
   template init_file do
     source "#{node[:platform_family]}-init-service.erb"
@@ -58,7 +58,7 @@ node[:scalr][:daemons].each do |srv|
     variables args
   end
 
-  service srv[:daemon_name] do
+  service srv[:service_name] do
     supports   :restart => true
     subscribes :restart, "template[#{init_file}]", :delayed
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
@@ -71,7 +71,7 @@ node[:scalr][:daemons].each do |srv|
   # Monit
 
   if srv[:run][:daemon]
-    template "#{monit_dir}/#{args[:daemon_name]}" do
+    template "#{monit_dir}/#{args[:service_name]}" do
       source    'monit-service.erb'
       mode       0644
       owner     'root'
@@ -83,11 +83,11 @@ node[:scalr][:daemons].each do |srv|
 
   # Crontab
   if srv[:run][:cron]
-    cron srv[:daemon_name] do
+    cron srv[:service_name] do
       user    node[:scalr][:core][:users][:service]
       hour    srv[:run][:cron][:hour]
       minute  srv[:run][:cron][:minute]
-      command "service #{srv[:daemon_name]} start"
+      command "service #{srv[:service_name]} start"
     end
   end
 end

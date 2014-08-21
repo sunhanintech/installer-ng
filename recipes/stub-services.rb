@@ -8,8 +8,8 @@
 # we still don't know where Scalr is installed, so we can't succesfully
 # complete those files.
 
-node[:scalr][:daemons].each do |daemon|
-  init_file = "/etc/init.d/#{daemon[:daemon_name]}"  # Some duplication here..
+node[:scalr][:services].each do |srv|
+  init_file = "/etc/init.d/#{srv[:service_name]}"  # Some duplication here..
 
   file init_file do
     mode    0755
