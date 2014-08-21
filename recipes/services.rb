@@ -56,6 +56,9 @@ node[:scalr][:services].each do |svc|
     variables args
   end
 
+  action = if svc[:run][:daemon] then [:enable, :start] else [:nothing] end
+  log "Action for #{svc[:service_name]}: #{action}"
+
   service svc[:service_name] do
     supports   :restart => true
     subscribes :restart, "template[#{init_file}]", :delayed
@@ -63,7 +66,7 @@ node[:scalr][:services].each do |svc|
     subscribes :restart, "execute[Mark Install]", :delayed
     subscribes :restart, "ruby_block[Set Endpoint Hostname]", :delayed
     subscribes :restart, "deploy_revision[#{node[:scalr][:package][:name]}]", :delayed
-    action     if svc[:run][:daemon] ? [:enable, :start] : [:enable]
+    action     action
   end
 
   # Monit
@@ -80,19 +83,12 @@ node[:scalr][:services].each do |svc|
   end
 
   # Crontab
-  case node[:platform_family]
-  when 'rhel', 'fedora'
-    service_command = '/sbin/service'
-  when 'debian'
-    service_command = '/usr/sbin/service'
-  end
-
   if svc[:run][:cron]
     cron svc[:service_name] do
       user    node[:scalr][:core][:users][:service]
       hour    svc[:run][:cron][:hour]
       minute  svc[:run][:cron][:minute]
-      command "#{service_command} #{svc[:service_name]} start"
+      command "/usr/bin/env service #{svc[:service_name]} start"
     end
   end
 end
