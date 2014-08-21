@@ -10,7 +10,7 @@
 # Provides:            <%= @daemon_name %>
 # Required-Start: $local_fs $remote_fs
 # Required-Stop: $local_fs $remote_fs
-# Default-Start: 2 3 4 5
+# Default-Start: <% if @run[:daemon] %>2 3 4 5<% end %>
 # Default-Stop: 0 1 6
 # Description: <%= @daemon_desc %>
 ### END INIT INFO

@@ -32,9 +32,9 @@ if node[:platform_family] == 'fedora'
 end
 
 
-node[:scalr][:daemons].each do |daemon|
+node[:scalr][:daemons].each do |srv|
   # We want to be able to mutate that array to add things to it
-  args = daemon.deep_to_hash
+  args = srv.deep_to_hash
 
   # deep_to_hash gives us strings, but we want symbols.
   args.keys.each do |key|
@@ -58,7 +58,7 @@ node[:scalr][:daemons].each do |daemon|
     variables args
   end
 
-  service daemon[:daemon_name] do
+  service srv[:daemon_name] do
     supports   :restart => true
     subscribes :restart, "template[#{init_file}]", :delayed
     subscribes :restart, "template[#{node[:scalr][:core][:configuration]}]", :delayed
@@ -70,12 +70,24 @@ node[:scalr][:daemons].each do |daemon|
 
   # Monit
 
-  template "#{monit_dir}/#{args[:daemon_name]}" do
-    source    'monit-service.erb'
-    mode       0644
-    owner     'root'
-    group     'root'
-    variables args
-    notifies  :restart, 'service[monit]', :delayed
+  if srv[:run][:daemon]
+    template "#{monit_dir}/#{args[:daemon_name]}" do
+      source    'monit-service.erb'
+      mode       0644
+      owner     'root'
+      group     'root'
+      variables args
+      notifies  :restart, 'service[monit]', :delayed
+    end
+  end
+
+  # Crontab
+  if srv[:run][:cron]
+    cron srv[:daemon_name] do
+      user    node[:scalr][:core][:users][:service]
+      hour    srv[:run][:cron][:hour]
+      minute  srv[:run][:cron][:minute]
+      command "service #{srv[:daemon_name]} start"
+    end
   end
 end
