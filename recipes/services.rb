@@ -33,21 +33,21 @@ end
 
 
 node[:scalr][:services].each do |svc|
-  log "Service: #{svc}"
+  log "ERRTRACE - Service: #{svc}"
 
   # We want to be able to mutate that array to add things to it
   args = svc.deep_to_hash
 
-  log "Args: #{args}"
+  log "ERRTRACE - Args: #{args}"
 
-  # deep_to_hash gives us strings, but we want symbols.
-  args.keys.each do |key|
-    args[(key.to_sym rescue key) || key] = args.delete(key)
-  end
+  # Make sure we're only dealing with symbols here (recursively)
+  HashHelper.symbolize_keys_deep!(args)
+
+  log "ERRTRACE - Args as symbols: #{args}"
 
   args[:executable] = node[:scalr][:python][:venv_python]
   args[:piddir] = node[:scalr][:core][:pid_dir]
-  args[:pidfile] = "#{args[:piddir]}/#{svc[:service_name]}.pid"
+  args[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{svc[:service_name]}.pid"
   args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{svc[:service_name]}.log"
   args[:user] = node[:scalr][:core][:users][:service]
   args[:group] = node[:scalr][:core][:group]
@@ -73,6 +73,8 @@ node[:scalr][:services].each do |svc|
   end
 
   # Monit
+
+  log "ERRTRACE - Daemon? #{svc[:run][:daemon]}"
 
   if svc[:run][:daemon]
     template "#{monit_dir}/#{svc[:service_name]}" do
