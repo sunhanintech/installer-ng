@@ -37,6 +37,10 @@ case "${1}" in
       ${0} start
       ;;
 
+  status)
+      status_of_proc -p <%= @pidfile %> <%= @executable %> <% @service_name %>
+      ;;
+
    *)
       echo "Usage: ${0} {start|stop|restart}"
       exit 1
