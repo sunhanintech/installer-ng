@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# processname: <%= @daemon_name %>
-# description: <%= @daemon_desc %>
-# chkconfig: 2345 50 50
+# processname: <%= @service_name %>
+# description: <%= @service_desc %>
+# chkconfig: <% if @run[:daemon] %>2345<%else %>-<% end %> 50 50
 
 . /etc/init.d/functions
 
@@ -12,7 +12,7 @@ case "${1}" in
       mkdir --mode=0770 --parents <%= @piddir %>
       chown <%= @user %>:<%= @group %> <%= @piddir %>
 
-      daemon --force --user <%= @user %> --pidfile <%= @pidfile %> <%= @executable %> -m scalrpy.<%= @daemon_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @daemon_extra_args %>
+      daemon --force --user <%= @user %> --pidfile <%= @pidfile %> <%= @executable %> -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
       ;;
 
    stop)
@@ -26,10 +26,12 @@ case "${1}" in
       ${0} start
       ;;
 
+  status)
+      status -p <%= @pidfile %> <%= @executable %>  <% @service_name %>
+      ;;
+
    *)
-      echo "Usage: ${0} {start|stop|restart}"
+      echo "Usage: ${0} {start|stop|status|restart}"
       exit 1
       ;;
 esac
-
-# End scriptname
