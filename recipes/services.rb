@@ -33,17 +33,11 @@ end
 
 
 node[:scalr][:services].each do |svc|
-  log "ERRTRACE - Service: #{svc}"
-
   # We want to be able to mutate that array to add things to it
   args = svc.deep_to_hash
 
-  log "ERRTRACE - Args: #{args}"
-
   # Make sure we're only dealing with symbols here (recursively)
   HashHelper.symbolize_keys_deep!(args)
-
-  log "ERRTRACE - Args as symbols: #{args}"
 
   args[:executable] = node[:scalr][:python][:venv_python]
   args[:piddir] = node[:scalr][:core][:pid_dir]
@@ -73,8 +67,6 @@ node[:scalr][:services].each do |svc|
   end
 
   # Monit
-
-  log "ERRTRACE - Daemon? #{svc[:run][:daemon]}"
 
   if svc[:run][:daemon]
     template "#{monit_dir}/#{svc[:service_name]}" do
