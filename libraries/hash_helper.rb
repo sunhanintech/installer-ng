@@ -1,5 +1,5 @@
 module HashHelper
-  def symbolize_keys_deep!(h)
+  def self.symbolize_keys_deep!(h)
       h.keys.each do |k|
           ks    = k.to_sym
           h[ks] = h.delete k

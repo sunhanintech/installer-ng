@@ -1,5 +1,3 @@
-include HashHelper
-
 # Install Monit to watch over our daemons
 package 'monit'
 
