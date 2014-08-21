@@ -80,12 +80,19 @@ node[:scalr][:services].each do |svc|
   end
 
   # Crontab
+  case node[:platform_family]
+  when 'rhel', 'fedora'
+    service_command = '/sbin/service'
+  when 'debian'
+    service_command = '/usr/sbin/service'
+  end
+
   if svc[:run][:cron]
     cron svc[:service_name] do
       user    node[:scalr][:core][:users][:service]
       hour    svc[:run][:cron][:hour]
       minute  svc[:run][:cron][:minute]
-      command "service #{svc[:service_name]} start"
+      command "#{service_command} #{svc[:service_name]} start"
     end
   end
 end
