@@ -33,6 +33,7 @@ node[:scalr][:python][:venv_force_install].each do |pkg, version|
     user        node[:scalr][:core][:users][:service]
     group       node[:scalr][:core][:group]
     virtualenv  node[:scalr][:python][:venv]
+    action      :upgrade
     version     version
     options     "--ignore-installed"
   end
