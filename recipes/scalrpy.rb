@@ -27,7 +27,20 @@ python_virtualenv node[:scalr][:python][:venv] do
   action :create
 end
 
+# Force install dependencies where conflicts may arise
+node[:scalr][:python][:venv_force_install].each do |pkg, version|
+  python_pip pkg do
+    user        node[:scalr][:core][:users][:service]
+    group       node[:scalr][:core][:group]
+    virtualenv  node[:scalr][:python][:venv]
+    action      :upgrade
+    version     version
+    options     "--ignore-installed"
+  end
+end
+
 # Prioritize our virtualenv python and pip in the installer
+
 execute "Install Scalrpy" do
   command     "#{node[:scalr][:python][:venv_python]} setup.py install"
   cwd         "#{node[:scalr][:core][:location]}/app/python"
