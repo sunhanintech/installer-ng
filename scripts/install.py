@@ -30,7 +30,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_VERSION = "3.2.0"
+DEFAULT_COOKBOOK_VERSION = "3.3.0a1"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
