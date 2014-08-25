@@ -25,7 +25,7 @@ default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
 default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
 default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
-default[:scalr][:python][:venv_force_install] = [[httplib2, nil], [pymysql, nil], [cherrypy, '3.2.6']]
+default[:scalr][:python][:venv_force_install] = [['httplib2', nil], ['pymysql', nil], ['cherrypy', '3.2.6']]
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
