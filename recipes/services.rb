@@ -84,10 +84,11 @@ node[:scalr][:services].each do |svc|
 
   # Crontab
   if svc[:run][:cron]
-    cron svc[:service_name] do
-      user    node[:scalr][:core][:users][:service]
+    cron_d svc[:service_name] do
       hour    svc[:run][:cron][:hour]
       minute  svc[:run][:cron][:minute]
+      user    node[:scalr][:core][:users][:service]
+      path    node[:scalr][:cron][:path]
       command "/usr/bin/env service #{svc[:service_name]} start"
     end
   end
