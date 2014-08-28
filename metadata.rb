@@ -4,7 +4,7 @@ maintainer_email 'thomas@scalr.com'
 license          'Apache License 2.0'
 description      'Installs/Configures Scalr Core'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '3.3.1'
+version          '4.0.0'
 
 %w{ ubuntu centos redhat }.each do |os|
     supports os
@@ -22,3 +22,4 @@ depends 'apache2', '~> 1.8.14'
 depends 'iptables-ng', '~> 2.0.0'
 depends 'ntp', '~> 1.5.0'
 depends 'timezone-ii', '~> 0.2.0'
+depends 'cron', '~> 1.4.0'

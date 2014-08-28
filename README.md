@@ -53,6 +53,16 @@ contains your login credentials.
 All generated credentials are logged to `/root/solo.json`, so you can
 also retrieve them there.
 
+
+Upgrading
+=========
+
+You may use the Scalr Installer to upgrade your Scalr install. However, be
+mindful that that the Installer uses semantic versioning, and that there are
+no guarantees that a new major version will not prevent upgrading a Scalr
+install performed with an earlier major version.
+
+
 Supported OSes
 ==============
 

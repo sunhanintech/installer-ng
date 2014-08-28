@@ -2,6 +2,9 @@
 include_recipe 'scalr-core::repos'
 include_recipe 'apt'
 
+# Cron
+include_recipe 'cron'
+
 # Time
 include_recipe 'timezone-ii'
 include_recipe 'ntp'

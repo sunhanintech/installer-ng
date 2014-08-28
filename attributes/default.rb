@@ -84,7 +84,9 @@ default[:scalr][:services] = [
   }},
 ]
 
-default[:scalr][:crons] = [
+
+default[:scalr][:cron][:path] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+default[:scalr][:cron][:crons] = [
   {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
   {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
   {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Scaling'},
@@ -121,7 +123,7 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
     {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
   ]
 
-  default[:scalr][:crons].concat extra_crons
+  default[:scalr][:cron][:crons].concat extra_crons
 
   messaging_crons = %w{
     SzrMessagingAll SzrMessagingAll2
@@ -135,7 +137,7 @@ end
 
 
 messaging_crons.each do |messaging_cron|
-  default[:scalr][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
+  default[:scalr][:cron][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
 end
 
 
@@ -158,18 +160,19 @@ default['apache']['default_modules'] = %w{
 
 case node['platform_family']
 when 'rhel', 'fedora'
-  # PHP
   # View here for package contents (extensions): https://webtatic.com/packages/php55/
   default['php']['packages'] = %w{php55w php55w-devel php55w-cli php55w-mysql php55w-mcrypt php55w-snmp php55w-process php55w-xml php55w-soap php55w-pear}
   default['php']['cnf_dirs'] = %w{/etc/php.d}
+  default['php']['session_save_path'] = '/var/lib/php/session'
 
   default['apache']['extra_modules'] = %w{authz_owner}  # Modules that don't have a recipe.
+
 when 'debian'
-  # PHP
   # View here for package contents (extensions): http://ppa.launchpad.net/ondrej/php5/ubuntu/dists/precise/main/binary-amd64/Packages
   default['php']['packages'] = %w{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
   default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
+  default['php']['session_save_path'] = '/var/lib/php5/sessions'
 
   default['apache']['extra_modules'] = %w{authz_core authz_owner}
   default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
