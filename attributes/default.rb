@@ -84,7 +84,9 @@ default[:scalr][:services] = [
   }},
 ]
 
-default[:scalr][:crons] = [
+
+default[:scalr][:cron][:path] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+default[:scalr][:cron][:crons] = [
   {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
   {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
   {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Scaling'},
@@ -121,7 +123,7 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
     {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
   ]
 
-  default[:scalr][:crons].concat extra_crons
+  default[:scalr][:cron][:crons].concat extra_crons
 
   messaging_crons = %w{
     SzrMessagingAll SzrMessagingAll2
@@ -135,7 +137,7 @@ end
 
 
 messaging_crons.each do |messaging_cron|
-  default[:scalr][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
+  default[:scalr][:cron][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
 end
 
 
