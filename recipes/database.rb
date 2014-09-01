@@ -94,5 +94,6 @@ template "/etc/mysql/conf.d/tz.cnf" do
   mode 0755
   owner "root"
   group "root"
-  notifies :restart, "service[mysql]", :delayed
+  notifies :restart, "mysql_service", :delayed
 end
+

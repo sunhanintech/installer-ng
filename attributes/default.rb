@@ -43,7 +43,6 @@ default[:scalr][:database][:scalr_dbname] = 'scalr'
 default[:scalr][:database][:analytics_dbname] = 'analytics'
 
 default[:scalr][:database][:client_host] = 'localhost'  # Where will the client connect from?
-default['mysql']['bind_address'] = 'localhost'
 
 # Email settings
 default[:scalr][:email][:from] = 'scalr@scalr.example.com'
@@ -178,6 +177,3 @@ when 'debian'
   default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
 end
 
-if node['platform'] == 'fedora' and node['platform_version'].to_f >= 19.0
-  default['mysql']['client']['packages'] = %w[community-mysql community-mysql-devel]
-end
