@@ -1,12 +1,6 @@
 case node[:platform_family]
 
 when 'rhel', 'fedora'
-  package 'yum-plugin-priorities'
-
-  cookbook_file '/etc/yum/pluginconf.d/priorities.conf' do
-    source "#{node[:platform_family]}-yum-priorities.conf"
-  end
-
   # TODO - Use HTTPS or a file for gpgkey
 
   # EPEL uses a different key on 6 and 7.
