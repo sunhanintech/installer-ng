@@ -1,7 +1,7 @@
 case node[:platform_family]
 
 when 'rhel', 'fedora'
-  # TODO - Use HTTPS or a file for gpgkey
+  # TODO - Use HTTPS or a file for gpgkey's!
 
   # EPEL uses a different key on 6 and 7.
   # Since we are using platform_version, might as well use it everywhere.
@@ -37,7 +37,7 @@ when 'rhel', 'fedora'
   yum_repository 'webtatic' do
     description "Webtatic Repository #{rhel_version} - $basearch"
     mirrorlist "http://mirror.webtatic.com/yum/el#{rhel_version}#{webtatic_artifact}/$basearch/mirrorlist"
-    gpgkey 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy'
+    gpgkey rhel_version == 7 ? 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7' : 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy'
     includepkgs 'libmysqlclient* libmcrypt* php*'
     action :create
   end
