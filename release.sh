@@ -2,6 +2,8 @@
 ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
+trap "git checkout $ORIGINAL_BRANCH" EXIT
+
 set -o errexit
 set -o nounset
 
@@ -91,7 +93,7 @@ rm -rf "$RELEASE_DIR/.git"
 
 echo "Creating release package"
 cd $RELEASE_DIR
-berks pack
+berks package "$PACKAGE_FILE"
 
 # Upload the release in S3
 echo "Uploading to S3"
@@ -108,8 +110,6 @@ if [ -z "$no_push" ]; then
 else
   echo "Not pushing release branch: -x is set"
 fi
-
-git checkout $ORIGINAL_BRANCH
 
 echo "Done. Published: $release"
 
