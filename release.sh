@@ -91,7 +91,7 @@ rm -rf "$RELEASE_DIR/.git"
 
 echo "Creating release package"
 cd $RELEASE_DIR
-berks pack
+berks pack --debug
 
 # Upload the release in S3
 echo "Uploading to S3"
