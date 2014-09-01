@@ -31,9 +31,12 @@ when 'rhel', 'fedora'
     action :create
   end
 
+  # TODO - Use regular repository once webtatic moves PHP out of testing.
+  webtatic_artifact = rhel_version == 7 ? "-testing" : ""
+
   yum_repository 'webtatic' do
-    description 'Webtatic Repository EL6 - $basearch'
-    mirrorlist "http://mirror.webtatic.com/yum/el#{rhel_version}/$basearch/mirrorlist"
+    description "Webtatic Repository #{rhel_version} - $basearch"
+    mirrorlist "http://mirror.webtatic.com/yum/el#{rhel_version}#{webtatic_artifact}/$basearch/mirrorlist"
     gpgkey 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy'
     includepkgs 'libmysqlclient* libmcrypt* php*'
     action :create
