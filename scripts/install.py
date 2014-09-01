@@ -381,9 +381,9 @@ class InstallWrapper(object):
         self._err_file = err_file
 
         # We only set those up once, but it's not very clean
-        self.file_cache_path = os.path.join(work_dir, "cache")
-        self.cookbook_path = os.path.join(work_dir, "cookbooks")
-        self.solo_rb_path = os.path.join(work_dir, "solo.rb")
+        self.file_cache_path = os.path.join(self.work_dir, "cache")
+        self.cookbook_path = os.path.join(self.work_dir, "cookbooks")
+        self.solo_rb_path = os.path.join(self.work_dir, "solo.rb")
 
         # We don't change that file across runs.
         self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
@@ -491,7 +491,7 @@ class InstallWrapper(object):
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
         pkg = self._download(url)
-        subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
+        subprocess.check_call(["tar", "xzvf", pkg, "-C", self.work_dir])
 
     def install_scalr(self):
         self.write_out("Launching Chef Solo", nl=True)
