@@ -170,8 +170,12 @@ default['apache']['group'] = node.scalr.core.group
 default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
 
 if node['platform_family'] == 'debian'
-  # The debphp PPA we use ships Apache 2.4
-  override['apache']['version'] = '2.4'
+  # The debphp PPA we use ships Apache 2.4. These are the attributes the Apache 2 Cookbook for Apache 2.4.
+  # We have to *all* of those here (not just the version), because they are defined based on the
+  # apache/version attribute in the Apache 2 Cookbook.
+  default['apache']['version'] = '2.4'
+  default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
+  default['apache']['docroot_dir'] = '/var/www/html'
 end
 
 if node['apache']['version'] == '2.4'
@@ -182,3 +186,4 @@ end
 # Override for a bug in yum-mysql-community cookbook (that ignores RHEL 7)
 # TODO - probably doesn't need to be an override here
 override['yum']['mysql55-community']['baseurl'] = "http://repo.mysql.com/yum/mysql-5.5-community/el/#{node['platform_version'].to_i}/$basearch/"
+
