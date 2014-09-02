@@ -27,6 +27,17 @@ template value_for_platform_family(
   notifies :restart, "service[rrdcached]", :delayed
 end
 
+# On RHEL 7, we install rrdcached from the CentOS 7 repos,
+# which don't have an init file for rrdcached
+rrdcached_init = '/etc/init.d/rrdcached'
+file rrdcached_init do
+  owner     'root'
+  group     'root'
+  mode      0644
+  source    'rrdcached-init'
+  not_if    "ls -- '#{rrdcached_init}'"
+end
+
 service 'rrdcached' do
   action [:enable, :start]
 end
