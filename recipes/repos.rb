@@ -32,6 +32,7 @@ when 'rhel', 'fedora'
 
   # We'll need EPEL for libyaml and monit. Webtatic has started depending on EPEL in RHEL 7, so
   # we also need to include those dependencies here.
+  # Note that libyaml is in base on CentOS 7, and no longer in EPEL!
   yum_repository 'epel' do
     description 'Extra Packages for Enterprise Linux'
     mirrorlist "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-#{rhel_version}&arch=$basearch"
@@ -66,7 +67,7 @@ when 'rhel', 'fedora'
       description 'CentOS-$releasever - Base'
       mirrorlist  "http://mirrorlist.centos.org/?release=#{rhel_version}&arch=$basearch&repo=os"
       gpgkey      "http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-#{rhel_version}"
-      includepkgs 'file* libssh2*'
+      includepkgs 'file* libssh2* libyaml*'
       action :create
     end
   end

@@ -1,6 +1,7 @@
 case node[:platform_family]
 
 when 'rhel'
+  # On RHEL 6,
   # When cloud-init is installed, RHEL has libyaml installed,
   # but it's tagged release: 1.1.el6. This prevents us from installing
   # libyaml-devel from epel, which is tagged release: 1.el6 and depends
