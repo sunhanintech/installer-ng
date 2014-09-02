@@ -149,12 +149,6 @@ include_attribute 'php'
 default['php']['version'] = '5.5.7'
 default['php']['install_method'] = 'package'
 
-
-# Apache attributes
-default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
-default['apache']['user'] = node.scalr.core.users.web
-default['apache']['group'] = node.scalr.core.group
-
 case node['platform_family']
 when 'rhel', 'fedora'
   # View here for package contents (extensions): https://webtatic.com/packages/php55/
@@ -167,6 +161,15 @@ when 'debian'
   default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
   default['php']['session_save_path'] = '/var/lib/php5/sessions'
+end
+
+
+# Apache attributes
+default['apache']['user'] = node.scalr.core.users.web
+default['apache']['group'] = node.scalr.core.group
+default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
+if node['apache']['version'] == '2.4'
+  default['apache']['extra_modules'].push 'access_compat'
 end
 
 
