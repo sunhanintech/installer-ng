@@ -33,7 +33,7 @@ rrdcached_init = '/etc/init.d/rrdcached'
 cookbook_file rrdcached_init do
   owner     'root'
   group     'root'
-  mode      0644
+  mode      0755
   source    'rrdcached-init'
   not_if    "ls -- '#{rrdcached_init}'"
 end
