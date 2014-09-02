@@ -39,7 +39,7 @@ when 'rhel', 'fedora'
     description "Webtatic Repository #{rhel_version} - $basearch"
     mirrorlist  "http://mirror.webtatic.com/yum/el#{rhel_version}#{webtatic_artifact}/$basearch/mirrorlist"
     gpgkey      webtatic_gpg_key
-    includepkgs webtatic_pkgs
+    includepkgs webtatic_pkgs.join(' ')
     action      :create
   end
 
@@ -50,7 +50,7 @@ when 'rhel', 'fedora'
     description 'Extra Packages for Enterprise Linux'
     mirrorlist  "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-#{rhel_version}&arch=$basearch"
     gpgkey      "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-#{rhel_version}"
-    includepkgs epel_pkgs
+    includepkgs epel_pkgs.join(' ')
     action      :create
   end
 
@@ -59,7 +59,7 @@ when 'rhel', 'fedora'
     description "RHEL #{rhel_version} - RPMforge.net - base"
     mirrorlist  "http://apt.sw.be/redhat/el#{rhel_version}/en/mirrors-rpmforge"
     gpgkey      'http://apt.sw.be/RPM-GPG-KEY.dag.txt'
-    includepkgs rpmforge_pkgs
+    includepkgs rpmforge_pkgs.join(' ')
     action      :create
   end
 
@@ -69,7 +69,7 @@ when 'rhel', 'fedora'
     description "RHEL #{rhel_version} - RPMforge.net - extras"
     mirrorlist  "http://apt.sw.be/redhat/el#{rhel_version}/en/mirrors-rpmforge-extras"
     gpgkey      'http://apt.sw.be/RPM-GPG-KEY.dag.txt'
-    includepkgs rpmforge_extras_pkgs
+    includepkgs rpmforge_extras_pkgs.join(' ')
     action      :create
   end
 
@@ -80,7 +80,7 @@ when 'rhel', 'fedora'
       description 'CentOS-$releasever - Base'
       mirrorlist  "http://mirrorlist.centos.org/?release=#{rhel_version}&arch=$basearch&repo=os"
       gpgkey      "http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-#{rhel_version}"
-      includepkgs centos_base_pkgs
+      includepkgs centos_base_pkgs.join(' ')
       action      :create
     end
   end
