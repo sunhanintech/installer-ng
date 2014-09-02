@@ -171,7 +171,7 @@ default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 auth
 
 if node['platform_family'] == 'debian'
   # The debphp PPA we use ships Apache 2.4
-  default['apache']['version'] = '2.4'
+  override['apache']['version'] = '2.4'
 end
 
 if node['apache']['version'] == '2.4'
