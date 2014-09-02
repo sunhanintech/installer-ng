@@ -151,11 +151,7 @@ default['php']['install_method'] = 'package'
 
 
 # Apache attributes
-default['apache']['default_modules'] = %w{
-  alias autoindex deflate dir env filter headers mime negotiation php5 rewrite
-  setenvif status log_config logio
-  authz_host authz_user authz_core authz_owner
-}
+default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
 default['apache']['user'] = node.scalr.core.users.web
 default['apache']['group'] = node.scalr.core.group
 

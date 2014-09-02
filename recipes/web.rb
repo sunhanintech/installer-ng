@@ -1,5 +1,9 @@
 include_recipe 'apache2'
 
+node['apache']['extra_modules'].each do |mod|
+  include_recipe "apache2::mod_#{mod}"
+end
+
 web_app 'scalr' do
   template 'scalr-vhost.conf.erb'
 end
