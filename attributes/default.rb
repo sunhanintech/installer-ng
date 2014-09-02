@@ -177,3 +177,6 @@ when 'debian'
   default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
 end
 
+
+# Override for a bug in yum-mysql-community cookbook (that ignores RHEL 7)
+override['yum']['mysql55-community']['baseurl'] = "http://repo.mysql.com/yum/mysql-5.5-community/el/#{node['platform_version'].to_i}/$basearch/"
