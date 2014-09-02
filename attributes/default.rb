@@ -149,34 +149,36 @@ include_attribute 'php'
 default['php']['version'] = '5.5.7'
 default['php']['install_method'] = 'package'
 
-
-# Apache attributes
-default['apache']['default_modules'] = %w{
-  alias autoindex deflate dir env filter headers mime negotiation php5 rewrite
-  setenvif status log_config logio
-  authz_host authz_user
-}
-
 case node['platform_family']
 when 'rhel', 'fedora'
   # View here for package contents (extensions): https://webtatic.com/packages/php55/
   default['php']['packages'] = %w{php55w php55w-devel php55w-cli php55w-mysql php55w-mcrypt php55w-snmp php55w-process php55w-xml php55w-soap php55w-pear}
   default['php']['cnf_dirs'] = %w{/etc/php.d}
   default['php']['session_save_path'] = '/var/lib/php/session'
-
-  default['apache']['extra_modules'] = %w{authz_owner}  # Modules that don't have a recipe.
-
 when 'debian'
   # View here for package contents (extensions): http://ppa.launchpad.net/ondrej/php5/ubuntu/dists/precise/main/binary-amd64/Packages
   default['php']['packages'] = %w{php5 php5-dev php5-mysql php5-mcrypt php5-curl php5-snmp php-pear}
   default['php']['cnf_dirs'] = %w{/etc/php5/apache2/conf.d /etc/php5/cli/conf.d}
   default['php']['ext_conf_dir'] = '/etc/php5/mods-available'
   default['php']['session_save_path'] = '/var/lib/php5/sessions'
-
-  default['apache']['extra_modules'] = %w{authz_core authz_owner}
-  default['apache']['pid_file']    = '/var/run/apache2/apache2.pid'
 end
 
 
+# Apache attributes
+default['apache']['user'] = node.scalr.core.users.web
+default['apache']['group'] = node.scalr.core.group
+default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
+
+if node['platform_family'] == 'debian'
+  # The debphp PPA we use ships Apache 2.4
+  default['apache']['version'] = '2.4'
+end
+
+if node['apache']['version'] == '2.4'
+  # Our Scalr virtualhost uses Apache 2.2-style rules here
+  default['apache']['extra_modules'].push 'access_compat'
+end
+
 # Override for a bug in yum-mysql-community cookbook (that ignores RHEL 7)
+# TODO - probably doesn't need to be an override here
 override['yum']['mysql55-community']['baseurl'] = "http://repo.mysql.com/yum/mysql-5.5-community/el/#{node['platform_version'].to_i}/$basearch/"
