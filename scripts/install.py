@@ -30,7 +30,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_VERSION = "4.0.0"
+DEFAULT_COOKBOOK_VERSION = "5.0.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
@@ -276,7 +276,11 @@ class RandomPasswordGenerator(object):
 
 def generate_chef_solo_config(options, ui, pwgen):
     output = {
-        "run_list":  ["recipe[apt::default]", "recipe[scalr-core::default]"],
+        "run_list":  [
+            "recipe[apt::default]",
+            "recipe[build-essential::default]",
+            "recipe[scalr-core::default]"
+        ],
     }
 
     # What are we installing?
@@ -381,9 +385,9 @@ class InstallWrapper(object):
         self._err_file = err_file
 
         # We only set those up once, but it's not very clean
-        self.file_cache_path = os.path.join(work_dir, "cache")
-        self.cookbook_path = os.path.join(work_dir, "cookbooks")
-        self.solo_rb_path = os.path.join(work_dir, "solo.rb")
+        self.file_cache_path = os.path.join(self.work_dir, "cache")
+        self.cookbook_path = os.path.join(self.work_dir, "cookbooks")
+        self.solo_rb_path = os.path.join(self.work_dir, "solo.rb")
 
         # We don't change that file across runs.
         self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
@@ -491,7 +495,7 @@ class InstallWrapper(object):
         if spawn.find_executable("tar") is None:
             raise RuntimeError("tar is not available. Please install it.")
         pkg = self._download(url)
-        subprocess.check_call(["tar", "xzvf", pkg, "-C", self.cookbook_path])
+        subprocess.check_call(["tar", "xzvf", pkg, "-C", self.work_dir])
 
     def install_scalr(self):
         self.write_out("Launching Chef Solo", nl=True)
