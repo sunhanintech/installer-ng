@@ -19,7 +19,7 @@ when 'rhel', 'fedora'
 
   if rhel_version == 7
     epel_pkgs.concat        ['libmcrypt*']
-    centos_base_pkgs.concat ['rrdtool*', 'file*', 'libssh2*', 'libyaml*']
+    centos_base_pkgs.concat ['rrdtool*', 'file*', 'libssh2*', 'libyaml*', 'libevent*']
 
     # Webtatic artifacts..
     webtatic_artifact = '-testing'  # TODO - Use regular repository once webtatic moves PHP out of testing.
