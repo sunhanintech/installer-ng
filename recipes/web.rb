@@ -6,10 +6,12 @@ end
 
 web_app 'scalr' do
   template 'scalr-vhost.conf.erb'
+  notifies :restart, "service[apache2]", :delayed
 end
 
 %w{000-default.conf default.conf 000-default-ssl.conf default-ssl.conf}.each do |site|
   apache_site site do
-    enable false
+    enable    false
+    notifies  :restart, "service[apache2]", :delayed
   end
 end
