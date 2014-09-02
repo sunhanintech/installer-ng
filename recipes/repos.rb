@@ -60,11 +60,11 @@ when 'rhel', 'fedora'
   end
 
   # The Red Hat repositories are missing -devel packages that we need
-  # TODO - CentOS uses one key per release, consider using $releasever here.
+  # $releasever?
   if node[:platform] == 'redhat'
     yum_repository 'centos-base' do
       description 'CentOS-$releasever - Base'
-      mirrorlist  'http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os'
+      mirrorlist  "http://mirrorlist.centos.org/?release=#{rhel_version}&arch=$basearch&repo=os"
       gpgkey      "http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-#{rhel_version}"
       includepkgs 'file* libssh2*'
       action :create
