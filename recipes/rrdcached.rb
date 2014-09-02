@@ -30,7 +30,7 @@ end
 # On RHEL 7, we install rrdcached from the CentOS 7 repos,
 # which don't have an init file for rrdcached
 rrdcached_init = '/etc/init.d/rrdcached'
-file rrdcached_init do
+cookbook_file rrdcached_init do
   owner     'root'
   group     'root'
   mode      0644
