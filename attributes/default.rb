@@ -168,10 +168,17 @@ end
 default['apache']['user'] = node.scalr.core.users.web
 default['apache']['group'] = node.scalr.core.group
 default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
+
+if node['platform_family'] == 'debian'
+  # The debphp PPA we use ships Apache 2.4
+  default['apache']['version'] = '2.4'
+end
+
 if node['apache']['version'] == '2.4'
+  # Our Scalr virtualhost uses Apache 2.2-style rules here
   default['apache']['extra_modules'].push 'access_compat'
 end
 
-
 # Override for a bug in yum-mysql-community cookbook (that ignores RHEL 7)
+# TODO - probably doesn't need to be an override here
 override['yum']['mysql55-community']['baseurl'] = "http://repo.mysql.com/yum/mysql-5.5-community/el/#{node['platform_version'].to_i}/$basearch/"
