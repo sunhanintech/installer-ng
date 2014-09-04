@@ -547,6 +547,7 @@ class InstallWrapper(object):
         # Values we'll reuse
         install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
         sync_shared_roles_path = os.path.join(install_path, "app", "tools", "sync_shared_roles.php")
+        id_file_path = os.path.join(install_path, "app", "etc", "id")
         scalr_id = self.solo_json_config["scalr"]["id"]
 
         # Subscribe to security notifications
