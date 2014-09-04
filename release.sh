@@ -10,11 +10,16 @@ set -o nounset
 OPTIND=1
 
 no_push=
+farm_gv=()  # List of Farms we want to set the INSTALLER_BRANCH GV on
 
-while getopts "x" opt; do
+while getopts "xf:" opt
+do
   case "$opt" in
     x)
       no_push=1
+      ;;
+    f)
+      farm_gv+=("$OPTARG")
       ;;
   esac
 done
@@ -113,3 +118,16 @@ fi
 
 echo "Done. Published: $release"
 
+
+# Now, set the GVs as requested
+BRANCH_VAR="INSTALLER_BRANCH"
+
+for farm in "${farm_gv[@]}"
+do
+  echo "Setting '$BRANCH_VAR' = '$RELEASE_BRANCH' on '$farm'"
+  args="--param-name=$BRANCH_VAR --param-value=$RELEASE_BRANCH --farm-id=$farm"
+
+  # There is a typo in the method name at this time, so we need to find the right name
+  method=$(scalr help  | grep -E 'set-.*-variable')
+  scalr $method $args
+done
