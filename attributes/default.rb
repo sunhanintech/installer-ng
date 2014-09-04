@@ -1,4 +1,7 @@
 # Scalr attributes
+default[:scalr][:id] ='unset'
+
+# Users
 default[:scalr][:core][:group] = 'scalr'
 default[:scalr][:core][:users][:service] = 'root'
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'fedora' => 'apache', 'debian' => 'www-data')
@@ -21,6 +24,7 @@ default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 default[:scalr][:core][:location] = File.join(node.scalr.package.deploy_to, 'current')
 default[:scalr][:core][:configuration] = "#{node.scalr.core.location}/app/etc/config.yml"
 default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app/etc/.cryptokey"
+default[:scalr][:core][:id_path] = "#{node[:scalr][:core][:location]}/app/etc/id"
 
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
 default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
