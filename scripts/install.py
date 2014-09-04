@@ -13,6 +13,7 @@ import urllib2
 import re
 import optparse
 import string
+import binascii
 import json
 import shutil
 import contextlib
@@ -30,7 +31,7 @@ CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_VERSION = "5.0.0"
+DEFAULT_COOKBOOK_RELEASE = "6.0.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
@@ -69,7 +70,7 @@ INSTALL_DONE_MSG = """
 
 Congratulations! Scalr has successfully finished installing!
 
-Installer cookbook version: `{cookbook_version}`.
+Installer cookbook version: `{cookbook_release}`.
 
 
 -- Configuration --
@@ -121,7 +122,7 @@ We've read the file for you, its contents are:      `{scalr_id}`
 
 Please submit those contents to this form `http://hub.am/1fDAc2B`
 
-Once done, please run this command `php {sync_shared_roles_script}`
+Once done, please run this command `php {sync_shared_roles_path}`
 
 """
 
@@ -262,7 +263,7 @@ class UserInput(object):
         return self.prompt(q, error_msg, coerce_fn)
 
 
-class RandomPasswordGenerator(object):
+class RandomTokenGenerator(object):
     def __init__(self, random_source):
         self.random_source = random_source
         self._chars = string.letters + string.digits + "+="  # 64 divides 256
@@ -273,113 +274,19 @@ class RandomPasswordGenerator(object):
             pw_chars.append(self._chars[ord(c) % len(self._chars)])
         return "".join(pw_chars)
 
-
-def generate_chef_solo_config(options, ui, pwgen):
-    output = {
-        "run_list":  [
-            "recipe[apt::default]",
-            "recipe[build-essential::default]",
-            "recipe[scalr-core::default]"
-        ],
-    }
-
-    # What are we installing?
-
-    if not options.advanced:
-        revision = DEFAULT_SCALR_GIT_REV
-        repo = DEFAULT_SCALR_REPO
-        version = DEFAULT_SCALR_VERSION
-        ssh_key = ""
-        ssh_key_path = ""
-    else:
-        revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
-        repo = ui.prompt("Enter the repository to clone", "")
-        version = ui.prompt_select_from_options("What Scalr version is this?",
-            SUPPORTED_VERSIONS, "This is not a valid choice")
-        ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
-                                    "Invalid key. Please try again.")
-        ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
-
-    # MySQL configuration
-    output["mysql"] = {}
-
-    mysql_passwords = ["server_root_password", "server_debian_password",
-                       "server_repl_password"]
-
-    for mysql_password in mysql_passwords:
-        if options.passwords:
-            pw = ui.prompt("Enter password for: {0}".format(mysql_password),
-                           "")
-        else:
-            pw = pwgen.make_password(30)
-        output["mysql"][mysql_password] = pw
-
-    # Scalr configuration
-    output["scalr"] = {}
-
-    host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
-                             " use to connect to this server. ",
-                             "This is not a valid IP")
-
-    if version == SCALR_VERSION_4_5:
-        local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
-                                  " this instance through. If you are not"
-                                  " using NAT or a Cloud Elastic IP, this"
-                                  " should be the same IP",
-                                  "This is not a valid IP")
-    else:
-        local_ip = ""
-
-    output["scalr"]["endpoint"] = {
-        "host": host_ip,
-        "host_ip": host_ip,
-        "local_ip": local_ip,
-    }
-
-    conn_policy = ui.prompt_select_from_options("To connect to your instances,"
-        " should Scalr use the private IP, public IP, or automatically choose"
-        " the best one? Use `auto` if you are unsure.",
-        ["auto", "public", "local"], "This is not a valid choice")
-    output["scalr"]["instances_connection_policy"] = conn_policy
-
-    output["scalr"]["admin"] = {}
-    output["scalr"]["admin"]["username"] = "admin"
-    output["scalr"]["admin"]["password"] = pwgen.make_password(15)
-
-    output["scalr"]["database"] = {}
-    output["scalr"]["database"]["password"] = pwgen.make_password(30)
-
-    output["scalr"]["package"] = {
-        "revision": revision,
-        "repo": repo,
-        "version": version,
-        "name": SCALR_NAME,
-        "deploy_to": SCALR_DEPLOY_TO,
-    }
-
-    output["scalr"]["deployment"] = {
-        "ssh_key": ssh_key,
-        "ssh_key_path": ssh_key_path,
-    }
-
-    output["apt"] = {
-        "compile_time_update": True
-    }
-
-    # System parameters
-    ## Disable apparmor in the ntp cookbook if it's not installed
-    if spawn.find_executable("aa-status") is None:
-        output['ntp'] = {'apparmor_enabled': False}
-
-    return output
+    def make_id(self, cookbook_release):
+        major, minor, patch = cookbook_release.split(".", 2)
+        bits = ["i", major, "x"]
+        bits.append(binascii.hexlify(self.random_source(4)))  # 8 chars
+        return "".join(bits)
 
 
 class InstallWrapper(object):
-    def __init__(self, work_dir, options, ui, pwgen, out_file, err_file):
+    def __init__(self, work_dir, options, ui, tokgen, out_file, err_file):
         self.work_dir = work_dir
         self.options = options
         self.ui = ui
-        self.pwgen = pwgen
+        self.tokgen = tokgen
 
         self._out_file = out_file
         self._err_file = err_file
@@ -417,24 +324,134 @@ class InstallWrapper(object):
                                " Please install one")
         return name
 
+    def _generate_chef_solo_config(self):
+        # FIXME
+        options, ui, tokgen = self.options, self.ui, self.tokgen
+
+        # Start with our base runlist
+        output = {
+            "run_list":  [
+                "recipe[apt::default]",
+                "recipe[build-essential::default]",
+                "recipe[scalr-core::default]"
+            ],
+        }
+
+        # What are we installing?
+
+        if not options.advanced:
+            revision = DEFAULT_SCALR_GIT_REV
+            repo = DEFAULT_SCALR_REPO
+            version = DEFAULT_SCALR_VERSION
+            ssh_key = ""
+            ssh_key_path = ""
+        else:
+            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
+            repo = ui.prompt("Enter the repository to clone", "")
+            version = ui.prompt_select_from_options("What Scalr version is this?",
+                SUPPORTED_VERSIONS, "This is not a valid choice")
+            ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
+                                        "Invalid key. Please try again.")
+            ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
+
+        # MySQL configuration
+        output["mysql"] = {}
+
+        mysql_passwords = ["server_root_password", "server_debian_password",
+                           "server_repl_password"]
+
+        for mysql_password in mysql_passwords:
+            if options.passwords:
+                pw = ui.prompt("Enter password for: {0}".format(mysql_password),
+                               "")
+            else:
+                pw = tokgen.make_password(30)
+            output["mysql"][mysql_password] = pw
+
+        # Scalr configuration
+        output["scalr"] = {}
+
+        host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
+                                 " use to connect to this server. ",
+                                 "This is not a valid IP")
+
+        if version == SCALR_VERSION_4_5:
+            local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
+                                      " this instance through. If you are not"
+                                      " using NAT or a Cloud Elastic IP, this"
+                                      " should be the same IP",
+                                      "This is not a valid IP")
+        else:
+            local_ip = ""
+
+        output["scalr"]["endpoint"] = {
+            "host": host_ip,
+            "host_ip": host_ip,
+            "local_ip": local_ip,
+        }
+
+        conn_policy = ui.prompt_select_from_options("To connect to your instances,"
+            " should Scalr use the private IP, public IP, or automatically choose"
+            " the best one? Use `auto` if you are unsure.",
+            ["auto", "public", "local"], "This is not a valid choice")
+        output["scalr"]["instances_connection_policy"] = conn_policy
+
+        output["scalr"]["admin"] = {}
+        output["scalr"]["admin"]["username"] = "admin"
+        output["scalr"]["admin"]["password"] = tokgen.make_password(15)
+
+        output["scalr"]["database"] = {}
+        output["scalr"]["database"]["password"] = tokgen.make_password(30)
+
+        output["scalr"]["package"] = {
+            "revision": revision,
+            "repo": repo,
+            "version": version,
+            "name": SCALR_NAME,
+            "deploy_to": SCALR_DEPLOY_TO,
+        }
+
+        output["scalr"]["deployment"] = {
+            "ssh_key": ssh_key,
+            "ssh_key_path": ssh_key_path,
+        }
+
+        output["scalr"]["id"] = tokgen.make_id(self.options.release)
+
+        # Misc cookbooks
+        output["apt"] = {
+            "compile_time_update": True
+        }
+
+        # System parameters
+        ## Disable apparmor in the ntp cookbook if it's not installed
+        if spawn.find_executable("aa-status") is None:
+            output['ntp'] = {'apparmor_enabled': False}
+
+        return output
+
     def generate_config(self):
-        self.solo_json_config = generate_chef_solo_config(self.options, self.ui, self.pwgen)
+        self.solo_json_config = self._generate_chef_solo_config()
 
     def load_config(self):
         with open(self.solo_json_path) as f:
             self.solo_json_config = json.load(f)
 
-    def create_configuration_files(self):
+    def create_and_load_chef_configuration(self):
         self.write_out("Creating configuration", nl=True)
 
-        if os.path.exists(self.solo_json_path):
+        # solo.json
+        try:
             self.load_config()
-            self.write_out("JSON Configuration already exists. Using it.", nl=True)
-        else:
+        except IOError:
+            self.write_out("NO JSON Configuration found. Creating.", nl=True)
             self.generate_config()
             with open(self.solo_json_path, "w") as f:
                 json.dump(self.solo_json_config, f, indent=2, separators=(',', ': '))
+        else:
+            self.write_out("JSON Configuration already exists. Using it.", nl=True)
 
+        # solo.rb
         solo_rb_lines = [
             "file_cache_path '{0}'".format(self.file_cache_path),
             "cookbook_path '{0}'".format(self.cookbook_path),
@@ -526,17 +543,13 @@ class InstallWrapper(object):
         if retcode != 0:
             raise InstallerFailure("The installer failed")
 
-
     def finish(self):
-        # Multiple paths
+        # Values we'll reuse
         install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
-
+        sync_shared_roles_path = os.path.join(install_path, "app", "tools", "sync_shared_roles.php")
         id_file_path = os.path.join(install_path, "app", "etc", "id")
-        with open(id_file_path) as f:
-            scalr_id = f.read().strip()
+        scalr_id = self.solo_json_config["scalr"]["id"]
 
-        sync_shared_roles_script = os.path.join(install_path, "app", "tools",
-                                                 "sync_shared_roles.php")
         # Subscribe to security notifications
         if self.user_email is not None:
             # The user wants security and critical updates notifications
@@ -569,14 +582,14 @@ class InstallWrapper(object):
             scalr_admin_password=self.solo_json_config["scalr"]["admin"]["password"],
             scalr_id_file=id_file_path,
             scalr_id=scalr_id,
-            sync_shared_roles_script=sync_shared_roles_script,
+            sync_shared_roles_path=sync_shared_roles_path,
             solo_json_path=self.solo_json_path,
-            cookbook_version=self.options.release
+            cookbook_release=self.options.release
         ), nl=True)
 
 
     def install(self):
-        self.create_configuration_files()
+        self.create_and_load_chef_configuration()
         self.prompt_for_notifications()
         self.install_chef()
         self.download_cookbooks()
@@ -584,9 +597,9 @@ class InstallWrapper(object):
         self.finish()
 
 
-def main(work_dir, options, ui, pwgen, out_file, err_file):
+def main(work_dir, options, ui, tokgen, out_file, err_file):
     with umask(INSTALLER_UMASK):
-        wrapper = InstallWrapper(work_dir, options, ui, pwgen, out_file, err_file)
+        wrapper = InstallWrapper(work_dir, options, ui, tokgen, out_file, err_file)
         wrapper.install()
 
 
@@ -598,7 +611,7 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
-    parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_VERSION,
+    parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
                       help="Installer release")
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
@@ -620,8 +633,8 @@ if __name__ == "__main__":
     try:
         os.chdir(work_dir)
         ui = UserInput(raw_input, print)
-        pwgen = RandomPasswordGenerator(os.urandom)
-        main(work_dir, options, ui, pwgen, out_log, err_log)
+        tokgen = RandomTokenGenerator(os.urandom)
+        main(work_dir, options, ui, tokgen, out_log, err_log)
     except KeyboardInterrupt:
         print("Exiting on user interrupt")
     except Exception:

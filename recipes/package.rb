@@ -50,17 +50,19 @@ end
   end
 end
 
-
-# Ensure those files are created and not world-readable
-# before we add the data in them!
-
-[
-  node[:scalr][:core][:cryptokey_path],
-  "#{node[:scalr][:core][:location]}/app/etc/id"
-].each do |f|
-  file f do
+# Create the cryptokey file and set permissions.
+# This stays empty the validate step, which will generate the cryptokey
+file node[:scalr][:core][:cryptokey_path] do
     owner node[:scalr][:core][:users][:service]
     group node[:scalr][:core][:group]
-    mode 0640
-  end
+    mode  0640
+end
+
+# Create the ID file
+# This one has a predefined value, because we use the ID in multiple locations
+file node[:scalr][:core][:id_path] do
+    owner   node[:scalr][:core][:users][:service]
+    group   node[:scalr][:core][:group]
+    mode    0640
+    content node[:scalr][:id]
 end
