@@ -34,7 +34,7 @@ scalr:
 
   aws:
     ip_pool: ['<%= node[:scalr][:endpoint][:host_ip] %>/32']
-    security_group_name: scalr.<%= node[:scalr][:endpoint][:host_ip] %>.ip-pool
+    security_group_name: scalr.<%= node[:scalr][:id] %>.ip-pool
 
   billing:
     enabled: no
