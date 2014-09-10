@@ -1,9 +1,11 @@
 Scalr Next Generation Installer
 ===============================
 
-An installer for [Scalr Open Source][0].
+An installer for [Scalr Open Source][0], with support for:
 
-This installer supports Ubuntu 12.04, Red Hat Enterprise Linux 6, and CentOS 6.
+  + Ubuntu: 12.04, 14.04
+  + RHEL: 6, 7
+  + CentOS: 6, 7
 
 If you run into any issues, or have suggestions, get in touch with us at
 onboarding@scalr.com, or [file an issue][1].
