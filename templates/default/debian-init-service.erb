@@ -23,12 +23,12 @@ case "${1}" in
       mkdir --mode=0770 --parents <%= @piddir %>
       chown <%= @user %>:<%= @group %> <%= @piddir %>
 
-      /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
+      /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- <%= node[:scalr][:core][:location] %>/app/python/scalrpy/<%= @service_script %> --pid-file=<%= @pidfile %> --log-file=<%= @logfile %> --config=<%= node[:scalr][:core][:configuration] %> --verbosity=3 --daemon <%= @daemon_extra_args %> start
       ;;
 
    stop)
       log_action_begin_msg "Stopping..."
-      killproc -p <%= @pidfile %> <%= @executable %> SIGINT
+      <%= @executable %> <%= node[:scalr][:core][:location] %>/app/python/scalrpy/<%= @service_script %> --pid-file=<%= @pidfile %> --log-file=<%= @logfile %> --config=<%= node[:scalr][:core][:configuration] %> stop
       ;;
 
    restart)

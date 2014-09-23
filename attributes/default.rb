@@ -27,9 +27,8 @@ default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app
 default[:scalr][:core][:id_path] = "#{node[:scalr][:core][:location]}/app/etc/id"
 
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
-default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
 default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
-default[:scalr][:python][:venv_force_install] = [['httplib2', nil], ['pymysql', nil], ['cherrypy', '3.2.6'], ['pytz', nil]]
+default[:scalr][:python][:venv_pip] = "#{node.scalr.python.venv}/bin/pip"
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
@@ -73,16 +72,16 @@ default[:scalr][:rrd][:port] = 8080
 
 # Scalr Daemon Attributes
 default[:scalr][:services] = [
-  {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon', :service_extra_args => '', :run => {
+  {:service_name => 'msgsender', :service_script => 'msg_sender.py', :service_desc => 'Scalr Messaging Daemon', :service_extra_args => '', :run => {
     :daemon => true
   }},
-  {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller', :service_extra_args => '', :run => {
+  {:service_name => 'dbqueue', :service_script => 'dbqueue_event.py', :service_desc => 'Scalr DB Queue Event Poller', :service_extra_args => '', :run => {
     :daemon => true
   }},
-  {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter', :service_extra_args => '--plotter', :run => {
+  {:service_name => 'plotter', :service_script => 'load_statistics.py', :service_desc => 'Scalr Load Stats Plotter', :service_extra_args => '--plotter', :run => {
     :daemon => true
   }},
-  {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller', :service_extra_args => '--poller', :run => {
+  {:service_name => 'poller', :service_script => 'load_statistics.py', :service_desc => 'Scalr Load Stats Poller', :service_extra_args => '--poller', :run => {
     :daemon => true
   }},
 ]
@@ -108,14 +107,14 @@ default[:scalr][:cron][:crons] = [
 # These new cron jobs were intoduced in 5.0
 if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
   extra_services = [
-    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => '--interval=120', :run => {
+    {:service_name => 'szrupdater', :service_script => 'szr_upd_service.py', :service_desc => 'Scalarizr Update Client', :run => {
       :daemon => true
     }},
-    {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => {
-      :cron => {:hour => '*', :minute => '*/5'}
+    {:service_name => 'analytics_poller', :service_script => 'analytics_polling.py', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => {
+      :daemon => true
     }},
-    {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => {
-      :cron => {:hour => '*', :minute => '7,37'}
+    {:service_name => 'analytics_processor', :service_script => 'analytics_processing.py', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => {
+      :daemon => true
     }},
   ]
 
