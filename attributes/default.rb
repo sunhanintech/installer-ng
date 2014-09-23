@@ -27,8 +27,9 @@ default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app
 default[:scalr][:core][:id_path] = "#{node[:scalr][:core][:location]}/app/etc/id"
 
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
-default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
-default[:scalr][:python][:venv_pip] = "#{node.scalr.python.venv}/bin/pip"
+default[:scalr][:python][:venv_bin] = "#{node.scalr.package.deploy_to}/venv/bin"
+default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv_bin}/python"
+default[:scalr][:python][:venv_pip] = "#{node.scalr.python.venv_bin}/pip"
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'

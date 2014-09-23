@@ -27,6 +27,33 @@ python_virtualenv node[:scalr][:python][:venv] do
   action :create
 end
 
+# Let the fun begin! M2Crypto isn't installable from pip on RHEL platforms, so we
+# need to manually install it and run the fedora_setup.sh script provided by RHEL
+case node[:platform_family]
+when 'rhel'
+  package 'wget'
+  fedora_setup = 'https://raw.githubusercontent.com/M2Crypto/M2Crypto/master/fedora_setup.sh'
+  bash 'install_m2crypto' do
+    code <<-EOH
+    set -o errexit
+    set -o nounset
+    work_dir=$(mktemp -d)
+    cd -- "$work_dir"
+    #{node[:scalr][:python][:venv_pip]} install --download "$work_dir" --no-deps m2crypto
+    tar -xzvf *.tar.gz
+    rm *.tar.gz
+    cd M2Crypto*
+    wget "#{fedora_setup}"
+    fedora_setup=$(basename "#{fedora_setup}")
+    chmod +x "$fedora_setup"
+    PATH="#{node[:scalr][:python][:venv_bin]}:$PATH" "./$fedora_setup" install
+    cd /
+    rm -r $work_dir
+    EOH
+    not_if "#{node[:scalr][:python][:venv_pip]} freeze | grep -i m2crypto"
+  end
+end
+
 # Install dependencies in the virtual environment
 execute "Install Scalrpy" do
   command     "#{node[:scalr][:python][:venv_pip]} install --no-use-wheel --requirement requirements.txt"
