@@ -8,11 +8,12 @@ include_recipe "python::virtualenv"
 #   - libevent: gevent
 #   - openssl: various crypto libs
 #   - swig: m2crypto
+#   - cairo, pango, glib, xml2, rrd: python-rrdtool
 case node[:platform]
 when 'redhat', 'centos', 'fedora'
-  pkgs = %w{libffi-devel libevent-devel openssl-devel swig}
+  pkgs = %w{libffi-devel libevent-devel openssl-devel swig cairo-devel pango-devel glib2-devel libxml2-devel rrdtool-devel}
 when 'ubuntu'  #TODO: Debian...
-  pkgs = %w{libffi-dev libevent-dev libssl-dev swig}
+  pkgs = %w{libffi-dev libevent-dev libssl-dev swig libcairo2-dev libpango1.0-dev libglib2.0-dev libxml2-dev librrd-dev}
 end
 
 pkgs.each do |pkg|
