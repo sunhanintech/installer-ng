@@ -3,11 +3,16 @@ include_recipe "python::pip"
 include_recipe "python::virtualenv"
 
 # Install dependencies that ae required to build the various Python modules we will need to deploy in the virtualenv.
+# Dependencies:
+#   - libffi: ?
+#   - libevent: gevent
+#   - openssl: various crypto libs
+#   - swig: m2crypto
 case node[:platform]
 when 'redhat', 'centos', 'fedora'
-  pkgs = %w{libffi-devel libevent-devel openssl-devel python-setuptools}
+  pkgs = %w{libffi-devel libevent-devel openssl-devel swig}
 when 'ubuntu'  #TODO: Debian...
-  pkgs = %w{libffi-dev libevent-dev libssl-dev python-setuptools}
+  pkgs = %w{libffi-dev libevent-dev libssl-dev swig}
 end
 
 pkgs.each do |pkg|
