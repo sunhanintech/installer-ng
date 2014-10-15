@@ -6,10 +6,12 @@ include_recipe "python::virtualenv"
 # To build Python extensions: libffi, libevent, libopenssl
 # Actual Python packages that aren't practical / possible to install using pip: m2crypto, snmp, rrdtool
 # Python setuptools, to actually install
+#
+# On RHEL we also want procps, because we use pkill to kill the plotter process group
 
 case node[:platform]
 when 'redhat', 'centos', 'fedora'
-  pkgs = %w{libffi-devel libevent-devel openssl-devel python-setuptools m2crypto net-snmp-python rrdtool-python}
+  pkgs = %w{procps libffi-devel libevent-devel openssl-devel python-setuptools m2crypto net-snmp-python rrdtool-python}
 when 'ubuntu'  #TODO: Debian...
   pkgs = %w{libffi-dev libevent-dev libssl-dev python-setuptools python-m2crypto libsnmp-python python-rrdtool}
 end
@@ -27,6 +29,15 @@ python_virtualenv node[:scalr][:python][:venv] do
   action :create
 end
 
+# Ensure pip is the most up-to-date (and has --no-use-wheel)
+
+python_pip "pip" do
+  user        node[:scalr][:core][:users][:service]
+  group       node[:scalr][:core][:group]
+  virtualenv  node[:scalr][:python][:venv]
+  action      :upgrade
+end
+
 # Force install dependencies where conflicts may arise
 node[:scalr][:python][:venv_force_install].each do |pkg, version|
   python_pip pkg do
@@ -35,7 +46,7 @@ node[:scalr][:python][:venv_force_install].each do |pkg, version|
     virtualenv  node[:scalr][:python][:venv]
     action      :upgrade
     version     version
-    options     "--ignore-installed"
+    options     "--ignore-installed --no-use-wheel"
   end
 end
 
