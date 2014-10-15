@@ -12,7 +12,7 @@ when 'rhel', 'fedora'
   rhel_version = node[:platform_version].to_i
 
   webtatic_pkgs         = ['libmysqlclient*', 'php*']
-  epel_pkgs             = ['monit*']
+  epel_pkgs             = ['monit*', 'zeromq*', 'openpgm*']
   rpmforge_pkgs         = ['putty*']
   rpmforge_extras_pkgs  = []
   centos_base_pkgs      = []
