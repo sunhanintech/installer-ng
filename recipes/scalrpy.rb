@@ -27,6 +27,15 @@ python_virtualenv node[:scalr][:python][:venv] do
   action :create
 end
 
+# Ensure pip is the most up-to-date (and has --no-use-wheel)
+
+python_pip "pip" do
+  user        node[:scalr][:core][:users][:service]
+  group       node[:scalr][:core][:group]
+  virtualenv  node[:scalr][:python][:venv]
+  action      :upgrade
+end
+
 # Force install dependencies where conflicts may arise
 node[:scalr][:python][:venv_force_install].each do |pkg, version|
   python_pip pkg do
@@ -35,7 +44,7 @@ node[:scalr][:python][:venv_force_install].each do |pkg, version|
     virtualenv  node[:scalr][:python][:venv]
     action      :upgrade
     version     version
-    options     "--ignore-installed"
+    options     "--ignore-installed --no-use-wheel"
   end
 end
 
