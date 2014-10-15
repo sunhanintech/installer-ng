@@ -6,10 +6,12 @@ include_recipe "python::virtualenv"
 # To build Python extensions: libffi, libevent, libopenssl
 # Actual Python packages that aren't practical / possible to install using pip: m2crypto, snmp, rrdtool
 # Python setuptools, to actually install
+#
+# On RHEL we also want procps, because we use pkill to kill the plotter process group
 
 case node[:platform]
 when 'redhat', 'centos', 'fedora'
-  pkgs = %w{libffi-devel libevent-devel openssl-devel python-setuptools m2crypto net-snmp-python rrdtool-python}
+  pkgs = %w{procps libffi-devel libevent-devel openssl-devel python-setuptools m2crypto net-snmp-python rrdtool-python}
 when 'ubuntu'  #TODO: Debian...
   pkgs = %w{libffi-dev libevent-dev libssl-dev python-setuptools python-m2crypto libsnmp-python python-rrdtool}
 end
