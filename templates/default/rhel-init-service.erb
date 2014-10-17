@@ -18,7 +18,7 @@ case "${1}" in
    stop)
       # Don't use the buit-in killproc function here, because we have an entire group to kill
       echo_passed "Stopping..."
-      pkill -TERM -P $(cat -- "<%= @pidfile %>")
+      [ -f "<%= @pidfile %>" ] && kill -TERM -$(ps -o pgid= $(cat -- "<%= @pidfile %>") | grep -o [0-9]*)
       ret="$?"
       rm -f -- "<%= @pidfile %>"
       # TODO - Verify this actually exits!

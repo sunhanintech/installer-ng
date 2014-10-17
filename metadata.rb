@@ -4,7 +4,7 @@ maintainer_email 'thomas@scalr.com'
 license          'Apache License 2.0'
 description      'Installs/Configures Scalr Core'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '6.3.0'
+version          '6.3.1'
 
 %w{ ubuntu centos redhat }.each do |os|
     supports os
