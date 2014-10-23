@@ -333,7 +333,9 @@ class InstallWrapper(object):
             "run_list":  [
                 "recipe[apt::default]",
                 "recipe[build-essential::default]",
+                "recipe[ntp::default]",  # TODO _ Optional
                 "recipe[scalr-core::default]"
+                "recipe[iptables-ng::default]",  #TODO _ Optional
             ],
         }
 
@@ -418,15 +420,33 @@ class InstallWrapper(object):
 
         output["scalr"]["id"] = tokgen.make_id(self.options.release)
 
-        # Misc cookbooks
-        output["apt"] = {
-            "compile_time_update": True
-        }
+        # Other cookbooks
+        output.update({
+            "apt" : {
+                "compile_time_update": True,
+            },
+            "iptables-ng": {
+                "rules": {
+                    "filter": {
+                        "INPUT": {
+                            "scalr-web": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 80 --match state --state NEW --jump ACCEPT",
+                            },
+                            "scalr-plotter": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
+                            },
+                        }
+                    }
+                }
+            },
+            "ntp": {}
+        })
 
-        # System parameters
         ## Disable apparmor in the ntp cookbook if it's not installed
         if spawn.find_executable("aa-status") is None:
-            output['ntp'] = {'apparmor_enabled': False}
+            output['ntp']['apparmor_enabled'] =  False
 
         return output
 
