@@ -328,15 +328,17 @@ class InstallWrapper(object):
         # FIXME
         options, ui, tokgen = self.options, self.ui, self.tokgen
 
-        # Start with our base runlist
+        # Create the runlist
+        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
+        if not options.no_ntp:
+            run_list.append("recipe[ntp::default]")
+        run_list.append("recipe[scalr-core::default]")
+        if not options.no_iptables:
+            run_list.append("recipe[iptables-ng::default]")
+
+        # Create our attributes
         output = {
-            "run_list":  [
-                "recipe[apt::default]",
-                "recipe[build-essential::default]",
-                "recipe[ntp::default]",  # TODO _ Optional
-                "recipe[scalr-core::default]"
-                "recipe[iptables-ng::default]",  #TODO _ Optional
-            ],
+            "run_list": run_list
         }
 
         # What are we installing?
@@ -483,7 +485,7 @@ class InstallWrapper(object):
     def prompt_for_notifications(self):
         self.user_email = None
 
-        if self.options.noprompt:
+        if self.options.no_prompt:
             return
 
         signup = ui.prompt_yes_no("Would you like to be notified of "
@@ -629,14 +631,23 @@ if __name__ == "__main__":
         sys.exit(1)
 
     parser = optparse.OptionParser()
+
     parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
     parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
                       help="Installer release")
+
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
-    parser.add_option("-n", "--noprompt", action="store_true", default=False,
+
+    parser.add_option("-n", "--no-prompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
+
+    parser.add_option("--no-iptables", action="store_true", default=False,
+                      help="Disable iptables management")
+    parser.add_option("--no-ntp", action="store_true", default=False,
+                      help="Disable ntp management")
+
     parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
     options, args = parser.parse_args()
