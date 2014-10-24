@@ -348,12 +348,12 @@ class InstallWrapper(object):
 
         # What are we installing?
         if not options.advanced:
-            revision = DEFAULT_SCALR_GIT_REV
             repo = DEFAULT_SCALR_REPO
+            revision = DEFAULT_SCALR_GIT_REV
             version = DEFAULT_SCALR_VERSION
         else:
-            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
             repo = ui.prompt("Enter the repository to clone")
+            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
             version = ui.prompt_select_from_options("What Scalr version is this?",
                 SUPPORTED_VERSIONS, "This is not a valid choice")
 
