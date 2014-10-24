@@ -418,7 +418,7 @@ class InstallWrapper(object):
             local_ip = ""
 
         output["scalr"]["endpoint"] = {
-            "host": host_ip,
+            "host": host,
             "host_ip": host_ip,
             "local_ip": local_ip,
         }
