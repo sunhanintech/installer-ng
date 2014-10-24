@@ -75,9 +75,12 @@ scalr:
     connections:
       plotter:
         scheme: 'http'
+        bind_scheme: 'http' # Not used yet, but let's be safe
         host: '<%= node[:scalr][:endpoint][:host] %>'
+        bind_host: '0.0.0.0'     # New version
+        bind_address: '0.0.0.0'  # Old version
         port: <%= node[:scalr][:rrd][:port] %>
-        bind_address: '0.0.0.0'
+        bind_port: <%= node[:scalr][:rrd][:port] %>  # Not used yet, but let's be safe
     rrd:
       dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
       rrdcached_sock_path: '<%= node[:scalr][:rrd][:rrdcached_sock] %>'
