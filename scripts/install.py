@@ -178,10 +178,7 @@ class UserInput(object):
         self.prompt_fn = prompt_fn
         self.print_fn = print_fn
 
-    def prompt(self, q, error_msg="", coerce_fn=None):
-        if coerce_fn is None:
-            coerce_fn = lambda x: x
-
+    def prompt(self, q, error_msg="", coerce_fn=lambda x: x.strip()):
         while True:
             r = self.prompt_fn(q + "\n> ")
             try:
