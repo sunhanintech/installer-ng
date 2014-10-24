@@ -324,22 +324,27 @@ class InstallWrapper(object):
                                " Please install one")
         return name
 
+    def _generate_chef_solo_runlist(self):
+        """
+        Generate the run list based on the options that were passed to this script.
+        """
+        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
+        if not self.options.no_ntp:
+            run_list.append("recipe[ntp::default]")
+        run_list.append("recipe[scalr-core::default]")
+        if not self.options.no_iptables:
+            run_list.append("recipe[iptables-ng::default]")
+        return run_list
+
     def _generate_chef_solo_config(self):
+        """
+        Generate all the attributes, except the run list, which is created
+        separately so that it can be updated even when loading the JSON from disk.
+        """
         # FIXME
         options, ui, tokgen = self.options, self.ui, self.tokgen
 
-        # Create the runlist
-        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
-        if not options.no_ntp:
-            run_list.append("recipe[ntp::default]")
-        run_list.append("recipe[scalr-core::default]")
-        if not options.no_iptables:
-            run_list.append("recipe[iptables-ng::default]")
-
-        # Create our attributes
-        output = {
-            "run_list": run_list
-        }
+        output = {}
 
         # What are we installing?
 
@@ -453,25 +458,31 @@ class InstallWrapper(object):
         return output
 
     def generate_config(self):
-        self.solo_json_config = self._generate_chef_solo_config()
+        return self._generate_chef_solo_config()
 
     def load_config(self):
         with open(self.solo_json_path) as f:
-            self.solo_json_config = json.load(f)
+            return json.load(f)
 
-    def create_and_load_chef_configuration(self):
+    def create_or_load_chef_solo_config(self):
         self.write_out("Creating configuration", nl=True)
 
-        # solo.json
+        # solo.json, or ask for attributes
         try:
-            self.load_config()
+            config = self.load_config()
         except IOError:
             self.write_out("NO JSON Configuration found. Creating.", nl=True)
-            self.generate_config()
-            with open(self.solo_json_path, "w") as f:
-                json.dump(self.solo_json_config, f, indent=2, separators=(',', ': '))
+            config = self.generate_config()
         else:
             self.write_out("JSON Configuration already exists. Using it.", nl=True)
+
+        # The run list must be redefined here
+        config["run_list"] = self._generate_chef_solo_runlist()
+        with open(self.solo_json_path, "w") as f:
+            json.dump(config, f, indent=2, separators=(',', ': '))
+
+        # Kind of hackish, but we use that later..
+        self.solo_json_config = config
 
         # solo.rb
         solo_rb_lines = [
@@ -611,7 +622,7 @@ class InstallWrapper(object):
 
 
     def install(self):
-        self.create_and_load_chef_configuration()
+        self.create_or_load_chef_solo_config()
         self.prompt_for_notifications()
         self.install_chef()
         self.download_cookbooks()
