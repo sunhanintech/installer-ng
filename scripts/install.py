@@ -8,6 +8,7 @@ import traceback
 import socket
 import tempfile
 import subprocess
+import urlparse
 import urllib
 import urllib2
 import re
@@ -24,6 +25,8 @@ from distutils import spawn
 ISSUES_URL = "https://github.com/scalr/installer-ng/issues"
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
+
+GIT_NON_SSH_SCHEMES = ["http", "https", "git", "file"]
 
 CHEF_SOLO_BIN = "/opt/chef/bin/chef-solo"
 CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
@@ -347,18 +350,29 @@ class InstallWrapper(object):
         output = {}
 
         # What are we installing?
-
         if not options.advanced:
             revision = DEFAULT_SCALR_GIT_REV
             repo = DEFAULT_SCALR_REPO
             version = DEFAULT_SCALR_VERSION
-            ssh_key = ""
-            ssh_key_path = ""
         else:
             revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
             repo = ui.prompt("Enter the repository to clone", "")
             version = ui.prompt_select_from_options("What Scalr version is this?",
                 SUPPORTED_VERSIONS, "This is not a valid choice")
+
+        # Check whether we'll need to use a private key
+        # It might seem contradictory to check for "non-SSH" schemes, but we
+        # do this because no one ever puts ssh:// in their git URLs.
+        if urlparse.urlparse(repo).scheme in GIT_NON_SSH_SCHEMES:
+            self.write_out("You will not need a SSH key for this repository "
+                           "({0}).".format(repo), nl=True)
+            ssh_key = ""
+            ssh_key_path = ""
+        else:
+            self.write_out("Please provide a SSH Key for this repository "
+                           "(password-based SSH isn't supported).", nl=True)
+            self.write_out("If this seems wrong, provide a full URL "
+                           "(e.g. file:// ...)", nl=True)
             ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                         "Invalid key. Please try again.")
             ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
@@ -379,6 +393,8 @@ class InstallWrapper(object):
 
         # Scalr configuration
         output["scalr"] = {}
+
+        # TODO - Support a custom host
 
         host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
                                  " use to connect to this server. ",
