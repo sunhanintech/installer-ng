@@ -178,7 +178,7 @@ class UserInput(object):
         self.prompt_fn = prompt_fn
         self.print_fn = print_fn
 
-    def prompt(self, q, error_msg, coerce_fn=None):
+    def prompt(self, q, error_msg="", coerce_fn=None):
         if coerce_fn is None:
             coerce_fn = lambda x: x
 
@@ -355,8 +355,8 @@ class InstallWrapper(object):
             repo = DEFAULT_SCALR_REPO
             version = DEFAULT_SCALR_VERSION
         else:
-            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
-            repo = ui.prompt("Enter the repository to clone", "")
+            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
+            repo = ui.prompt("Enter the repository to clone")
             version = ui.prompt_select_from_options("What Scalr version is this?",
                 SUPPORTED_VERSIONS, "This is not a valid choice")
 
@@ -385,8 +385,7 @@ class InstallWrapper(object):
 
         for mysql_password in mysql_passwords:
             if options.passwords:
-                pw = ui.prompt("Enter password for: {0}".format(mysql_password),
-                               "")
+                pw = ui.prompt("Enter password for: {0}".format(mysql_password))
             else:
                 pw = tokgen.make_password(30)
             output["mysql"][mysql_password] = pw
@@ -394,11 +393,20 @@ class InstallWrapper(object):
         # Scalr configuration
         output["scalr"] = {}
 
-        # TODO - Support a custom host
-
-        host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
-                                 " use to connect to this server. ",
+        host_ip = ui.prompt_ipv4("Enter the IPv4 address this Scalr server "
+                                 "will use to connect to your cloud instances. "
+                                 "This is used to setup cloud security groups.",
                                  "This is not a valid IP")
+
+        if ui.prompt_yes_no("Should your cloud instances also use {0} to "
+                            "connect to this Scalr server?".format(host_ip),
+                            "This is not a valid choice."):
+            host = host_ip
+        else:
+            host = ui.prompt("Enter the host your cloud instances should "
+                             "connect to to reach this Scalr server. This "
+                             "does NOT need to be an IP, and will NOT be "
+                             "validated (so be extra careful!).")
 
         if version == SCALR_VERSION_4_5:
             local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
