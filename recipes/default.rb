@@ -7,7 +7,6 @@ include_recipe 'cron'
 
 # Time
 include_recipe 'timezone-ii'
-include_recipe 'ntp'
 
 # Users
 include_recipe 'scalr-core::users'
@@ -43,10 +42,7 @@ include_recipe 'scalr-core::database'
 # Set sysctl requirements
 include_recipe 'scalr-core::sysctl'
 
-# Firewall configuration
-include_recipe 'scalr-core::firewall'
-
-# Service Confiuration and Launch
+# Service Configuration and Launch
 include_recipe 'scalr-core::web'
 include_recipe 'scalr-core::services'
 include_recipe 'scalr-core::cron'

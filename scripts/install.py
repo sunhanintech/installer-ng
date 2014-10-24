@@ -8,6 +8,7 @@ import traceback
 import socket
 import tempfile
 import subprocess
+import urlparse
 import urllib
 import urllib2
 import re
@@ -25,13 +26,15 @@ ISSUES_URL = "https://github.com/scalr/installer-ng/issues"
 
 CHEF_INSTALL_URL = "https://www.opscode.com/chef/install.sh"
 
+GIT_NON_SSH_SCHEMES = ["http", "https", "git", "file"]
+
 CHEF_SOLO_BIN = "/opt/chef/bin/chef-solo"
 CHEF_RUBY_BIN = "/opt/chef/embedded/bin/ruby"
 
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
-DEFAULT_COOKBOOK_RELEASE = "6.3.2"
+DEFAULT_COOKBOOK_RELEASE = "6.4.0"
 COOKBOOK_PKG_URL_FORMAT = "https://s3.amazonaws.com/installer.scalr.com/releases/installer-ng-v{0}.tar.gz"
 
 INSTALLER_UMASK = 0o22
@@ -175,10 +178,7 @@ class UserInput(object):
         self.prompt_fn = prompt_fn
         self.print_fn = print_fn
 
-    def prompt(self, q, error_msg, coerce_fn=None):
-        if coerce_fn is None:
-            coerce_fn = lambda x: x
-
+    def prompt(self, q, error_msg="", coerce_fn=lambda x: x.strip()):
         while True:
             r = self.prompt_fn(q + "\n> ")
             try:
@@ -324,32 +324,52 @@ class InstallWrapper(object):
                                " Please install one")
         return name
 
+    def _generate_chef_solo_runlist(self):
+        """
+        Generate the run list based on the options that were passed to this script.
+        """
+        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
+        if not self.options.no_ntp:
+            run_list.append("recipe[ntp::default]")
+        run_list.append("recipe[scalr-core::default]")
+        if not self.options.no_iptables:
+            run_list.append("recipe[iptables-ng::default]")
+        return run_list
+
     def _generate_chef_solo_config(self):
+        """
+        Generate all the attributes, except the run list, which is created
+        separately so that it can be updated even when loading the JSON from disk.
+        """
         # FIXME
         options, ui, tokgen = self.options, self.ui, self.tokgen
 
-        # Start with our base runlist
-        output = {
-            "run_list":  [
-                "recipe[apt::default]",
-                "recipe[build-essential::default]",
-                "recipe[scalr-core::default]"
-            ],
-        }
+        output = {}
 
         # What are we installing?
-
         if not options.advanced:
-            revision = DEFAULT_SCALR_GIT_REV
             repo = DEFAULT_SCALR_REPO
+            revision = DEFAULT_SCALR_GIT_REV
             version = DEFAULT_SCALR_VERSION
+        else:
+            repo = ui.prompt("Enter the repository to clone")
+            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
+            version = ui.prompt_select_from_options("What Scalr version is this?",
+                SUPPORTED_VERSIONS, "This is not a valid choice")
+
+        # Check whether we'll need to use a private key
+        # It might seem contradictory to check for "non-SSH" schemes, but we
+        # do this because no one ever puts ssh:// in their git URLs.
+        if urlparse.urlparse(repo).scheme in GIT_NON_SSH_SCHEMES:
+            self.write_out("You will not need a SSH key for this repository "
+                           "({0}).".format(repo), nl=True)
             ssh_key = ""
             ssh_key_path = ""
         else:
-            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)", "")
-            repo = ui.prompt("Enter the repository to clone", "")
-            version = ui.prompt_select_from_options("What Scalr version is this?",
-                SUPPORTED_VERSIONS, "This is not a valid choice")
+            self.write_out("Please provide a SSH Key for this repository "
+                           "(password-based SSH isn't supported).", nl=True)
+            self.write_out("If this seems wrong, provide a full URL "
+                           "(e.g. file:// ...)", nl=True)
             ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
                                         "Invalid key. Please try again.")
             ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
@@ -362,8 +382,7 @@ class InstallWrapper(object):
 
         for mysql_password in mysql_passwords:
             if options.passwords:
-                pw = ui.prompt("Enter password for: {0}".format(mysql_password),
-                               "")
+                pw = ui.prompt("Enter password for: {0}".format(mysql_password))
             else:
                 pw = tokgen.make_password(30)
             output["mysql"][mysql_password] = pw
@@ -371,9 +390,20 @@ class InstallWrapper(object):
         # Scalr configuration
         output["scalr"] = {}
 
-        host_ip = ui.prompt_ipv4("Enter the IP (v4) address your instances should"
-                                 " use to connect to this server. ",
+        host_ip = ui.prompt_ipv4("Enter the IPv4 address this Scalr server "
+                                 "will use to connect to your cloud instances. "
+                                 "This is used to setup cloud security groups.",
                                  "This is not a valid IP")
+
+        if ui.prompt_yes_no("Should your cloud instances also use {0} to "
+                            "connect to this Scalr server?".format(host_ip),
+                            "This is not a valid choice."):
+            host = host_ip
+        else:
+            host = ui.prompt("Enter the host your cloud instances should "
+                             "connect to to reach this Scalr server. This "
+                             "does NOT need to be an IP, and will NOT be "
+                             "validated (so be extra careful!).")
 
         if version == SCALR_VERSION_4_5:
             local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
@@ -385,7 +415,7 @@ class InstallWrapper(object):
             local_ip = ""
 
         output["scalr"]["endpoint"] = {
-            "host": host_ip,
+            "host": host,
             "host_ip": host_ip,
             "local_ip": local_ip,
         }
@@ -418,38 +448,62 @@ class InstallWrapper(object):
 
         output["scalr"]["id"] = tokgen.make_id(self.options.release)
 
-        # Misc cookbooks
-        output["apt"] = {
-            "compile_time_update": True
-        }
+        # Other cookbooks
+        output.update({
+            "apt" : {
+                "compile_time_update": True,
+            },
+            "iptables-ng": {
+                "rules": {
+                    "filter": {
+                        "INPUT": {
+                            "scalr-web": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 80 --match state --state NEW --jump ACCEPT",
+                            },
+                            "scalr-plotter": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
+                            },
+                        }
+                    }
+                }
+            },
+            "ntp": {}
+        })
 
-        # System parameters
         ## Disable apparmor in the ntp cookbook if it's not installed
         if spawn.find_executable("aa-status") is None:
-            output['ntp'] = {'apparmor_enabled': False}
+            output['ntp']['apparmor_enabled'] =  False
 
         return output
 
     def generate_config(self):
-        self.solo_json_config = self._generate_chef_solo_config()
+        return self._generate_chef_solo_config()
 
     def load_config(self):
         with open(self.solo_json_path) as f:
-            self.solo_json_config = json.load(f)
+            return json.load(f)
 
-    def create_and_load_chef_configuration(self):
+    def create_or_load_chef_solo_config(self):
         self.write_out("Creating configuration", nl=True)
 
-        # solo.json
+        # solo.json, or ask for attributes
         try:
-            self.load_config()
+            config = self.load_config()
         except IOError:
             self.write_out("NO JSON Configuration found. Creating.", nl=True)
-            self.generate_config()
-            with open(self.solo_json_path, "w") as f:
-                json.dump(self.solo_json_config, f, indent=2, separators=(',', ': '))
+            config = self.generate_config()
         else:
             self.write_out("JSON Configuration already exists. Using it.", nl=True)
+
+        # The run list must be redefined here
+        config["run_list"] = self._generate_chef_solo_runlist()
+        with open(self.solo_json_path, "w") as f:
+            json.dump(config, f, indent=2, separators=(',', ': '))
+
+        # Kind of hackish, but we use that later..
+        self.solo_json_config = config
 
         # solo.rb
         solo_rb_lines = [
@@ -463,7 +517,7 @@ class InstallWrapper(object):
     def prompt_for_notifications(self):
         self.user_email = None
 
-        if self.options.noprompt:
+        if self.options.no_prompt:
             return
 
         signup = ui.prompt_yes_no("Would you like to be notified of "
@@ -589,7 +643,7 @@ class InstallWrapper(object):
 
 
     def install(self):
-        self.create_and_load_chef_configuration()
+        self.create_or_load_chef_solo_config()
         self.prompt_for_notifications()
         self.install_chef()
         self.download_cookbooks()
@@ -609,14 +663,23 @@ if __name__ == "__main__":
         sys.exit(1)
 
     parser = optparse.OptionParser()
+
     parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
     parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
                       help="Installer release")
+
     parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
-    parser.add_option("-n", "--noprompt", action="store_true", default=False,
+
+    parser.add_option("-n", "--no-prompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
+
+    parser.add_option("--no-iptables", action="store_true", default=False,
+                      help="Disable iptables management")
+    parser.add_option("--no-ntp", action="store_true", default=False,
+                      help="Disable ntp management")
+
     parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
     options, args = parser.parse_args()
