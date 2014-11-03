@@ -328,12 +328,17 @@ class InstallWrapper(object):
         """
         Generate the run list based on the options that were passed to this script.
         """
-        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
+        run_list = [ "recipe[apt]", "recipe[build-essential]"]
         if not self.options.no_ntp:
-            run_list.append("recipe[ntp::default]")
-        run_list.append("recipe[scalr-core::default]")
+            run_list.append("recipe[ntp]")
+        if True:
+            run_list.append("recipe[timezone-ii]")
+        if self.options.with_mysql:
+            run_list.append("recipe[scalr-core::group_mysql]")
+        if self.options.with_default:
+            run_list.append("recipe[scalr-core::group_default]")
         if not self.options.no_iptables:
-            run_list.append("recipe[iptables-ng::default]")
+            run_list.append("recipe[iptables-ng]")
         return run_list
 
     def _generate_chef_solo_config(self):
@@ -432,6 +437,10 @@ class InstallWrapper(object):
 
         output["scalr"]["database"] = {}
         output["scalr"]["database"]["password"] = tokgen.make_password(30)
+
+        if not options.with_mysql:
+            output["scalr"]["database"]["host"] = ui.prompt("MySQL host?")
+            output["scalr"]["database"]["port"] = ui.prompt("MySQL port?")
 
         output["scalr"]["package"] = {
             "revision": revision,
@@ -679,6 +688,12 @@ if __name__ == "__main__":
                       help="Disable iptables management")
     parser.add_option("--no-ntp", action="store_true", default=False,
                       help="Disable ntp management")
+
+    parser.add_option("--with-default", action="store_true", default=True,
+                      help="Base Scalr installation")
+    parser.add_option("--with-mysql", action="store_true", default=True,
+                      help="Do not install MySQL (requires MySQL creds)")
+
 
     parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
