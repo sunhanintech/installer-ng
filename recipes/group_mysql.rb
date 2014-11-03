@@ -1,6 +1,13 @@
 # (Optional) MySQL installation
 include_recipe "mysql::server"
 
+root_conn_info = {
+  :username => "root",
+  :password => node['mysql']['server_root_password'],
+  :host => node[:scalr][:database][:host],
+  :port => node[:scalr][:database][:port],
+}
+
 execute "Load MySQL TZ Info" do
   command "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -h'#{root_conn_info[:host]}' -u'#{root_conn_info[:username]}' -p'#{root_conn_info[:password]}' mysql"
 end
