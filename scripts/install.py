@@ -333,10 +333,10 @@ class InstallWrapper(object):
             run_list.append("recipe[ntp]")
         if True:
             run_list.append("recipe[timezone-ii]")
-        if self.options.with_mysql:
+        if self.options.group_mysql:
             run_list.append("recipe[scalr-core::group_mysql]")
-        if self.options.with_default:
-            run_list.append("recipe[scalr-core::group_default]")
+        if self.options.group_base:
+            run_list.append("recipe[scalr-core::group_base]")
         if not self.options.no_iptables:
             run_list.append("recipe[iptables-ng]")
         return run_list
@@ -689,10 +689,13 @@ if __name__ == "__main__":
     parser.add_option("--no-ntp", action="store_true", default=False,
                       help="Disable ntp management")
 
-    parser.add_option("--with-default", action="store_true", default=True,
-                      help="Base Scalr installation")
-    parser.add_option("--with-mysql", action="store_true", default=True,
-                      help="Do not install MySQL (requires MySQL creds)")
+    parser.add_option("--with-base", action="store_true", dest='group_base')
+    parser.add_option("--without-base", action="store_false", dest='group_base')
+    parser.set_defaults(group_base=True)
+
+    parser.add_option("--with-mysql", action="store_true", dest='group_mysql')
+    parser.add_option("--without-mysql", action="store_false", dest='group_mysql')
+    parser.set_defaults(group_mysql=True)
 
 
     parser.add_option("-v", "--verbose", action="store_true", default=False,
