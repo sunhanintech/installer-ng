@@ -1,4 +1,3 @@
-include_recipe "mysql::server"
 include_recipe "database::mysql"
 
 root_conn_info = {
@@ -84,16 +83,3 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
     cwd "#{node[:scalr][:core][:location]}/app/bin"
   end
 end
-
-execute "Load MySQL TZ Info" do
-  command "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -h'#{root_conn_info[:host]}' -u'#{root_conn_info[:username]}' -p'#{root_conn_info[:password]}' mysql"
-end
-
-template "/etc/mysql/conf.d/tz.cnf" do
-  source "mysql-tz.cnf.erb"
-  mode 0755
-  owner "root"
-  group "root"
-  notifies :restart, "mysql_service[#{node['mysql']['service_name']}]", :delayed
-end
-
