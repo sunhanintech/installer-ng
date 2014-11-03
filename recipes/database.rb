@@ -1,39 +1,5 @@
 include_recipe "database::mysql"
 
-root_conn_info = {
-  :username => "root",
-  :password => node['mysql']['server_root_password'],
-  :host => node[:scalr][:database][:host],
-  :port => node[:scalr][:database][:port],
-}
-
-mysql_database_user node[:scalr][:database][:username] do
-  connection root_conn_info
-
-  password node[:scalr][:database][:password]
-  host node[:scalr][:database][:client_host]
-
-  action [:create]
-end
-
-scalr_databases = [node[:scalr][:database][:scalr_dbname]]
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
-  scalr_databases.push(node[:scalr][:database][:analytics_dbname])
-end
-
-scalr_databases.each do |scalr_database|
-  mysql_database scalr_database do
-    connection root_conn_info
-    action :create
-  end
-
-  mysql_database_user node[:scalr][:database][:username] do
-    connection root_conn_info
-    database_name scalr_database
-    action [:grant]
-  end
-end
-
 #TODO: PORT
 
 base_conn_params = "-h'#{node[:scalr][:database][:host]}' -u'#{node[:scalr][:database][:username]}' -p'#{node[:scalr][:database][:password]}'"
