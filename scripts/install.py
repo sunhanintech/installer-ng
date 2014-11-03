@@ -436,11 +436,14 @@ class InstallWrapper(object):
         output["scalr"]["admin"]["password"] = tokgen.make_password(15)
 
         output["scalr"]["database"] = {}
-        output["scalr"]["database"]["password"] = tokgen.make_password(30)
 
-        if not options.group_mysql:
+        if options.group_mysql:
+            output["scalr"]["database"]["password"] = tokgen.make_password(30)
+        else:
             output["scalr"]["database"]["host"] = ui.prompt("MySQL host?")
             output["scalr"]["database"]["port"] = ui.prompt("MySQL port?")
+            output["scalr"]["database"]["username"] = ui.prompt("MySQL username?")
+            output["scalr"]["database"]["password"] = ui.prompt("MySQL password?")
 
         output["scalr"]["package"] = {
             "revision": revision,
