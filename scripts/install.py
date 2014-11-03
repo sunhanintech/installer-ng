@@ -438,7 +438,7 @@ class InstallWrapper(object):
         output["scalr"]["database"] = {}
         output["scalr"]["database"]["password"] = tokgen.make_password(30)
 
-        if not options.with_mysql:
+        if not options.group_mysql:
             output["scalr"]["database"]["host"] = ui.prompt("MySQL host?")
             output["scalr"]["database"]["port"] = ui.prompt("MySQL port?")
 
