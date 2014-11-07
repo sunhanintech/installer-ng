@@ -344,15 +344,13 @@ class InstallWrapper(object):
         # FIXME
         options, ui, tokgen = self.options, self.ui, self.tokgen
 
-        output = {}
+        output = {"scalr": {}}
 
         #################################
         # Options for the Scalr install #
         #################################
 
         if options.group_app:
-            output["scalr"] = {}
-
             # Deployment target options
 
             if not options.advanced:
@@ -442,17 +440,16 @@ class InstallWrapper(object):
                 "password": tokgen.make_password(15)
             }
 
-            # Are we installing MySQL? If not, then we need configuation for it!
+            # If MySQL is not going to be installed here, then we need
+            # to get configuration from the user.
 
-            output["scalr"]["database"] = {}
-
-            if options.group_mysql:
-                output["scalr"]["database"]["password"] = tokgen.make_password(30)
-            else:
-                output["scalr"]["database"]["host"] = ui.prompt("MySQL host?")
-                output["scalr"]["database"]["port"] = ui.prompt("MySQL port?")
-                output["scalr"]["database"]["username"] = ui.prompt("MySQL username?")
-                output["scalr"]["database"]["password"] = ui.prompt("MySQL password?")
+            if not options.group_mysql:
+                output["scalr"]["database"] = {
+                    "host": ui.prompt("MySQL host?"),
+                    "port": ui.prompt("MySQL port?"),
+                    "username": ui.prompt("MySQL username?"),
+                    "password": ui.prompt("MySQL password?"),
+                }
 
         #################################
         # Options for the MySQL install #
@@ -471,6 +468,19 @@ class InstallWrapper(object):
                 else:
                     pw = tokgen.make_password(30)
                 output["mysql"][mysql_password] = pw
+
+            # The MySQL group takes care of setting up databases and users,
+            # so we need to configure them here, even if they are a "Scalr"
+            # attribute. We do it that way so that we don't have to allow
+            # remote root.
+
+            if options.group_mysql:
+                output["scalr"]["database"] = {
+                    "host": "127.0.0.1",
+                    "port": "3306",
+                    "username": "scalr",
+                    "password": tokgen.make_password(30)
+                }
 
         ####################################
         # Options for the Iptables install #
