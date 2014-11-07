@@ -4,6 +4,7 @@ from __future__ import print_function
 import argparse
 
 from scalr_installer.library.configure.target import ConfigureTarget
+from scalr_installer.library.install.target import InstallTarget
 from scalr_installer.rnd import RandomTokenGenerator
 
 
@@ -17,8 +18,7 @@ def _main(argv, ui, tokgen):
 
     # TODO - Add config file
 
-    # TODO - Add InstallTarget
-    for target in (ConfigureTarget(), ):
+    for target in (ConfigureTarget(), InstallTarget()):
         parser = subparsers.add_parser(target.name, help=target.help)
         parser.set_defaults(target=target)
         target.register(parser)
