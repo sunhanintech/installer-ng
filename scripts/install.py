@@ -496,7 +496,7 @@ class InstallWrapper(object):
                         "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
                     },
                 })
-            options["iptables-ng"] = {"rules": {"filter": {"INPUT": input_rules}}}
+            output["iptables-ng"] = {"rules": {"filter": {"INPUT": input_rules}}}
 
         ###########################
         # Extra / Generic Options #
@@ -727,7 +727,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
     parser.add_argument("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
-                      help="Installer release")
+                      help="Installer release (e.g. {0})".format(DEFAULT_COOKBOOK_RELEASE))
 
     parser.add_argument("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
