@@ -44,7 +44,7 @@ class ConfigureTarget(Target):
     def __call__(self, args, ui, tokgen):
         attributes = self.make_attributes(args, ui, tokgen)
         runlist = self.make_runlist(args)
-        output = merge(dict(attributes), {"runlist": runlist})
+        output = merge(dict(attributes), {"run_list": runlist})
 
         # TODO - Mode
         try:
