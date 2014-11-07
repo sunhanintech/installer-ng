@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "Chef: 11.10.4"
