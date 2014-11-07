@@ -49,7 +49,7 @@ class ConfigureTarget(Target):
         # TODO - Mode
         try:
             os.makedirs(os.path.dirname(args.configuration))
-        except IOError:
+        except OSError:
             pass
         else:
             logger.warning("Directory did not exist for `{0}`, created it".format(args.configuration))
