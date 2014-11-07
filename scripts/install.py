@@ -455,12 +455,13 @@ class InstallWrapper(object):
             # to get configuration from the user.
 
             if not options.group_mysql:
-                output["scalr"]["database"] = {
-                    "host": ui.prompt("MySQL host?"),
-                    "port": ui.prompt_integer("MySQL port?"),
-                    "username": ui.prompt("MySQL username?"),
-                    "password": ui.prompt("MySQL password?"),
-                }
+                # Create a list first here, for ordering
+                output["scalr"]["database"] = dict([
+                    ("host", ui.prompt("MySQL host?")),
+                    ("port", ui.prompt_integer("MySQL port?")),
+                    ("username", ui.prompt("MySQL username?")),
+                    ("password", ui.prompt("MySQL password?")),
+                ])
 
         #################################
         # Options for the MySQL install #
