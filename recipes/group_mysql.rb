@@ -33,10 +33,13 @@ mysql_database_user node[:scalr][:database][:username] do
   action [:create]
 end
 
-scalr_databases = [node[:scalr][:database][:scalr_dbname]]
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
-  scalr_databases.push(node[:scalr][:database][:analytics_dbname])
-end
+# The analytics database is not useful on an old Scalr version, but that's
+# fine -- we create it anyway so that we don't need to know which version
+# is being deployed to support MySQL
+scalr_databases = [
+  node[:scalr][:database][:scalr_dbname],
+  node[:scalr][:database][:analytics_dbname],
+]
 
 scalr_databases.each do |scalr_database|
   mysql_database scalr_database do
