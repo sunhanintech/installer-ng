@@ -33,6 +33,10 @@ def main():
     import os
     from scalr_installer.ui.engine import UserInput
 
+    # TODO
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+
     ui = UserInput(raw_input if sys.version_info < (3, 0, 0) else input, print)
     tokgen = RandomTokenGenerator(os.urandom)
     _main(sys.argv[1:], ui, tokgen)
