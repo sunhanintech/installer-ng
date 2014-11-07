@@ -478,7 +478,7 @@ class InstallWrapper(object):
 
         if options.group_iptables:
             input_rules = {}
-            if option.group_mysql:
+            if options.group_mysql:
                 input_rules.update({
                     "scalr-mysql": {
                         # TODO _ Variabilize
@@ -713,16 +713,14 @@ if __name__ == "__main__":
                 cmd_line = " ".join([pkg_installer] + args + "argparse")
                 print("Install it with: `{0}`".format(cmd_line))
                 break
-        else:
-            print("Please install it")
-        sys.exit(1)
+        raise RuntimeError("Please resolve the issue and try again.")
 
     # This parser checks the default for groups
     pre_parser = argparse.ArgumentParser(add_help=False)
     pre_parser.add_argument("--without-all", default=True, action="store_false",
-                            dest="with_all")
+                            dest="with_all", help="Disable all groups")
 
-    pre_options, other_args = pre_parser.parse_args()
+    pre_options, other_args = pre_parser.parse_known_args()
 
     parser = argparse.ArgumentParser(parents=[pre_parser])
 
@@ -738,9 +736,6 @@ if __name__ == "__main__":
                       help="Do not prompt for notifications.")
 
     # Options
-    parser.add_argument("--only", action="store_strue", default=False,
-                      help="Only ")
-
     groups = ("iptables", "ntp", "app", "mysql")
     for group in groups:
         arg_group = parser.add_mutually_exclusive_group()
