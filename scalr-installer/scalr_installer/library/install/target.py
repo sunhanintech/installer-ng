@@ -88,7 +88,7 @@ class InstallTarget(Target):
 
     def register(self, parser):
         # TODO - This needs to be indexed somewhere!
-        parser.add_argument("-r", "--release", help="Installer cookbook release (e.g. 6.5.0)")
+        parser.add_argument("-r", "--release", required=True, help="Installer cookbook release (e.g. 6.5.0)")
         parser.add_argument("-v", "--verbose", help="Enable debug log output from Chef")
 
     def __call__(self, args, ui, tokgen):
