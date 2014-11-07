@@ -241,7 +241,7 @@ class UserInput(object):
                 raise InvalidInput("{0} is not a valid IP address".format(sym))
 
             if len(r.split(".")) != 4:
-                # Technically speaking, this would be a vlaid IPV4 address,
+                # Technically speaking, this would be a valid IPV4 address,
                 # but it's most likely an error.
                 raise InvalidInput("Please enter a full address")
 
@@ -258,12 +258,13 @@ class UserInput(object):
 
         return self.prompt(q, error_msg, coerce_fn)
 
-    def prompt_integer(self, q):
+    def prompt_integer(self, q, error_msg):
         def coerce_fn(r):
             try:
                 return int(r)
             except ValueError:
                 raise InvalidInput("{0} is not an integer".format(format_symbol(r)))
+        return self.prompt(q, error_msg, coerce_fn)
 
 
 class RandomTokenGenerator(object):
@@ -458,7 +459,7 @@ class InstallWrapper(object):
                 # Create a list first here, for ordering
                 output["scalr"]["database"] = dict([
                     ("host", ui.prompt("MySQL host?")),
-                    ("port", ui.prompt_integer("MySQL port?")),
+                    ("port", ui.prompt_integer("MySQL port?", "Not a valid port")),
                     ("username", ui.prompt("MySQL username?")),
                     ("password", ui.prompt("MySQL password?")),
                 ])
