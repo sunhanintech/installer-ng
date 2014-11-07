@@ -69,6 +69,8 @@ def create_solo_rb(args, work_dir, http_download):
         json_attribs=args.configuration,
     )
 
+    logger.debug("solo.rb: %s", contents)
+
     with open(os.path.join(work_dir, constant.SOLO_RB_FILE), "w") as f:
         f.write(contents.encode("utf-8"))
 
@@ -93,7 +95,10 @@ class InstallTarget(Target):
         path = os.pathsep.join([constant.CHEF_SOLO_PATHS, os.environ["PATH"]])
         http_download = http.download
         with python.path(path):
+            logger.debug("PATH is: %s", path)
             with python.umask(constant.INSTALLER_UMASK):
                 with python.tmp_dir() as work_dir:
+                    logger.debug("Work dir is: %s", work_dir)
                     for step in [check_or_install_chef, create_solo_rb, install_scalr]:
+                        logger.info("Now performing installation step: %s", step.__name__)
                         step(args, work_dir, http_download)
