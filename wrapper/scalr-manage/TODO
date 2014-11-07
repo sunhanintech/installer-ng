@@ -1,0 +1,16 @@
+# python-requests NOT AVAILABLE ON PRECISE. Need to put it in my repo, too.
+# Same for python-jinja2
+# Not the right name: https://launchpad.net/~chris-lea/+archive/ubuntu/python-requests
+
+
+Build packages using Docker?
+RPM can be built locally
+.deb should be built through a ppa
+
+# python-setuptools-git doesn't need to be in the build-depends, right?
+
+# Need to figure out how we make setuptools_git be installed when building a RPM
+#
+# Multiple suites?
+# Arch?
+#
