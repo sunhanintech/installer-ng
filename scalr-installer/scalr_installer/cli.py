@@ -19,9 +19,9 @@ def _main(argv, ui, tokgen):
     # TODO - Add config file
 
     for target in (ConfigureTarget(), InstallTarget()):
-        parser = subparsers.add_parser(target.name, help=target.help)
-        parser.set_defaults(target=target)
-        target.register(parser)
+        subparser = subparsers.add_parser(target.name, help=target.help)
+        subparser.set_defaults(target=target)
+        target.register(subparser)
 
     args = parser.parse_args(argv)
 
