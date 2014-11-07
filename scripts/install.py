@@ -258,6 +258,13 @@ class UserInput(object):
 
         return self.prompt(q, error_msg, coerce_fn)
 
+    def prompt_integer(self, q):
+        def coerce_fn(r):
+            try:
+                return int(r)
+            except ValueError:
+                raise InvalidInput("{0} is not an integer".format(format_symbol(r)))
+
 
 class RandomTokenGenerator(object):
     def __init__(self, random_source):
@@ -450,7 +457,7 @@ class InstallWrapper(object):
             if not options.group_mysql:
                 output["scalr"]["database"] = {
                     "host": ui.prompt("MySQL host?"),
-                    "port": ui.prompt("MySQL port?"),
+                    "port": ui.prompt_integer("MySQL port?"),
                     "username": ui.prompt("MySQL username?"),
                     "password": ui.prompt("MySQL password?"),
                 }
