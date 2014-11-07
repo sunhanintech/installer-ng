@@ -241,7 +241,7 @@ class UserInput(object):
                 raise InvalidInput("{0} is not a valid IP address".format(sym))
 
             if len(r.split(".")) != 4:
-                # Technically speaking, this would be a vlaid IPV4 address,
+                # Technically speaking, this would be a valid IPV4 address,
                 # but it's most likely an error.
                 raise InvalidInput("Please enter a full address")
 
@@ -256,6 +256,14 @@ class UserInput(object):
                                    "address".format(format_symbol(r)))
             return r
 
+        return self.prompt(q, error_msg, coerce_fn)
+
+    def prompt_integer(self, q, error_msg):
+        def coerce_fn(r):
+            try:
+                return int(r)
+            except ValueError:
+                raise InvalidInput("{0} is not an integer".format(format_symbol(r)))
         return self.prompt(q, error_msg, coerce_fn)
 
 
@@ -448,12 +456,13 @@ class InstallWrapper(object):
             # to get configuration from the user.
 
             if not options.group_mysql:
-                output["scalr"]["database"] = {
-                    "host": ui.prompt("MySQL host?"),
-                    "port": ui.prompt("MySQL port?"),
-                    "username": ui.prompt("MySQL username?"),
-                    "password": ui.prompt("MySQL password?"),
-                }
+                # Create a list first here, for ordering
+                output["scalr"]["database"] = dict([
+                    ("host", ui.prompt("MySQL host?")),
+                    ("port", ui.prompt_integer("MySQL port?", "Not a valid port")),
+                    ("username", ui.prompt("MySQL username?")),
+                    ("password", ui.prompt("MySQL password?")),
+                ])
 
         #################################
         # Options for the MySQL install #
@@ -481,7 +490,7 @@ class InstallWrapper(object):
             if options.group_mysql:
                 output["scalr"]["database"] = {
                     "host": "127.0.0.1",
-                    "port": "3306",
+                    "port": 3306,
                     "username": "scalr",
                     "password": tokgen.make_password(30)
                 }
