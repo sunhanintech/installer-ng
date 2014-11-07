@@ -293,7 +293,10 @@ class InstallWrapper(object):
         self.solo_rb_path = os.path.join(self.work_dir, "solo.rb")
 
         # We don't change that file across runs.
-        self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
+        if options.attributes is None:
+            self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
+        else:
+            self.solo_json_path = options.attributes
 
         os.makedirs(self.cookbook_path)  # This should not exist yet
 
@@ -746,6 +749,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-n", "--no-prompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
+
+    parser.add_argument("--attributes", default=None, help="Attributes file")
 
     # Options
     groups = ("iptables", "ntp", "app", "mysql")
