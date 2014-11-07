@@ -60,12 +60,12 @@ def create_solo_rb(args, work_dir, http_download):
     contents = """
     file_cache_path "{file_cache_path}"
     recipe_url      "{recipe_url}"
-    log_level       "{log_level}"
+    log_level       {log_level}
     json_attribs    "{json_attribs}"
     """.format(
         file_cache_path=os.path.join(work_dir, constant.CACHE_DIR),
         recipe_url=constant.COOKBOOK_PKG_URL_TPL.format(args.release),
-        log_level="debug" if args.verbose else "info",
+        log_level=":debug" if args.verbose else ":info",
         json_attribs=args.configuration,
     )
 
