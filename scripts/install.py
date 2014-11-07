@@ -718,13 +718,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # This parser checks the default for groups
-    pre_parser = argparse.ArgumentParser()
+    pre_parser = argparse.ArgumentParser(add_help=False)
     pre_parser.add_argument("--without-all", default=True, action="store_false",
                             dest="with_all")
 
     pre_options, other_args = pre_parser.parse_args()
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(parents=[pre_parser])
 
     parser.add_argument("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
