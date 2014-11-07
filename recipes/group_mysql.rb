@@ -1,6 +1,10 @@
-# (Optional) MySQL installation
+# Install MySQL
 include_recipe "mysql::server"
 
+# Install MySQL Gem
+include_recipe "database::mysql"
+
+# Configure MySQL
 root_conn_info = {
   :username => "root",
   :password => node['mysql']['server_root_password'],
