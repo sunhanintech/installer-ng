@@ -144,6 +144,6 @@ class FullTestCase(unittest.TestCase):
         with open(self.solo_json_path) as f:
             attrs = json.load(f)
         self.assertGreaterEqual(len(attrs), 2)
-        self.assertTrue("runlist" in attrs)
+        self.assertTrue("run_list" in attrs)
         self.assertTrue("scalr" in attrs)
         self.assertTrue("mysql" in attrs)
