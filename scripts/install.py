@@ -122,6 +122,7 @@ MYSQL_INSTALL_DONE_MSG_TPL = """
 Use these credentials to access Scalr's MySQL database.
 
 root : `{root_mysql_password}`
+scalr: `{scalr_mysql_password}`
 """
 
 
@@ -651,6 +652,7 @@ class InstallWrapper(object):
         if self.options.group_mysql:
             self.write_out(MYSQL_INSTALL_DONE_MSG_TPL.format(
                 root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
+                scalr_mysql_password=self.solo_json_config["scalr"]["database"]["password"]
             ), nl=True)
 
         if self.options.group_app:
