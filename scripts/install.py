@@ -477,7 +477,7 @@ class InstallWrapper(object):
             if options.group_mysql:
                 output["scalr"]["database"] = {
                     "host": "127.0.0.1",
-                    "port": "3306",
+                    "port": 3306,
                     "username": "scalr",
                     "password": tokgen.make_password(30)
                 }
