@@ -1,0 +1,20 @@
+Build packages using Docker?
+RPM can be built locally
+.deb should be built through a ppa
+
+# Need devscripts
+# Need debhelper
+# Need python-stdeb - NO ->> stdeb from packages doesn't do it because it's too old (no changes)
+# Need to sign the archive
+
+# python-setuptools-git doesn't need to be in the build-depends, right?
+
+# Need to figure out how we make setuptools_git be installed when building a RPM
+#
+# Multiple suites?
+# Arch?
+#
+
+multiple orig.tar.gz --> fix
+copy ? hash might mismatch
+Use different numbers!

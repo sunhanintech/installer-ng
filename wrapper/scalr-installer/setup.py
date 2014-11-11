@@ -13,7 +13,7 @@ with open(os.path.join(here, PROJECT_DIR, "version.py")) as f:
     code = compile(f.read(), "version.py", "exec")
     exec(code)
 
-dependencies = ["requests"]
+dependencies = ["requests", "setuptools"]
 if sys.version_info < (2, 7, 0):
     dependencies.append("argparse")
 
@@ -33,7 +33,7 @@ setuptools.setup(
         ]
     },
     install_requires=dependencies,
-    setup_requires=["nose", "setuptools_git"],
+    #setup_requires=["nose", "setuptools_git"],
     tests_require=["nose", "tox"],
     url="https://github.com/scalr/installer-ng"
 )

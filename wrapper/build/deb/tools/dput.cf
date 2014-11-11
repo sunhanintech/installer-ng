@@ -1,0 +1,6 @@
+[scalr-installer]
+fqdn = ppa.launchpad.net
+method = sftp
+incoming = ~torozco/devel-scalr-manage/ubuntu/
+login = torozco
+allow_unsigned_uploads = 0
