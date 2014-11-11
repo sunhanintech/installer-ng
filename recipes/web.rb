@@ -4,6 +4,15 @@ node['apache']['extra_modules'].each do |mod|
   include_recipe "apache2::mod_#{mod}"
 end
 
+# Disable a bunch of modules we don't need. Specifically, we don't want
+# Apache's fancy indexing and icons
+
+%{alias autoindex}.each do |mod|
+  apache_module mod do
+    enable false
+  end
+end
+
 web_app 'scalr' do
   template 'scalr-vhost.conf.erb'
   notifies :restart, "service[apache2]", :delayed
