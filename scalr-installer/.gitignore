@@ -135,3 +135,5 @@ Session.vim
 .netrwhist
 *~
 
+# coverage
+cover
