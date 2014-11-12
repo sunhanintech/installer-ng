@@ -10,8 +10,9 @@ RUN apt-get update && \
 RUN pip install stdeb setuptools_git
 
 ENV TOOLS_DIR /build/tools
+ENV DIST_DIR /build/dist
 
-CMD "${TOOLS_DIR}/deb_build.sh"
+CMD "${TOOLS_DIR}/deb_wrap.sh"
 
 # We actually add the scalr-installer pkg dir into the image, because accessing it from a
 # volume is too slow when using boot2docker (which is the very purpose of this image)
