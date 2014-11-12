@@ -2,15 +2,13 @@
 set -o errexit
 set -o nounset
 
-# Docker doesn't make our lives easy with SSH, because UIDs don't match
-# To work around this, we only publish the key to the container, no SSH config file,
-# or anything else.
-: ${SSH_KEY:="id_rsa"}
-
-
 REL_HERE=$(dirname "${BASH_SOURCE}")
 HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
 PKG_DIR="$(dirname $HERE)/scalr-manage"
+
+# boot2docker default values
+: ${BUILD_UID:="1000"}
+: ${BUILD_GID:="50"}
 
 # First, build the package. This is somewhat hackish, but it's so we can give it to
 # Docker easily. We have to do this because directly sharing the package volume is
@@ -48,7 +46,11 @@ for builderDir in *; do
 
     echo "Building $img"
     docker build -t $img "$builderDir"
-    docker run -it -v ~/.gnupg:/root/.gnupg -v ~/.ssh/$SSH_KEY:/root/.ssh/$SSH_KEY -e PKG_DIR=/build/scalr-manage-$PKG_VERSION "$img"
+    docker run -it \
+      -v ~/.gnupg:/home/$(id -un)/.gnupg -v ~/.ssh:/home/$(id -un)/.ssh:ro \
+      -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
+      -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
+      "$img"
   fi
 done
 
