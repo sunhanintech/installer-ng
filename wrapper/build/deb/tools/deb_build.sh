@@ -3,14 +3,10 @@ set -o errexit
 set -o nounset
 
 : ${DEB_VERSION:="1"}
-: ${DIST_DIR:="/dist"}
 
 # Load agents
 eval "$(ssh-agent -s)"
 eval "$(gpg-agent --daemon --sh)"
-
-# Load all SSH Keys
-ssh-add ~/.ssh/*
 
 # Start the build
 cd $PKG_DIR
@@ -23,7 +19,7 @@ orig=${DIST_DIR}/scalr-installer-${PKG_VERSION}.tar.gz
 
 # Extract the version
 
-for release in precise raring trusty; do
+for release in precise trusty utopic; do
   full_version="$DEB_VERSION~$release"
   python setup.py sdist_dsc --use-premade-distfile=$orig --debian-version=$full_version --suite=$release --dist-dir=$DIST_DIR
 
