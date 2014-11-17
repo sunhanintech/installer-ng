@@ -6,6 +6,7 @@ import stat
 import subprocess
 import logging
 
+from scalr_manage.version import __version__
 from scalr_manage.library.base import Target
 from scalr_manage.library.install import constant
 from scalr_manage.library.install.constant import CHEF_SOLO_BIN
@@ -88,7 +89,7 @@ class InstallTarget(Target):
 
     def register(self, parser):
         # TODO - This needs to be indexed somewhere!
-        parser.add_argument("-r", "--release", required=True, help="Installer cookbook release (e.g. 6.5.0)")
+        parser.add_argument("-r", "--release", default=__version__, help="Installer cookbook release (e.g. 6.5.0)")
         parser.add_argument("-v", "--verbose", help="Enable debug log output from Chef")
 
     def __call__(self, args, ui, tokgen):
