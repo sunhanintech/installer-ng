@@ -16,8 +16,18 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
+echo "Releasing $PKG_VERSION"
 # While building the package, upload it to PyPi too.
 python setup.py sdist upload
+
+# Before building the archives, check whether we are dealing with a release
+# or a pre-release
+if echo "$PKG_VERSION" | grep --extended-regexp --silent '^(\d+\.){2}\d+$'; then
+  echo "$PKG_VERSION looks like a release. Building binary packages."
+else
+  echo "$PKG_VERSION looks like a pre-release. Not building binary packages."
+  exit 0
+fi
 
 # Now, let's inject the archive into all our build contexts!
 PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${PKG_VERSION}.tar.gz"
