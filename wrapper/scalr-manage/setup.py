@@ -81,6 +81,6 @@ setuptools.setup(
         ]
     },
     install_requires=dependencies,
-    tests_require=["nose", "tox", "testfixtures"],
+    tests_require=["nose", "tox"],
     url="https://github.com/scalr/installer-ng"
 )
