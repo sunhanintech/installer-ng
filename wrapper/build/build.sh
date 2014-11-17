@@ -16,7 +16,8 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
-python setup.py sdist
+# While building the package, upload it to PyPi too.
+python setup.py sdist upload
 
 # Now, let's inject the archive into all our build contexts!
 PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${PKG_VERSION}.tar.gz"
