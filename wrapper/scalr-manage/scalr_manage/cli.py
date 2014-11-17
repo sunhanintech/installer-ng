@@ -5,6 +5,7 @@ import argparse
 
 from scalr_manage.library.configure.target import ConfigureTarget
 from scalr_manage.library.install.target import InstallTarget
+from scalr_manage.library.document.target import DocumentTarget
 
 
 def _main(argv, ui, tokgen):
@@ -15,7 +16,7 @@ def _main(argv, ui, tokgen):
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    for target in (ConfigureTarget(), InstallTarget()):
+    for target in (ConfigureTarget(), InstallTarget(), DocumentTarget()):
         subparser = subparsers.add_parser(target.name, help=target.help)
         subparser.set_defaults(target=target)
         target.register(subparser)
