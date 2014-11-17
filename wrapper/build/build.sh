@@ -14,11 +14,6 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # Docker easily. We have to do this because directly sharing the package volume is
 # a performance disaster when using e.g. boot2docker, which is exactly why we have
 # this script. It's slow because we deal with plenty of small files.
-
-python -c "import setuptools_git" || {
-  echo "ERROR: setuptools_git is required for this build to work! Install it."
-  exit 1
-}
 cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
 echo "Releasing $PKG_VERSION"
