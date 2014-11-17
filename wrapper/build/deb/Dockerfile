@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y python-pip
 
 # Packaging Dependency (we want a really up to date version)
-RUN pip install stdeb setuptools_git
+RUN pip install stdeb
 
 # Build dependencies
 RUN apt-get update && \
