@@ -24,7 +24,7 @@ install Scalr. A cloud instance is a great choice.
 Log in to the server you'd like to install Scalr on, and run the following
 command, preferably as root.
 
-    curl -sfSLO https://raw.githubusercontent.com/Scalr/installer-ng/master/scripts/install.py
+    curl -sfSLO https://raw.githubusercontent.com/Scalr/installer-ng/master/dist/install.sh
 
 You might want to double-check that the `install.py` file that was downloaded
 does match the installer script as it is presented here.
@@ -33,7 +33,7 @@ does match the installer script as it is presented here.
 
 Run the following, as root.
 
-    python install.py
+    bash install.sh
 
 If you'd like to install a specific Scalr version (e.g. a release candidate),
 use `python install.py --advanced`, and follow the instructions provided
