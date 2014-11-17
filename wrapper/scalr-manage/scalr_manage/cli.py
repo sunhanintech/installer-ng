@@ -34,7 +34,7 @@ def main():
 
     # TODO
     import logging
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 
     ui = UserInput(raw_input if sys.version_info < (3, 0, 0) else input, print)
     tokgen = RandomTokenGenerator(os.urandom)
