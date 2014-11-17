@@ -4,7 +4,7 @@ set -o nounset
 
 REL_HERE=$(dirname "${BASH_SOURCE}")
 HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
-PKG_DIR="$(dirname $HERE)/scalr-installer"
+PKG_DIR="$(dirname $HERE)/scalr-manage"
 
 # boot2docker default values
 : ${BUILD_UID:="1000"}
@@ -20,14 +20,14 @@ python -c "import setuptools_git" || {
   exit 1
 }
 cd $PKG_DIR
-PKG_VERSION=$(python -c "exec(compile(open('scalr_installer/version.py').read(), 'version.py', 'exec')); print __version__")
+PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
 python setup.py sdist
 
 # Now, let's inject the archive into all our build contexts!
-PKG_ARCHIVE="$PKG_DIR/dist/scalr-installer-${PKG_VERSION}.tar.gz"
+PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${PKG_VERSION}.tar.gz"
 
 # Now, build the "binary" packages, in each builder we have
-FACTORY_BASE_NAME=installer/factory
+FACTORY_BASE_NAME=scalr_manage/factory
 
 delete_files=""
 cleanup_on_exit () {
@@ -54,7 +54,7 @@ for builderDir in *; do
     docker run -it \
       -v ~/.gnupg:/home/$(id -un)/.gnupg -v ~/.ssh:/home/$(id -un)/.ssh:ro \
       -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-      -e PKG_DIR=/build/scalr-installer-$PKG_VERSION \
+      -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
       "$img"
   fi
 done

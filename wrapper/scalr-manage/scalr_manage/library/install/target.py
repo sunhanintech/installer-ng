@@ -6,10 +6,10 @@ import stat
 import subprocess
 import logging
 
-from scalr_installer.library.base import Target
-from scalr_installer.library.install import constant
-from scalr_installer.library.install.constant import CHEF_SOLO_BIN
-from scalr_installer.library.install.util import python, http
+from scalr_manage.library.base import Target
+from scalr_manage.library.install import constant
+from scalr_manage.library.install.constant import CHEF_SOLO_BIN
+from scalr_manage.library.install.util import python, http
 
 
 logger = logging.getLogger(__name__)

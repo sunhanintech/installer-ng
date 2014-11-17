@@ -2,9 +2,9 @@
 import os
 import unittest
 
-from scalr_installer.ui.engine import UserInput
-from scalr_installer.ui.exception import InvalidInput
-from scalr_installer.ui.test.util import MockInput, MockOutput
+from scalr_manage.ui.engine import UserInput
+from scalr_manage.ui.exception import InvalidInput
+from scalr_manage.ui.test.util import MockInput, MockOutput
 
 
 class IOTestCase(unittest.TestCase):

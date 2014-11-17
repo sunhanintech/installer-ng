@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 
 import socket
 
-from scalr_installer.ui.constant import OPENSSL_START_KEY, OPENSSL_END_KEY, OPENSSL_PROC_TYPE, OPENSSL_ENCRYPTED, \
+from scalr_manage.ui.constant import OPENSSL_START_KEY, OPENSSL_END_KEY, OPENSSL_PROC_TYPE, OPENSSL_ENCRYPTED, \
     EMAIL_RE
-from scalr_installer.ui.exception import InvalidInput
-from scalr_installer.ui.util import format_symbol
+from scalr_manage.ui.exception import InvalidInput
+from scalr_manage.ui.util import format_symbol
 
 
 class UserInput(object):

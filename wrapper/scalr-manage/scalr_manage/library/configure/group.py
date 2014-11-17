@@ -7,8 +7,8 @@ import logging
 import urlparse
 from distutils.spawn import find_executable
 
-from scalr_installer.library.configure import constant
-from scalr_installer.version import __version__
+from scalr_manage.library.configure import constant
+from scalr_manage.version import __version__
 
 
 logger = logging.getLogger(__name__)
@@ -190,6 +190,7 @@ class AppGroup(Group):
             local_ip = ""
 
         output["scalr"]["endpoint"] = {
+            "scheme": "http",  # TODO
             "host": host,
             "host_ip": host_ip,
             "local_ip": local_ip,
