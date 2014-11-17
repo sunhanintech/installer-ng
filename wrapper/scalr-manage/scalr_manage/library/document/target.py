@@ -25,5 +25,5 @@ class DocumentTarget(Target):
         last_line = None
         for line in tpl.render(**{"attrs": attrs, "args": args}).split("\n"):
             if line != last_line:
-                logger.info(line)
+                ui.print_fn(line)
             last_line = line
