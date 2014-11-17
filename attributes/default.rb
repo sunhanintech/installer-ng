@@ -102,7 +102,7 @@ default[:scalr][:cron][:crons] = [
   {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
   {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
   {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
-  {:hour => '*/5',  :minute => '0',    :ng => true,  :name => 'RotateLogs'},
+  {:hour => '*/5',  :minute => '0',    :ng => false,  :name => 'RotateLogs'},
 ]
 
 # These new cron jobs were intoduced in 5.0
