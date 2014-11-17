@@ -29,7 +29,7 @@ setuptools.setup(
     description="Management CLI for the Scalr installer",
     entry_points={
         "console_scripts": [
-            "scalr-manage = scalr_Nnstaller.cli:main"
+            "scalr-manage = scalr_manage.cli:main"
         ]
     },
     install_requires=dependencies,
