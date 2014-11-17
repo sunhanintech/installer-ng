@@ -61,9 +61,11 @@ sed --version | grep --silent "GNU sed" || SED_OPTS="$SED_OPTS ''"
 make_local_release () {
   metadata_file="metadata.rb"
   install_file="scripts/install.py"
+  wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
 
   sed $SED_OPTS "s/(version[ ]+)'[0-9.]*'/\1'$final_release'/g" $metadata_file
   sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
+  sed $SED_OPTS "s/(__version__[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
 
   git checkout -b $RELEASE_BRANCH
   git add $metadata_file $install_file
@@ -122,6 +124,11 @@ else
 fi
 
 echo "Done. Published: $release"
+
+echo "DON'T FORGET TO BUILD THE WRAPPER"
+echo "DON'T FORGET TO BUILD THE WRAPPER"
+echo "DON'T FORGET TO BUILD THE WRAPPER"
+echo "DON'T FORGET TO BUILD THE WRAPPER"
 
 
 # Now, set the GVs as requested
