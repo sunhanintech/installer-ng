@@ -6,13 +6,13 @@ import tempfile
 import shutil
 
 import unittest
-from argparse import ArgumentParser
 
-from scalr_installer.library.configure.target import ConfigureTarget
-from scalr_installer.rnd import RandomTokenGenerator
+from scalr_manage.library.configure.target import ConfigureTarget
+from scalr_manage.rnd import RandomTokenGenerator
+from scalr_manage.ui.engine import UserInput
 
-from scalr_installer.ui.engine import UserInput
-from scalr_installer.ui.test.util import MockOutput, MockInput
+from scalr_manage.test.util import ParsingError, TestParser
+from scalr_manage.ui.test.util import MockOutput, MockInput
 
 
 APP_TEST_INPUTS = [
@@ -31,20 +31,6 @@ APP_TEST_NO_MYSQL_INPUTS = APP_TEST_INPUTS + [
     "scalr",
     "scalr123",
 ]
-
-
-class ParsingError(Exception):
-    """
-    Re-raise argparse errors as those, so that we don't trap exits.
-    """
-    def __init__(self, status, message):
-        self.status = status
-        self.message = message
-
-
-class TestParser(ArgumentParser):
-    def exit(self, status=0, message=None):
-        raise ParsingError(status, message)
 
 
 class ArgumentsTestCase(unittest.TestCase):
@@ -143,7 +129,7 @@ class FullTestCase(unittest.TestCase):
         self.target.__call__(args, self.ui, self.tokgen)
         with open(self.solo_json_path) as f:
             attrs = json.load(f)
-        self.assertGreaterEqual(len(attrs), 2)
+        self.assertTrue(attrs > 2)
         self.assertTrue("run_list" in attrs)
         self.assertTrue("scalr" in attrs)
         self.assertTrue("mysql" in attrs)

@@ -3,9 +3,8 @@ from __future__ import print_function
 
 import argparse
 
-from scalr_installer.library.configure.target import ConfigureTarget
-from scalr_installer.library.install.target import InstallTarget
-from scalr_installer.rnd import RandomTokenGenerator
+from scalr_manage.library.configure.target import ConfigureTarget
+from scalr_manage.library.install.target import InstallTarget
 
 
 def _main(argv, ui, tokgen):
@@ -15,8 +14,6 @@ def _main(argv, ui, tokgen):
                         help="Where to save the solo.json configuration file.")
 
     subparsers = parser.add_subparsers(title="subcommands")
-
-    # TODO - Add config file
 
     for target in (ConfigureTarget(), InstallTarget()):
         subparser = subparsers.add_parser(target.name, help=target.help)
@@ -31,7 +28,8 @@ def _main(argv, ui, tokgen):
 def main():
     import sys
     import os
-    from scalr_installer.ui.engine import UserInput
+    from scalr_manage.ui.engine import UserInput
+    from scalr_manage.rnd import RandomTokenGenerator
 
     # TODO
     import logging

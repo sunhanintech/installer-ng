@@ -5,9 +5,9 @@ import os
 import logging
 import json
 
-from scalr_installer.library.base import Target
-from scalr_installer.library.configure.group import Group
-from scalr_installer.library.configure.util import merge
+from scalr_manage.library.base import Target
+from scalr_manage.library.configure.group import Group
+from scalr_manage.library.configure.util import merge
 
 
 logger = logging.getLogger(__name__)

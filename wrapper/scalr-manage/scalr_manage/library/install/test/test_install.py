@@ -4,8 +4,8 @@ import tempfile
 import unittest
 import shutil
 
-from scalr_installer.library.install.target import has_compliant_chef, check_or_install_chef
-from scalr_installer.library.install.util import http
+from scalr_manage.library.install.target import has_compliant_chef, check_or_install_chef
+from scalr_manage.library.install.util import http
 
 
 class ChefInstallTestCase(unittest.TestCase):

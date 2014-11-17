@@ -1,4 +1,4 @@
-[scalr-installer]
+[scalr-manage]
 fqdn = ppa.launchpad.net
 method = sftp
 incoming = ~torozco/devel-scalr-manage/ubuntu/
