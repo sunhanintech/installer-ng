@@ -29,6 +29,7 @@ default[:scalr][:core][:id_path] = "#{node[:scalr][:core][:location]}/app/etc/id
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
 default[:scalr][:python][:venv_path] = "#{node.scalr.python.venv}/bin:#{ENV['PATH']}" # Prioritize our Pythons!
 default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
+default[:scalr][:python][:venv_pip] = "#{node.scalr.python.venv}/bin/pip"
 default[:scalr][:python][:venv_force_install] = [['httplib2', nil], ['pymysql', nil], ['cherrypy', '3.2.6'], ['pytz', nil]]
 
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
@@ -87,6 +88,29 @@ default[:scalr][:services] = [
   }},
 ]
 
+if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
+  # The Scalarizr Update and Cost Analytics Scalrpy were introduced in Scalr 5.0
+
+  if Gem::Dependency.new(nil, '~> 5.1').match?(nil, node.scalr.package.version)
+    # In Scallr 5.1, the Scarlrpy jobs all run as daemons instead of services.
+    poller_run = {:daemon => true}
+    processor_run = {:daemon => true}
+  else
+    poller_run = {:cron => {:hour => '*', :minute => '*/5'}}
+    processor_run = {:cron => {:hour => '*', :minute => '7,37'}}
+  end
+
+  extra_services = [
+    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => '--interval=120', :run => {
+      :daemon => true
+    }},
+    {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => poller_run},
+    {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => processor_run},
+  ]
+
+  default[:scalr][:services].concat extra_services
+end
+
 
 default[:scalr][:cron][:path] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 default[:scalr][:cron][:crons] = [
@@ -105,22 +129,7 @@ default[:scalr][:cron][:crons] = [
   {:hour => '*/5',  :minute => '0',    :ng => false,  :name => 'RotateLogs'},
 ]
 
-# These new cron jobs were intoduced in 5.0
 if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
-  extra_services = [
-    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => '--interval=120', :run => {
-      :daemon => true
-    }},
-    {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => {
-      :cron => {:hour => '*', :minute => '*/5'}
-    }},
-    {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => {
-      :cron => {:hour => '*', :minute => '7,37'}
-    }},
-  ]
-
-  default[:scalr][:services].concat extra_services
-
   extra_crons = [
     {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
     {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
@@ -137,7 +146,6 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
 else
   messaging_crons = %w{SzrMessaging}
 end
-
 
 messaging_crons.each do |messaging_cron|
   default[:scalr][:cron][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
