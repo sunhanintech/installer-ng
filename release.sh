@@ -2,7 +2,7 @@
 ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-trap "git checkout $ORIGINAL_BRANCH" EXIT TERM
+trap "git checkout $ORIGINAL_BRANCH" HUP INT ERR EXIT TERM
 
 set -o errexit
 set -o nounset
