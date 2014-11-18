@@ -44,24 +44,31 @@ cleanup_on_exit () {
 }
 trap cleanup_on_exit INT TERM EXIT
 
-cd $HERE
+# Build Ubuntu packages now
+cd "$HERE/deb"
 
-for builderDir in *; do
-  if [[ -d $builderDir ]]; then
-    # First, check this is in fact a builder directory, not just a random script!
-    img="${FACTORY_BASE_NAME}-$builderDir"
-    build_pkg="$builderDir/pkg.tar.gz"
+for version in "12.04" "14.04"; do
+  img="${FACTORY_BASE_NAME}-ubuntu-${version}"
 
-    cp "$PKG_ARCHIVE" "$build_pkg"
-    delete_files="$delete_files $build_pkg"
+  # Create the Dockerfile
+  echo "FROM ubuntu:$version" > Dockerfile
+  cat Dockerfile.tpl >> Dockerfile
 
-    echo "Building $img"
-    docker build -t $img "$builderDir"
-    docker run -it \
-      -v ~/.gnupg:/home/$(id -un)/.gnupg -v ~/.ssh:/home/$(id -un)/.ssh:ro \
-      -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-      -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
-      "$img"
-  fi
+  # Add the package
+  build_pkg="$builderDir/pkg.tar.gz"
+  cp "$PKG_ARCHIVE" "$build_pkg"
+
+  delete_files="$delete_files $build_pkg Dockerfile"
+
+  # Now build the packages
+
+  echo "Building $img"
+  docker build -t $img "$builderDir"
+  docker run -it \
+    -v ~/.packagecloud:$(id -un)/packagecloud:ro \
+    -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
+    -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
+    "$img"
 done
 
+# Bulild RHEL / CentOS packages now
