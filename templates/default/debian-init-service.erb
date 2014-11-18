@@ -28,6 +28,7 @@ case "${1}" in
         <% else %>
         /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
         <% end %>
+        exit $?
         ;;
 
     stop)
@@ -38,6 +39,7 @@ case "${1}" in
         <% else %>
         killproc -p <%= @pidfile %> <%= @executable %> SIGINT
         <% end %>
+        exit $?
         ;;
 
     restart)
