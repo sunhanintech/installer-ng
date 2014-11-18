@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 # Basic wrapper script to install Scalr
 
-VERSION="6.4.1"
+VERSION="7.1.0a1"
 
 
 exit_no_pip () {
