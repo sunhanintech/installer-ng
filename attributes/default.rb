@@ -102,14 +102,16 @@ if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
     analytics_poller_module = 'analytics_polling'
     poller_run = {:daemon => true}
     processor_run = {:daemon => true}
+    updater_args = ''
   else
     analytics_poller_module = 'analytics_poller'
     poller_run = {:cron => {:hour => '*', :minute => '*/5'}}
     processor_run = {:cron => {:hour => '*', :minute => '7,37'}}
+    updater_args = '--interval=120'
   end
 
   extra_services = [
-    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => '--interval=120', :run => {
+    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => updater_args, :run => {
       :daemon => true
     }},
     {:service_name => 'analytics_poller', :service_module => analytics_poller_module, :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => poller_run},
