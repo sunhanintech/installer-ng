@@ -16,7 +16,7 @@ wget "<%= @fedora_setup %>"
 fedora_setup=$(basename "<%= @fedora_setup %>")
 chmod +x "$fedora_setup"
 
-PATH="<%= node[:scalr][:python][:venv_path] %>" "./$fedora_setup" install
+PATH="<%= node[:scalr][:python][:venv_build_path] %>" "./$fedora_setup" install
 
 cd /
 rm -r $work_dir

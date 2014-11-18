@@ -88,5 +88,5 @@ end
 execute 'Install Scalrpy' do
   command     install_cmd
   cwd         "#{node[:scalr][:core][:location]}/app/python"
-  environment('PATH' => node[:scalr][:python][:venv_path])
+  environment('PATH' => node[:scalr][:python][:venv_build_path])
 end
