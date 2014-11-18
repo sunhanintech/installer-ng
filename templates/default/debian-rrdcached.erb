@@ -5,5 +5,8 @@ ENABLE_COREFILES=0
 OPTS="-s <%= node[:scalr][:core][:group] %>"
 OPTS="$OPTS -l unix:<%= node[:scalr][:rrd][:run_dir] %>/rrdcached.sock"
 OPTS="$OPTS -j <%= node[:scalr][:rrd][:journal_dir] %> -F"
-OPTS="$OPTS -p <%= node[:scalr][:rrd][:run_dir] %>/rrdcached.pid"
 OPTS="$OPTS -b <%= node[:scalr][:rrd][:rrd_dir] %> -B"
+
+# Note that the following has not effect (as of now), considering that the PID file is hardcoded
+# in the init files on Debian.
+OPTS="$OPTS -p <%= node[:scalr][:rrd][:run_dir] %>/rrdcached.pid"
