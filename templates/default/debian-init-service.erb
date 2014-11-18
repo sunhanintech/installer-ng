@@ -18,33 +18,44 @@
 . /lib/lsb/init-functions
 
 case "${1}" in
-   start)
-      log_action_begin_msg "Starting..."
-      mkdir --mode=0770 --parents <%= @piddir %>
-      chown <%= @user %>:<%= @group %> <%= @piddir %>
+    start)
+        log_action_begin_msg "Starting..."
+        mkdir --mode=0770 --parents <%= @piddir %>
+        chown <%= @user %>:<%= @group %> <%= @piddir %>
 
-      /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
-      ;;
+        <% if scalrpy2? node %>
+        /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- <%= node[:scalr][:core][:location] %>/app/python/scalrpy/<%= @service_module %>.py --pid-file=<%= @pidfile %> --log-file=<%= @logfile %> --config=<%= node[:scalr][:core][:configuration] %> --verbosity=INFO --daemon <%= @service_extra_args %> start
+        <% else %>
+        /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
+        <% end %>
+        exit $?
+        ;;
 
-   stop)
-      log_action_begin_msg "Stopping..."
-      killproc -p <%= @pidfile %> <%= @executable %> SIGINT
-      ;;
+    stop)
+        log_action_begin_msg "Stopping..."
 
-   restart)
-      ${0} stop
-      sleep 1
-      ${0} start
-      ;;
+        <% if scalrpy2? node %>
+        <%= @executable %> <%= node[:scalr][:core][:location] %>/app/python/scalrpy/<%= @service_module %>.py --pid-file=<%= @pidfile %> --log-file=<%= @logfile %> --config=<%= node[:scalr][:core][:configuration] %> stop
+        <% else %>
+        killproc -p <%= @pidfile %> <%= @executable %> SIGINT
+        <% end %>
+        exit $?
+        ;;
 
-  status)
-      status_of_proc -p <%= @pidfile %> <%= @executable %> <% @service_name %>
-      ;;
+    restart)
+        ${0} stop
+        sleep 1
+        ${0} start
+        ;;
 
-   *)
-      echo "Usage: ${0} {start|stop|restart}"
-      exit 1
-      ;;
+    status)
+        status_of_proc -p <%= @pidfile %> <%= @executable %> <% @service_name %>
+        ;;
+
+    *)
+        echo "Usage: ${0} {start|stop|restart}"
+        exit 1
+        ;;
 esac
 
 # End scriptname
