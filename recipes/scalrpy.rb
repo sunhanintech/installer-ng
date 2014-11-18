@@ -25,7 +25,7 @@ end
 python_virtualenv node[:scalr][:python][:venv] do
   owner  node[:scalr][:core][:users][:service]
   group  node[:scalr][:core][:group]
-  options scalrpy2? node ? '' : '--system-site-packages'
+  options (scalrpy2? node) ? '' : '--system-site-packages'
   action :create
 end
 
