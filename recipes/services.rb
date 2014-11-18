@@ -54,6 +54,7 @@ node[:scalr][:services].each do |svc|
     owner "root"
     group "root"
     variables args
+    helpers(Scalr::VersionHelper)
   end
 
   action = if svc[:run][:daemon] then [:enable, :start] else [:nothing] end
