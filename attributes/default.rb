@@ -73,7 +73,14 @@ default[:scalr][:instances_connection_policy] = 'auto'
 
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
-default[:scalr][:rrd][:rrdcached_sock] = '/var/run/rrdcached.sock'
+default[:scalr][:rrd][:journal_dir] = '/var/lib/rrdcached/journal'
+default[:scalr][:rrd][:run_dir] = value_for_platform_family(
+  %w(rhel fedora) => '/var/rrdtool/rrdcached',
+  'debian' => '/var/run'
+)
+# ^^ Don't change this. Scalrpy somehow wants rrdcached.pid to be found in this
+# run_dir. Unfortunately, neither Ubuntu nor Debian let us specify this, so instead
+# of pointing rrd at the right directory, we point Scalrpy to it.
 default[:scalr][:rrd][:img_url] = '/graphics'
 default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www#{node.scalr.rrd.img_url}"
 default[:scalr][:rrd][:port] = 8080

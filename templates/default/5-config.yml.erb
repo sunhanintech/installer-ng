@@ -83,7 +83,8 @@ scalr:
         bind_port: <%= node[:scalr][:rrd][:port] %>  # Not used yet, but let's be safe
     rrd:
       dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
-      rrdcached_sock_path: '<%= node[:scalr][:rrd][:rrdcached_sock] %>'
+      run_dir: '<%= node[:scalr][:rrd][:run_dir] %>'
+      rrdcached_sock_path: '<%= node[:scalr][:rrd][:run_dir] %>/rrdcached.sock'
     img:
       scheme: 'http'
       host: '<%= node[:scalr][:endpoint][:host] %>'
