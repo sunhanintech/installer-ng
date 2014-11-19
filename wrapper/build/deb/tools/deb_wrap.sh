@@ -5,6 +5,7 @@ set -o nounset
 # Some UID magic to make everything work
 groupadd --non-unique --gid $BUILD_GID "$BUILD_NAME"
 useradd --non-unique --home "/home/$BUILD_NAME" --uid $BUILD_UID --gid $BUILD_GID "$BUILD_NAME"
+usermod --append --groups rvm "$BUILD_NAME"
 
 chown -R "$BUILD_NAME:$BUILD_NAME" "$PKG_DIR"
 
@@ -18,4 +19,4 @@ chown "$(id -nu):$BUILD_NAME" "$GPG_TTY"
 chmod g+rw "$GPG_TTY"
 
 # Actually run as that user now!
-sudo --user "$BUILD_NAME" --group "$BUILD_NAME" --set-home --preserve-env "$TOOLS_DIR/deb_build.sh"
+sudo -u "$BUILD_NAME" -g "$BUILD_NAME" -H -E -- bash --login "$TOOLS_DIR/deb_build.sh"

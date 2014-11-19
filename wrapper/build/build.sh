@@ -18,7 +18,7 @@ cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
 echo "Releasing $PKG_VERSION"
 # While building the package, upload it to PyPi too.
-python setup.py sdist upload
+python setup.py sdist #upload
 
 # Before building the archives, check whether we are dealing with a release
 # or a pre-release
@@ -42,33 +42,37 @@ cleanup_on_exit () {
    rm -- $delete_files
   fi
 }
-trap cleanup_on_exit INT TERM EXIT
+trap cleanup_on_exit EXIT
+
+# Start building
+cd $HERE  # TODO - Needed?
 
 # Build Ubuntu packages now
-cd "$HERE/deb"
+debDir="$HERE/deb"
 
 for version in "12.04" "14.04"; do
   img="${FACTORY_BASE_NAME}-ubuntu-${version}"
 
   # Create the Dockerfile
-  echo "FROM ubuntu:$version" > Dockerfile
-  cat Dockerfile.tpl >> Dockerfile
+  dockerfile="${debDir}/Dockerfile"
+  echo "FROM ubuntu:$version" > "$dockerfile"
+  cat "${debDir}/Dockerfile.tpl" >> "$dockerfile"
 
   # Add the package
-  build_pkg="$builderDir/pkg.tar.gz"
+  build_pkg="$debDir/pkg.tar.gz"
   cp "$PKG_ARCHIVE" "$build_pkg"
 
-  delete_files="$delete_files $build_pkg Dockerfile"
+  delete_files="$delete_files $build_pkg $dockerfile"
 
   # Now build the packages
 
   echo "Building $img"
-  docker build -t $img "$builderDir"
+  docker build -t $img "$debDir"
   docker run -it \
-    -v ~/.packagecloud:$(id -un)/packagecloud:ro \
+    -v ~/.packagecloud:/home/$(id -un)/.packagecloud:ro \
     -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
     -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
     "$img"
 done
 
-# Bulild RHEL / CentOS packages now
+# Build RHEL / CentOS packages now
