@@ -10,7 +10,13 @@ RUN bash --login -c "gem install fpm package_cloud"
 ENV TOOLS_DIR /build/tools
 ENV DIST_DIR /build/dist
 
-CMD ["bash", "--login", "${TOOLS_DIR}/wrap.sh"]
+# Set locale to something UTF-8 to please package_cloud
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# We need shell interpolation here
+CMD bash --login ${TOOLS_DIR}/wrap.sh
 
 # We actually add the scalr-manage pkg dir into the image, because accessing it from a
 # volume is too slow when using boot2docker (which is the very purpose of this image)
