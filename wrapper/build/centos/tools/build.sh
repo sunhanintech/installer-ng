@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 
 # For now
-CENTOS_RELEASE=6
+CENTOS_RELEASE=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
 EPOCH=1
 
 # Start the build

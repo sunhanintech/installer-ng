@@ -47,50 +47,41 @@ trap cleanup_on_exit EXIT
 # Start building
 cd $HERE  # TODO - Needed?
 
-# Build Ubuntu packages now
-debDir="$HERE/deb"
+for distroDir in *; do
+  releases="${distroDir}/RELEASES"
+  if [[ ! -f "$releases" ]]; then
+    echo "$distroDir: does not look like a build tree"
+    continue
+  fi
 
-UBUNTU_RELEASES="12.04 14.04"
-for version in $UBUNTU_RELEASES; do
-  img="${FACTORY_BASE_NAME}-ubuntu-${version}"
+  for release in $(cat $releases); do
+    echo "Found release for $distroDir: $release"
 
-  # Create the Dockerfile
-  dockerfile="${debDir}/Dockerfile"
-  echo "FROM ubuntu:$version" > "$dockerfile"
-  cat "${debDir}/Dockerfile.tpl" >> "$dockerfile"
+    img="${FACTORY_BASE_NAME}-${distroDir}-${release}"
 
-  # Add the package
-  build_pkg="$debDir/pkg.tar.gz"
-  cp "$PKG_ARCHIVE" "$build_pkg"
+    # Create the Dockerfile
+    dockerfile="${distroDir}/Dockerfile"
+    echo "FROM ${distroDir}:${release}" > "$dockerfile"
+    cat "$HERE/tools/Dockerfile.head.tpl" "${distroDir}/Dockerfile.tpl" "$HERE/tools/Dockerfile.tail.tpl" >> "$dockerfile"
 
-  delete_files="$delete_files $build_pkg $dockerfile"
+    # Add the package
+    build_pkg="$distroDir/pkg.tar.gz"
+    cp "$PKG_ARCHIVE" "$build_pkg"
 
-  # Now build the packages
+    # Add the wrap script
+    wrap_script="$distroDir/tools/wrap.sh"
+    cp "$HERE/tools/wrap.sh" "$wrap_script"
 
-  echo "Building $img"
-  docker build -t $img "$debDir"
-  docker run -it \
-    -v ~/.packagecloud:/home/$(id -un)/.packagecloud:ro \
-    -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-    -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
-    "$img"
+    delete_files="$delete_files $build_pkg $dockerfile $wrap_script"
+
+    # Now build the packages
+
+    echo "Building $img"
+    docker build -t $img "$distroDir"
+    docker run -it \
+      -v ~/.packagecloud:/home/$(id -un)/.packagecloud:ro \
+      -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
+      -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
+      "$img"
+  done
 done
-
-# Build CentOS / RHEL packages now
-rpmDir="$HERE/rpm"
-img="${FACTORY_BASE_NAME}-centos-6"
-
-# TODO Add in a function
-# Add the package
-build_pkg="$rpmDir/pkg.tar.gz"
-cp "$PKG_ARCHIVE" "$build_pkg"
-delete_files="$delete_files $build_pkg"
-
-# TODO - Add in a function
-docker build -t $img "$rpmDir"
-docker run -it \
-  -v ~/.packagecloud:/root/.packagecloud:ro \
-  -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-  -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
-  "$img"
-# TODO - Wrapper in RHEL too
