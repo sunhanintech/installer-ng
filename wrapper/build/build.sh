@@ -2,6 +2,15 @@
 set -o errexit
 set -o nounset
 
+# Some houskeeping. One Mac OS, mktemp behaves weirdly,
+# If that happens to you, then you need to install the gnu utils.
+# Using brew, this ends up being prefixed "gmktemp", so we look for that
+mktemp=$(which gmktemp || true)
+if [[ -z "$mktemp" ]]; then
+  mktemp="mktemp"
+fi
+echo "Using $mktemp for mktemp"
+
 REL_HERE=$(dirname "${BASH_SOURCE}")
 HERE=$(cd "${REL_HERE}"; pwd)  # Get an absolute path
 PKG_DIR="$(dirname $HERE)/scalr-manage"
@@ -39,7 +48,7 @@ delete_files=""
 cleanup_on_exit () {
   echo "Removing: $delete_files"
   if [[ -n "$delete_files" ]]; then
-   rm -- $delete_files
+   rm -rf -- $delete_files
   fi
 }
 trap cleanup_on_exit EXIT
@@ -59,27 +68,31 @@ for distroDir in *; do
 
     img="${FACTORY_BASE_NAME}-${distroDir}-${release}"
 
+    work_dir=$("$mktemp" -d)
+    delete_files="$delete_files $work_dir"
+
+    echo "Working in: $work_dir"
+
+    # Start by copying everything into the work dir
+    cp -r -- "$distroDir"/* $work_dir
+
     # Create the Dockerfile
-    dockerfile="${distroDir}/Dockerfile"
+    dockerfile="${work_dir}/Dockerfile"
     echo "FROM ${distroDir}:${release}" > "$dockerfile"
     cat "$HERE/tools/Dockerfile.head.tpl" "${distroDir}/Dockerfile.tpl" "$HERE/tools/Dockerfile.tail.tpl" >> "$dockerfile"
 
     # Add the package
-    build_pkg="$distroDir/pkg.tar.gz"
-    cp "$PKG_ARCHIVE" "$build_pkg"
+    cp "$PKG_ARCHIVE" "$work_dir/pkg.tar.gz"
 
     # Add the wrap script
-    wrap_script="$distroDir/tools/wrap.sh"
-    cp "$HERE/tools/wrap.sh" "$wrap_script"
-
-    delete_files="$delete_files $build_pkg $dockerfile $wrap_script"
+    cp "$HERE/tools/wrap.sh" "$work_dir/tools/wrap.sh"
 
     # Now build the packages
 
     echo "Building $img"
-    docker build -t $img "$distroDir"
+    docker build -t $img "$work_dir"
     docker run -it \
-      -v ~/.packagecloud:/home/$(id -un)/.packagecloud:ro \
+      -e PACKAGE_CLOUD_SETTINGS="$(cat ~/.packagecloud)" \
       -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
       -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
       "$img"
