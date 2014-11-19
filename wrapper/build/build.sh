@@ -50,7 +50,8 @@ cd $HERE  # TODO - Needed?
 # Build Ubuntu packages now
 debDir="$HERE/deb"
 
-for version in "12.04" "14.04"; do
+UBUNTU_RELEASES="12.04 14.04"
+for version in $UBUNTU_RELEASES; do
   img="${FACTORY_BASE_NAME}-ubuntu-${version}"
 
   # Create the Dockerfile
@@ -75,4 +76,21 @@ for version in "12.04" "14.04"; do
     "$img"
 done
 
-# Build RHEL / CentOS packages now
+# Build CentOS / RHEL packages now
+rpmDir="$HERE/rpm"
+img="${FACTORY_BASE_NAME}-centos-6"
+
+# TODO Add in a function
+# Add the package
+build_pkg="$rpmDir/pkg.tar.gz"
+cp "$PKG_ARCHIVE" "$build_pkg"
+delete_files="$delete_files $build_pkg"
+
+# TODO - Add in a function
+docker build -t $img "$rpmDir"
+docker run -it \
+  -v ~/.packagecloud:/root/.packagecloud:ro \
+  -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
+  -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
+  "$img"
+# TODO - Wrapper in RHEL too
