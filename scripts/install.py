@@ -43,7 +43,7 @@ ERR_LOG = "scalr.install.err.log"
 
 # Supported versions
 SCALR_VERSION_4_5 = "4.5"
-SCALR_VERSION_5_0 = "5.0"
+SCALR_VERSION_5_0 = "5.0.1"
 SCALR_VERSION_5_1 = "5.1"
 SUPPORTED_VERSIONS = [SCALR_VERSION_4_5, SCALR_VERSION_5_0, SCALR_VERSION_5_1]
 
@@ -53,8 +53,8 @@ SCALR_DEPLOY_TO = "/opt/scalr"
 
 # Defaults
 DEFAULT_SCALR_REPO = "git://github.com/Scalr/scalr.git"
-DEFAULT_SCALR_GIT_REV = SCALR_VERSION_5_0
 DEFAULT_SCALR_VERSION = SCALR_VERSION_5_0
+DEFAULT_SCALR_GIT_REV = "v{0}".format(DEFAULT_SCALR_VERSION)
 
 
 # Notification configuration
