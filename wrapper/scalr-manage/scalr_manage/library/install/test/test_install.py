@@ -39,6 +39,10 @@ class ChefInstallTestCase(BaseInstallTestCase):
         os.environ["PATH"] = os.path.join(self.versions_path, "ko_chef")
         self.assertFalse(has_compliant_chef())
 
+    def test_no_chef(self):
+        os.environ["PATH"] = os.path.join(self.versions_path, "no_chef")
+        self.assertFalse(has_compliant_chef())
+
     def test_chef_install(self):
         # TODO - Setup a test dir and have that script drop a file there
         os.environ["PATH"] = os.path.join(self.versions_path, "ko_chef")

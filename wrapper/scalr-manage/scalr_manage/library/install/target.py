@@ -29,9 +29,9 @@ def has_compliant_chef():
         if ver < constant.MINIMUM_RUBY_VERSION:
             return False
 
-    except (ValueError, AttributeError, subprocess.CalledProcessError):
+    except (ValueError, AttributeError, OSError, subprocess.CalledProcessError):
         # ValueError: we didn't recognize the version string
-        # AttributeError: it's not installed
+        # AttributeError, OSError: it's not installed
         # CalledProcessError: something crashed
         return False
 
