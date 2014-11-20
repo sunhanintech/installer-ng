@@ -1,40 +1,30 @@
-#!/bin/bash
+#!/bin/sh
 set -o errexit
 set -o nounset
-# Basic wrapper script to install Scalr
 
-VERSION="6.4.1"
+pkgMgr=$(basename $(which apt-get || which yum || true))
 
-
-exit_no_pip () {
-  echo "Then, run this script again."
-  exit 1
-}
-
-if which pip; then
-  echo "Found pip"
+if [ "apt-get" = "$pkgMgr" ] ; then
+  repoType="deb"
+elif [ "yum" = "$pkgMgr" ]; then
+  repoType="rpm"
 else
-  echo "pip wasn't found. Installing"
-
-  if which apt-get; then
-    apt-get update && apt-get install -y python-pip || {
-      echo "Unable to install pip using apt-get"
-      echo "Install pip manually"
-      exit_no_pip
-    }
-  fi
-
-  if which yum; then
-    yum install -y python-pip || {
-      echo "Unable to install pip using yum"
-      echo "Enable EPEL, or install pip manually"
-      exit_no_pip
-    }
-  fi
-
+  echo "No supported package manager (apt-get or yum) detected!"
+  exit 1
 fi
 
-pip install "scalr-manage==$VERSION"
+curl=$(which curl || true)
+if [ -z "$curl" ]; then
+  echo "curl wasn't found. Install curl."
+  exit 1
+fi
+
+# We trust packagecloud.io considering it's serving our packages anyway.
+echo "Detected '$pkgMgr' -- installing '$repoType' installer repo"
+curl "https://packagecloud.io/install/repositories/scalr/scalr-manage/script.${repoType}" | sudo bash
+
+$pkgMgr install -y scalr-manage
+
 scalr-manage configure
 scalr-manage install
 scalr-manage document
