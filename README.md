@@ -26,7 +26,7 @@ command, preferably as root.
 
     curl -sfSLO https://raw.githubusercontent.com/Scalr/installer-ng/master/dist/install.sh
 
-You might want to double-check that the `install.py` file that was downloaded
+You might want to double-check that the `install.sh` file that was downloaded
 does match the installer script as it is presented here.
 
 ### Install Scalr ###
@@ -35,9 +35,8 @@ Run the following, as root.
 
     bash install.sh
 
-If you'd like to install a specific Scalr version (e.g. a release candidate),
-use `python install.py --advanced`, and follow the instructions provided
-on-screen.
+If you'd like to anything more complex, like install a specific Scalr version,
+then review the [instructions on the Scalr Wiki][10].
 
 Note: we recommend that you run this command using GNU screen, so that the
 installation process isn't interrupted if your SSH connection drops.
@@ -77,3 +76,4 @@ Apache 2.0
 
   [0]: https://github.com/Scalr/scalr
   [1]: https://github.com/Scalr/installer-ng/issues
+  [10]: https://scalr-wiki.atlassian.net/wiki/x/AoD4
