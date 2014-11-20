@@ -12,6 +12,7 @@ import urlparse
 import urllib
 import urllib2
 import re
+import optparse
 import string
 import binascii
 import json
@@ -69,20 +70,31 @@ OPENSSL_END_KEY = "-----END RSA PRIVATE KEY-----"
 OPENSSL_PROC_TYPE = "Proc-Type: "
 OPENSSL_ENCRYPTED = "ENCRYPTED"
 
-INSTALL_DONE_MSG_TPL = """
+INSTALL_DONE_MSG = """
+
 Congratulations! Scalr has successfully finished installing!
 
 Installer cookbook version: `{cookbook_release}`.
 
--- Credentials and configuration file --
 
-Deployment credentials and configuration are found in `{solo_json_path}`.
-"""
-
-APP_INSTALL_DONE_MSG_TPL = """
 -- Configuration --
 
 Some optional modules have not been installed: DNS, LDAP.
+
+
+-- Credentials file --
+
+All the credentials that were used are stored in `{solo_json_path}`.
+
+Consider making a backup of those, and deleting this file.
+
+
+-- MySQL credentials --
+
+Use these credentials to access Scalr's MySQL database.
+
+root : `{root_mysql_password}`
+scalr: `{scalr_mysql_password}`
 
 
 -- Accessing Scalr --
@@ -104,7 +116,7 @@ Username: `{scalr_admin_username}`
 Password: `{scalr_admin_password}`
 
 
--- "Quick Start" Roles --
+-- Quickstart Roles --
 
 Scalr provides, free of charge, up-to-date role images for AWS. Those will help you get started with Scalr.
 
@@ -115,15 +127,7 @@ We've read the file for you, its contents are:      `{scalr_id}`
 Please submit those contents to this form `http://hub.am/1fDAc2B`
 
 Once done, please run this command `php {sync_shared_roles_path}`
-"""
 
-MYSQL_INSTALL_DONE_MSG_TPL = """
--- MySQL credentials --
-
-Use these credentials to access Scalr's MySQL database.
-
-root : `{root_mysql_password}`
-scalr: `{scalr_mysql_password}`
 """
 
 
@@ -242,7 +246,7 @@ class UserInput(object):
                 raise InvalidInput("{0} is not a valid IP address".format(sym))
 
             if len(r.split(".")) != 4:
-                # Technically speaking, this would be a valid IPV4 address,
+                # Technically speaking, this would be a vlaid IPV4 address,
                 # but it's most likely an error.
                 raise InvalidInput("Please enter a full address")
 
@@ -257,14 +261,6 @@ class UserInput(object):
                                    "address".format(format_symbol(r)))
             return r
 
-        return self.prompt(q, error_msg, coerce_fn)
-
-    def prompt_integer(self, q, error_msg):
-        def coerce_fn(r):
-            try:
-                return int(r)
-            except ValueError:
-                raise InvalidInput("{0} is not an integer".format(format_symbol(r)))
         return self.prompt(q, error_msg, coerce_fn)
 
 
@@ -302,10 +298,7 @@ class InstallWrapper(object):
         self.solo_rb_path = os.path.join(self.work_dir, "solo.rb")
 
         # We don't change that file across runs.
-        if options.attributes is None:
-            self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
-        else:
-            self.solo_json_path = options.attributes
+        self.solo_json_path = os.path.join(os.path.expanduser("~"), "solo.json")
 
         os.makedirs(self.cookbook_path)  # This should not exist yet
 
@@ -336,17 +329,12 @@ class InstallWrapper(object):
         """
         Generate the run list based on the options that were passed to this script.
         """
-        run_list = [ "recipe[apt]", "recipe[build-essential]"]
-        if self.options.group_ntp:
-            run_list.append("recipe[ntp]")
-        if True:  # Not optional!
-            run_list.append("recipe[timezone-ii]")
-        if self.options.group_mysql:
-            run_list.append("recipe[scalr-core::group_mysql]")
-        if self.options.group_app:
-            run_list.append("recipe[scalr-core::group_app]")
-        if self.options.group_iptables:
-            run_list.append("recipe[iptables-ng]")
+        run_list = [ "recipe[apt::default]", "recipe[build-essential::default]"]
+        if not self.options.no_ntp:
+            run_list.append("recipe[ntp::default]")
+        run_list.append("recipe[scalr-core::default]")
+        if not self.options.no_iptables:
+            run_list.append("recipe[iptables-ng::default]")
         return run_list
 
     def _generate_chef_solo_config(self):
@@ -357,177 +345,131 @@ class InstallWrapper(object):
         # FIXME
         options, ui, tokgen = self.options, self.ui, self.tokgen
 
-        output = {"scalr": {}}
+        output = {}
 
-        #################################
-        # Options for the Scalr install #
-        #################################
+        # What are we installing?
+        if not options.advanced:
+            repo = DEFAULT_SCALR_REPO
+            revision = DEFAULT_SCALR_GIT_REV
+            version = DEFAULT_SCALR_VERSION
+        else:
+            repo = ui.prompt("Enter the repository to clone")
+            revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
+            version = ui.prompt_select_from_options("What Scalr version is this?",
+                SUPPORTED_VERSIONS, "This is not a valid choice")
 
-        if options.group_app:
-            # Deployment target options
-
-            if not options.advanced:
-                repo = DEFAULT_SCALR_REPO
-                revision = DEFAULT_SCALR_GIT_REV
-                version = DEFAULT_SCALR_VERSION
-            else:
-                repo = ui.prompt("Enter the repository to clone")
-                revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
-                version = ui.prompt_select_from_options("What Scalr version is this?",
-                    SUPPORTED_VERSIONS, "This is not a valid choice")
-
-            output["scalr"]["package"] = {
-                "revision": revision,
-                "repo": repo,
-                "version": version,
-                "name": SCALR_NAME,
-                "deploy_to": SCALR_DEPLOY_TO,
-            }
-
-            # Deployment credentials options
-
-            # Check whether we'll need to use a private key
-            # It might seem contradictory to check for "non-SSH" schemes, but we
-            # do this because no one ever puts ssh:// in their git URLs.
-            if urlparse.urlparse(repo).scheme in GIT_NON_SSH_SCHEMES:
-                self.write_out("You will not need a SSH key for this repository "
-                               "({0}).".format(repo), nl=True)
-                ssh_key = ""
-                ssh_key_path = ""
-            else:
-                self.write_out("Please provide a SSH Key for this repository "
-                               "(password-based SSH isn't supported).", nl=True)
-                self.write_out("If this seems wrong, provide a full URL "
-                               "(e.g. file:// ...)", nl=True)
-                ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
-                                            "Invalid key. Please try again.")
-                ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
-
-            output["scalr"]["deployment"] = {
-                "ssh_key": ssh_key,
-                "ssh_key_path": ssh_key_path,
-            }
-
-            # Endpoint Settings
-
-            host_ip = ui.prompt_ipv4("Enter the IPv4 address this Scalr server "
-                                     "will use to connect to your cloud instances. "
-                                     "This is used to setup cloud security groups.",
-                                     "This is not a valid IP")
-
-            if ui.prompt_yes_no("Should your cloud instances also use {0} to "
-                                "connect to this Scalr server?".format(host_ip),
-                                "This is not a valid choice."):
-                host = host_ip
-            else:
-                host = ui.prompt("Enter the host your cloud instances should "
-                                 "connect to to reach this Scalr server. This "
-                                 "does NOT need to be an IP, and will NOT be "
-                                 "validated (so be extra careful!).")
-
-            if version == SCALR_VERSION_4_5:
-                local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
-                                          " this instance through. If you are not"
-                                          " using NAT or a Cloud Elastic IP, this"
-                                          " should be the same IP",
-                                          "This is not a valid IP")
-            else:
-                local_ip = ""
-
-            output["scalr"]["endpoint"] = {
-                "host": host,
-                "host_ip": host_ip,
-                "local_ip": local_ip,
-            }
-
-            # Scalr configuration
-
-            conn_policy = ui.prompt_select_from_options("To connect to your instances,"
-                " should Scalr use the private IP, public IP, or automatically choose"
-                " the best one? Use `auto` if you are unsure.",
-                ["auto", "public", "local"], "This is not a valid choice")
-            output["scalr"]["instances_connection_policy"] = conn_policy
-
-            output["scalr"]["admin"] = {
-                "username": "admin",
-                "password": tokgen.make_password(15)
-            }
-
-            # If MySQL is not going to be installed here, then we need
-            # to get configuration from the user.
-
-            if not options.group_mysql:
-                # Create a list first here, for ordering
-                output["scalr"]["database"] = dict([
-                    ("host", ui.prompt("MySQL host?")),
-                    ("port", ui.prompt_integer("MySQL port?", "Not a valid port")),
-                    ("username", ui.prompt("MySQL username?")),
-                    ("password", ui.prompt("MySQL password?")),
-                ])
-
-        #################################
-        # Options for the MySQL install #
-        #################################
+        # Check whether we'll need to use a private key
+        # It might seem contradictory to check for "non-SSH" schemes, but we
+        # do this because no one ever puts ssh:// in their git URLs.
+        if urlparse.urlparse(repo).scheme in GIT_NON_SSH_SCHEMES:
+            self.write_out("You will not need a SSH key for this repository "
+                           "({0}).".format(repo), nl=True)
+            ssh_key = ""
+            ssh_key_path = ""
+        else:
+            self.write_out("Please provide a SSH Key for this repository "
+                           "(password-based SSH isn't supported).", nl=True)
+            self.write_out("If this seems wrong, provide a full URL "
+                           "(e.g. file:// ...)", nl=True)
+            ssh_key = ui.prompt_ssh_key("Enter (paste) the SSH private key to use",
+                                        "Invalid key. Please try again.")
+            ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
 
         # MySQL configuration
-        if options.group_mysql:
-            output["mysql"] = {}
+        output["mysql"] = {}
 
-            mysql_passwords = ["server_root_password", "server_debian_password",
-                               "server_repl_password"]
+        mysql_passwords = ["server_root_password", "server_debian_password",
+                           "server_repl_password"]
 
-            for mysql_password in mysql_passwords:
-                if options.passwords:
-                    pw = ui.prompt("Enter password for: {0}".format(mysql_password))
-                else:
-                    pw = tokgen.make_password(30)
-                output["mysql"][mysql_password] = pw
+        for mysql_password in mysql_passwords:
+            if options.passwords:
+                pw = ui.prompt("Enter password for: {0}".format(mysql_password))
+            else:
+                pw = tokgen.make_password(30)
+            output["mysql"][mysql_password] = pw
 
-            # The MySQL group takes care of setting up databases and users,
-            # so we need to configure them here, even if they are a "Scalr"
-            # attribute. We do it that way so that we don't have to allow
-            # remote root.
+        # Scalr configuration
+        output["scalr"] = {}
 
-            if options.group_mysql:
-                output["scalr"]["database"] = {
-                    "host": "127.0.0.1",
-                    "port": 3306,
-                    "username": "scalr",
-                    "password": tokgen.make_password(30)
-                }
+        host_ip = ui.prompt_ipv4("Enter the IPv4 address this Scalr server "
+                                 "will use to connect to your cloud instances. "
+                                 "This is used to setup cloud security groups.",
+                                 "This is not a valid IP")
 
-        ####################################
-        # Options for the Iptables install #
-        ####################################
+        if ui.prompt_yes_no("Should your cloud instances also use {0} to "
+                            "connect to this Scalr server?".format(host_ip),
+                            "This is not a valid choice."):
+            host = host_ip
+        else:
+            host = ui.prompt("Enter the host your cloud instances should "
+                             "connect to to reach this Scalr server. This "
+                             "does NOT need to be an IP, and will NOT be "
+                             "validated (so be extra careful!).")
 
-        if options.group_iptables:
-            input_rules = {}
-            if options.group_mysql:
-                input_rules.update({
-                    "scalr-mysql": {
-                        # TODO _ Variabilize
-                        "rule": "--protocol tcp --dport 3306 --match state --state NEW --jump ACCEPT",
-                    }
-                })
-            if options.group_app:
-                input_rules.update({
-                    "scalr-web": {
-                        # TODO _ Variabilize
-                        "rule": "--protocol tcp --dport 80 --match state --state NEW --jump ACCEPT",
-                    },
-                    "scalr-plotter": {
-                        # TODO _ Variabilize
-                        "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
-                    },
-                })
-            output["iptables-ng"] = {"rules": {"filter": {"INPUT": input_rules}}}
+        if version == SCALR_VERSION_4_5:
+            local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches"
+                                      " this instance through. If you are not"
+                                      " using NAT or a Cloud Elastic IP, this"
+                                      " should be the same IP",
+                                      "This is not a valid IP")
+        else:
+            local_ip = ""
 
-        ###########################
-        # Extra / Generic Options #
-        ###########################
+        output["scalr"]["endpoint"] = {
+            "host": host,
+            "host_ip": host_ip,
+            "local_ip": local_ip,
+        }
 
+        conn_policy = ui.prompt_select_from_options("To connect to your instances,"
+            " should Scalr use the private IP, public IP, or automatically choose"
+            " the best one? Use `auto` if you are unsure.",
+            ["auto", "public", "local"], "This is not a valid choice")
+        output["scalr"]["instances_connection_policy"] = conn_policy
+
+        output["scalr"]["admin"] = {}
+        output["scalr"]["admin"]["username"] = "admin"
+        output["scalr"]["admin"]["password"] = tokgen.make_password(15)
+
+        output["scalr"]["database"] = {}
+        output["scalr"]["database"]["password"] = tokgen.make_password(30)
+
+        output["scalr"]["package"] = {
+            "revision": revision,
+            "repo": repo,
+            "version": version,
+            "name": SCALR_NAME,
+            "deploy_to": SCALR_DEPLOY_TO,
+        }
+
+        output["scalr"]["deployment"] = {
+            "ssh_key": ssh_key,
+            "ssh_key_path": ssh_key_path,
+        }
+
+        output["scalr"]["id"] = tokgen.make_id(self.options.release)
+
+        # Other cookbooks
         output.update({
-            "apt" : {"compile_time_update": True,},
+            "apt" : {
+                "compile_time_update": True,
+            },
+            "iptables-ng": {
+                "rules": {
+                    "filter": {
+                        "INPUT": {
+                            "scalr-web": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 80 --match state --state NEW --jump ACCEPT",
+                            },
+                            "scalr-plotter": {
+                                # TODO _ Variabilize
+                                "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
+                            },
+                        }
+                    }
+                }
+            },
             "ntp": {}
         })
 
@@ -538,9 +480,7 @@ class InstallWrapper(object):
         return output
 
     def generate_config(self):
-        config = self._generate_chef_solo_config()
-        config["run_list"] = self._generate_chef_solo_runlist()
-        return config
+        return self._generate_chef_solo_config()
 
     def load_config(self):
         with open(self.solo_json_path) as f:
@@ -555,11 +495,13 @@ class InstallWrapper(object):
         except IOError:
             self.write_out("NO JSON Configuration found. Creating.", nl=True)
             config = self.generate_config()
-            with open(self.solo_json_path, "w") as f:
-                json.dump(config, f, indent=2, separators=(',', ': '))
         else:
             self.write_out("JSON Configuration already exists. Using it.", nl=True)
-            self.write_out("WARNING: Command line arguments will be ignored", nl=True)
+
+        # The run list must be redefined here
+        config["run_list"] = self._generate_chef_solo_runlist()
+        with open(self.solo_json_path, "w") as f:
+            json.dump(config, f, indent=2, separators=(',', ': '))
 
         # Kind of hackish, but we use that later..
         self.solo_json_config = config
@@ -657,56 +599,48 @@ class InstallWrapper(object):
             raise InstallerFailure("The installer failed")
 
     def finish(self):
-        self.write_out(INSTALL_DONE_MSG_TPL.format(
-            cookbook_release=self.options.release,
-            solo_json_path=self.solo_json_path,
-        ), nl=True)
+        # Values we'll reuse
+        install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
+        sync_shared_roles_path = os.path.join(install_path, "app", "tools", "sync_shared_roles.php")
+        id_file_path = os.path.join(install_path, "app", "etc", "id")
+        scalr_id = self.solo_json_config["scalr"]["id"]
 
-        if self.options.group_mysql:
-            self.write_out(MYSQL_INSTALL_DONE_MSG_TPL.format(
-                root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
-                scalr_mysql_password=self.solo_json_config["scalr"]["database"]["password"]
-            ), nl=True)
+        # Subscribe to security notifications
+        if self.user_email is not None:
+            # The user wants security and critical updates notifications
+            # Submit the user's email for notifications
+            # Submit the Scalr installation ID for deduplication
+            data = urllib.urlencode({
+                NOTIFICATION_ATTR_EMAIL: self.user_email,
+                NOTIFICATION_ATTR_ID: scalr_id})
 
-        if self.options.group_app:
-            # Values we'll reuse
-            install_path = os.path.join(self.solo_json_config["scalr"]["package"]["deploy_to"], "current")
-            sync_shared_roles_path = os.path.join(install_path, "app", "tools", "sync_shared_roles.php")
-            id_file_path = os.path.join(install_path, "app", "etc", "id")
-            scalr_id = self.solo_json_config["scalr"]["id"]
+            error_message = "WARNING! Failed to subscribe to notifications"
 
-            # Subscribe to security notifications
-            if self.user_email is not None:
-                # The user wants security and critical updates notifications
-                # Submit the user's email for notifications
-                # Submit the Scalr installation ID for deduplication
-                data = urllib.urlencode({
-                    NOTIFICATION_ATTR_EMAIL: self.user_email,
-                    NOTIFICATION_ATTR_ID: scalr_id})
-
-                error_message = "WARNING! Failed to subscribe to notifications"
-
-                try:
-                    res = urllib2.urlopen(NOTIFICATION_FORM_URL, data)
-                except urllib2.URLError as e:
+            try:
+                res = urllib2.urlopen(NOTIFICATION_FORM_URL, data)
+            except urllib2.URLError as e:
+                self.write_out(error_message, nl=True)
+                self.write_out(e.reason, nl=True)
+            else:
+                if res.getcode() != NOTIFICATION_FORM_STATUS_SUCCESS:
                     self.write_out(error_message, nl=True)
-                    self.write_out(e.reason, nl=True)
                 else:
-                    if res.getcode() != NOTIFICATION_FORM_STATUS_SUCCESS:
-                        self.write_out(error_message, nl=True)
-                    else:
-                        self.write_out("Successfully signed up for notifications", nl=True)
+                    self.write_out("Successfully signed up for notifications", nl=True)
 
-            # Output message
-            self.write_out(APP_INSTALL_DONE_MSG_TPL.format(
-                install_path=install_path,
-                scalr_host=self.solo_json_config["scalr"]["endpoint"]["host"],
-                scalr_admin_username=self.solo_json_config["scalr"]["admin"]["username"],
-                scalr_admin_password=self.solo_json_config["scalr"]["admin"]["password"],
-                scalr_id_file=id_file_path,
-                scalr_id=scalr_id,
-                sync_shared_roles_path=sync_shared_roles_path,
-            ), nl=True)
+        # Output message
+        self.write_out(INSTALL_DONE_MSG.format(
+            install_path=install_path,
+            scalr_host=self.solo_json_config["scalr"]["endpoint"]["host"],
+            root_mysql_password=self.solo_json_config["mysql"]["server_root_password"],
+            scalr_mysql_password=self.solo_json_config["scalr"]["database"]["password"],
+            scalr_admin_username=self.solo_json_config["scalr"]["admin"]["username"],
+            scalr_admin_password=self.solo_json_config["scalr"]["admin"]["password"],
+            scalr_id_file=id_file_path,
+            scalr_id=scalr_id,
+            sync_shared_roles_path=sync_shared_roles_path,
+            solo_json_path=self.solo_json_path,
+            cookbook_release=self.options.release
+        ), nl=True)
 
 
     def install(self):
@@ -729,56 +663,27 @@ if __name__ == "__main__":
         print("This script should run as root")
         sys.exit(1)
 
-    try:
-        import argparse
-    except ImportError:
-        print("This script requires the `argparse` module")
-        for pkg_installer, args in [("pip", ["install"]), ("easy_install", [])]:
-            if spawn.find_executable(pkg_installer) is not None:
-                cmd_line = " ".join([pkg_installer] + args + "argparse")
-                print("Install it with: `{0}`".format(cmd_line))
-                break
-        raise RuntimeError("Please resolve the issue and try again.")
+    parser = optparse.OptionParser()
 
-    # This parser checks the default for groups
-    pre_parser = argparse.ArgumentParser(add_help=False)
-    pre_parser.add_argument("--without-all", default=True, action="store_false",
-                            dest="with_all", help="Disable all groups")
-
-    pre_options, other_args = pre_parser.parse_known_args()
-
-    parser = argparse.ArgumentParser(parents=[pre_parser])
-
-    parser.add_argument("-a", "--advanced", action="store_true", default=False,
+    parser.add_option("-a", "--advanced", action="store_true", default=False,
                       help="Advanced configuration options")
-    parser.add_argument("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
-                      help="Installer release (e.g. {0})".format(DEFAULT_COOKBOOK_RELEASE))
+    parser.add_option("-r", "--release", default=DEFAULT_COOKBOOK_RELEASE,
+                      help="Installer release")
 
-    parser.add_argument("-p", "--passwords", action="store_true", default=False,
+    parser.add_option("-p", "--passwords", action="store_true", default=False,
                       help="Use custom passwords")
 
-    parser.add_argument("-n", "--no-prompt", action="store_true", default=False,
+    parser.add_option("-n", "--no-prompt", action="store_true", default=False,
                       help="Do not prompt for notifications.")
 
-    parser.add_argument("--attributes", default=None, help="Attributes file")
+    parser.add_option("--no-iptables", action="store_true", default=False,
+                      help="Disable iptables management")
+    parser.add_option("--no-ntp", action="store_true", default=False,
+                      help="Disable ntp management")
 
-    # Options
-    groups = ("iptables", "ntp", "app", "mysql")
-    for group in groups:
-        arg_group = parser.add_mutually_exclusive_group()
-        dest = "group_{0}".format(group)
-
-        arg_group.add_argument("--without-{0}".format(group), action="store_false",
-            dest=dest, help="Disable {0} group".format(group))
-        arg_group.add_argument("--with-{0}".format(group), action="store_true",
-            dest=dest, help="Enable {0} group".format(group))
-
-        parser.set_defaults(**{dest: pre_options.with_all})
-
-    parser.add_argument("-v", "--verbose", action="store_true", default=False,
+    parser.add_option("-v", "--verbose", action="store_true", default=False,
                       help="Verbose logging (debug)")
-
-    options = parser.parse_args(other_args)
+    options, args = parser.parse_args()
 
     current_dir = os.getcwd()
     work_dir = tempfile.mkdtemp()

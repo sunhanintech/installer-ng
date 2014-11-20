@@ -62,12 +62,14 @@ sed --version | grep --silent "GNU sed" || SED_OPTS="$SED_OPTS ''"
 make_local_release () {
   metadata_file="metadata.rb"
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
+  install_file="scripts/install.py"
 
   sed $SED_OPTS "s/(version[ ]+)'[0-9.]*'/\1'$final_release'/g" $metadata_file
   sed $SED_OPTS "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$release\"/g" $wrapper_version_file
+  sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
 
   git checkout -b $RELEASE_BRANCH
-  git add $metadata_file $wrapper_version_file
+  git add $metadata_file $wrapper_version_file $install_file
   git commit -m "Release: $release"
   git tag $RELEASE_TAG HEAD
 }
