@@ -8,6 +8,7 @@ import logging
 
 from scalr_manage.version import __version__
 from scalr_manage.library.base import Target
+from scalr_manage.library import exception
 from scalr_manage.library.install import constant
 from scalr_manage.library.install.constant import CHEF_SOLO_BIN
 from scalr_manage.library.install.util import python, http
@@ -62,11 +63,13 @@ def create_solo_rb(args, work_dir, http_download):
     file_cache_path "{file_cache_path}"
     recipe_url      "{recipe_url}"
     log_level       {log_level}
+    log_location    "{log_location}"
     json_attribs    "{json_attribs}"
     """.format(
         file_cache_path=os.path.join(work_dir, constant.CACHE_DIR),
         recipe_url=constant.COOKBOOK_PKG_URL_TPL.format(args.release),
         log_level=":debug" if args.verbose else ":info",
+        log_location=args.log_file,
         json_attribs=args.configuration,
     )
 
@@ -78,9 +81,7 @@ def create_solo_rb(args, work_dir, http_download):
 
 def install_scalr(args, work_dir, http_download):
     logger.info("Installing Scalr")
-    proc = subprocess.Popen([CHEF_SOLO_BIN, "--config", os.path.join(work_dir, constant.SOLO_RB_FILE)])
-    proc.wait()
-    # TODO - Check retcode
+    subprocess.check_call([CHEF_SOLO_BIN, "--config", os.path.join(work_dir, constant.SOLO_RB_FILE)])
 
 
 class InstallTarget(Target):
@@ -88,18 +89,30 @@ class InstallTarget(Target):
     help = "Install or update Scalr on this host"
 
     def register(self, parser):
-        # TODO - This needs to be indexed somewhere!
         parser.add_argument("-r", "--release", default=__version__, help="Installer cookbook release (e.g. 6.5.0)")
+        parser.add_argument("-l", "--log-file", default=constant.DEFAULT_LOG_FILE)
         parser.add_argument("-v", "--verbose", help="Enable debug log output from Chef")
 
     def __call__(self, args, ui, tokgen):
+        self._check_configuration(args)
         path = os.pathsep.join([constant.CHEF_SOLO_PATHS, os.environ["PATH"]])
         http_download = http.download
-        with python.path(path):
-            logger.debug("PATH is: %s", path)
-            with python.umask(constant.INSTALLER_UMASK):
-                with python.tmp_dir() as work_dir:
-                    logger.debug("Work dir is: %s", work_dir)
-                    for step in [check_or_install_chef, create_solo_rb, install_scalr]:
-                        logger.info("Now performing installation step: %s", step.__name__)
-                        step(args, work_dir, http_download)
+
+        # First, register the log file!
+        log_handler = logging.FileHandler(args.log_file)
+        log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(pathname)s:%(lineno)s] [%(name)s:%(levelname)s] %(message)s"))
+        logger.addHandler(log_handler)
+
+        # Now, install!
+        try:
+            with python.path(path):
+                logger.debug("PATH is: %s", path)
+                with python.umask(constant.INSTALLER_UMASK):
+                    with python.tmp_dir() as work_dir:
+                        logger.debug("Work dir is: %s", work_dir)
+                        for step in [check_or_install_chef, create_solo_rb, install_scalr]:
+                            logger.info("Now performing installation step: %s", step.__name__)
+                            step(args, work_dir, http_download)
+        except Exception:
+            logger.exception("Installation failed")
+            raise exception.InstallerException(args.log_file)

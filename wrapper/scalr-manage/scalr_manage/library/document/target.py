@@ -15,6 +15,8 @@ class DocumentTarget(Target):
     help = "Document the Scalr install on this host"
 
     def __call__(self, args, ui, tokgen):
+        self._check_configuration(args)
+
         with open(args.configuration) as f:
             attrs = json.load(f)
 

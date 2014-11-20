@@ -19,3 +19,5 @@ TAR_BIN = "tar"
 MINIMUM_CHEF_VERSION = "11.0.0"
 MINIMUM_RUBY_VERSION = "1.9.0"
 
+
+DEFAULT_LOG_FILE = "/var/log/scalr-install.log"

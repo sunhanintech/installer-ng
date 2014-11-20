@@ -5,11 +5,16 @@ import os
 import unittest
 
 from scalr_manage.library.document.target import DocumentTarget
+from scalr_manage.library.exception import ConfigurationException
 from scalr_manage.rnd import RandomTokenGenerator
 from scalr_manage.ui.engine import UserInput
 
 from scalr_manage.test.util import TestParser
 from scalr_manage.ui.test.util import MockOutput, MockInput
+
+
+class Container(object):
+    pass
 
 
 class DocumentTestCase(unittest.TestCase):
@@ -24,14 +29,12 @@ class DocumentTestCase(unittest.TestCase):
 
         self.test_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data")
         self.test_json = os.path.join(self.test_data, "solo.json")
+        self.fail_json = os.path.join(self.test_data, "fail.json")
+        self.no_json = os.path.join(self.test_data, "does-not-exist.json")
 
     def test_document(self):
-        class Container(object):
-            pass
-
         args = Container()
         args.configuration = self.test_json
-
 
         target = DocumentTarget()
         target(args, self.ui, self.tokgen)
@@ -46,4 +49,16 @@ class DocumentTestCase(unittest.TestCase):
             ]:
             self.assertTrue(expected in self.output.outputs)
 
+    def test_no_configuration(self):
+        args = Container()
+        args.configuration = self.no_json
 
+        target = DocumentTarget()
+        self.assertRaises(ConfigurationException, target, args, self.ui, self.tokgen)
+
+    def test_invalid_configuration(self):
+        args = Container()
+        args.configuration = self.fail_json
+
+        target = DocumentTarget()
+        self.assertRaises(ConfigurationException, target, args, self.ui, self.tokgen)
