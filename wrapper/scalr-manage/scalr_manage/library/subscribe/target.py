@@ -37,5 +37,5 @@ class SubscribeTarget(Target):
             })
             res.raise_for_status()
         except requests.RequestException:
-            logger.exception()
+            logger.exception("Registration failed!")
             ui.print_fn("An error occurred registering your installation!")
