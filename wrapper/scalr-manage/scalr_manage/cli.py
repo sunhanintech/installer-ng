@@ -7,6 +7,7 @@ from scalr_manage.library.configure.target import ConfigureTarget
 from scalr_manage.library.install.target import InstallTarget
 from scalr_manage.library.document.target import DocumentTarget
 from scalr_manage.library.exception import ConfigurationException, InstallerException
+from scalr_manage.library.subscribe.target import SubscribeTarget
 
 
 def _main(argv, ui, tokgen):
@@ -18,7 +19,7 @@ def _main(argv, ui, tokgen):
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    for target in (ConfigureTarget(), InstallTarget(), DocumentTarget()):
+    for target in (ConfigureTarget(), InstallTarget(), DocumentTarget(), SubscribeTarget()):
         subparser = subparsers.add_parser(target.name, help=target.help)
         subparser.set_defaults(target=target)
         target.register(subparser)
