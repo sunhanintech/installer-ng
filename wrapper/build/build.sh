@@ -27,7 +27,7 @@ cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
 echo "Releasing $PKG_VERSION"
 # While building the package, upload it to PyPi too.
-python setup.py sdist #upload
+python setup.py sdist upload
 
 # Before building the archives, check whether we are dealing with a release
 # or a pre-release
