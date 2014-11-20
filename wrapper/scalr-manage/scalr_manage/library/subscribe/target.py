@@ -31,7 +31,7 @@ class SubscribeTarget(Target):
         email = ui.prompt_email("Please enter your email address", "This is not a valid email")
 
         try:
-            res = requests.get(constant.NOTIFICATION_FORM_URL, data={
+            res = requests.post(constant.NOTIFICATION_FORM_URL, data={
                 constant.NOTIFICATION_ATTR_EMAIL: email,
                 constant.NOTIFICATION_ATTR_ID: id
             })
