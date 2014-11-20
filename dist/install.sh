@@ -26,5 +26,6 @@ curl "https://packagecloud.io/install/repositories/scalr/scalr-manage/script.${r
 $pkgMgr install -y scalr-manage
 
 scalr-manage configure
+scalr-manage subscribe
 scalr-manage install
 scalr-manage document

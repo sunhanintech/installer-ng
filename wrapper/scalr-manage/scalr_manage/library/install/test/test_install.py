@@ -90,7 +90,6 @@ class ScalrInstallTestCase(BaseInstallTestCase):
         args = self.parser.parse_args(["--log-file", os.path.join(self.work_dir, "install.log")])
         self.target(args, self.ui, self.tokgen)
 
-
     def test_install_fail(self):
         os.environ["MOCK_CHEF_EXIT_CODE"] = "1"
         args = self.parser.parse_args(["--log-file", os.path.join(self.work_dir, "install.log")])
