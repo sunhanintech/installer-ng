@@ -15,8 +15,11 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+# NOTE - Hopefully one day we can use the ENV here, but currently
+# to use ENTRYPOINT + CMD, we need the JSON form.
 # We need shell interpolation here
-CMD bash --login ${TOOLS_DIR}/wrap.sh
+ENTRYPOINT ["/build/tools/wrap.sh"]
+CMD ["bash", "--login", "/build/tools/build.sh"]
 
 # We actually add the scalr-manage pkg dir into the image, because accessing it from a
 # volume is too slow when using boot2docker (which is the very purpose of this image)
