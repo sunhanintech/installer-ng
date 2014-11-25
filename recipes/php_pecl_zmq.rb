@@ -1,7 +1,11 @@
 case node[:platform_family]
-
 when 'rhel'
-  package 'zeromq-devel'
+  case node[:platform_version].to_i
+  when 6
+    package 'zeromq-devel'
+  when 7
+    package 'zeromq3-devel'
+  end
 when 'debian'
   package 'libzmq-dev'
 end
