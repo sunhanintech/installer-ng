@@ -39,7 +39,7 @@ def _main(argv, ui, tokgen):
     except InstallerException as e:
         ui.print_fn("Whoops! It looks like the installer hit a snag")
         ui.print_fn("Please file an issue to get support: https://github.com/scalr/installer-ng/issues")
-        ui.print_fn("Please include the installer log file in your bug report: %s", e.log_file)
+        ui.print_fn("Please include the installer log file in your bug report: %s".format(e.log_file))
         exit_code = 1
 
     return exit_code

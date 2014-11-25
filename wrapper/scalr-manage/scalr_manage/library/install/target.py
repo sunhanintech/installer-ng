@@ -91,7 +91,7 @@ class InstallTarget(Target):
     def register(self, parser):
         parser.add_argument("-r", "--release", default=__version__, help="Installer cookbook release (e.g. 6.5.0)")
         parser.add_argument("-l", "--log-file", default=constant.DEFAULT_LOG_FILE)
-        parser.add_argument("-v", "--verbose", help="Enable debug log output from Chef")
+        parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug log output from Chef")
 
     def __call__(self, args, ui, tokgen):
         self._check_configuration(args)

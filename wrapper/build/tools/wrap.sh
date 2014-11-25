@@ -21,4 +21,4 @@ mkdir -p "$DIST_DIR"
 chown -R "$BUILD_NAME:$BUILD_NAME" "$DIST_DIR"
 
 # Actually run as that user now!
-sudo -u "$BUILD_NAME" -g "$BUILD_NAME" -H -E -- bash --login "$TOOLS_DIR/build.sh"
+sudo -u "$BUILD_NAME" -g "$BUILD_NAME" -H -E -- "$@"
