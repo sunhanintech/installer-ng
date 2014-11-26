@@ -1,18 +1,12 @@
 # coding:utf-8
 from __future__ import unicode_literals
 import json
-import os
-import tempfile
 import shutil
-
 import unittest
 
 from scalr_manage.library.configure.target import ConfigureTarget
-from scalr_manage.rnd import RandomTokenGenerator
-from scalr_manage.ui.engine import UserInput
 
-from scalr_manage.test.util import ParsingError, TestParser
-from scalr_manage.ui.test.util import MockOutput, MockInput
+from scalr_manage.test.util import ParsingError, TestParser, BaseWrapperTestCase
 
 
 APP_TEST_INPUTS = [
@@ -47,15 +41,9 @@ class ArgumentsTestCase(unittest.TestCase):
         self.assertRaises(ParsingError, self.parser.parse_args, ["--without-zzz"])
 
 
-class AttributesTestCase(unittest.TestCase):
+class AttributesTestCase(BaseWrapperTestCase):
     def setUp(self):
-        self.input = MockInput()
-        self.output = MockOutput()
-        self.ui = UserInput(self.input, self.output)
-
-        self.tokgen = RandomTokenGenerator(os.urandom)
-
-        self.parser = TestParser()
+        super(AttributesTestCase, self).setUp()
 
         self.target = ConfigureTarget()
         self.target.register(self.parser)
@@ -103,19 +91,9 @@ class AttributesTestCase(unittest.TestCase):
         self.assertEqual(7, len(self.target.make_runlist(self.parser.parse_args([]))))
 
 
-class FullTestCase(unittest.TestCase):
+class FullTestCase(BaseWrapperTestCase):
     def setUp(self):
-        self.work_dir = tempfile.mkdtemp()
-        self.solo_json_path = os.path.join(self.work_dir, "scalr", "solo.json")
-
-        self.input = MockInput()
-        self.output = MockOutput()
-        self.ui = UserInput(self.input, self.output)
-
-        self.tokgen = RandomTokenGenerator(os.urandom)
-
-        self.parser = TestParser()
-        self.parser.add_argument("--configuration", default=self.solo_json_path)
+        super(FullTestCase, self).setUp()
 
         self.target = ConfigureTarget()
         self.target.register(self.parser)
@@ -129,7 +107,7 @@ class FullTestCase(unittest.TestCase):
         self.target.__call__(args, self.ui, self.tokgen)
         with open(self.solo_json_path) as f:
             attrs = json.load(f)
-        self.assertTrue(attrs > 2)
+        self.assertTrue(len(attrs) > 2)
         self.assertTrue("run_list" in attrs)
         self.assertTrue("scalr" in attrs)
         self.assertTrue("mysql" in attrs)

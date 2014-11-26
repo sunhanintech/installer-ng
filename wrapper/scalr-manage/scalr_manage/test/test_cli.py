@@ -1,7 +1,8 @@
-import unittest
 import os
+import unittest
 
 from scalr_manage import cli
+from scalr_manage.library.install.test.util import BaseInstallTestCase
 from scalr_manage.rnd import RandomTokenGenerator
 from scalr_manage.ui.engine import UserInput
 
