@@ -2,30 +2,20 @@
 from __future__ import unicode_literals
 
 import os
-import unittest
 
 from scalr_manage.library.document.target import DocumentTarget
 from scalr_manage.library.exception import ConfigurationException
-from scalr_manage.rnd import RandomTokenGenerator
-from scalr_manage.ui.engine import UserInput
 
-from scalr_manage.test.util import TestParser
-from scalr_manage.ui.test.util import MockOutput, MockInput
+from scalr_manage.test.util import BaseWrapperTestCase
 
 
 class Container(object):
     pass
 
 
-class DocumentTestCase(unittest.TestCase):
+class DocumentTestCase(BaseWrapperTestCase):
     def setUp(self):
-        self.input = MockInput()
-        self.output = MockOutput()
-        self.ui = UserInput(self.input, self.output)
-
-        self.tokgen = RandomTokenGenerator(os.urandom)
-
-        self.parser = TestParser()
+        super(DocumentTestCase, self).setUp()
 
         self.test_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data")
         self.test_json = os.path.join(self.test_data, "solo.json")
