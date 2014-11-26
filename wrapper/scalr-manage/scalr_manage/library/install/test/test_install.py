@@ -46,10 +46,6 @@ class ScalrInstallTestCase(BaseInstallTestCase):
     def setUp(self):
         super(ScalrInstallTestCase, self).setUp()
 
-        # Copy our configuration where the tests expect it
-        os.makedirs(os.path.join(os.path.dirname(self.solo_json_path)))
-        shutil.copyfile(os.path.join(self.test_data, "test.json"), self.solo_json_path)
-
         self.target = InstallTarget()
         self.target.register(self.parser)
 
