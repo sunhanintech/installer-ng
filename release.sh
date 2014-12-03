@@ -9,15 +9,11 @@ set -o nounset
 
 OPTIND=1
 
-no_push=
 farm_gv=()  # List of Farms we want to set the INSTALLER_BRANCH GV on
 
 while getopts "xf:" opt
 do
   case "$opt" in
-    x)
-      no_push=1
-      ;;
     f)
       farm_gv+=("$OPTARG")
       ;;
@@ -39,6 +35,10 @@ exit_invalid_release () {
 # We expect a release such as 1.1.1 or 1.2.3a1 or 2.0.0b2
 echo "$release" | grep --silent --extended-regexp '^(\d+\.){2}\d+([a-b]\d+)?$' || exit_invalid_release
 final_release=$(echo "$release" | grep --only-matching --extended-regexp '^(\d+\.){2}\d+')  # Chef does not support ax or bx in our release
+
+is_final_release () {
+  [[ "$final_release" = "$release" ]]
+}
 
 exit_dirty_files () {
   echo "Dirty files in repo, aborting"
@@ -119,13 +119,13 @@ $HERE/wrapper/build/build.sh
 
 cd $ORIGINAL_DIR
 
-if [ -z "$no_push" ]; then
+if is_final_release; then
   echo "Pushing release branch"
   git push --force origin "${RELEASE_BRANCH}:${RELEASE_BRANCH}"
   echo "Pushing release tag"
   git push --force origin "refs/tags/${RELEASE_TAG}:refs/tags/${RELEASE_TAG}"
 else
-  echo "Not pushing release branch: -x is set"
+  echo "Not pushing release branch: $release is not a final release"
 fi
 
 echo "Done. Published: $release"
