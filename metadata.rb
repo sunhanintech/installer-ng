@@ -18,7 +18,7 @@ depends 'python', '~> 1.4.0'
 depends 'artifact', '~> 1.11.0'
 depends 'database', '~> 2.3.0'
 depends 'mysql', '~> 5.4.0'
-depends 'apache2', '~> 2.0.0'
+depends 'apache2', '~> 3.0.0'
 depends 'cron', '~> 1.4.0'
 
 # These aren't actually used *here*, but we pull them in for packaging
