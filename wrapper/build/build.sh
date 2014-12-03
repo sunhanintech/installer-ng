@@ -26,16 +26,25 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 cd $PKG_DIR
 PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
 echo "Releasing $PKG_VERSION"
-# While building the package, upload it to PyPi too.
-python setup.py sdist upload
+# Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
+
+python setup.py sdist
 
 # Before building the archives, check whether we are dealing with a release
 # or a pre-release
+
+pypi_upload_and_exit () {
+  echo "Uploading to PyPi"
+  cd $PKG_DIR
+  python setup.py sdist upload
+  exit 0
+}
+
 if echo "$PKG_VERSION" | grep --extended-regexp --silent '^(\d+\.){2}\d+$'; then
   echo "$PKG_VERSION looks like a release. Building binary packages."
 else
   echo "$PKG_VERSION looks like a pre-release. Not building binary packages."
-  exit 0
+  pypi_upload_and_exit
 fi
 
 # Now, let's inject the archive into all our build contexts!
@@ -98,3 +107,6 @@ for distroDir in *; do
       "$img"
   done
 done
+
+# Finally, upload to PyPi!
+pypi_upload_and_exit

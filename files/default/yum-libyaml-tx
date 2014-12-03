@@ -1,0 +1,3 @@
+remove  libyaml
+install libyaml libyaml-devel
+transaction run
