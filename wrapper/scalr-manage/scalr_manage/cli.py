@@ -1,6 +1,7 @@
 # coding:utf-8
 from __future__ import print_function
 
+import subprocess
 import argparse
 
 from scalr_manage.library.configure.target import ConfigureTarget
@@ -24,7 +25,7 @@ def _main(argv, ui, tokgen):
         subparser.set_defaults(target=target)
         target.register(subparser)
 
-    args = parser.parse_args(argv)
+    args = parser.parse_args(argv[1:])  # Default behavior, only we're not directly using sys.argv here
     exit_code = 0
 
     try:
@@ -40,6 +41,8 @@ def _main(argv, ui, tokgen):
         ui.print_fn("Whoops! It looks like the installer hit a snag")
         ui.print_fn("Please file an issue to get support: https://github.com/scalr/installer-ng/issues")
         ui.print_fn("Please include the installer log file in your bug report: {0}".format(e.log_file))
+        ui.print_fn("If this looks like a temporary issue, consider re-executing the installer command that failed by running")
+        ui.print_fn("  {0}".format(subprocess.list2cmdline(argv)))
         exit_code = 1
 
     return exit_code
@@ -57,4 +60,4 @@ def main():
 
     ui = UserInput(raw_input if sys.version_info < (3, 0, 0) else input, print)
     tokgen = RandomTokenGenerator(os.urandom)
-    sys.exit(_main(sys.argv[1:], ui, tokgen))
+    sys.exit(_main(sys.argv, ui, tokgen))
