@@ -23,7 +23,6 @@ when 'rhel', 'fedora'
     webtatic_gpg_key = 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7'
   else
     webtatic_pkgs.concat        ['libmcrypt*']
-    epel_pkgs.concat            ['libyaml*']
     rpmforge_extras_pkgs.concat ['*rrdtool*']
     webtatic_gpg_key = 'http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy'
   end
