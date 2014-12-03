@@ -196,6 +196,7 @@ default['php']['session_save_path'] = '/var/lib/scalr/sessions'
 # Apache attributes
 default['apache']['user'] = node.scalr.core.users.web
 default['apache']['group'] = node.scalr.core.group
+default['apache']['mpm'] = 'prefork'  # For mod_php
 default['apache']['extra_modules'] = %w{rewrite deflate filter headers php5 authz_owner}
 
 if node['platform_family'] == 'debian'

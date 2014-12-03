@@ -1,5 +1,15 @@
 include_recipe "python::#{node['python']['install_method']}"
 include_recipe 'python::pip'
+
+# NOTE: the python cookbook has a pending issue to resolve the following hack
+# All the include_recipe blocks and this can be replaced with include_recipe "python"
+# once they fix it.
+# https://github.com/poise/python/issues/100
+python_pip 'setuptools' do
+  action :upgrade
+  version node['python']['setuptools_version']
+end
+
 include_recipe 'python::virtualenv'
 
 if scalrpy2? node
