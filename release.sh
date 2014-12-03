@@ -37,7 +37,7 @@ exit_invalid_release () {
 }
 
 # We expect a release such as 1.1.1 or 1.2.3a1 or 2.0.0b2
-echo "$release" | grep --silent --extended-regexp '^(\d+\.){2}\d([a-b]\d+)?$' || exit_invalid_release
+echo "$release" | grep --silent --extended-regexp '^(\d+\.){2}\d+([a-b]\d+)?$' || exit_invalid_release
 final_release=$(echo "$release" | grep --only-matching --extended-regexp '^(\d+\.){2}\d+')  # Chef does not support ax or bx in our release
 
 exit_dirty_files () {
