@@ -58,7 +58,12 @@ if scalrpy2? node
   # Let the fun begin! M2Crypto isn't installable from pip on RHEL platforms, so we
   # need to manually install it and run the fedora_setup.sh script provided for RHEL
   if node[:platform_family] == 'rhel'
-    package 'wget'
+
+    package 'wget' do
+      # Old wget packages may not have support for alternative names, which
+      # github uses.
+      action :upgrade
+    end
 
     template "#{Chef::Config[:file_cache_path]}/rhel-install-m2crypto.sh" do
       source    'rhel-install-m2crypto.sh.erb'
