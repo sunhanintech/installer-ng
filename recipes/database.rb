@@ -16,7 +16,7 @@ end
 
 # Load data only if no upgrade data is there (>= 5.0), or rely on some other indicator if upgrade data is unavailable (< 5.0)
 
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
+if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
   data_test_query = "SELECT COUNT(*) FROM upgrades;"
 else
   data_test_query = "SELECT COUNT(*) FROM ipaccess;"
@@ -28,7 +28,7 @@ execute "Load Scalr Database Data" do
   # Only import data if it's none at this point.
 end
 
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
+if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
   # Load Analytics structure and data
   execute "Load Analytics Database Structure" do
     command "mysql #{analytics_conn_params} < #{node[:scalr][:core][:location]}/sql/analytics_structure.sql"

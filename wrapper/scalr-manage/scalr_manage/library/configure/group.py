@@ -139,7 +139,7 @@ class AppGroup(Group):
             revision = constant.DEFAULT_SCALR_GIT_REV
             version = constant.DEFAULT_SCALR_VERSION
         else:
-            repo = ui.prompt("Enter the repository to clone")
+            repo = ui.prompt("Enter the repository to clone (e.g. git@github.com:Scalr/scalr.git)")
             revision = ui.prompt("Enter the revision to deploy (e.g. HEAD)")
             version = ui.prompt_select_from_options("What Scalr version is this?", constant.SUPPORTED_VERSIONS)
 

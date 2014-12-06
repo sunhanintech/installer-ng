@@ -1,7 +1,7 @@
 module Scalr
   module VersionHelper
     def scalrpy2?(node)
-      Gem::Dependency.new(nil, '>= 5.1').match?(nil, node.scalr.package.version)
+      Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node.scalr.package.version)
     end
   end
 end
