@@ -101,10 +101,10 @@ default[:scalr][:services] = [
   }},
 ]
 
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
+if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
   # The Scalarizr Update and Cost Analytics Scalrpy were introduced in Scalr 5.0
 
-  if Gem::Dependency.new(nil, '~> 5.1').match?(nil, node.scalr.package.version)
+  if Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node.scalr.package.version)
     # In Scalr 5.1, the Scarlrpy jobs all run as daemons instead of services.
     poller_run = {:daemon => true}
     processor_run = {:daemon => true}
@@ -144,7 +144,7 @@ default[:scalr][:cron][:crons] = [
   {:hour => '*/5',  :minute => '0',    :ng => false,  :name => 'RotateLogs'},
 ]
 
-if Gem::Dependency.new(nil, '~> 5.0').match?(nil, node.scalr.package.version)
+if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
   extra_crons = [
     {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
     {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
