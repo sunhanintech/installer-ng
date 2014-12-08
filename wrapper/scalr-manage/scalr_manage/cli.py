@@ -51,13 +51,64 @@ def _main(argv, ui, tokgen):
 def main():
     import sys
     import os
+    import logging
+
+    import requests
+    from raven.handlers.logging import SentryHandler
+    from raven.conf import setup_logging
+
     from scalr_manage.ui.engine import UserInput
     from scalr_manage.rnd import RandomTokenGenerator
+    from scalr_manage.constant import RAVEN_DSN_URL, RAVEN_DSN_CACHE_FILE, LOGGING_FORMAT
 
-    # TODO
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-
+    # UI / random setup
     ui = UserInput(raw_input if sys.version_info < (3, 0, 0) else input, print)
     tokgen = RandomTokenGenerator(os.urandom)
-    sys.exit(_main(sys.argv, ui, tokgen))
+
+    # Logging setup
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument("--no-logging", default=False, action="store_true")
+    pre_parser.add_argument("--verbose", default=False, action="store_true")
+    ns, real_args = pre_parser.parse_known_args()
+
+    root_handler = logging.StreamHandler()
+    root_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(root_handler)
+    root_logger.setLevel(logging.WARNING)
+
+    installer_logger = logging.getLogger("scalr_manage")
+    installer_logger.setLevel(logging.DEBUG if ns.verbose else logging.INFO)
+
+    if not ns.no_logging:
+        ui.print_fn("Note: this installer will log fatal errors to Scalr. No personal data is "
+                    "logged (only stack traces), but you can disable this behavior with the "
+                    "--no-logging flag if this is a problem for you.")
+        try:
+            try:
+                with open(RAVEN_DSN_CACHE_FILE) as f:
+                    raven_dsn = f.read()
+            except IOError:
+                # Retrieve a remote token so that we can rotate the token without
+                # needing to upgrade the installer.
+                ui.print_fn("Please wait while fatal error logging is being configured... ", end="")
+                sys.stdout.flush()
+                raven_dsn = requests.get(RAVEN_DSN_URL).text.strip()
+                ui.print_fn("Done!")
+        except Exception as e:
+            logger.warning("Failed to setup fatal exception logging. Don't worry: you can still proceed.", exc_info=True)
+        else:
+            handler = SentryHandler(raven_dsn, level=logging.ERROR)
+            setup_logging(handler)
+
+        try:
+            # Try and cache the token for future access
+            with open(RAVEN_DSN_CACHE_FILE, "w") as f:
+                f.write(raven_dsn)
+        except:
+            # If this fails for any reason, we don't care
+            pass
+
+    real_args.insert(0, sys.argv[0])  # _main expects to have argv[0] be the program's name!
+    sys.exit(_main(real_args, ui, tokgen))
