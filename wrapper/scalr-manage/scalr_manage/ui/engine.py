@@ -25,13 +25,13 @@ class UserInput(object):
                 self.print_fn("")  # Newline
                 return ret
 
-    def prompt_ssh_key(self, q, error_msg="This is not a valid SSH Key"):
+    def prompt_ssh_key(self, q, error_msg="This is not a valid SSH private key"):
         key = ""
 
         while not key:
-            first_line = self.prompt_fn(q + ">\n")
+            first_line = self.prompt_fn(q + "\n>\n")
             if first_line != OPENSSL_START_KEY:
-                self.print_fn("{0} (This is not an SSH private key)".format(error_msg))
+                self.print_fn("{0} (This is not a SSH private key)".format(error_msg))
                 continue
 
             lines = [first_line]
@@ -45,7 +45,9 @@ class UserInput(object):
                     break
 
                 if line.startswith(OPENSSL_PROC_TYPE) and OPENSSL_ENCRYPTED in line:
-                    self.print_fn("{0} (This is an encrypted key".format(error_msg))
+                    # This will break out of the inner loop, and continue into the outer loop
+                    # because we stil have (key == "").
+                    self.print_fn("{0} (This is an encrypted SSH private key".format(error_msg))
                     break
 
         return key

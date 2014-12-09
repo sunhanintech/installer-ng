@@ -7,6 +7,7 @@ import subprocess
 import logging
 
 from scalr_manage.version import __version__
+from scalr_manage.constant import LOGGING_FORMAT
 from scalr_manage.library.base import Target
 from scalr_manage.library import exception
 from scalr_manage.library.install import constant
@@ -99,9 +100,13 @@ class InstallTarget(Target):
         http_download = http.download
 
         # First, register the log file!
-        log_handler = logging.FileHandler(args.log_file)
-        log_handler.setFormatter(logging.Formatter("[%(asctime)s] [%(pathname)s:%(lineno)s] [%(name)s:%(levelname)s] %(message)s"))
-        logger.addHandler(log_handler)
+        try:
+            log_handler = logging.FileHandler(args.log_file)
+        except Exception:
+            logger.warning("Failed to setup logging to %s", args.log_file, exc_info=True)
+        else:
+            log_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+            logger.addHandler(log_handler)
 
         # Now, install!
         try:
