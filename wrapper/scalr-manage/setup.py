@@ -61,7 +61,7 @@ for dirpath, dirnames, filenames in os.walk(django_dir):
         package_files = package_data.setdefault('.'.join(parts), [])
         package_files.extend([os.path.join(path, f) for f in filenames])
 
-dependencies = ["requests>=1.0.0", "setuptools", "jinja2", "raven>=5.1.1,<6.0.0"]
+dependencies = ["requests>=1.0.0", "setuptools", "jinja2", "raven>=5.0.0"]
 if sys.version_info < (2, 7, 0):
     dependencies.append("argparse")
 
