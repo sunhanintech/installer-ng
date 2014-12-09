@@ -52,7 +52,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         argv = ["--without-all"]
 
         self.assertEqual(
-            {'apt': {'compile_time_update': True}},
+            {'apt': {'compile_time_update': True}, 'sentry': {'dsn': None, 'enabled': False}},
             self.target.make_attributes(self.parser.parse_args(argv), self.ui, self.tokgen)
         )
 
@@ -80,7 +80,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         self.assertEqual(4, len(attrs["scalr"]["database"]))
 
     def test_make_runlist(self):
-        common = ["recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common = ["recipe[sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
         test_cases = [
             (common, ["--without-all"]),
             (common + ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
@@ -88,7 +88,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         ]
         for expected, args in test_cases:
             self.assertEqual(expected, self.target.make_runlist(self.parser.parse_args(args)))
-        self.assertEqual(7, len(self.target.make_runlist(self.parser.parse_args([]))))
+        self.assertEqual(8, len(self.target.make_runlist(self.parser.parse_args([]))))
 
 
 class FullTestCase(BaseWrapperTestCase):
