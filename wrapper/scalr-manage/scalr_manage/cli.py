@@ -82,14 +82,16 @@ def main():
     installer_logger.setLevel(logging.DEBUG if ns.verbose else logging.INFO)
 
     if not ns.no_logging:
-        ui.print_fn("Note: this installer will log fatal errors to Scalr. No personal data is "
-                    "logged (only stack traces), but you can disable this behavior with the "
-                    "--no-logging flag if this is a problem for you.")
         try:
             try:
                 with open(RAVEN_DSN_CACHE_FILE) as f:
                     raven_dsn = f.read()
             except IOError:
+                # Only print a warning the first time this is used
+                ui.print_fn("Note: this installer will log fatal errors to Scalr. No personal data is "
+                            "logged (only stack traces), but you can disable this behavior with the "
+                            "--no-logging flag if this is a problem for you.")
+
                 # Retrieve a remote token so that we can rotate the token without
                 # needing to upgrade the installer.
                 ui.print_fn("Please wait while fatal error logging is being configured... ", end="")
