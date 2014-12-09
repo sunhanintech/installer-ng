@@ -38,11 +38,13 @@ def _main(argv, ui, tokgen):
         ui.print_fn("Run 'scalr-manage configure' first.")
         exit_code = -2
     except InstallerException as e:
+        ui.print_fn("\n") # This is 2 lines
         ui.print_fn("Whoops! It looks like the installer hit a snag")
         ui.print_fn("Please file an issue to get support: https://github.com/scalr/installer-ng/issues")
         ui.print_fn("Please include the installer log file in your bug report: {0}".format(e.log_file))
         ui.print_fn("If this looks like a temporary issue, consider re-executing the installer command that failed by running")
         ui.print_fn("  {0}".format(subprocess.list2cmdline(argv)))
+        ui.print_fn("\n")
         exit_code = 1
 
     return exit_code
