@@ -100,6 +100,7 @@ class InstallTarget(Target):
         http_download = http.download
 
         # First, register the log file!
+        # noinspection PyBroadException
         try:
             log_handler = logging.FileHandler(args.log_file)
         except Exception:

@@ -8,6 +8,7 @@ import urlparse
 from distutils.spawn import find_executable
 
 from scalr_manage.library.configure import constant
+from scalr_manage.sentry.constant import RAVEN_DSN_ENV_VAR
 from scalr_manage.version import __version__
 
 
@@ -66,10 +67,25 @@ class Group(object):
         return {}
 
 
+class LoggingGroup(Group):
+    name        = "logging"
+    recipes     = ["chef-sentry-handler"]
+    priority    = 0
+    optional    = False  # This only gets enabled if the env var is set
+
+    @classmethod
+    def make_attributes(cls, args, ui, tokgen):
+        raven_dsn = os.environ.get(RAVEN_DSN_ENV_VAR)
+        return {"sentry": {
+            "enabled": raven_dsn is not None,
+            "dsn": raven_dsn
+        }}
+
+
 class UtilGroup(Group):
     name        = "util"
     recipes     = ["apt", "build-essential", "timezone-ii"]
-    priority    = 0
+    priority    = 5
     optional    = False
 
     @classmethod
