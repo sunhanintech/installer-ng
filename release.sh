@@ -2,8 +2,6 @@
 ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-trap "git checkout $ORIGINAL_BRANCH" HUP INT ERR EXIT TERM
-
 set -o errexit
 set -o nounset
 
@@ -26,6 +24,8 @@ release=$1
 
 HERE=$(dirname "${BASH_SOURCE[0]}")
 cd $HERE
+
+trap "cd $HERE && git checkout $ORIGINAL_BRANCH" HUP INT ERR EXIT TERM
 
 exit_invalid_release () {
   echo "$release: Not a valid release"
