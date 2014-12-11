@@ -114,12 +114,12 @@ class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
         return attrs["iptables-ng"]
 
     def test_all_ip_protos(self):
-        self.mock_path_exists = lambda path: True
+        self.mock_path_exists = lambda path: path == "/proc/net/if_inet6"
         iptables_ng_attrs = self._helper_get_iptables_ng_attrs()
         self.assertEqual([4, 6], iptables_ng_attrs["enabled_ip_versions"])
 
     def test_no_ipv6(self):
-        self.mock_path_exists = lambda path: path == "/proc/net/ip_tables_names"
+        self.mock_path_exists = lambda path: False
         iptables_ng_attrs = self._helper_get_iptables_ng_attrs()
         self.assertEqual([4,], iptables_ng_attrs["enabled_ip_versions"])
 

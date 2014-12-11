@@ -254,15 +254,12 @@ class IptablesGroup(Group):
     optional    = True
 
     @classmethod
-    def enabled_ip_versions(cls):
-        def enabled(ip_version, tables_path):
-            if os.path.exists(tables_path):
-                return True
-            logger.warning("Not enabling iptables management for IPv%s: protocol version appears to be disabled", ip_version)
-            return False
-
-        return [ip_version for ip_version, tables_path in constant.IPTABLES_VERSIONS_INDICATORS
-                if enabled(ip_version, tables_path)]
+    def enabled_iptables_versions(cls):
+        if os.path.exists(constant.IPV6_IF):
+            return [4, 6]
+        else:
+            logger.warning("Not enabling iptables management for IPv6: protocol version appears to be disabled")
+            return [4]
 
     @classmethod
     def make_attributes(cls, args, ui, tokgen):
@@ -286,7 +283,7 @@ class IptablesGroup(Group):
                 },
             })
         return {"iptables-ng": {
-            "enabled_ip_versions": cls.enabled_ip_versions(),
+            "enabled_ip_versions": cls.enabled_iptables_versions(),
             "rules": {"filter": {"INPUT": input_rules}}}
         }
 
