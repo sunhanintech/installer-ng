@@ -254,6 +254,17 @@ class IptablesGroup(Group):
     optional    = True
 
     @classmethod
+    def enabled_ip_versions(cls):
+        def enabled(ip_version, tables_path):
+            if os.path.exists(tables_path):
+                return True
+            logger.warning("Not enabling iptables management for IPv%s: protocol version appears to be disabled", ip_version)
+            return False
+
+        return [ip_version for ip_version, tables_path in constant.IPTABLES_VERSIONS_INDICATORS
+                if enabled(ip_version, tables_path)]
+
+    @classmethod
     def make_attributes(cls, args, ui, tokgen):
         input_rules = {}
         if MysqlGroup.is_enabled(args):
@@ -274,5 +285,8 @@ class IptablesGroup(Group):
                     "rule": "--protocol tcp --dport 8080 --match state --state NEW --jump ACCEPT"
                 },
             })
-        return {"iptables-ng": {"rules": {"filter": {"INPUT": input_rules}}}}
+        return {"iptables-ng": {
+            "enabled_ip_versions": cls.enabled_ip_versions(),
+            "rules": {"filter": {"INPUT": input_rules}}}
+        }
 
