@@ -1,6 +1,7 @@
 # coding:utf-8
 from __future__ import unicode_literals
 import json
+import os
 import shutil
 import unittest
 
@@ -80,7 +81,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         self.assertEqual(4, len(attrs["scalr"]["database"]))
 
     def test_make_runlist(self):
-        common = ["recipe[sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common = ["recipe[chef-sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
         test_cases = [
             (common, ["--without-all"]),
             (common + ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
@@ -89,6 +90,38 @@ class AttributesTestCase(BaseWrapperTestCase):
         for expected, args in test_cases:
             self.assertEqual(expected, self.target.make_runlist(self.parser.parse_args(args)))
         self.assertEqual(8, len(self.target.make_runlist(self.parser.parse_args([]))))
+
+
+class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
+    def setUp(self):
+        super(IptablesAttributesDiscoveryTestCase, self).setUp()
+
+        self.target = ConfigureTarget()
+        self.target.register(self.parser)
+
+        self.__real_path_exists = os.path.exists
+        os.path.exists = lambda path: self.mock_path_exists(path)
+
+        self.mock_path_exists = lambda path: 1/0  # Override me !
+
+    def tearDown(self):
+        os.path.exists = self.__real_path_exists
+
+    def _helper_get_iptables_ng_attrs(self):
+        argv = ["--without-all", "--with-iptables"]
+        attrs = self.target.make_attributes(self.parser.parse_args(argv), self.ui, self.tokgen)
+        self.assertTrue("iptables-ng" in attrs)
+        return attrs["iptables-ng"]
+
+    def test_all_ip_protos(self):
+        self.mock_path_exists = lambda path: True
+        iptables_ng_attrs = self._helper_get_iptables_ng_attrs()
+        self.assertEqual([4, 6], iptables_ng_attrs["enabled_ip_versions"])
+
+    def test_no_ipv6(self):
+        self.mock_path_exists = lambda path: path == "/proc/net/ip_tables_names"
+        iptables_ng_attrs = self._helper_get_iptables_ng_attrs()
+        self.assertEqual([4,], iptables_ng_attrs["enabled_ip_versions"])
 
 
 class FullTestCase(BaseWrapperTestCase):
