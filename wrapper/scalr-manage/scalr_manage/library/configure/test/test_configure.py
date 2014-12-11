@@ -80,7 +80,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         self.assertEqual(4, len(attrs["scalr"]["database"]))
 
     def test_make_runlist(self):
-        common = ["recipe[sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common = ["recipe[chef-sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
         test_cases = [
             (common, ["--without-all"]),
             (common + ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
