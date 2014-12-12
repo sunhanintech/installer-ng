@@ -82,6 +82,13 @@ class LoggingGroup(Group):
         }}
 
 
+class PolicyGroup(Group):
+    name        = "policy"
+    recipes     = ["apparmor", "selinux::disabled"]
+    priority    = 2  # Disable very early
+    optional    = True
+
+
 class UtilGroup(Group):
     name        = "util"
     recipes     = ["apt", "build-essential", "timezone-ii"]
@@ -102,8 +109,8 @@ class NtpGroup(Group):
     @classmethod
     def make_attributes(cls, args, ui, tokgen):
         output = {"ntp": {}}
-        if find_executable("aa-status") is None:
-            # Disable apparmor in the ntp cookbook if apparmor is not installed
+        if PolicyGroup.is_enabled(args) or find_executable("aa-status") is None:
+            # Disable apparmor in the ntp cookbook if apparmor is not enabled / installed.
             output['ntp']['apparmor_enabled'] =  False
         return output
 
@@ -286,4 +293,3 @@ class IptablesGroup(Group):
             "enabled_ip_versions": cls.enabled_iptables_versions(),
             "rules": {"filter": {"INPUT": input_rules}}}
         }
-

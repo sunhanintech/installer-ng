@@ -81,15 +81,19 @@ class AttributesTestCase(BaseWrapperTestCase):
         self.assertEqual(4, len(attrs["scalr"]["database"]))
 
     def test_make_runlist(self):
-        common = ["recipe[chef-sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common_head = ["recipe[chef-sentry-handler]"]
+        common_tail = ["recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+
         test_cases = [
-            (common, ["--without-all"]),
-            (common + ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
+            (common_head + common_tail, ["--without-all"]),
+            (common_head + ["recipe[apparmor]", "recipe[selinux::disabled]"] + common_tail +
+             ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
              ["--without-ntp", "--without-iptables"]),
         ]
         for expected, args in test_cases:
             self.assertEqual(expected, self.target.make_runlist(self.parser.parse_args(args)))
-        self.assertEqual(8, len(self.target.make_runlist(self.parser.parse_args([]))))
+
+        self.assertEqual(10, len(self.target.make_runlist(self.parser.parse_args([]))))
 
 
 class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
