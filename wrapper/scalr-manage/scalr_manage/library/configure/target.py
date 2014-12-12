@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 import os
 import logging
 import json
+from scalr_manage import version
 
+from scalr_manage.constant import VERSION_FLAG_FILE_EXT
 from scalr_manage.library.base import Target
 from scalr_manage.library.configure.group import Group
 from scalr_manage.library.configure.util import merge
@@ -56,4 +58,9 @@ class ConfigureTarget(Target):
 
         # TODO - Warn if the file already exists!
         with open(args.configuration, "w") as f:
+            logger.info("Generated configuration in: %s", f.name)
             json.dump(output, f, indent=4)
+
+        with open(".".join([args.configuration, VERSION_FLAG_FILE_EXT]), "w") as f:
+            logger.info("Logged configuration version in: %s", f.name)
+            f.write(version.__version__)

@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import unittest
+from scalr_manage import version
 
 from scalr_manage.library.configure.target import ConfigureTarget
 
@@ -142,9 +143,14 @@ class FullTestCase(BaseWrapperTestCase):
         self.input.inputs = list(APP_TEST_INPUTS)
         args = self.parser.parse_args(["--advanced"])
         self.target.__call__(args, self.ui, self.tokgen)
+
         with open(self.solo_json_path) as f:
             attrs = json.load(f)
         self.assertTrue(len(attrs) > 2)
         self.assertTrue("run_list" in attrs)
         self.assertTrue("scalr" in attrs)
         self.assertTrue("mysql" in attrs)
+
+        with open(self.solo_json_path + ".version") as f:
+            self.assertEqual(version.__version__, f.read())
+

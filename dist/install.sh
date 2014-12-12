@@ -28,6 +28,8 @@ fi
 echo "Detected '$pkgMgr' -- installing '$repoType' installer repo"
 curl "https://packagecloud.io/install/repositories/scalr/scalr-manage/script.${repoType}" | sudo bash
 
+# It's important to keep this around, so that if someone's install crashes the first time,
+# they get another shot after we update by just re-running this script.
 $pkgMgr install -y scalr-manage
 
 # Check OS -- exit if the OS is unsupported
@@ -54,9 +56,15 @@ if [ -n "${SENTRY_DSN}" ]; then
 fi
 
 CONFIGURATION_FILE="/etc/scalr.json"
+CONFIGURATION_VERSION_FILE="/etc/scalr.json"
 
-if [ -f "${CONFIGURATION_FILE}" ]; then
-  echo "Already configured -- skipping configuration step"
+# Try and do the right thing here. If there is already a configuration file laying around with the
+# right version, use it. If there isn't, then create a new one (that might create an annoying prompt
+# for the user to recreate their configuration, but that's a small price to pay if there was an error
+# in configure and the attributes need to be fixed in an update).
+
+if scalr-manage -c "${CONFIGURATION_VERSION_FILE}" match-version; then
+  echo "Already configured for '$(scalr-manage --version)', skipping configuration step"
   echo "Delete '${CONFIGURATION_FILE}' if you'd like to reconfigure"
 else
   scalr-manage -c "${CONFIGURATION_FILE}" configure
