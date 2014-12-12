@@ -5,15 +5,16 @@ set -o nounset
 # Get the release we're running
 source /etc/lsb-release
 
+# Load the version
+source /build/tools/pkg_util.sh
+
 # Start the build
 cd $PKG_DIR
 
-PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
-fpm -t deb -s python --no-python-fix-name --depends python --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
+fpm -t deb ${FPM_ARGS} --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
 
-repo="scalr/scalr-manage/ubuntu/$DISTRIB_CODENAME/"
-pkg="scalr-manage_${PKG_VERSION}_all.deb"
+repo="${REPO_BASE}/ubuntu/${DISTRIB_CODENAME}/"
+pkg="scalr-manage_${VERSION_FULL}_all.deb"
 
 echo "Uploading '$pkg' to '$repo'"
 package_cloud push "$repo" "$pkg"
-
