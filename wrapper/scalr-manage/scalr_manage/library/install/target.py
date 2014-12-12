@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import platform
 import stat
 import subprocess
 import logging
@@ -120,5 +121,7 @@ class InstallTarget(Target):
                             logger.info("Now performing installation step: %s", step.__name__)
                             step(args, work_dir, http_download)
         except Exception:
-            logger.exception("Installation failed")
+            # Note: don't use logger.exception here, it doesn't have the `extra` kwarg on Python 2.6.
+            logger.error("Installation failed", exc_info=True, extra=dict(zip(["os_name", "os_version", "os_codename"],
+                                                                              platform.linux_distribution())))
             raise exception.InstallerException(args.log_file)
