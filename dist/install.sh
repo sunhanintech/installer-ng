@@ -2,6 +2,11 @@
 set -o errexit
 set -o nounset
 
+if [ "$(id -u)" != "0" ]; then
+  echo "You should run this installation script as root (or with sudo)!" 1>&2
+  exit 1
+fi
+
 pkgMgr=$(basename $(which apt-get || which yum || true))
 
 if [ "apt-get" = "$pkgMgr" ] ; then
