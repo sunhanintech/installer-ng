@@ -4,23 +4,26 @@ from __future__ import print_function
 import subprocess
 import argparse
 
+from scalr_manage import version
+from scalr_manage import constant
 from scalr_manage.library.configure.target import ConfigureTarget
 from scalr_manage.library.install.target import InstallTarget
 from scalr_manage.library.document.target import DocumentTarget
-from scalr_manage.library.exception import ConfigurationException, InstallerException
 from scalr_manage.library.subscribe.target import SubscribeTarget
+from scalr_manage.library.match_version.target import MatchVersionTarget
+from scalr_manage.library.exception import ConfigurationException, InstallerException
 
 
 def _main(argv, ui, tokgen):
     # TODO - Test!
     parser = argparse.ArgumentParser(description="Install and manage a Scalr host")
 
-    parser.add_argument("-c", "--configuration", default="/etc/scalr.json",
+    parser.add_argument("-c", "--configuration", default=constant.DEFAULT_CONFIG_FILE,
                         help="Where to save the solo.json configuration file.")
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    for target in (ConfigureTarget(), InstallTarget(), DocumentTarget(), SubscribeTarget()):
+    for target in (ConfigureTarget(), InstallTarget(), DocumentTarget(), SubscribeTarget(), MatchVersionTarget()):
         subparser = subparsers.add_parser(target.name, help=target.help)
         subparser.set_defaults(target=target)
         target.register(subparser)
@@ -46,6 +49,8 @@ def _main(argv, ui, tokgen):
         ui.print_fn("  {0}".format(subprocess.list2cmdline(argv)))
         ui.print_fn("\n")
         exit_code = 1
+    except SystemExit as e:
+        exit_code = e.code
 
     return exit_code
 
@@ -57,7 +62,6 @@ def main():
 
     from scalr_manage.ui.engine import UserInput
     from scalr_manage.rnd import RandomTokenGenerator
-    from scalr_manage.constant import LOGGING_FORMAT
     from scalr_manage.sentry.configure import maybe_enable_remote_logging
 
     # UI / random setup
@@ -67,10 +71,16 @@ def main():
     # Logging setup
     pre_parser = argparse.ArgumentParser(add_help=False)
     pre_parser.add_argument("--verbose", default=False, action="store_true")
+    pre_parser.add_argument("--version", default=False, action="store_true")
     ns, real_args = pre_parser.parse_known_args()
 
+    # Check if version was requested, and if yes, exit now.
+    if ns.version:
+        ui.print_fn(version.__version__)
+        sys.exit(0)
+
     root_handler = logging.StreamHandler()
-    root_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+    root_handler.setFormatter(logging.Formatter(constant.LOGGING_FORMAT))
 
     root_logger = logging.getLogger()
     root_logger.addHandler(root_handler)
@@ -83,4 +93,10 @@ def main():
     maybe_enable_remote_logging()
 
     real_args.insert(0, sys.argv[0])  # _main expects to have argv[0] be the program's name!
-    sys.exit(_main(real_args, ui, tokgen))
+
+    # noinspection PyBroadException
+    try:
+        sys.exit(_main(real_args, ui, tokgen))
+    except Exception:
+        installer_logger.exception("An unknown error occurred")
+        sys.exit(1)

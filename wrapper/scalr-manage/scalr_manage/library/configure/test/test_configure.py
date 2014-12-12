@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import unittest
+from scalr_manage import version
 
 from scalr_manage.library.configure.target import ConfigureTarget
 
@@ -81,15 +82,19 @@ class AttributesTestCase(BaseWrapperTestCase):
         self.assertEqual(4, len(attrs["scalr"]["database"]))
 
     def test_make_runlist(self):
-        common = ["recipe[chef-sentry-handler]", "recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common_head = ["recipe[chef-sentry-handler]"]
+        common_tail = ["recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+
         test_cases = [
-            (common, ["--without-all"]),
-            (common + ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
+            (common_head + common_tail, ["--without-all"]),
+            (common_head + ["recipe[apparmor]", "recipe[selinux::disabled]"] + common_tail +
+             ["recipe[scalr-core::group_mysql]", "recipe[scalr-core::group_app]"],
              ["--without-ntp", "--without-iptables"]),
         ]
         for expected, args in test_cases:
             self.assertEqual(expected, self.target.make_runlist(self.parser.parse_args(args)))
-        self.assertEqual(8, len(self.target.make_runlist(self.parser.parse_args([]))))
+
+        self.assertEqual(10, len(self.target.make_runlist(self.parser.parse_args([]))))
 
 
 class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
@@ -105,6 +110,7 @@ class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
         self.mock_path_exists = lambda path: 1/0  # Override me !
 
     def tearDown(self):
+        super(IptablesAttributesDiscoveryTestCase, self).tearDown()
         os.path.exists = self.__real_path_exists
 
     def _helper_get_iptables_ng_attrs(self):
@@ -131,16 +137,18 @@ class FullTestCase(BaseWrapperTestCase):
         self.target = ConfigureTarget()
         self.target.register(self.parser)
 
-    def tearDown(self):
-        shutil.rmtree(self.work_dir)
-
     def test_solo_json_creation(self):
         self.input.inputs = list(APP_TEST_INPUTS)
         args = self.parser.parse_args(["--advanced"])
         self.target.__call__(args, self.ui, self.tokgen)
+
         with open(self.solo_json_path) as f:
             attrs = json.load(f)
         self.assertTrue(len(attrs) > 2)
         self.assertTrue("run_list" in attrs)
         self.assertTrue("scalr" in attrs)
         self.assertTrue("mysql" in attrs)
+
+        with open(self.solo_json_path + ".version") as f:
+            self.assertEqual(version.__version__, f.read())
+
