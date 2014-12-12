@@ -19,25 +19,28 @@ do
 done
 
 shift "$((OPTIND-1))"
-release=$1
+VERSION_FULL=$1
 
 
-HERE=$(dirname "${BASH_SOURCE[0]}")
+HERE=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 cd $HERE
 
-trap "cd $HERE && git checkout $ORIGINAL_BRANCH" HUP INT ERR EXIT TERM
-
 exit_invalid_release () {
-  echo "$release: Not a valid release"
+  echo "$VERSION_FULL: Not a valid release"
   exit 1
 }
 
-# We expect a release such as 1.1.1 or 1.2.3a1 or 2.0.0b2
-echo "$release" | grep --silent --extended-regexp '^(\d+\.){2}\d+([a-b]\d+)?$' || exit_invalid_release
-final_release=$(echo "$release" | grep --only-matching --extended-regexp '^(\d+\.){2}\d+')  # Chef does not support ax or bx in our release
+# Load the version into the environment. This will cause us to exit if the version is invalid,
+# so we don't need further validation.
+eval $(./version_helper.py "$VERSION_FULL")
+
+# Export this one too
+export VERSION_FULL
+
+# Chef will not accept a different release
 
 is_final_release () {
-  [[ "$final_release" = "$release" ]]
+  [[ "$VERSION_FINAL" = "$VERSION_FULL" ]]
 }
 
 exit_dirty_files () {
@@ -48,14 +51,26 @@ git diff-files --quiet || exit_dirty_files
 
 
 # Valid release - start.
-echo "Creating release $release"
+CLEANUP_RM_DIRS=""
+cleanup () {
+  echo "Exiting -- cleaning up"
+
+  rm -rf -- $CLEANUP_RM_DIRS
+
+  cd "${HERE}"
+  git checkout $ORIGINAL_BRANCH
+}
+
+trap "cleanup" EXIT
+
+echo "Creating release $VERSION_FULL"
 
 echo "Creating release branch"
-RELEASE_TAG="v$release"
-RELEASE_BRANCH="release-$release"
+RELEASE_TAG="v$VERSION_FULL"
+RELEASE_BRANCH="release-$VERSION_FULL"
 
 
-# Support both GNU sed and regular sed
+# Support both GNU sed and OSX sed
 SED_OPTS="-E -i"
 sed --version | grep --silent "GNU sed" || SED_OPTS="$SED_OPTS ''"
 
@@ -64,13 +79,13 @@ make_local_release () {
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
   install_file="scripts/install.py"
 
-  sed $SED_OPTS "s/(version[ ]+)'[0-9.]*'/\1'$final_release'/g" $metadata_file
-  sed $SED_OPTS "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$release\"/g" $wrapper_version_file
-  sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$release\"/g" $install_file
+  sed $SED_OPTS "s/(version[ ]+)'[0-9.]*'/\1'$VERSION_FINAL'/g" $metadata_file
+  sed $SED_OPTS "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $wrapper_version_file
+  sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $install_file
 
   git checkout -b $RELEASE_BRANCH
   git add $metadata_file $wrapper_version_file $install_file
-  git commit -m "Release: $release"
+  git commit -m "Release: $VERSION_FULL"
   git tag $RELEASE_TAG HEAD
 }
 
@@ -87,7 +102,7 @@ git branch | grep --extended-regexp "${RELEASE_BRANCH}$" && {
 
 make_local_release
 
-RELEASE_DIR="$TMPDIR/installer-ng-release-$release-$$"
+RELEASE_DIR="$TMPDIR/installer-ng-release-$VERSION_FULL-$$"
 PACKAGE_NAME="package.tar.gz"
 PACKAGE_FILE="$RELEASE_DIR/$PACKAGE_NAME"
 RELEASE_PACKAGE_FILE=$RELEASE_DIR/installer-ng-${RELEASE_TAG}.tar.gz
@@ -98,10 +113,11 @@ if [ -z $RELEASE_DIR ]; then
   exit 1
 fi
 git clone . $RELEASE_DIR
+CLEANUP_RM_DIRS="$CLEANUP_RM_DIRS $RELEASE_DIR"
 
-
-echo "Cleaning up tmp dir"
+echo "Cleaning up build dir"
 rm -rf "$RELEASE_DIR/.git"
+rm -rf "$RELEASE_DIR/wrapper"
 
 
 echo "Creating release package"
@@ -125,10 +141,10 @@ if is_final_release; then
   echo "Pushing release tag"
   git push --force origin "refs/tags/${RELEASE_TAG}:refs/tags/${RELEASE_TAG}"
 else
-  echo "Not pushing release branch: $release is not a final release"
+  echo "Not pushing release branch: $VERSION_FULL is not a final release"
 fi
 
-echo "Done. Published: $release"
+echo "Done. Published: $VERSION_FULL"
 
 
 # Now, set the GVs as requested

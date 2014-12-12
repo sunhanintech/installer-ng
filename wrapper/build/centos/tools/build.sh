@@ -2,19 +2,19 @@
 set -o errexit
 set -o nounset
 
-# For now
 CENTOS_RELEASE=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
 EPOCH=1
+
+# Load the version
+source /build/tools/pkg_util.sh
 
 # Start the build
 cd $PKG_DIR
 
-PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
-fpm -t rpm -s python --no-python-fix-name --epoch $EPOCH --depends python --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
+fpm -t rpm ${FPM_ARGS} --epoch ${EPOCH} --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
 
-repo="scalr/scalr-manage/el/${CENTOS_RELEASE}"
-pkg="scalr-manage-${PKG_VERSION}-${EPOCH}.noarch.rpm"
+repo="${REPO_BASE}/el/${CENTOS_RELEASE}"
+pkg="scalr-manage-${VERSION_FULL}.noarch.rpm"
 
 echo "Uploading '$pkg' to '$repo'"
 package_cloud push "$repo" "$pkg"
-

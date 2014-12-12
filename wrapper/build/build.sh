@@ -24,31 +24,13 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # a performance disaster when using e.g. boot2docker, which is exactly why we have
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
-PKG_VERSION=$(python -c "exec(compile(open('scalr_manage/version.py').read(), 'version.py', 'exec')); print __version__")
-echo "Releasing $PKG_VERSION"
+echo "Releasing $VERSION_FULL"  # VERSION_FULL comes from the environment
 # Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
 
 python setup.py sdist
 
-# Before building the archives, check whether we are dealing with a release
-# or a pre-release
-
-pypi_upload_and_exit () {
-  echo "Uploading to PyPi"
-  cd $PKG_DIR
-  python setup.py sdist upload
-  exit 0
-}
-
-if echo "$PKG_VERSION" | grep --extended-regexp --silent '^(\d+\.){2}\d+$'; then
-  echo "$PKG_VERSION looks like a release. Building binary packages."
-else
-  echo "$PKG_VERSION looks like a pre-release. Not building binary packages."
-  pypi_upload_and_exit
-fi
-
 # Now, let's inject the archive into all our build contexts!
-PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${PKG_VERSION}.tar.gz"
+PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${VERSION_FULL}.tar.gz"
 
 # Now, build the "binary" packages, in each builder we have
 FACTORY_BASE_NAME=scalr_manage/factory
@@ -93,8 +75,12 @@ for distroDir in *; do
     # Add the package
     cp "$PKG_ARCHIVE" "$work_dir/pkg.tar.gz"
 
-    # Add the wrap script
+    # Add the wrap and pkg util script
     cp "$HERE/tools/wrap.sh" "$work_dir/tools/wrap.sh"
+    cp "$HERE/tools/pkg_util.sh" "$work_dir/tools/pkg_util.sh"
+
+    # Add the version helper
+    cp "$HERE/../../version_helper.py" "${work_dir}/tools/version_helper.py"
 
     # Now build the packages
 
@@ -103,10 +89,12 @@ for distroDir in *; do
     docker run -it \
       -e PACKAGE_CLOUD_SETTINGS="$(cat ~/.packagecloud)" \
       -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-      -e PKG_DIR=/build/scalr-manage-$PKG_VERSION \
+      -e PKG_DIR=/build/scalr-manage-$VERSION_FULL -e VERSION_FULL="${VERSION_FULL}" \
       "$img"
   done
 done
 
 # Finally, upload to PyPi!
-pypi_upload_and_exit
+echo "Uploading to PyPi"
+cd $PKG_DIR
+python setup.py sdist upload
