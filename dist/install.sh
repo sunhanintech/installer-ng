@@ -30,6 +30,21 @@ curl "https://packagecloud.io/install/repositories/scalr/scalr-manage/script.${r
 
 $pkgMgr install -y scalr-manage
 
+# Check OS -- exit if the OS is unsupported
+python -c "
+import sys
+import platform
+
+SUPPORTED_DISTROS = ['ubuntu', 'redhat', 'centos']
+distro, _, _ = map(lambda s: s.lower(), platform.linux_distribution(full_distribution_name=False))
+if distro not in SUPPORTED_DISTROS:
+    print \"Distribution '{0}' is not supported -- use one of: {1}\".format(distro, SUPPORTED_DISTROS)
+    sys.exit(1)
+" || {
+  echo '(If you think your OS was improperly detected, comment out "exit 1" after the OS check)'
+  exit 1
+}
+
 # Setup remote logging
 SENTRY_DSN=$(curl "https://s3.amazonaws.com/installer.scalr.com/logging/raven-dsn.txt" | tr -d '\n' || true)
 if [ -n "${SENTRY_DSN}" ]; then
