@@ -83,4 +83,10 @@ def main():
     maybe_enable_remote_logging()
 
     real_args.insert(0, sys.argv[0])  # _main expects to have argv[0] be the program's name!
-    sys.exit(_main(real_args, ui, tokgen))
+
+    # noinspection PyBroadException
+    try:
+        sys.exit(_main(real_args, ui, tokgen))
+    except Exception:
+        installer_logger.exception("An unknown error occurred")
+        sys.exit(1)
