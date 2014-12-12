@@ -20,4 +20,5 @@ DEFAULT_SCALR_GIT_REV = "v{0}".format(DEFAULT_SCALR_VERSION)
 GIT_NON_SSH_SCHEMES = ["http", "https", "git", "file"]
 
 
+# Used to check for IPv6
 IPV6_IF = "/proc/net/if_inet6"

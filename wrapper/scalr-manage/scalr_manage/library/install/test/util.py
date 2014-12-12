@@ -24,11 +24,13 @@ class BaseInstallTestCase(BaseWrapperTestCase):
         shutil.copyfile(os.path.join(self.test_data, "test.json"), self.solo_json_path)
 
     def tearDown(self):
+        super(BaseInstallTestCase, self).tearDown()
+
         os.environ["PATH"] = self.old_path
-        shutil.rmtree(self.work_dir)
 
         for k in ["MOCK_CHEF_EXIT_CODE", "WORK_DIR"]:
             try:
                 del os.environ[k]
             except KeyError:
                 pass
+

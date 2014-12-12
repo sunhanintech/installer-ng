@@ -110,6 +110,7 @@ class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):
         self.mock_path_exists = lambda path: 1/0  # Override me !
 
     def tearDown(self):
+        super(IptablesAttributesDiscoveryTestCase, self).tearDown()
         os.path.exists = self.__real_path_exists
 
     def _helper_get_iptables_ng_attrs(self):
@@ -135,9 +136,6 @@ class FullTestCase(BaseWrapperTestCase):
 
         self.target = ConfigureTarget()
         self.target.register(self.parser)
-
-    def tearDown(self):
-        shutil.rmtree(self.work_dir)
 
     def test_solo_json_creation(self):
         self.input.inputs = list(APP_TEST_INPUTS)

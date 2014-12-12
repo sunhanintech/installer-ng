@@ -1,5 +1,6 @@
 # coding:utf-8
 import os
+import shutil
 import tempfile
 import unittest
 from argparse import ArgumentParser
@@ -37,4 +38,7 @@ class BaseWrapperTestCase(unittest.TestCase):
 
         self.parser = TestParser()
         self.parser.add_argument("--configuration", default=self.solo_json_path)
+
+    def tearDown(self):
+        shutil.rmtree(self.work_dir)
 
