@@ -9,6 +9,8 @@ if [ -n "${VERSION_SPECIAL}" ]; then
   FPM_ARGS="$FPM_ARGS --iteration ${VERSION_SPECIAL}.${VERSION_INDEX}"
 fi
 
+# TODO - Probably need to set iteration to 1 otherwise!
+
 # Identify the packagecloud base repo
 
 REPO_BASE="scalr/scalr-manage"
