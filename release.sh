@@ -7,18 +7,53 @@ set -o nounset
 
 OPTIND=1
 
+VAR_SKIP_DIRTY_CHECK="0"
+VAR_SKIP_COOKBOOK_PACKAGE="0"
+HAS_GVS="0"
 farm_gv=()  # List of Farms we want to set the INSTALLER_BRANCH GV on
 
-while getopts "xf:" opt
+warn_devel_arg () {
+  echo "DO NOT RUN  THIS FOR A REAL RELEASE"
+}
+
+echo_usage () {
+  echo 'Usage: build.sh [-x | -s | -f FARM_ID] <release>'
+  echo '  -x: Skip the git dirty check'
+  echo '  -s: Skip the cookbook package'
+  echo '  -f: <deprecated for now>'
+}
+
+
+while getopts "hxsf:" opt
 do
   case "$opt" in
+    h)
+      echo_usage
+      exit 0
+      ;;
+    x)
+      warn_devel_arg
+      echo "Skipping dirty check"
+      VAR_SKIP_DIRTY_CHECK="1"
+      ;;
+    s)
+      warn_devel_arg
+      echo "Skipping cookbook package"
+      VAR_SKIP_COOKBOOK_PACKAGE=1
+      ;;
     f)
       farm_gv+=("$OPTARG")
+      HAS_GVS="1"
       ;;
   esac
 done
 
 shift "$((OPTIND-1))"
+if [[ "$#" -eq 0 ]]; then
+  echo_usage
+  echo 'Missing required positional argument: release'
+  exit 1
+fi
 VERSION_FULL=$1
 
 
@@ -43,7 +78,31 @@ is_final_release () {
   [[ "$VERSION_FINAL" = "$VERSION_FULL" ]]
 }
 
+skip_dirty_check () {
+  [[ "$VAR_SKIP_DIRTY_CHECK" = "1" ]]
+}
+
+skip_cookbook_package () {
+  [[ "$VAR_SKIP_COOKBOOK_PACKAGE" = "1" ]]
+}
+
+if is_final_release; then
+  if skip_dirty_check; then
+    echo "You may not skip the dirty check for a final release"
+    exit 1
+  fi
+  if skip_cookbook_package; then
+    echo "You may not skip the cookbook package for a final release"
+    exit 1
+  fi
+fi
+
+
 exit_dirty_files () {
+  if skip_dirty_check; then
+    return 0
+  fi
+
   echo "Dirty files in repo, aborting"
   exit 1
 }
@@ -74,7 +133,7 @@ RELEASE_BRANCH="release-$VERSION_FULL"
 SED_OPTS="-E -i"
 sed --version | grep --silent "GNU sed" || SED_OPTS="$SED_OPTS ''"
 
-make_local_release () {
+make_git_release () {
   metadata_file="metadata.rb"
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
   install_file="scripts/install.py"
@@ -83,51 +142,59 @@ make_local_release () {
   sed $SED_OPTS "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $wrapper_version_file
   sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $install_file
 
+  git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
+    echo "Tag already exists. Deleting"
+    git tag -d "$RELEASE_TAG"
+  }
+
+  git branch | grep --extended-regexp "${RELEASE_BRANCH}$" && {
+    echo "Branch already exists. Deleting"
+    git branch -D "$RELEASE_BRANCH"
+  }
+
   git checkout -b $RELEASE_BRANCH
   git add $metadata_file $wrapper_version_file $install_file
   git commit -m "Release: $VERSION_FULL"
   git tag $RELEASE_TAG HEAD
 }
 
-git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
-  echo "Tag already exists. Deleting"
-  git tag -d "$RELEASE_TAG"
+make_git_release
+
+make_cookbook_package () {
+  if skip_cookbook_package; then
+    return 0
+  fi
+
+  if [[ -z "${TMPDIR}" ]]; then
+    echo "No tmp dir - aborting"
+    exit 1
+  fi
+
+  RELEASE_DIR="$TMPDIR/installer-ng-release-$VERSION_FULL-$$"
+  PACKAGE_NAME="package.tar.gz"
+  PACKAGE_FILE="$RELEASE_DIR/$PACKAGE_NAME"
+  RELEASE_PACKAGE_FILE=$RELEASE_DIR/installer-ng-${RELEASE_TAG}.tar.gz
+
+  echo "Releasing in $RELEASE_DIR"
+  git clone . $RELEASE_DIR
+  CLEANUP_RM_DIRS="$CLEANUP_RM_DIRS $RELEASE_DIR"
+
+  echo "Cleaning up build dir"
+  rm -rf "$RELEASE_DIR/.git"
+  rm -rf "$RELEASE_DIR/wrapper"
+
+
+  echo "Creating release package"
+  cd $RELEASE_DIR
+  berks package "$PACKAGE_FILE"
+
+  # Upload the release in S3
+  echo "Uploading to S3"
+  mv $PACKAGE_FILE $RELEASE_PACKAGE_FILE
+  s3put --bucket=installer.scalr.com --prefix=$(dirname $RELEASE_PACKAGE_FILE) --key_prefix="releases" --grant=public-read --callback=10 $RELEASE_PACKAGE_FILE
 }
 
-git branch | grep --extended-regexp "${RELEASE_BRANCH}$" && {
-  echo "Branch already exists. Deleting"
-  git branch -D "$RELEASE_BRANCH"
-}
-
-
-make_local_release
-
-RELEASE_DIR="$TMPDIR/installer-ng-release-$VERSION_FULL-$$"
-PACKAGE_NAME="package.tar.gz"
-PACKAGE_FILE="$RELEASE_DIR/$PACKAGE_NAME"
-RELEASE_PACKAGE_FILE=$RELEASE_DIR/installer-ng-${RELEASE_TAG}.tar.gz
-
-echo "Releasing in $RELEASE_DIR"
-if [ -z $RELEASE_DIR ]; then
-  echo "No tmp dir - aborting"
-  exit 1
-fi
-git clone . $RELEASE_DIR
-CLEANUP_RM_DIRS="$CLEANUP_RM_DIRS $RELEASE_DIR"
-
-echo "Cleaning up build dir"
-rm -rf "$RELEASE_DIR/.git"
-rm -rf "$RELEASE_DIR/wrapper"
-
-
-echo "Creating release package"
-cd $RELEASE_DIR
-berks package "$PACKAGE_FILE"
-
-# Upload the release in S3
-echo "Uploading to S3"
-mv $PACKAGE_FILE $RELEASE_PACKAGE_FILE
-s3put --bucket=installer.scalr.com --prefix=$(dirname $RELEASE_PACKAGE_FILE) --key_prefix="releases" --grant=public-read --callback=10 $RELEASE_PACKAGE_FILE
+make_cookbook_package
 
 # Build the wrapper packages
 echo "Building wrapper packages"
@@ -147,15 +214,18 @@ fi
 echo "Done. Published: $VERSION_FULL"
 
 
-# Now, set the GVs as requested
-BRANCH_VAR="INSTALLER_BRANCH"
 
-for farm in "${farm_gv[@]}"
-do
-  echo "Setting '$BRANCH_VAR' = '$RELEASE_BRANCH' on '$farm'"
-  args="--param-name=$BRANCH_VAR --param-value=$RELEASE_BRANCH --farm-id=$farm"
+if [[ "${HAS_GVS}" = "1" ]]; then
+  # Set the GVs as requested
+  BRANCH_VAR="INSTALLER_BRANCH"
 
-  # There is a typo in the method name at this time, so we need to find the right name
-  method=$(scalr help  | grep -E 'set-.*-variable')
-  scalr $method $args
-done
+  for farm in "${farm_gv[@]}"
+  do
+    echo "Setting '$BRANCH_VAR' = '$RELEASE_BRANCH' on '$farm'"
+    args="--param-name=$BRANCH_VAR --param-value=$RELEASE_BRANCH --farm-id=$farm"
+
+    # There is a typo in the method name at this time, so we need to find the right name
+    method=$(scalr help  | grep -E 'set-.*-variable')
+    scalr $method $args
+  done
+fi
