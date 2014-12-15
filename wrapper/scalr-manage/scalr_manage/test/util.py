@@ -21,8 +21,8 @@ class ParsingError(Exception):
 
 
 class TestParser(ArgumentParser):
-    def exit(self, status=0, message=None):
-        raise ParsingError(status, message)
+    def error(self, message):
+        raise ParsingError(2, message)
 
 
 class BaseWrapperTestCase(unittest.TestCase):
