@@ -30,7 +30,9 @@ mktemp=$(which gmktemp || true)
 if [[ -z "$mktemp" ]]; then
   mktemp="mktemp"
 fi
-user_info "Using $mktemp for mktemp"
+$mktemp --version | grep --silent "GNU coreutils" || {
+  echo "You must install GNU mktemp !"
+}
 
 # Setup cleanup handler
 

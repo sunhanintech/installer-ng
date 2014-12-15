@@ -130,17 +130,24 @@ RELEASE_BRANCH="release-$VERSION_FULL"
 
 
 # Support both GNU sed and OSX sed
-SED_OPTS="-E -i"
-sed --version | grep --silent "GNU sed" || SED_OPTS="$SED_OPTS ''"
+sed=$(which gsed || true)
+if [[ -z "$sed" ]]; then
+  sed="sed"
+fi
+
+$sed --version | grep --silent "GNU sed" || {
+  echo "You must install GNU sed !"
+}
 
 make_git_release () {
   metadata_file="metadata.rb"
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
   install_file="scripts/install.py"
 
-  sed $SED_OPTS "s/(version[ ]+)'[0-9.]*'/\1'$VERSION_FINAL'/g" $metadata_file
-  sed $SED_OPTS "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $wrapper_version_file
-  sed $SED_OPTS "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $install_file
+  sed_opts="-E -i"
+  $sed $sed_opts "s/(version[ ]+)'[0-9.]*'/\1'$VERSION_FINAL'/g" $metadata_file
+  $sed $sed_opts "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $wrapper_version_file
+  $sed $sed_opts "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $install_file
 
   git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
     echo "Tag already exists. Deleting"
