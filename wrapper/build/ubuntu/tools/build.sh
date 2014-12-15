@@ -11,7 +11,7 @@ source /build/tools/pkg_util.sh
 # Start the build
 cd $PKG_DIR
 
-fpm -t deb ${FPM_ARGS} --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
+fpm -t deb "${FPM_ARGS[@]}" setup.py
 
 repo="${REPO_BASE}/ubuntu/${DISTRIB_CODENAME}/"
 pkg="scalr-manage_${VERSION_FULL}_all.deb"
