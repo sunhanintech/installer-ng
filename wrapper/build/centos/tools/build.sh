@@ -11,7 +11,7 @@ source /build/tools/pkg_util.sh
 # Start the build
 cd $PKG_DIR
 
-fpm -t rpm ${FPM_ARGS} --epoch ${EPOCH} --maintainer "Thomas Orozco <thomas@scalr.com>" --vendor "Scalr, Inc." setup.py
+fpm -t rpm "${FPM_ARGS[@]}" --epoch ${EPOCH} setup.py
 
 repo="${REPO_BASE}/el/${CENTOS_RELEASE}"
 pkg="scalr-manage-${VERSION_FULL}.noarch.rpm"
