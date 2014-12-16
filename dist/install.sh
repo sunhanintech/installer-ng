@@ -55,6 +55,8 @@ if [ -n "${SENTRY_DSN}" ]; then
   export SENTRY_DSN
 fi
 
+: ${CONFIGURE_OPTIONS:=""} # Provide this in the environemnt as options for scalr-manage configure
+
 CONFIGURATION_FILE="/etc/scalr.json"
 CONFIGURATION_VERSION_FILE="/etc/scalr.json"
 
@@ -67,7 +69,7 @@ if scalr-manage -c "${CONFIGURATION_VERSION_FILE}" match-version; then
   echo "Already configured for '$(scalr-manage --version)', skipping configuration step"
   echo "Delete '${CONFIGURATION_FILE}' if you'd like to reconfigure"
 else
-  scalr-manage -c "${CONFIGURATION_FILE}" configure
+  scalr-manage -c "${CONFIGURATION_FILE}" configure ${CONFIGURE_OPTIONS}
 fi
 
 scalr-manage -c "${CONFIGURATION_FILE}" subscribe
