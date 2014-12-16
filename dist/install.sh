@@ -55,19 +55,20 @@ if [ -n "${SENTRY_DSN}" ]; then
   export SENTRY_DSN
 fi
 
+: ${CONFIGURE_OPTIONS:=""} # Provide this in the environemnt as options for scalr-manage configure
+
 CONFIGURATION_FILE="/etc/scalr.json"
-CONFIGURATION_VERSION_FILE="/etc/scalr.json"
 
 # Try and do the right thing here. If there is already a configuration file laying around with the
 # right version, use it. If there isn't, then create a new one (that might create an annoying prompt
 # for the user to recreate their configuration, but that's a small price to pay if there was an error
 # in configure and the attributes need to be fixed in an update).
 
-if scalr-manage -c "${CONFIGURATION_VERSION_FILE}" match-version; then
+if scalr-manage -c "${CONFIGURATION_FILE}" match-version; then
   echo "Already configured for '$(scalr-manage --version)', skipping configuration step"
   echo "Delete '${CONFIGURATION_FILE}' if you'd like to reconfigure"
 else
-  scalr-manage -c "${CONFIGURATION_FILE}" configure
+  scalr-manage -c "${CONFIGURATION_FILE}" configure ${CONFIGURE_OPTIONS}
 fi
 
 scalr-manage -c "${CONFIGURATION_FILE}" subscribe
