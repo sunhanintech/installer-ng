@@ -44,5 +44,4 @@ parallel --no-notice --env VERSION_FULL ::: "${parallelCommands[@]}"
 
 # Finally, upload to PyPi!
 echo "Uploading to PyPi"
-cd $PKG_DIR
-python setup.py sdist upload
+twine upload "${PKG_ARCHIVE}"

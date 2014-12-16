@@ -19,6 +19,8 @@ You will need the following tools installed:
   + GNU `parallel` - to build the `scalr-manage` packages in parallel.
     Using Homebrew: `brew install parallel`.
   + `s3put`, which is part of `boto`. Using pip: `pip install boto`.
+  + `twine`, a helper for Python package uploads. Using pip:
+    `pip install twine`.
   + `docker`, with a functional Docker environment (i.e. `DOCKER_HOST`, etc.).
     You can either use `boot2docker`, or a remote Docker, either work fine.
 
