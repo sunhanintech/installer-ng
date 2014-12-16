@@ -3,17 +3,22 @@
 # Generate FPM args
 eval $(/build/tools/version_helper.py "${VERSION_FULL}")
 
-FPM_ARGS=()
-
-FPM_ARGS+=("-s" "python" "--no-python-fix-name" "--depends" "python" "--version" "${VERSION_FINAL}" "--maintainer" "Thomas Orozco <thomas@scalr.com>" "--vendor" "Scalr, Inc." )
+PKG_VERSION="${VERSION_FINAL}"
 if [ -n "${VERSION_SPECIAL}" ]; then
-  FPM_ARGS+=("--iteration" "${VERSION_SPECIAL}.${VERSION_INDEX}")
+  # The '~' sign sorts before anything else in rpm / dpkg.
+  # This lets us identify a pre-release as being before an actual release.
+  # See:
+  #   https://www.debian.org/doc/debian-policy/ch-controlfields.html
+  #   http://rpm.org/ticket/56
+  PKG_VERSION="${PKG_VERSION}~${VERSION_SPECIAL}.${VERSION_INDEX}"
 fi
 
-# TODO - Probably need to set iteration to 1 otherwise!
+PKG_ITERATION="1"
+
+FPM_ARGS=()
+FPM_ARGS+=("-s" "python" "--no-python-fix-name" "--depends" "python" "--version" "${PKG_VERSION}" "--iteration" "${PKG_ITERATION}" "--maintainer" "Thomas Orozco <thomas@scalr.com>" "--vendor" "Scalr, Inc." )
 
 # Identify the packagecloud base repo
-
 REPO_BASE="scalr/scalr-manage"
 
 if [ -n "${VERSION_SPECIAL}" ]; then

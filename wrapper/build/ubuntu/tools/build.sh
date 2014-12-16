@@ -14,7 +14,7 @@ cd $PKG_DIR
 fpm -t deb "${FPM_ARGS[@]}" setup.py
 
 repo="${REPO_BASE}/ubuntu/${DISTRIB_CODENAME}/"
-pkg="scalr-manage_${VERSION_FULL}_all.deb"
+pkg="scalr-manage_${PKG_VERSION}-${PKG_ITERATION}_all.deb"
 
 echo "Uploading '$pkg' to '$repo'"
 package_cloud push "$repo" "$pkg"
