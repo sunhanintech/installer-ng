@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import os
-import platform
 import stat
 import subprocess
 import logging
@@ -122,9 +121,5 @@ class InstallTarget(Target):
                             step(args, work_dir, http_download)
         except Exception:
             # Note: don't use logger.exception here, it doesn't have the `extra` kwarg on Python 2.6.
-            extra_data = dict(zip(
-                ["os_name", "os_version", "os_codename"],
-                platform.linux_distribution(full_distribution_name=False))
-            )
-            logger.error("Installation failed", exc_info=True, extra=extra_data)
+            logger.error("Installation failed", exc_info=True, extra={"cookbook_version": args.release})
             raise exception.InstallerException(args.log_file)

@@ -13,8 +13,8 @@ SCALR_DEPLOY_TO = "/opt/scalr"
 
 # Defaults
 DEFAULT_SCALR_REPO = "git://github.com/Scalr/scalr.git"
-DEFAULT_SCALR_VERSION = SCALR_VERSION_5_0_1
-DEFAULT_SCALR_GIT_REV = "v{0}".format(DEFAULT_SCALR_VERSION)
+DEFAULT_SCALR_VERSION = SCALR_VERSION_5_1
+DEFAULT_SCALR_GIT_REV = DEFAULT_SCALR_VERSION  # Corresponding branch
 
 # Other useful constants
 GIT_NON_SSH_SCHEMES = ["http", "https", "git", "file"]
