@@ -25,8 +25,15 @@ if [ -z "$curl" ]; then
 fi
 
 # We trust packagecloud.io considering it's serving our packages anyway.
+
+: ${INSTALLER_EXTRA_REPOS:=""}
+INSTALLER_REPO="scalr-manage ${INSTALLER_EXTRA_REPOS}"
+
 echo "Detected '$pkgMgr' -- installing '$repoType' installer repo"
-curl "https://packagecloud.io/install/repositories/scalr/scalr-manage/script.${repoType}" | sudo bash
+for repo in $INSTALLER_REPO; do
+  curl "https://packagecloud.io/install/repositories/scalr/${repo}/script.${repoType}" | sudo bash
+done
+
 
 # It's important to keep this around, so that if someone's install crashes the first time,
 # they get another shot after we update by just re-running this script.
@@ -56,8 +63,8 @@ if [ -n "${SENTRY_DSN}" ]; then
 fi
 
 : ${CONFIGURE_OPTIONS:=""} # Provide this in the environemnt as options for scalr-manage configure
-
-CONFIGURATION_FILE="/etc/scalr.json"
+: ${INSTALL_OPTIONS:=""} # Provide this in the environemnt as options for scalr-manage install
+: ${CONFIGURATION_FILE:="/etc/scalr.json"}
 
 # Try and do the right thing here. If there is already a configuration file laying around with the
 # right version, use it. If there isn't, then create a new one (that might create an annoying prompt
@@ -72,5 +79,5 @@ else
 fi
 
 scalr-manage -c "${CONFIGURATION_FILE}" subscribe
-scalr-manage -c "${CONFIGURATION_FILE}" install
+scalr-manage -c "${CONFIGURATION_FILE}" install ${INSTALL_OPTIONS}
 scalr-manage -c "${CONFIGURATION_FILE}" document
