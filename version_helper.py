@@ -19,7 +19,7 @@ VERSION_REGEX = re.compile(r"""
 (?P<patch>\d+)      #
 (?P<special_sep>-)? #
 (?P<special>[a-b])? #
-(?P<index_sep>.)?  #
+(?P<index_sep>\.)?  #
 (?P<index>\d+)?     #
 $                   #
 """, re.VERBOSE)
@@ -38,8 +38,10 @@ def validate_version(version):
 
     >>> validate_version("1.1")         # Not enough elements
     >>> validate_version("1.1.1-")      # Separator is alone
+    >>> validate_version("1.1.1a.1")    # Special without separator
     >>> validate_version("1.1.1-a")     # Special without index
     >>> validate_version("1.1.1-a.")    # Separator is alone
+    >>> validate_version("1.1.1-a1")    # Index without separator
     >>> validate_version("1.1.1-c.1")   # Special too high
     >>> validate_version("1.1.1.")      # Wrong separator
     >>> validate_version("1.1.1.1")     # Index without special
@@ -53,7 +55,7 @@ def validate_version(version):
     version_dict = matched.groupdict()
 
     # Check dependents
-    dependencies = [("special_sep", "special"), ("index_sep", "index"), ("index", "special"), ("special", "index")]
+    dependencies = [("special_sep", "special"), ("special", "special_sep"), ("index_sep", "index"), ("index", "index_sep"), ("index", "special"), ("special", "index")]
     for dependent, dependency in dependencies:
         if version_dict[dependent] and not version_dict[dependency]:
             print_stderr("Version '{0}' is invalid: '{1}' is defined but not '{2}'".format(version, dependent, dependency))
