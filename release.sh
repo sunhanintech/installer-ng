@@ -69,8 +69,9 @@ exit_invalid_release () {
 # so we don't need further validation.
 eval $(./version_helper.py "$VERSION_FULL")
 
-# Export this one too
+# Export these versions
 export VERSION_FULL
+export VERSION_PYTHON
 
 # Chef will not accept a different release
 
@@ -145,9 +146,9 @@ make_git_release () {
   install_file="scripts/install.py"
 
   sed_opts="-E -i"
-  $sed $sed_opts "s/(version[ ]+)'[0-9.]*'/\1'$VERSION_FINAL'/g" $metadata_file
-  $sed $sed_opts "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $wrapper_version_file
-  $sed $sed_opts "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"$VERSION_FULL\"/g" $install_file
+  $sed $sed_opts "s/(version[ ]+)'[0-9.]*'/\1'${VERSION_FINAL}'/g" "${metadata_file}"
+  $sed $sed_opts "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"${VERSION_PYTHON}\"/g" "${wrapper_version_file}"
+  $sed $sed_opts "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"${VERSION_FULL}\"/g" "${install_file}"
 
   git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
     echo "Tag already exists. Deleting"

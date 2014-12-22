@@ -68,6 +68,7 @@ def validate_version(version):
 
 def shell_load_version(version_dict):
     version_dict["final"] = ".".join([version_dict[k] for k in ["major", "minor", "patch"]])
+    version_dict["python"] = version_dict["final"] + "".join([v for v in [version_dict[k] for k in ["special", "index"]] if v is not None])
     for k, v in version_dict.items():
         print("VERSION_{0}='{1}'".format(k.upper(), v if v else ""))
 
