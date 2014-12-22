@@ -195,6 +195,11 @@ make_cookbook_package () {
   cd $RELEASE_DIR
   berks package "$PACKAGE_FILE"
 
+  echo "Creating boto configuration file"  # TODO - This might compromise usability here
+  export BOTO_CONFIG="${RELEASE_DIR}/boto.cfg"
+  echo "[s3]" > "${BOTO_CONFIG}"
+  echo "calling_format = boto.s3.connection.OrdinaryCallingFormat" >> "${BOTO_CONFIG}"
+
   # Upload the release in S3
   echo "Uploading to S3"
   mv $PACKAGE_FILE $RELEASE_PACKAGE_FILE
