@@ -60,13 +60,12 @@ class IOTestCase(unittest.TestCase):
         ret = self.io.prompt_email("?", "!")
         self.assertEqual("a+b@my.test.com", ret)
 
-    def test_prompt_ssh_key(self):
-        keys_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                 "test_data")
+    def test_prompt_ssh_rsa_key(self):
+        keys_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
         with open(os.path.join(keys_path, "test_encrypted_ssh_key")) as f:
             encrypted_key_parts = f.read().split("\n")
 
-        with open(os.path.join(keys_path, "test_ssh_key")) as f:
+        with open(os.path.join(keys_path, "test_ssh_rsa_key")) as f:
             ok_key = f.read()
             ok_key_parts = ok_key.split("\n")
 
@@ -77,8 +76,15 @@ class IOTestCase(unittest.TestCase):
 
         self.assertEqual(ok_key, ret)
 
+    def test_prompt_ssh_dsa_key(self):
+        keys_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
 
+        with open(os.path.join(keys_path, "test_ssh_dsa_key")) as f:
+            ok_key = f.read()
+            ok_key_parts = ok_key.split("\n")
 
-if __name__ == "__main__":
-    unittest.main()
+        self.input.inputs.extend(ok_key_parts)
 
+        ret = self.io.prompt_ssh_key("?", "!")
+
+        self.assertEqual(ok_key, ret)

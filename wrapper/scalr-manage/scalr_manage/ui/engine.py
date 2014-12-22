@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import socket
 
-from scalr_manage.ui.constant import OPENSSL_START_KEY, OPENSSL_END_KEY, OPENSSL_PROC_TYPE, OPENSSL_ENCRYPTED, \
+from scalr_manage.ui.constant import OPENSSL_START_KEY_RE, OPENSSL_END_KEY_RE, OPENSSL_PROC_TYPE, OPENSSL_ENCRYPTED, \
     EMAIL_RE
 from scalr_manage.ui.exception import InvalidInput
 from scalr_manage.ui.util import format_symbol
@@ -30,7 +30,7 @@ class UserInput(object):
 
         while not key:
             first_line = self.prompt_fn(q + "\n>\n")
-            if first_line != OPENSSL_START_KEY:
+            if OPENSSL_START_KEY_RE.match(first_line) is None:
                 self.print_fn("{0} (This is not a SSH private key)".format(error_msg))
                 continue
 
@@ -39,7 +39,7 @@ class UserInput(object):
                 line = self.prompt_fn("")
                 lines.append(line)
 
-                if line == OPENSSL_END_KEY:
+                if OPENSSL_END_KEY_RE.match(line) is not None:
                     lines.append("")  # Newline
                     key = "\n".join(lines)
                     break
