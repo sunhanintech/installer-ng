@@ -148,6 +148,7 @@ make_git_release () {
   sed_opts="-E -i"
   $sed $sed_opts "s/(version[ ]+)'[0-9.]*'/\1'${VERSION_FINAL}'/g" "${metadata_file}"
   $sed $sed_opts "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"${VERSION_PYTHON}\"/g" "${wrapper_version_file}"
+  $sed $sed_opts "s/(__pkg_version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"${VERSION_FULL}\"/g" "${wrapper_version_file}"
   $sed $sed_opts "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"${VERSION_FULL}\"/g" "${install_file}"
 
   git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {

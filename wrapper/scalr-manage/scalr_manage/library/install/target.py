@@ -6,7 +6,7 @@ import stat
 import subprocess
 import logging
 
-from scalr_manage.version import __version__
+from scalr_manage.version import __pkg_version__
 from scalr_manage.constant import LOGGING_FORMAT
 from scalr_manage.library.base import Target
 from scalr_manage.library import exception
@@ -90,7 +90,7 @@ class InstallTarget(Target):
     help = "Install or update Scalr on this host"
 
     def register(self, parser):
-        parser.add_argument("-r", "--release", default=__version__, help="Installer cookbook release (e.g. 6.5.0)")
+        parser.add_argument("-r", "--release", default=__pkg_version__, help="Installer cookbook release (e.g. 6.5.0)")
         parser.add_argument("-l", "--log-file", default=constant.DEFAULT_LOG_FILE)
         parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug log output from Chef")
 
