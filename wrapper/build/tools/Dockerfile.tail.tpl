@@ -6,9 +6,10 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
 # Install packaging dependencies
 RUN bash --login -c "gem install fpm package_cloud"
 
-# Launch
+# Setup env
 ENV TOOLS_DIR /build/tools
 ENV DIST_DIR /build/dist
+ENV GOSU /build/tools/gosu
 
 # Set locale to something UTF-8 to please package_cloud
 ENV LANG en_US.UTF-8
@@ -21,7 +22,14 @@ ENV LC_ALL en_US.UTF-8
 ENTRYPOINT ["/build/tools/wrap.sh"]
 CMD ["bash", "--login", "/build/tools/build.sh"]
 
-# We actually add the scalr-manage pkg dir into the image, because accessing it from a
-# volume is too slow when using boot2docker (which is the very purpose of this image)
+# Add our utility tools
 ADD ./tools ${TOOLS_DIR}
+
+# Add gosu. Sudo is a bit annoying to work with here (especially on CentOS
+# where requiretty is set)
+ADD https://github.com/tianon/gosu/releases/download/1.2/gosu-amd64 ${GOSU}
+RUN chmod 755 ${GOSU}
+
+# We actually add the scalr-manage pkg into the image, because accessing it from a
+# volume is too slow when using boot2docker or a remote Docker
 ADD ./pkg.tar.gz /build
