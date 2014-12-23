@@ -3,6 +3,7 @@ ORIGINAL_DIR=$(pwd)
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 set -o errexit
+set -o pipefail
 set -o nounset
 
 OPTIND=1
@@ -17,7 +18,7 @@ warn_devel_arg () {
 }
 
 echo_usage () {
-  echo 'Usage: build.sh [-x | -s | -f FARM_ID] <release>'
+  echo 'Usage: build.sh [-x] [-s] [-f FARM_ID] <release>'
   echo '  -x: Skip the git dirty check'
   echo '  -s: Skip the cookbook package'
   echo '  -f: <deprecated for now>'

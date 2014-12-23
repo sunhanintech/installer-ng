@@ -1,5 +1,6 @@
 #!/bin/bash
 set -o errexit
+set -o pipefail
 set -o nounset
 
 REL_HERE=$(dirname "${BASH_SOURCE}")
@@ -11,6 +12,9 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # a performance disaster when using e.g. boot2docker, which is exactly why we have
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
+
+# Runtests
+tox
 
 # Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
 python setup.py sdist

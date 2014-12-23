@@ -19,6 +19,7 @@ You will need the following tools installed:
   + GNU `parallel` - to build the `scalr-manage` packages in parallel.
     Using Homebrew: `brew install parallel`.
   + `s3put`, which is part of `boto`. Using pip: `pip install boto`.
+  + `tox`, a test runner for Python. Using pip: `pip install tox`.
   + `twine`, a helper for Python package uploads. Using pip:
     `pip install twine`.
   + `docker`, with a functional Docker environment (i.e. `DOCKER_HOST`, etc.).
@@ -71,15 +72,18 @@ Then, issue the following command, from the root of the installer project:
 
     ./release.sh <version>
 
-Note that the version must follow [semantic versioning][00], and that this is
-actually enforced by the `version_helper.py` script. We also have a few
+Note that the version format must follow [semantic versioning][00], and that
+this is actually enforced by the `version_helper.py` script. We also have a few
 additional conventions (review `version_helper.py` to identify what a suitable
 version looks like).
 
-### About Versions ###
+Semantically, we interpret a breaking change (i.e. one that triggers bumping
+the major version number) as a change that requires running "configure" again.
 
-The version number you use actually has a certain impact on what the release
-script does.
+
+### Issuing a Pre-Release ###
+
+The version number you use also has an impact on what the release script does.
 
 If your release is a pre-release (i.e. it looks like `1.1.1-a.1`), then the
 release script will push your packages to one of the pre-release repositories
