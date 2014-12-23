@@ -31,7 +31,7 @@ class UserInput(object):
         while not key:
             first_line = self.prompt_fn(q + "\n>\n")
             if OPENSSL_START_KEY_RE.match(first_line) is None:
-                self.print_fn("{0} (This is not a SSH private key)".format(error_msg))
+                self.print_fn("{0} (paste a PEM-formatted SSH private key; don't use another format, and don't use a path to a file)".format(error_msg))
                 continue
 
             lines = [first_line]
