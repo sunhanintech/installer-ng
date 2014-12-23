@@ -72,15 +72,18 @@ Then, issue the following command, from the root of the installer project:
 
     ./release.sh <version>
 
-Note that the version must follow [semantic versioning][00], and that this is
-actually enforced by the `version_helper.py` script. We also have a few
+Note that the version format must follow [semantic versioning][00], and that
+this is actually enforced by the `version_helper.py` script. We also have a few
 additional conventions (review `version_helper.py` to identify what a suitable
 version looks like).
 
-### About Versions ###
+Semantically, we interpret a breaking change (i.e. one that triggers bumping
+the major version number) as a change that requires running "configure" again.
 
-The version number you use actually has a certain impact on what the release
-script does.
+
+### Issuing a Pre-Release ###
+
+The version number you use also has an impact on what the release script does.
 
 If your release is a pre-release (i.e. it looks like `1.1.1-a.1`), then the
 release script will push your packages to one of the pre-release repositories
