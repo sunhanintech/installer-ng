@@ -12,6 +12,9 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
 
+# Runtests
+tox
+
 # Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
 python setup.py sdist
 
