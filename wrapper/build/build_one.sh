@@ -1,5 +1,7 @@
 #!/bin/bash
 # Builds one package in Docker
+set -o errexit
+set -o nounset
 
 # boot2docker default values
 : ${BUILD_UID:="1000"}
@@ -14,13 +16,15 @@ PKG_ARCHIVE="${1}"
 distroDir="${2}"
 release="${3}"
 
+OUTPUT_PREFIX="[build ${distroDir}-${release}]"
+
 if [[ -z "${PKG_ARCHIVE}" ]] || [[ -z "${distroDir}" ]] || [[ -z "${release}" ]]; then
   echo "\$PKG_ARCHIVE, \$distroDir and \$release must be passed as command-line arguments"
   exit 1
 fi
 
 function user_info () {
-  echo "[build ${distroDir}-${release}]" "$@"
+  echo "${OUTPUT_PREFIX}" "$@"
 }
 
 # Some houskeeping. One Mac OS, mktemp behaves weirdly,
@@ -71,9 +75,9 @@ cp "${HERE}/../../version_helper.py" "${work_dir}/tools/version_helper.py"
 
 img="${FACTORY_BASE_NAME}-${distroDir}-${release}"
 user_info "Building ${img}"
-docker build -t "${img}" "${work_dir}"
-docker run -it \
+docker build -t "${img}" "${work_dir}" | sed "s/^/${OUTPUT_PREFIX} /"
+docker run -i \
   -e PACKAGE_CLOUD_SETTINGS="$(cat ~/.packagecloud)" \
   -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
-  -e PKG_DIR=/build/scalr-manage-$VERSION_FULL -e VERSION_FULL="${VERSION_FULL}" \
-  "$img"
+  -e PKG_DIR="/build/scalr-manage-${VERSION_PYTHON}" -e VERSION_FULL="${VERSION_FULL}" \
+  "$img" | sed "s/^/${OUTPUT_PREFIX} /"

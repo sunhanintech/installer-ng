@@ -11,13 +11,12 @@ PKG_DIR="$(dirname $HERE)/scalr-manage"
 # a performance disaster when using e.g. boot2docker, which is exactly why we have
 # this script. It's slow because we deal with plenty of small files.
 cd $PKG_DIR
-echo "Releasing $VERSION_FULL"  # VERSION_FULL comes from the environment
-# Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
 
+# Don't upload to PyPi now, otherwise if a package fails to upload, we're hosed.
 python setup.py sdist
 
 # Now, let's inject the archive into all our build contexts!
-PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${VERSION_FULL}.tar.gz"
+PKG_ARCHIVE="$PKG_DIR/dist/scalr-manage-${VERSION_PYTHON}.tar.gz"
 
 # Now, build the "binary" packages, in each builder we have
 
