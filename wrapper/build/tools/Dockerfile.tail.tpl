@@ -22,13 +22,13 @@ ENV LC_ALL en_US.UTF-8
 ENTRYPOINT ["/build/tools/wrap.sh"]
 CMD ["bash", "--login", "/build/tools/build.sh"]
 
-# Add our utility tools
-ADD ./tools ${TOOLS_DIR}
-
 # Add gosu. Sudo is a bit annoying to work with here (especially on CentOS
 # where requiretty is set)
 ADD https://github.com/tianon/gosu/releases/download/1.2/gosu-amd64 ${GOSU}
 RUN chmod 755 ${GOSU}
+
+# Add our utility tools
+ADD ./tools ${TOOLS_DIR}
 
 # We actually add the scalr-manage pkg into the image, because accessing it from a
 # volume is too slow when using boot2docker or a remote Docker
