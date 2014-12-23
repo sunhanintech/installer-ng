@@ -1,6 +1,7 @@
 #!/bin/bash
 # Builds one package in Docker
 set -o errexit
+set -o pipefail
 set -o nounset
 
 # boot2docker default values
