@@ -20,10 +20,3 @@ depends 'database', '~> 2.3.0'
 depends 'mysql', '~> 5.6.1'
 depends 'apache2', '~> 3.0.0'
 depends 'cron', '~> 1.4.0'
-
-# These aren't actually used *here*, but we pull them in for packaging
-depends 'apparmor', '~> 0.9.2'
-depends 'selinux', '~> 0.8.0'
-depends 'chef-sentry-handler', '~> 1.0.0'
-depends 'ntp', '~> 1.5.0'
-depends 'iptables-ng', '~> 2.2.0'
