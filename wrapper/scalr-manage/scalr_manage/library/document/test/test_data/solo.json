@@ -33,8 +33,9 @@
     },
     "run_list": [
         "recipe[apt]",
+        "recipe[yum]",
         "recipe[build-essential]",
-        "recipe[timezone-ii]",
+        "recipe[rackspace_timezone]",
         "recipe[ntp]",
         "recipe[scalr-core::group_app]",
         "recipe[iptables-ng]"

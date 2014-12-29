@@ -1,6 +1,11 @@
 case node[:platform_family]
 
 when 'rhel', 'fedora'
+  # Don't leave anything to chance: clear the metadata on all the repos.
+  # This is useful in case someone happens to have a repo that we overwrite
+  # (e.g. they had EPEL 6 and we register EPEL 7).
+  execute 'yum --enablerepo=* clean metadata'
+
   # We need to use some extra repositories to pull specific packages
   # In order to not mess up the entire system, we use includepks to
   # ensure that only the packages we want are installed.

@@ -167,9 +167,6 @@ messaging_crons.each do |messaging_cron|
 end
 
 
-# Time attributes
-default['tz'] = 'UTC'
-
 # PHP attributes
 include_attribute 'php'
 

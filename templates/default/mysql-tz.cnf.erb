@@ -1,2 +1,2 @@
 [mysqld]
-default-time-zone='<%= node['tz'] %>'
+default-time-zone='<%= node[:rackspace_timezone][:config][:tz] %>'

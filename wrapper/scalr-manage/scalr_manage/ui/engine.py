@@ -47,7 +47,7 @@ class UserInput(object):
                 if line.startswith(OPENSSL_PROC_TYPE) and OPENSSL_ENCRYPTED in line:
                     # This will break out of the inner loop, and continue into the outer loop
                     # because we stil have (key == "").
-                    self.print_fn("{0} (This is an encrypted SSH private key".format(error_msg))
+                    self.print_fn("{0} (This is an encrypted SSH private key, those are not supported in the installer)".format(error_msg))
                     break
 
         return key
