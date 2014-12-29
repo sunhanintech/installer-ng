@@ -33,6 +33,7 @@
     },
     "run_list": [
         "recipe[apt]",
+        "recipe[yum]",
         "recipe[build-essential]",
         "recipe[rackspace_timezone]",
         "recipe[ntp]",

@@ -87,7 +87,7 @@ class AttributesTestCase(BaseWrapperTestCase):
 
     def test_make_runlist(self):
         common_head = ["recipe[chef-sentry-handler]"]
-        common_tail = ["recipe[apt]", "recipe[build-essential]", "recipe[rackspace_timezone]"]
+        common_tail = ["recipe[apt]", "recipe[yum]", "recipe[build-essential]", "recipe[rackspace_timezone]"]
 
         test_cases = [
             (common_head + common_tail, ["--without-all"]),
@@ -98,7 +98,7 @@ class AttributesTestCase(BaseWrapperTestCase):
         for expected, args in test_cases:
             self.assertEqual(expected, self.target.make_runlist(self.parser.parse_args(args)))
 
-        self.assertEqual(10, len(self.target.make_runlist(self.parser.parse_args([]))))
+        self.assertEqual(11, len(self.target.make_runlist(self.parser.parse_args([]))))
 
 
 class IptablesAttributesDiscoveryTestCase(BaseWrapperTestCase):

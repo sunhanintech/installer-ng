@@ -91,7 +91,7 @@ class PolicyGroup(Group):
 
 class UtilGroup(Group):
     name        = "util"
-    recipes     = ["apt", "build-essential", "rackspace_timezone"]
+    recipes     = ["apt", "yum", "build-essential", "rackspace_timezone"]
     priority    = 5
     optional    = False
 
