@@ -42,6 +42,7 @@ $mktemp --version | grep --silent "GNU coreutils" || {
 # Setup cleanup handler
 
 work_dir=$("$mktemp" -d)
+tools_dir="${work_dir}/tools"
 cleanup_on_exit () {
   user_info "Removing: $work_dir"
   if [[ -n "$work_dir" ]]; then
@@ -55,22 +56,22 @@ trap cleanup_on_exit EXIT
 user_info "Working in: $work_dir"
 
 # Start by copying everything into the work dir
-cp -r -- "$distroDir"/* $work_dir
+cp -p -r -- "$distroDir"/* "${work_dir}"
 
 # Create the Dockerfile
 dockerfile="${work_dir}/Dockerfile"
-echo "FROM ${distroDir}:${release}" > "$dockerfile"
+echo "FROM ${distroDir}:${release}" > "${dockerfile}"
 cat "$HERE/tools/Dockerfile.head.tpl" "${distroDir}/Dockerfile.tpl" "${HERE}/tools/Dockerfile.tail.tpl" >> "${dockerfile}"
 
 # Add the package
 cp "$PKG_ARCHIVE" "${work_dir}/pkg.tar.gz"
 
 # Add the wrap and pkg util script
-cp "${HERE}/tools/wrap.sh" "${work_dir}/tools/wrap.sh"
-cp "${HERE}/tools/pkg_util.sh" "${work_dir}/tools/pkg_util.sh"
+cp -p "${HERE}/tools/wrap.sh" "${tools_dir}/wrap.sh"
+cp -p "${HERE}/tools/pkg_util.sh" "${tools_dir}/pkg_util.sh"
 
 # Add the version helper
-cp "${HERE}/../../version_helper.py" "${work_dir}/tools/version_helper.py"
+cp -p "${HERE}/../../version_helper.py" "${tools_dir}/version_helper.py"
 
 # Now build the packages
 
