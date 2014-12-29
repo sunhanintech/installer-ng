@@ -7,6 +7,21 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# Check OS -- exit if the OS is unsupported
+python -c "
+import sys
+import platform
+
+SUPPORTED_DISTROS = ['ubuntu', 'redhat', 'centos']
+distro, _, _ = map(lambda s: s.lower(), platform.linux_distribution(full_distribution_name=False))
+if distro not in SUPPORTED_DISTROS:
+    print \"Distribution '{0}' is not supported -- use one of: {1}\".format(distro, SUPPORTED_DISTROS)
+    sys.exit(1)
+" || {
+  echo '(If you think your OS was improperly detected, comment out "exit 1" after the OS check)'
+  exit 1
+}
+
 pkgMgr=$(basename $(which apt-get || which yum || true))
 
 if [ "apt-get" = "$pkgMgr" ] ; then
@@ -38,21 +53,6 @@ done
 # It's important to keep this around, so that if someone's install crashes the first time,
 # they get another shot after we update by just re-running this script.
 $pkgMgr install -y scalr-manage
-
-# Check OS -- exit if the OS is unsupported
-python -c "
-import sys
-import platform
-
-SUPPORTED_DISTROS = ['ubuntu', 'redhat', 'centos']
-distro, _, _ = map(lambda s: s.lower(), platform.linux_distribution(full_distribution_name=False))
-if distro not in SUPPORTED_DISTROS:
-    print \"Distribution '{0}' is not supported -- use one of: {1}\".format(distro, SUPPORTED_DISTROS)
-    sys.exit(1)
-" || {
-  echo '(If you think your OS was improperly detected, comment out "exit 1" after the OS check)'
-  exit 1
-}
 
 # Setup remote logging
 SENTRY_DSN=$(curl "https://s3.amazonaws.com/installer.scalr.com/logging/raven-dsn.txt" | tr -d '\n' || true)
