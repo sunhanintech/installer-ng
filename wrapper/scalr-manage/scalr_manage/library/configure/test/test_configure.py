@@ -54,7 +54,11 @@ class AttributesTestCase(BaseWrapperTestCase):
         argv = ["--without-all"]
 
         self.assertEqual(
-            {'apt': {'compile_time_update': True}, 'sentry': {'dsn': None, 'enabled': False}},
+            {
+                'apt': {'compile_time_update': True},
+                'rackspace_timezone': {'config': {'tz': 'UTC'}},
+                'sentry': {'dsn': None, 'enabled': False}
+            },
             self.target.make_attributes(self.parser.parse_args(argv), self.ui, self.tokgen)
         )
 
@@ -83,7 +87,7 @@ class AttributesTestCase(BaseWrapperTestCase):
 
     def test_make_runlist(self):
         common_head = ["recipe[chef-sentry-handler]"]
-        common_tail = ["recipe[apt]", "recipe[build-essential]", "recipe[timezone-ii]"]
+        common_tail = ["recipe[apt]", "recipe[build-essential]", "recipe[rackspace_timezone]"]
 
         test_cases = [
             (common_head + common_tail, ["--without-all"]),

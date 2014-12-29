@@ -91,13 +91,20 @@ class PolicyGroup(Group):
 
 class UtilGroup(Group):
     name        = "util"
-    recipes     = ["apt", "build-essential", "timezone-ii"]
+    recipes     = ["apt", "build-essential", "rackspace_timezone"]
     priority    = 5
     optional    = False
 
     @classmethod
     def make_attributes(cls, args, ui, tokgen):
-        return {"apt" : {"compile_time_update": True}}
+        return {
+            "apt" : {"compile_time_update": True},
+            "rackspace_timezone": {
+                "config": {
+                    "tz": "UTC"
+                }
+            }
+        }
 
 
 class NtpGroup(Group):
