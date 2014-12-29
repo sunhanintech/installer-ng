@@ -1,6 +1,7 @@
 # coding:utf-8
 from __future__ import print_function
 
+import os
 import subprocess
 import argparse
 
@@ -12,6 +13,13 @@ from scalr_manage.library.document.target import DocumentTarget
 from scalr_manage.library.subscribe.target import SubscribeTarget
 from scalr_manage.library.match_version.target import MatchVersionTarget
 from scalr_manage.library.exception import ConfigurationException, InstallerException
+
+
+def get_current_command(argv, environ):
+    command = environ.get(constant.COMMAND_OVERRIDE_VARIABLE)
+    if command:  # None or empty string; we don't like either.
+        return command
+    return subprocess.list2cmdline(argv)
 
 
 def _main(argv, ui, tokgen):
@@ -46,7 +54,7 @@ def _main(argv, ui, tokgen):
         ui.print_fn("Please file an issue to get support: https://github.com/scalr/installer-ng/issues")
         ui.print_fn("Please include the installer log file in your bug report: {0}".format(e.log_file))
         ui.print_fn("If this looks like a temporary issue, consider re-executing the installer command that failed by running")
-        ui.print_fn("  {0}".format(subprocess.list2cmdline(argv)))
+        ui.print_fn("  {0}".format(get_current_command(argv, os.environ)))
         ui.print_fn("\n")
         exit_code = 1
     except SystemExit as e:
@@ -57,7 +65,6 @@ def _main(argv, ui, tokgen):
 
 def main():
     import sys
-    import os
     import logging
 
     from scalr_manage.ui.engine import UserInput

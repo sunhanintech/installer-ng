@@ -6,6 +6,9 @@ from scalr_manage.test.util import BaseWrapperTestCase
 
 
 class BaseInstallTestCase(BaseWrapperTestCase):
+    EXTRA_ENV_CLEANUP_KEYS = []
+
+
     def setUp(self):
         super(BaseInstallTestCase, self).setUp()
 
@@ -28,7 +31,7 @@ class BaseInstallTestCase(BaseWrapperTestCase):
 
         os.environ["PATH"] = self.old_path
 
-        for k in ["MOCK_CHEF_EXIT_CODE", "WORK_DIR"]:
+        for k in ["MOCK_CHEF_EXIT_CODE", "WORK_DIR"] + self.EXTRA_ENV_CLEANUP_KEYS:
             try:
                 del os.environ[k]
             except KeyError:
