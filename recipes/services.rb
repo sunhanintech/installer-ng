@@ -32,19 +32,15 @@ if node[:platform_family] == 'fedora'
 end
 
 
-node[:scalr][:services].each do |svc|
-  # We want to be able to mutate that array to add things to it
-  args = svc.deep_to_hash
-
+enabled_services(node).each do |svc|
   # Make sure we're only dealing with symbols here (recursively)
-  HashHelper.symbolize_keys_deep!(args)
+  HashHelper.symbolize_keys_deep!(svc)
 
-  args[:executable] = node[:scalr][:python][:venv_python]
-  args[:piddir] = node[:scalr][:core][:pid_dir]
-  args[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{svc[:service_name]}.pid"
-  args[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{svc[:service_name]}.log"
-  args[:user] = node[:scalr][:core][:users][:service]
-  args[:group] = node[:scalr][:core][:group]
+  svc[:piddir] = node[:scalr][:core][:pid_dir]
+  svc[:pidfile] = "#{node[:scalr][:core][:pid_dir]}/#{svc[:service_name]}.pid"
+  svc[:logfile] = "#{node[:scalr][:core][:log_dir]}/#{svc[:service_name]}.log"
+  svc[:user] = node[:scalr][:core][:users][:service]
+  svc[:group] = node[:scalr][:core][:group]
 
   init_file = "/etc/init.d/#{svc[:service_name]}"
 
@@ -53,8 +49,11 @@ node[:scalr][:services].each do |svc|
     mode 0755
     owner "root"
     group "root"
-    variables args
-    helpers(Scalr::VersionHelper)
+    variables svc
+    helpers do
+      include Scalr::VersionHelper
+      include Scalr::PathHelper
+    end
   end
 
   action = if svc[:run][:daemon] then [:enable, :start] else [:nothing] end
@@ -78,7 +77,7 @@ node[:scalr][:services].each do |svc|
       mode       0644
       owner     'root'
       group     'root'
-      variables args
+      variables svc
       notifies  :restart, 'service[monit]', :delayed
     end
   end

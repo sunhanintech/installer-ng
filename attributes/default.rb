@@ -27,15 +27,8 @@ default[:scalr][:core][:cryptokey_path] = "#{node[:scalr][:core][:location]}/app
 default[:scalr][:core][:id_path] = "#{node[:scalr][:core][:location]}/app/etc/id"
 
 default[:scalr][:python][:venv] = "#{node.scalr.package.deploy_to}/venv"
-default[:scalr][:python][:venv_python] = "#{node.scalr.python.venv}/bin/python"
-default[:scalr][:python][:venv_pip] = "#{node.scalr.python.venv}/bin/pip"
 
 default[:scalr][:python][:venv_force_install] = [['httplib2', nil], ['pymysql', nil], ['cherrypy', '3.2.6'], ['pytz', nil]]
-
-# Here, it is crucial NOT to use ENV["PATH"], as this would include the Chef PATH, which ships its own pkg-config,
-# and will result in package builds failing in the virtual environment (because despite Chef having pkg-config, it will
-# not find our packages).
-default[:scalr][:python][:venv_build_path] = "#{node.scalr.python.venv}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # Misc dirs
 default[:scalr][:core][:log_dir] = '/var/log/scalr'
@@ -64,7 +57,7 @@ default[:scalr][:endpoint][:scheme] = 'http'
 default[:scalr][:endpoint][:host_ip] = '127.0.0.1'
 default[:scalr][:endpoint][:host] = node.scalr.endpoint.host_ip
 
-# Plotter settings #TODO: Deprecate when updating to 4.5
+# Deprecated since 4.5
 default[:scalr][:endpoint][:local_ip] = '127.0.0.1'
 default[:scalr][:endpoint][:set_hostname] = false  # If you host can't resolve its IP to a name (gethostbyaddr fails), use this.
 
@@ -85,91 +78,12 @@ default[:scalr][:rrd][:img_url] = '/graphics'
 default[:scalr][:rrd][:img_dir] = "#{node.scalr.core.location}/app/www#{node.scalr.rrd.img_url}"
 default[:scalr][:rrd][:port] = 8080
 
-# Scalr Daemon Attributes
-default[:scalr][:services] = [
-  {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon', :service_extra_args => '', :run => {
-    :daemon => true
-  }},
-  {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller', :service_extra_args => '', :run => {
-    :daemon => true
-  }},
-  {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter', :service_extra_args => '--plotter', :run => {
-    :daemon => true
-  }},
-  {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller', :service_extra_args => '--poller', :run => {
-    :daemon => true
-  }},
-]
 
-if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
-  # The Scalarizr Update and Cost Analytics Scalrpy were introduced in Scalr 5.0
-
-  if Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node.scalr.package.version)
-    # In Scalr 5.1, the Scarlrpy jobs all run as daemons instead of services.
-    poller_run = {:daemon => true}
-    processor_run = {:daemon => true}
-    updater_args = ''
-  else
-    poller_run = {:cron => {:hour => '*', :minute => '*/5'}}
-    processor_run = {:cron => {:hour => '*', :minute => '7,37'}}
-    updater_args = '--interval=120'
-  end
-
-  extra_services = [
-    {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client', :service_extra_args => updater_args, :run => {
-      :daemon => true
-    }},
-    {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller', :service_extra_args => '', :run => poller_run},
-    {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor', :service_extra_args => '', :run => processor_run},
-  ]
-
-  default[:scalr][:services].concat extra_services
-end
-
-
+# Cron jobs
 default[:scalr][:cron][:path] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-default[:scalr][:cron][:crons] = [
-  {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
-  {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
-  {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Scaling'},
-  {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'BundleTasksManager'},
-  {:hour => '*',    :minute => '*/15', :ng => true,  :name => 'MetricCheck'},
-  {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Poller'},
-  {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
-  {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'EBSManager'},
-  {:hour => '*',    :minute => '*/20', :ng => false, :name => 'RolesQueue'},
-  {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
-  {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
-  {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
-  {:hour => '*/5',  :minute => '0',    :ng => false,  :name => 'RotateLogs'},
-]
-
-if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
-  extra_crons = [
-    {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
-    {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
-  ]
-
-  default[:scalr][:cron][:crons].concat extra_crons
-
-  messaging_crons = %w{
-    SzrMessagingAll SzrMessagingAll2
-    SzrMessagingBeforeHostUp SzrMessagingBeforeHostUp2
-    SzrMessagingHostInit SzrMessagingHostInit2
-    SzrMessagingHostUp SzrMessagingHostUp2
-  }
-else
-  messaging_crons = %w{SzrMessaging}
-end
-
-messaging_crons.each do |messaging_cron|
-  default[:scalr][:cron][:crons].push({:hour => '*', :minute => '*/2', :ng => false, :name => messaging_cron})
-end
 
 
 # PHP attributes
-include_attribute 'php'
-
 default['php']['version'] = '5.5.7'
 default['php']['install_method'] = 'package'
 

@@ -8,9 +8,10 @@ set -o nounset
 
 OPTIND=1
 
-VAR_SKIP_DIRTY_CHECK="0"
-VAR_SKIP_COOKBOOK_PACKAGE="0"
-HAS_GVS="0"
+VAR_SKIP_DIRTY_CHECK=0
+VAR_SKIP_COOKBOOK_PACKAGE=0
+VAR_SKIP_BUILD_PACKAGES=0
+HAS_GVS=0
 farm_gv=()  # List of Farms we want to set the INSTALLER_BRANCH GV on
 
 warn_devel_arg () {
@@ -21,11 +22,12 @@ echo_usage () {
   echo 'Usage: build.sh [-x] [-s] [-f FARM_ID] <release>'
   echo '  -x: Skip the git dirty check'
   echo '  -s: Skip the cookbook package'
+  echo '  -l: Skip the APT, RPM, and Python packages'
   echo '  -f: <deprecated for now>'
 }
 
 
-while getopts "hxsf:" opt
+while getopts "hxslf:" opt
 do
   case "$opt" in
     h)
@@ -35,16 +37,21 @@ do
     x)
       warn_devel_arg
       echo "Skipping dirty check"
-      VAR_SKIP_DIRTY_CHECK="1"
+      VAR_SKIP_DIRTY_CHECK=1
       ;;
     s)
       warn_devel_arg
       echo "Skipping cookbook package"
       VAR_SKIP_COOKBOOK_PACKAGE=1
       ;;
+    s)
+      warn_devel_arg
+      echo "Skipping APT, RPM, and Python packages"
+      VAR_SKIP_BUILD_PACKAGES=1
+      ;;
     f)
       farm_gv+=("$OPTARG")
-      HAS_GVS="1"
+      HAS_GVS=1
       ;;
   esac
 done
@@ -81,11 +88,15 @@ is_final_release () {
 }
 
 skip_dirty_check () {
-  [[ "$VAR_SKIP_DIRTY_CHECK" = "1" ]]
+  [[ "$VAR_SKIP_DIRTY_CHECK" = 1 ]]
 }
 
 skip_cookbook_package () {
-  [[ "$VAR_SKIP_COOKBOOK_PACKAGE" = "1" ]]
+  [[ "$VAR_SKIP_COOKBOOK_PACKAGE" = 1 ]]
+}
+
+skip_build_packages () {
+  [[ "$VAR_SKIP_BUILD_PACKAGES" = 1 ]]
 }
 
 if is_final_release; then
@@ -95,6 +106,10 @@ if is_final_release; then
   fi
   if skip_cookbook_package; then
     echo "You may not skip the cookbook package for a final release"
+    exit 1
+  fi
+  if skip_build_packages; then
+    echo "You may not skip the APT, RPM, and Python packages for a final release"
     exit 1
   fi
 fi
@@ -140,6 +155,9 @@ fi
 $sed --version | grep --silent "GNU sed" || {
   echo "You must install GNU sed !"
 }
+
+# First, test!
+bundle exec rspec
 
 make_git_release () {
   metadata_file="metadata.rb"
@@ -211,9 +229,18 @@ make_cookbook_package () {
 
 make_cookbook_package
 
-# Build the wrapper packages
-echo "Building wrapper packages"
-$HERE/wrapper/build/build.sh
+make_build_packages () {
+  if skip_build_packages; then
+    return 0
+  fi
+
+  # Build the wrapper packages
+  echo "Building wrapper packages"
+  $HERE/wrapper/build/build.sh
+}
+
+make_build_packages
+
 
 cd $ORIGINAL_DIR
 

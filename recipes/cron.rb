@@ -3,7 +3,7 @@ php = '/usr/bin/php -q'
 og_cmd = "#{php} #{node[:scalr][:core][:location]}/app/cron/cron.php"
 ng_cmd = "#{php} #{node[:scalr][:core][:location]}/app/cron-ng/cron.php"
 
-node[:scalr][:cron][:crons].each do |cron|
+enabled_crons(node).each do |cron|
   cmd = cron[:ng] ? ng_cmd : og_cmd
   cron_d cron[:name] do
     hour    cron[:hour]
