@@ -10,6 +10,8 @@ need to do.
 You will need the following tools installed:
 
   + `git`, `bash`, `python` - obviously.
+  + `bundle` to run cookbook tests (and `bundle install` must have been run
+    first).
   + `berkshelf` - to package the cookbooks.
     The best way to get this is to install the Chef Development Kit (using
     Homebrew: `brew cask install chef-dk`).

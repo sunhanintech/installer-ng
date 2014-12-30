@@ -141,6 +141,9 @@ $sed --version | grep --silent "GNU sed" || {
   echo "You must install GNU sed !"
 }
 
+# First, test!
+bundle exec rspec
+
 make_git_release () {
   metadata_file="metadata.rb"
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"

@@ -69,10 +69,12 @@ if scalrpy2? node
       source    'rhel-install-m2crypto.sh.erb'
       variables :fedora_setup => 'https://raw.githubusercontent.com/M2Crypto/M2Crypto/master/fedora_setup.sh'
       mode      0700
+      helpers(Scalr::PathHelper)
     end
 
     execute "#{Chef::Config[:file_cache_path]}/rhel-install-m2crypto.sh" do
-      not_if "#{node[:scalr][:python][:venv_pip]} freeze | grep -i m2crypto"
+      not_if "#{venv_pip node} freeze | grep -i m2crypto"
+      environment('PATH' => (venv_build_path node))
     end
   end
 
@@ -95,13 +97,13 @@ end
 # Prioritize our virtualenv python and pip in the installer
 
 if scalrpy2? node
-  install_cmd = "#{node[:scalr][:python][:venv_pip]} install --no-use-wheel --requirement requirements.txt"
+  install_cmd = "#{venv_pip node} install --no-use-wheel --requirement requirements.txt"
 else
-  install_cmd = "#{node[:scalr][:python][:venv_python]} setup.py install"
+  install_cmd = "#{venv_python node} setup.py install"
 end
 
 execute 'Install Scalrpy' do
   command     install_cmd
   cwd         "#{node[:scalr][:core][:location]}/app/python"
-  environment('PATH' => node[:scalr][:python][:venv_build_path])
+  environment('PATH' => (venv_build_path node))
 end

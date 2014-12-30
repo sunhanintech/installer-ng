@@ -8,7 +8,7 @@
 # we still don't know where Scalr is installed, so we can't succesfully
 # complete those files.
 
-node[:scalr][:services].each do |srv|
+enabled_services(node).each do |srv|
   init_file = "/etc/init.d/#{srv[:service_name]}"  # Some duplication here..
 
   file init_file do

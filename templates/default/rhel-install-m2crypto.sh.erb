@@ -5,7 +5,7 @@ set -o nounset
 work_dir=$(mktemp -d)
 cd -- "$work_dir"
 
-<%= node[:scalr][:python][:venv_pip] %> install --download "$work_dir" --no-deps m2crypto
+<%= venv_pip node %> install --download "$work_dir" --no-deps m2crypto
 tar -xzvf *.tar.gz
 rm *.tar.gz
 
@@ -16,7 +16,7 @@ wget "<%= @fedora_setup %>"
 fedora_setup=$(basename "<%= @fedora_setup %>")
 chmod +x "$fedora_setup"
 
-PATH="<%= node[:scalr][:python][:venv_build_path] %>" "./$fedora_setup" install
+PATH="<%= venv_build_path node %>" "./$fedora_setup" install
 
 cd /
 rm -r $work_dir
