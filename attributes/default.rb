@@ -84,8 +84,6 @@ default[:scalr][:cron][:path] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/b
 
 
 # PHP attributes
-include_attribute 'php'
-
 default['php']['version'] = '5.5.7'
 default['php']['install_method'] = 'package'
 
