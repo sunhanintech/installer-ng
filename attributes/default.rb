@@ -17,7 +17,6 @@ default[:scalr][:package][:version_obj] = Gem::Version.new(node.scalr.package.ve
 
 # Only used if deploying from a private repo
 default[:scalr][:deployment][:ssh_key] = ''
-default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 
 # Useful locations for Scalr
 default[:scalr][:core][:location] = File.join(node.scalr.package.deploy_to, 'current')
