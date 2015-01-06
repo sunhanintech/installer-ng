@@ -12,7 +12,7 @@ end
 
 include_recipe 'python::virtualenv'
 
-if scalrpy2? node
+if has_scalrpy2? node
   # In Scalrpy v2, we build everything in the virtualenv
   pkgs = value_for_platform_family(
       %w(rhel fedora) => %w(libffi-devel libevent-devel openssl-devel swig cairo-devel pango-devel glib2-devel libxml2-devel rrdtool-devel),
@@ -35,7 +35,7 @@ end
 python_virtualenv node[:scalr][:python][:venv] do
   owner  node[:scalr][:core][:users][:service]
   group  node[:scalr][:core][:group]
-  options (scalrpy2? node) ? '' : '--system-site-packages'
+  options (has_scalrpy2? node) ? '' : '--system-site-packages'
   action :create
 end
 
@@ -53,7 +53,7 @@ end
 # On Scalr 5.0, this means installing a few packages we want to pin to a moe up-to-date version than what
 # may already be on the system
 
-if scalrpy2? node
+if has_scalrpy2? node
 
   # Let the fun begin! M2Crypto isn't installable from pip on RHEL platforms, so we
   # need to manually install it and run the fedora_setup.sh script provided for RHEL
@@ -96,7 +96,7 @@ end
 
 # Prioritize our virtualenv python and pip in the installer
 
-if scalrpy2? node
+if has_scalrpy2? node
   install_cmd = "#{venv_pip node} install --no-use-wheel --requirement requirements.txt"
 else
   install_cmd = "#{venv_python node} setup.py install"
