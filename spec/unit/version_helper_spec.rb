@@ -75,6 +75,40 @@ describe Scalr::VersionHelper do
       node.set[:scalr][:package][:version] = '5.1.1'
       expect(dummy_class.new.enabled_crons(node).length).to equal(19)  # 13 constant + 2 for CA + 4 for messaging
     end
-
   end
+
+  describe '#has_migrations?' do
+    it 'should return the right information on Scalr 4.5' do
+      node.set[:scalr][:package][:version] = '4.5'
+      expect(dummy_class.new.has_migrations?(node)).to be_falsey
+    end
+
+    it 'should return the right information on Scalr 5.0' do
+      node.set[:scalr][:package][:version] = '5.0'
+      expect(dummy_class.new.has_migrations?(node)).to be_truthy
+    end
+
+    it 'should return the right information on Scalr 5.1' do
+      node.set[:scalr][:package][:version] = '5.1'
+      expect(dummy_class.new.has_migrations?(node)).to be_truthy
+    end
+  end
+
+  describe '#has_cost_analytics?' do
+    it 'should return the right information on Scalr 4.5' do
+      node.set[:scalr][:package][:version] = '4.5'
+      expect(dummy_class.new.has_cost_analytics?(node)).to be_falsey
+    end
+
+    it 'should return the right information on Scalr 5.0' do
+      node.set[:scalr][:package][:version] = '5.0'
+      expect(dummy_class.new.has_cost_analytics?(node)).to be_truthy
+    end
+
+    it 'should return the right information on Scalr 5.1' do
+      node.set[:scalr][:package][:version] = '5.1'
+      expect(dummy_class.new.has_cost_analytics?(node)).to be_truthy
+    end
+  end
+
 end

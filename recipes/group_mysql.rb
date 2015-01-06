@@ -1,36 +1,37 @@
 # Install MySQL
-include_recipe "mysql::server"
+include_recipe 'mysql::server'
 
 # Install MySQL Gem
-include_recipe "database::mysql"
+include_recipe 'database::mysql'
 
-# Configure MySQL
-root_conn_info = {
-  :username => "root",
-  :password => node['mysql']['server_root_password'],
-  :host => node[:scalr][:database][:host],
-  :port => node[:scalr][:database][:port],
-}
 
-execute "Load MySQL TZ Info" do
-  command "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -h'#{root_conn_info[:host]}' -u'#{root_conn_info[:username]}' -p'#{root_conn_info[:password]}' mysql"
+mysql_database 'load tz info' do
+  connection      mysql_root_params(node)
+  database_name   'mysql'
+  sql             {
+    proc = Mixlib::ShellOut.new("mysql_tzinfo_to_sql /usr/share/zoneinfo/#{node[:rackspace_timezone][:config][:tz]} #{node[:rackspace_timezone][:config][:tz]}")
+    proc.run_command
+    proc.error!
+    'TRUNCATE TABLE time_zone; TRUNCATE TABLE time_zone_name;' \
+    + 'TRUNCATE TABLE time_zone_transition; TRUNCATE TABLE time_zone_transition_type;' \
+    + proc.stdout
+  }
+  action          :query
 end
 
-template "/etc/mysql/conf.d/tz.cnf" do
-  source "mysql-tz.cnf.erb"
-  mode 0755
-  owner "root"
-  group "root"
-  notifies :restart, "mysql_service[#{node['mysql']['service_name']}]", :delayed
+template '/etc/mysql/conf.d/tz.cnf' do
+  source    'mysql-tz.cnf.erb'
+  mode      0755
+  owner     'root'
+  group     'root'
+  notifies  :restart, "mysql_service[#{node['mysql']['service_name']}]", :delayed
 end
 
 mysql_database_user node[:scalr][:database][:username] do
-  connection root_conn_info
-
-  password node[:scalr][:database][:password]
-  host node[:scalr][:database][:client_host]
-
-  action [:create]
+  connection  mysql_root_params(node)
+  password    node[:scalr][:database][:password]
+  host        node[:scalr][:database][:client_host]
+  action      :create
 end
 
 # The analytics database is not useful on an old Scalr version, but that's
@@ -43,14 +44,14 @@ scalr_databases = [
 
 scalr_databases.each do |scalr_database|
   mysql_database scalr_database do
-    connection root_conn_info
-    action :create
+    connection  mysql_root_params(node)
+    action      :create
   end
 
   mysql_database_user node[:scalr][:database][:username] do
-    connection root_conn_info
+    connection    mysql_root_params(node)
     database_name scalr_database
-    action [:grant]
+    action        :grant
   end
 end
 
