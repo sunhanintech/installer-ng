@@ -60,8 +60,8 @@ if has_scalrpy2? node
   if node[:platform_family] == 'rhel'
 
     package 'wget' do
-      # Old wget packages may not have support for alternative names, which
-      # github uses.
+      # Old wget packages may not have support for alternative names in SSL certificates,
+      # which GitHub uses (and we use GitHub in the install script below).
       action :upgrade
     end
 
@@ -88,7 +88,7 @@ else
       virtualenv  node[:scalr][:python][:venv]
       action      :upgrade
       version     version
-      options     "--ignore-installed --no-use-wheel"
+      options     '--ignore-installed --no-use-wheel'
     end
   end
 end

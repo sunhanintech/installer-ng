@@ -13,7 +13,6 @@ include_recipe 'scalr-core::users'
 include_recipe 'scalr-core::stub-services'
 
 # Scalr Code
-# node[:scalr][:core][:location] is not available before this.
 include_recipe 'scalr-core::package'
 
 # PuTTYgen (SSH Launcher support for Windows clients)
@@ -27,7 +26,7 @@ include_recipe 'scalr-core::rrdcached'
 
 # Scalr configuration and PHP settings
 include_recipe 'scalr-core::configuration'
-include_recipe "scalr-core::php_settings"
+include_recipe 'scalr-core::php_settings'
 
 # Database Configuration
 include_recipe 'scalr-core::database_init_structure'
