@@ -44,7 +44,7 @@ do
       echo "Skipping cookbook package"
       VAR_SKIP_COOKBOOK_PACKAGE=1
       ;;
-    s)
+    l)
       warn_devel_arg
       echo "Skipping APT, RPM, and Python packages"
       VAR_SKIP_BUILD_PACKAGES=1
