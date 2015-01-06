@@ -16,7 +16,6 @@ default[:scalr][:package][:version] = '4.5.0'
 default[:scalr][:package][:version_obj] = Gem::Version.new(node.scalr.package.version)
 
 # Only used if deploying from a private repo
-default[:scalr][:deployment][:ssh_key_path] = ''
 default[:scalr][:deployment][:ssh_key] = ''
 default[:scalr][:deployment][:ssh_wrapper_path] = '/tmp/chef_ssh_deploy_wrapper'
 
