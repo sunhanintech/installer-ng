@@ -78,7 +78,7 @@ cp -p "${HERE}/../../version_helper.py" "${tools_dir}/version_helper.py"
 img="${FACTORY_BASE_NAME}-${distroDir}-${release}"
 user_info "Building ${img}"
 docker build -t "${img}" "${work_dir}" | sed "s/^/${OUTPUT_PREFIX} /"
-docker run -i \
+docker run --interactive --rm \
   -e PACKAGE_CLOUD_SETTINGS="$(cat ~/.packagecloud)" \
   -e BUILD_UID=$BUILD_UID -e BUILD_GID=$BUILD_GID -e BUILD_NAME=$(id -un) \
   -e PKG_DIR="/build/scalr-manage-${VERSION_PYTHON}" -e VERSION_FULL="${VERSION_FULL}" \
