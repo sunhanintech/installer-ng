@@ -189,15 +189,12 @@ class AppGroup(Group):
         if urlparse.urlparse(repo).scheme in constant.GIT_NON_SSH_SCHEMES:
             ui.print_fn("You will not need a SSH key for this repository ({0}).".format(repo))
             ssh_key = ""
-            ssh_key_path = ""
         else:
             ssh_key = ui.prompt_ssh_key("Provide a SSH Key for this repository (password-based SSH isn't supported). "
                                         "If this seems wrong, provide a full URL (e.g. file:// ...)")
-            ssh_key_path = os.path.join(os.path.expanduser("~"), "scalr-deploy.pem")
 
         output["scalr"]["deployment"] = {
             "ssh_key": ssh_key,
-            "ssh_key_path": ssh_key_path,
         }
 
         # Endpoint Settings

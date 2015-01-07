@@ -26,7 +26,6 @@
             "port": 3306
         },
         "deployment": {
-            "ssh_key_path": "",
             "ssh_key": ""
         },
         "id": "i0xaaaaaaaa"

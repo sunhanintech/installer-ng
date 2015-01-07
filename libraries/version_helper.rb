@@ -1,8 +1,16 @@
 module Scalr
   module VersionHelper
 
-    def scalrpy2?(node)
+    def has_scalrpy2?(node)
       Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node[:scalr][:package][:version])
+    end
+
+    def has_migrations?(node)
+      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr][:package][:version])
+    end
+
+    def has_cost_analytics?(node)
+      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr][:package][:version])
     end
 
     def enabled_services(node)

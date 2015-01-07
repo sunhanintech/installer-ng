@@ -44,7 +44,7 @@ do
       echo "Skipping cookbook package"
       VAR_SKIP_COOKBOOK_PACKAGE=1
       ;;
-    s)
+    l)
       warn_devel_arg
       echo "Skipping APT, RPM, and Python packages"
       VAR_SKIP_BUILD_PACKAGES=1
@@ -162,13 +162,11 @@ bundle exec rspec
 make_git_release () {
   metadata_file="metadata.rb"
   wrapper_version_file="wrapper/scalr-manage/scalr_manage/version.py"
-  install_file="scripts/install.py"
 
   sed_opts="-E -i"
   $sed $sed_opts "s/(version[ ]+)'[0-9.]*'/\1'${VERSION_FINAL}'/g" "${metadata_file}"
   $sed $sed_opts "s/(__version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"${VERSION_PYTHON}\"/g" "${wrapper_version_file}"
   $sed $sed_opts "s/(__pkg_version__[ ]*=[ ]*)\"[0-9a-b.]*\"/\1\"${VERSION_FULL}\"/g" "${wrapper_version_file}"
-  $sed $sed_opts "s/(DEFAULT_COOKBOOK_RELEASE[ ]+=[ ]+)\"[0-9a-b.]*\"/\1\"${VERSION_FULL}\"/g" "${install_file}"
 
   git tag | grep --extended-regexp "^${RELEASE_TAG}$" && {
     echo "Tag already exists. Deleting"
@@ -181,7 +179,7 @@ make_git_release () {
   }
 
   git checkout -b $RELEASE_BRANCH
-  git add $metadata_file $wrapper_version_file $install_file
+  git add $metadata_file $wrapper_version_file
   git commit -m "Release: $VERSION_FULL"
   git tag $RELEASE_TAG HEAD
 }
