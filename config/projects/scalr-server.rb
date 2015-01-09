@@ -12,6 +12,9 @@ dependency "preparation"
 
 dependency "chef-gem" # for embedded chef-solo
 
+# Actual package
+dependency "scalr-server-cookbooks"
+
 
 # test dependencies/components
 # dependency "somedep"
