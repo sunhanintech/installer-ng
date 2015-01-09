@@ -20,3 +20,11 @@ Config files considerations:
  + Exclusively *declare* attributes in the `scalr-server.rb` file. No auto-generated passwords there.
    -> Also include whether services are enabled or not.
  + Store auto-generated passwords in `/etc/scalr-server/scalr-server-secrets.json`.
+
+
+
+IN THE CONFIGURATION FILE, YOU MUST SKIP *default[:scalr_server]*
+
+Make sure that when we convert to omnibus, DNA.json includes stuff like rackspace_timezone that
+still needs to run!
+

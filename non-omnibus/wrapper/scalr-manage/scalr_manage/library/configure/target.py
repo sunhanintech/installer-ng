@@ -57,6 +57,7 @@ class ConfigureTarget(Target):
             logger.warning("Directory did not exist for `{0}`, created it".format(args.configuration))
 
         # TODO - Warn if the file already exists!
+        # TODO - Catch IOError here (https://app.getsentry.com/scalr/installer/group/49546136/)
         with open(args.configuration, "w") as f:
             logger.info("Generated configuration in: %s", f.name)
             json.dump(output, f, indent=4)

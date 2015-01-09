@@ -49,16 +49,6 @@ def check_or_install_chef(args, work_dir, http_download):
         subprocess.check_call([installer])
 
 
-# TODO - Remove if this is indeed not useful
-def download_cookbook(args, work_dir, http_download):
-    cookbook_url = constant.COOKBOOK_PKG_URL_TPL.format(args.release)
-    cookbook_file = os.path.join(work_dir, os.path.basename(cookbook_url))
-    logger.info("Downloading Scalr Cookbook: %s", cookbook_url)
-
-    http_download(cookbook_url, cookbook_file)
-    subprocess.check_call(["tar", "xzvf", cookbook_file, "-C", os.path.join(work_dir, constant.COOKBOOK_DIR)])
-
-
 def create_solo_rb(args, work_dir, http_download):
     contents = """
     file_cache_path "{file_cache_path}"

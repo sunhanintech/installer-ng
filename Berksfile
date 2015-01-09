@@ -1,12 +1,12 @@
-source 'https://supermarket.chef.io'
+source 'https://api.berkshelf.com'
 
-metadata
+cookbook 'omnibus'
 
-cookbook 'build-essential'
-cookbook 'apparmor', '~> 0.9.2'
-cookbook 'selinux', '~> 0.8.0'
-cookbook 'ntp', '~> 1.5.0'
-cookbook 'iptables-ng', '~> 2.2.0'
+# Uncomment to use the latest version of the Omnibus cookbook from GitHub
+# cookbook 'omnibus', github: 'opscode-cookbooks/omnibus'
 
-cookbook 'chef-sentry-handler', github: 'scalr-cookbooks/chef-sentry-handler', tag: 'v1.1.0+scalr'
-cookbook 'rackspace_timezone', github: 'scalr-cookbooks/rackspace_timezone', tag: 'v1.0.1+scalr'
+group :integration do
+  cookbook 'apt',      '~> 2.3'
+  cookbook 'freebsd',  '~> 0.1'
+  cookbook 'yum-epel', '~> 0.3'
+end

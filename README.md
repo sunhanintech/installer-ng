@@ -1,79 +1,103 @@
-Scalr Next Generation Installer
-===============================
+test Omnibus project
+====================
+This project creates full-stack platform-specific packages for
+`test`!
 
-An installer for [Scalr Open Source][0], with support for:
+Installation
+------------
+You must have a sane Ruby 1.9+ environment with Bundler installed. Ensure all
+the required gems are installed:
 
-  + Ubuntu: 12.04, 14.04
-  + RHEL: 6, 7
-  + CentOS: 6, 7
-
-If you run into any issues, or have suggestions, get in touch with us at
-onboarding@scalr.com, or [file an issue][1].
-
+```shell
+$ bundle install --binstubs
+```
 
 Usage
-=====
+-----
+### Build
 
-### Choosing a Server ###
+You create a platform-specific package using the `build project` command:
 
-We strongly suggest that you use a fresh install of your OS of choice to
-install Scalr. A cloud instance is a great choice.
+```shell
+$ bin/omnibus build test
+```
 
-### Download ###
+The platform/architecture type of the package created will match the platform
+where the `build project` command is invoked. For example, running this command
+on a MacBook Pro will generate a Mac OS X package. After the build completes
+packages will be available in the `pkg/` folder.
 
-Log in to the server you'd like to install Scalr on, and run the following
-command, preferably as root.
+### Clean
 
-    curl -sfSLO https://raw.githubusercontent.com/Scalr/installer-ng/master/dist/install.sh
+You can clean up all temporary files generated during the build process with
+the `clean` command:
 
-You might want to double-check that the `install.sh` file that was downloaded
-does match the installer script as it is presented here.
+```shell
+$ bin/omnibus clean test
+```
 
-### Install Scalr ###
+Adding the `--purge` purge option removes __ALL__ files generated during the
+build including the project install directory (`/opt/test`) and
+the package cache directory (`/var/cache/omnibus/pkg`):
 
-Run the following, as root.
+```shell
+$ bin/omnibus clean test --purge
+```
 
-    bash install.sh
+### Publish
 
-If you'd like to anything more complex, like install a specific Scalr version,
-then review the [instructions on the Scalr Wiki][10].
+Omnibus has a built-in mechanism for releasing to a variety of "backends", such
+as Amazon S3. You must set the proper credentials in your `omnibus.rb` config
+file or specify them via the command line.
 
-Note: we recommend that you run this command using GNU screen, so that the
-installation process isn't interrupted if your SSH connection drops.
+```shell
+$ bin/omnibus publish path/to/*.deb --backend s3
+```
 
+### Help
 
-### Use Scalr ###
+Full help for the Omnibus command line interface can be accessed with the
+`help` command:
 
-Visit your server on port 80 to get started. The output of the install script
-contains your login credentials.
+```shell
+$ bin/omnibus help
+```
 
-All generated credentials are logged to `/root/solo.json`, so you can
-also retrieve them there.
+Kitchen-based Build Environment
+-------------------------------
+Every Omnibus project ships will a project-specific
+[Berksfile](http://berkshelf.com/) that will allow you to build your omnibus projects on all of the projects listed
+in the `.kitchen.yml`. You can add/remove additional platforms as needed by
+changing the list found in the `.kitchen.yml` `platforms` YAML stanza.
 
+This build environment is designed to get you up-and-running quickly. However,
+there is nothing that restricts you to building on other platforms. Simply use
+the [omnibus cookbook](https://github.com/opscode-cookbooks/omnibus) to setup
+your desired platform and execute the build steps listed above.
 
-Upgrading
-=========
+The default build environment requires Test Kitchen and VirtualBox for local
+development. Test Kitchen also exposes the ability to provision instances using
+various cloud providers like AWS, DigitalOcean, or OpenStack. For more
+information, please see the [Test Kitchen documentation](http://kitchen.ci).
 
-You may use the Scalr Installer to upgrade your Scalr install. However, be
-mindful that that the Installer uses semantic versioning, and that there are
-no guarantees that a new major version will not prevent upgrading a Scalr
-install performed with an earlier major version.
+Once you have tweaked your `.kitchen.yml` (or `.kitchen.local.yml`) to your
+liking, you can bring up an individual build environment using the `kitchen`
+command.
 
+```shell
+$ bin/kitchen converge ubuntu-1204
+```
 
-Supported OSes
-==============
+Then login to the instance and build the project as described in the Usage
+section:
 
-  + Ubuntu 12.04
-  + RHEL 6
-  + CentOS 6
+```shell
+$ bundle exec kitchen login ubuntu-1204
+[vagrant@ubuntu...] $ cd test
+[vagrant@ubuntu...] $ bundle install
+[vagrant@ubuntu...] $ ...
+[vagrant@ubuntu...] $ bin/omnibus build test
+```
 
-
-License
-=======
-
-Apache 2.0
-
-
-  [0]: https://github.com/Scalr/scalr
-  [1]: https://github.com/Scalr/installer-ng/issues
-  [10]: https://scalr-wiki.atlassian.net/wiki/x/AoD4
+For a complete list of all commands and platforms, run `kitchen list` or
+`kitchen help`.
