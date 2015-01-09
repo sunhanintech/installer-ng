@@ -12,7 +12,10 @@ dependency 'chef-gem' # for embedded chef-solo
 # Creates required build directories
 dependency 'local-preparation'
 
-# Actual software
+# Software we need to run
+dependency 'mysql'
+
+# Actual Scalr software
 dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
 dependency 'scalr-server-ctl'         # CLI to run chef-solo and actions (scalr-server-ctl)
 
