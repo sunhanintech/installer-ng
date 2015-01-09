@@ -41,7 +41,7 @@ default[:scalr][:package][:name] = 'scalr'
 default[:scalr][:package][:revision] = 'HEAD'
 default[:scalr][:package][:repo] = 'https://github.com/Scalr/scalr.git'
 default[:scalr][:package][:deploy_to] = '/opt/scalr'
-default[:scalr][:package][:version] = '4.5.0'
+default[:scalr][:package][:version] = '5.1'
 default[:scalr][:package][:version_obj] = Gem::Version.new(node.scalr.package.version)
 
 # Will be removed when we have omnibus.
