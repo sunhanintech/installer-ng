@@ -3,22 +3,22 @@ module Scalr
 
     def _mysql_base_params(node)
       {
-          :host => node[:scalr][:database][:host],
-          :port => node[:scalr][:database][:port],
+          :host => node[:scalr_server][:mysql][:host],
+          :port => node[:scalr_server][:mysql][:port],
       }
     end
 
     def mysql_root_params(node)
       _mysql_base_params(node).merge({
           :username => 'root',
-          :password => node[:mysql][:server_root_password],
+          :password => node[:scalr_server][:mysql][:root_password],
       })
     end
 
     def mysql_user_params(node)
       _mysql_base_params(node).merge({
-          :username => node[:scalr][:database][:username],
-          :password => node[:scalr][:database][:password],
+          :username => node[:scalr_server][:mysql][:scalr_user],
+          :password => node[:scalr_server][:mysql][:scalr_password],
       })
     end
 

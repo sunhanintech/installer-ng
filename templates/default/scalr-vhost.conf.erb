@@ -1,6 +1,6 @@
 <VirtualHost *:80>
-  ServerName <%= node[:scalr][:endpoint][:host] %>
-  ServerAdmin <%= node[:scalr][:email][:from] %>
+  ServerName <%= node[:scalr_server][:app][:endpoint_host] %>
+  ServerAdmin <%= node[:scalr_server][:app][:email_from_address] %>
   DocumentRoot <%= node[:scalr][:core][:location] %>/app/www
 
   <Directory <%= node[:scalr][:core][:location] %>/app/www>

@@ -1,15 +1,15 @@
 scalr:
   connections:
     mysql: &connections_mysql
-      host: <%= node[:scalr][:database][:host] %>
-      port: <%= node[:scalr][:database][:port] %>
-      name: <%= node[:scalr][:database][:scalr_dbname] %>
-      user: <%= node[:scalr][:database][:username] %>
-      pass: <%= node[:scalr][:database][:password] %>
+      host: <%= node[:scalr_server][:mysql][:host] %>
+      port: <%= node[:scalr_server][:mysql][:port] %>
+      user: <%= node[:scalr_server][:mysql][:scalr_user] %>
+      pass: <%= node[:scalr_server][:mysql][:password] %>
+      name: <%= node[:scalr_server][:mysql][:scalr_dbname] %>
 
   email:
-    address: <%= node[:scalr][:email][:from] %>
-    name: <%= node[:scalr][:email][:name] %>
+    address: <%= node[:scalr_server][:app][:email_from_address] %>
+    name: <%= node[:scalr_server][:app][:email_from_name] %>
 
   auth_mode: scalr
 

@@ -26,4 +26,4 @@ if node[:platform_family] == 'debian'
   end
 end
 
-scalr_core_phpmod 'http'
+scalr_server_phpmod 'http'

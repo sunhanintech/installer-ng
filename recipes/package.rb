@@ -62,5 +62,5 @@ file node[:scalr][:core][:id_path] do
     owner   node[:scalr][:core][:users][:service]
     group   node[:scalr][:core][:group]
     mode    0640
-    content node[:scalr][:id]
+    content node[:scalr_server][:app][:id]
 end

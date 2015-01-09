@@ -1,18 +1,18 @@
 scalr:
   connections:
     mysql: &connections_mysql
-      host: <%= node[:scalr][:database][:host] %>
-      port: <%= node[:scalr][:database][:port] %>
-      name: <%= node[:scalr][:database][:scalr_dbname] %>
-      user: <%= node[:scalr][:database][:username] %>
-      pass: <%= node[:scalr][:database][:password] %>
+      host: <%= node[:scalr_server][:mysql][:host] %>
+      port: <%= node[:scalr_server][:mysql][:port] %>
+      user: <%= node[:scalr_server][:mysql][:scalr_user] %>
+      pass: <%= node[:scalr_server][:mysql][:scalr_password] %>
+      name: <%= node[:scalr_server][:mysql][:scalr_dbname] %>
 
   analytics:
     enabled: yes
     connections:
       analytics:
         <<: *connections_mysql
-        name: <%= node[:scalr][:database][:analytics_dbname] %>
+        name: <%= node[:scalr_server][:mysql][:analytics_dbname] %>
       scalr:
         <<: *connections_mysql
     poller:
@@ -24,8 +24,8 @@ scalr:
       pid_file: '/var/run/scalr.analytics-processing.pid'
 
   email:
-    address: <%= node[:scalr][:email][:from] %>
-    name: <%= node[:scalr][:email][:name] %>
+    address: <%= node[:scalr_server][:app][:email_from_address] %>
+    name: <%= node[:scalr_server][:app][:email_from_name] %>
 
   auth_mode: scalr
 
@@ -45,12 +45,12 @@ scalr:
   - nebula
 
   endpoint:
-    scheme: <%= node[:scalr][:endpoint][:scheme] %>
-    host: <%= node[:scalr][:endpoint][:host] %>
+    scheme: <%= node[:scalr_server][:app][:endpoint_scheme] %>
+    host: <%= node[:scalr_server][:app][:endpoint_host] %>
 
   aws:
-    ip_pool: ['<%= node[:scalr][:endpoint][:host_ip] %>/32']
-    security_group_name: scalr.<%= node[:scalr][:id] %>.ip-pool
+    ip_pool: ['<%= node[:scalr_server][:app][:endpoint_ip_range] %>']
+    security_group_name: scalr.<%= node[:scalr_server][:app][:id] %>.ip-pool
 
   billing:
     enabled: no
@@ -76,7 +76,7 @@ scalr:
       plotter:
         scheme: 'http'
         bind_scheme: 'http' # Not used yet, but let's be safe
-        host: '<%= node[:scalr][:endpoint][:host] %>'
+        host: <%= node[:scalr_server][:app][:endpoint_host] %>
         bind_host:    '0.0.0.0'  # New version
         bind_address: '0.0.0.0'  # DEPRECATED - Consider removing and use bind_host instead
         port: <%= node[:scalr][:rrd][:port] %>
@@ -87,7 +87,7 @@ scalr:
       rrdcached_sock_path: '<%= node[:scalr][:rrd][:run_dir] %>/rrdcached.sock'
     img:
       scheme: 'http'
-      host: '<%= node[:scalr][:endpoint][:host] %>'
+      host: <%= node[:scalr_server][:app][:endpoint_host] %>
       path: '<%= node[:scalr][:rrd][:img_url] %>'
       dir: '<%= node[:scalr][:rrd][:img_dir] %>'
 

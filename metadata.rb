@@ -1,4 +1,4 @@
-name             'scalr-core'
+name             'scalr-server'
 maintainer       'Thomas Orozco'
 maintainer_email 'thomas@scalr.com'
 license          'Apache License 2.0'

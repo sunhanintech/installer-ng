@@ -40,4 +40,4 @@ php_pear 'yaml' do
   version '1.1.1'
 end
 
-scalr_core_phpmod 'yaml'
+scalr_server_phpmod 'yaml'

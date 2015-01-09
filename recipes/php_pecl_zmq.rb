@@ -15,4 +15,4 @@ php_pear 'zmq' do
   version '1.1.2'
 end
 
-scalr_core_phpmod 'zmq'
+scalr_server_phpmod 'zmq'

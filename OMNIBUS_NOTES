@@ -1,0 +1,22 @@
+Omnibus:
+
+ + Inspiration from: https://github.com/opscode/omnibus-chef-server.
+   View: https://github.com/opscode/omnibus-software
+
+
+ + Use omnibus to install non-specific dependencies, like php, apache, nginx, etc., to /opt/scalr/embedded/...
+ + Use omnibus to install chef-solo (as a gem, in the embedded location, too).
+
+ + Use omnibus-ctl (https://github.com/opscode/omnibus-ctl) and its "reconfigure" command to launch Chef solo.
+ + Use a regular cookbook to initialize (runtime).
+ + Use a configuration file on the system (/etc/scalr-server/scalr-server.rb -- https://github.com/opscode/omnibus-chef-server) to configure the components, etc.
+   View: https://github.com/opscode/omnibus-chef-server/blob/master/files/chef-server-cookbooks/chef-server/libraries/chef_server.rb
+
+
+Config files considerations:
+
+ + `solo.json` for the runlist.
+ + `/etc/scalr-server/scalr-server.rb` for user configuration.
+ + Exclusively *declare* attributes in the `scalr-server.rb` file. No auto-generated passwords there.
+   -> Also include whether services are enabled or not.
+ + Store auto-generated passwords in `/etc/scalr-server/scalr-server-secrets.json`.

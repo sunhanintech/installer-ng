@@ -12,4 +12,4 @@ php_pear 'ssh2' do
   version '0.12'
 end
 
-scalr_core_phpmod 'ssh2'
+scalr_server_phpmod 'ssh2'

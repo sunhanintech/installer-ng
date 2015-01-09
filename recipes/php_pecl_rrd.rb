@@ -5,4 +5,4 @@ php_pear 'rrd' do
   version '1.1.3'
 end
 
-scalr_core_phpmod 'rrd'
+scalr_server_phpmod 'rrd'
