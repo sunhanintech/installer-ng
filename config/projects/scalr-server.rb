@@ -13,6 +13,7 @@ dependency 'local-preparation'
 # Software we need to run
 dependency 'mysql'
 dependency 'php'
+dependency 'php-pecl_http'
 
 # Actual Scalr software
 dependency 'chef-gem' # for embedded chef-solo
