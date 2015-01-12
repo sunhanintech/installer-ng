@@ -34,6 +34,7 @@ dependency 'libldap'
 dependency 'libsasl'
 dependency 'gettext'
 dependency 'libssh2'
+dependency 'httpd'
 
 
 source url: "http://us.php.net/distributions/php-#{version}.tar.gz",
@@ -71,6 +72,7 @@ build do
           " --with-ldap=#{install_dir}/embedded" \
           " --with-ldap-sasl=#{install_dir}/embedded" \
           ' --enable-opcache' \
+          " --with-apxs2=#{install_dir}/embedded/bin/apxs" \
           ' --enable-fpm' \
           " --with-config-file-path=#{install_dir}/embedded/etc/php" \
           ' --with-fpm-user=scalr' \
