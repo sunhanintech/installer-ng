@@ -61,7 +61,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{mysql app}.each do |key|
+      %w{mysql app supervisor}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results
