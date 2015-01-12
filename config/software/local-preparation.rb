@@ -23,7 +23,8 @@ build do
   block do
     %w{embedded/lib embedded/bin bin}.each do |dir|
       command "mkdir -p #{install_dir}/#{dir}"
-      command "touch -a #{install_dir}/.gitkeep"
+      command "chmod 755 #{install_dir}/#{dir}"
+      command "touch -a #{install_dir}/#{dir}/.gitkeep"
     end
   end
 end
