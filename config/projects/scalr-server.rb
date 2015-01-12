@@ -14,7 +14,8 @@ override 'scalr-app', version: 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
 dependency 'local-preparation'
 
 # Things that don't change often
-dependency 'chef-gem' # for embedded chef-solo
+dependency 'chef-gem'   # For embedded chef-solo
+dependency 'mysql-gem'  # We use it in our embedded chef solo
 
 # Software we need to run
 dependency 'mysql'
