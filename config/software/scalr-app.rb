@@ -43,7 +43,7 @@ build do
           ' --requirement ./app/python/requirements.txt', env: env
 
   # Copy the code to the ./app dir.
-  command "mkdir -p #{install_dir}/app"
-  command "rsync -a --delete --exclude=.git/*** --exclude=.gitignore --exclude=./pybuild ./ #{install_dir}/app/"
+  command "mkdir -p #{install_dir}/embedded/scalr"
+  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=pybuild ./ #{install_dir}/embedded/scalr"
 
 end
