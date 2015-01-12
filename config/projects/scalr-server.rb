@@ -8,26 +8,23 @@ install_dir "#{default_root}/#{name}"
 build_version Omnibus::BuildVersion.semver
 build_iteration 1
 
+override 'scalr-app', version: 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
+
 # Creates required build directories
 dependency 'local-preparation'
 
 # Software we need to run
 dependency 'mysql'
-dependency 'php'
-dependency 'php-pecl_http'
-dependency 'php-rrd'
-dependency 'php-ssh2'
-dependency 'php-yaml'
-dependency 'php-zmq'
+dependency 'rrdtool'
+dependency 'cronie'
 
 # Actual Scalr software
+dependency 'scalr-app'
+
+# App management
 dependency 'chef-gem' # for embedded chef-solo
 dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
 dependency 'scalr-server-ctl'         # CLI to run chef-solo and actions (scalr-server-ctl)
-
-
-# test dependencies/components
-# dependency "somedep"
 
 # Version manifest file
 dependency 'version-manifest'

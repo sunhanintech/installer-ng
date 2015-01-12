@@ -1,5 +1,4 @@
 name 'scalr-app'
-default_version = 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
 
 source :git => 'https://github.com/Scalr/scalr.git' # TODO - EE
 
@@ -15,6 +14,18 @@ dependency 'pango'
 dependency 'glib'
 dependency 'libxml2'
 dependency 'rrdtool'
+dependency 'libyaml'
+
+# PHP package dependencies
+dependency 'php'
+dependency 'php-pecl_http'
+dependency 'php-rrd'
+dependency 'php-ssh2'
+dependency 'php-yaml'
+dependency 'php-zmq'
+
+# Other app dependencies
+dependency 'putty'
 
 # Note: rsync is only used during build, so we don't include it as a dependency. Same for swig.
 
@@ -26,7 +37,7 @@ build do
   # file)
   command "#{install_dir}/embedded/bin/pip install" \
           ' -I' \
-          " --build #{project_dir}" \
+          " --build #{project_dir}/pybuild" \
           ' --requirement ./app/python/requirements.txt', env: env
 
   # Copy the code to the ./app dir.
