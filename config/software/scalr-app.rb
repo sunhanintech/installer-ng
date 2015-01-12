@@ -5,6 +5,7 @@ source :git => 'https://github.com/Scalr/scalr.git' # TODO - EE
 # Python
 dependency 'python'
 dependency 'pip'
+dependency 'python-m2crypto'
 
 # Python package dependencies
 dependency 'libffi'
@@ -35,8 +36,9 @@ build do
 
   # Install Python dependencies (we have to install those here because this is where we get the requirements.txt
   # file)
+  # Note that m2crypto is installed separately in python-m2crypto.
+  # Then, install the rest
   command "#{install_dir}/embedded/bin/pip install" \
-          ' -I' \
           " --build #{project_dir}/pybuild" \
           ' --requirement ./app/python/requirements.txt', env: env
 
