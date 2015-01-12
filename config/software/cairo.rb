@@ -21,8 +21,6 @@ build do
           " --prefix=#{install_dir}/embedded" \
           ' --enable-xlib=no' \
           ' --enable-xlib-render=no ', env: env
-  make "-j #{workers}", env: env
-  # We don't run check here becaue cairo just has plenty of tests that fail even when it's functional
-  # (as per Cairo's own test/README document)
-  make "-j #{workers} install", env: env
+  make env: env
+  make 'install', env: env
 end
