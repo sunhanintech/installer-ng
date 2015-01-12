@@ -21,6 +21,7 @@ dependency 'mysql'
 dependency 'httpd'
 dependency 'php'
 dependency 'python'
+dependency 'supervisor'
 dependency 'rrdtool'
 dependency 'cronie'
 
