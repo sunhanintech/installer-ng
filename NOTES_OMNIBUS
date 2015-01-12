@@ -36,9 +36,11 @@ Must have a tag.
 
 To install:
 - omnibus (install ruby + ruby-dev and use bundle install --binstubs to install)
+- berks (gem install berkshelf)
 - build-essential
 - cmake
 - automake
 - rsync
 - git
 - swig
+- perl

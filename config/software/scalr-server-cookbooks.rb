@@ -19,22 +19,20 @@
 
 name 'scalr-server-cookbooks'
 
-dependency 'berkshelf'
-dependency 'rsync'
-# TODO - I don't actually need berks here. It's build-only dependency
-
-# Can I use 'name' here?
 source :path => File.expand_path('files/scalr-server-cookbooks', Omnibus::Config.project_root)
 
 berks_pkg = 'pkg.tar.gz'
 
+# Note: we use both berks and rsync here, but there are only build-time dependencies, so we don't actually
+# depend on them.
+
 build do
   # Add the extra files and our cookbook
   command "mkdir -p #{install_dir}/embedded/cookbooks"
-  command "#{install_dir}/embedded/bin/rsync --delete -a ./ #{install_dir}/embedded/cookbooks/"
+  command "rsync --delete -a ./ #{install_dir}/embedded/cookbooks/"
 
   # Add the package and all the dependencies (NOTE: unfortunately this copies the scalr-server cookbook again)
   command "mkdir -p #{install_dir}/embedded"
-  command "#{install_dir}/embedded/bin/berks package --berksfile ./scalr-server/Berksfile #{install_dir}/embedded/#{berks_pkg}"
+  command "berks package --berksfile ./scalr-server/Berksfile #{install_dir}/embedded/#{berks_pkg}"
   command "cd #{install_dir}/embedded && tar -xzvf #{berks_pkg} && rm #{berks_pkg}"
 end
