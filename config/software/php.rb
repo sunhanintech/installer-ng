@@ -49,6 +49,7 @@ build do
           " --with-iconv=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded" \
           " --with-libedit-dir=#{install_dir}/embedded" \
+          ' --enable-sockets' \
           " --with-gettext=#{install_dir}/embedded" \
           " --with-mysql=#{install_dir}/embedded" \
           " --with-mysqli=#{install_dir}/embedded/bin/mysql_config" \
