@@ -56,7 +56,7 @@ module ScalrServer
           }
         }))
       end
-      system("chmod 0600 #{node[:scalr_server][:secrets_file]}")
+      system("chmod 0600 #{secrets_file_path node}")
     end
 
     def generate_hash
