@@ -28,3 +28,17 @@ IN THE CONFIGURATION FILE, YOU MUST SKIP *default[:scalr_server]*
 Make sure that when we convert to omnibus, DNA.json includes stuff like rackspace_timezone that
 still needs to run!
 
+
+--- !!! ---
+Must have a tag.
+
+
+
+To install:
+- omnibus (install ruby + ruby-dev and use bundle install --binstubs to install)
+- build-essential
+- cmake
+- automake
+- rsync
+- git
+- swig
