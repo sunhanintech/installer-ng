@@ -29,6 +29,7 @@ dependency 'libiconv'
 dependency 'openssl'
 dependency 'libmcrypt'
 dependency 'mysql'
+dependency 'gettext'
 
 source url: "http://us.php.net/distributions/php-#{version}.tar.gz",
        md5: '63185e6efdd4e381c5f2ec1b1e3baf1f'
@@ -48,6 +49,7 @@ build do
           " --with-iconv=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded" \
           " --with-libedit-dir=#{install_dir}/embedded" \
+          " --with-gettext=#{install_dir}/embedded" \
           " --with-mysql=#{install_dir}/embedded" \
           " --with-mysqli=#{install_dir}/embedded/bin/mysql_config" \
           " --with-pdo-mysql=#{install_dir}/embedded" \
