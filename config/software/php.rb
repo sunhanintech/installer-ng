@@ -33,6 +33,8 @@ dependency 'curl'
 dependency 'libldap'
 dependency 'libsasl'
 dependency 'gettext'
+dependency 'libssh2'
+
 
 source url: "http://us.php.net/distributions/php-#{version}.tar.gz",
        md5: '63185e6efdd4e381c5f2ec1b1e3baf1f'
