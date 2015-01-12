@@ -1,0 +1,8 @@
++ Use my own zmq, because autoconf and automake don't need to be in the final package (though they need to be on the
+  build system, as in the cronie package here).
+
++ Same with libs that depend on rsync.
+
++ use my own Python for a more recent version
+
++ Maybe do that for pkg-config, too..
