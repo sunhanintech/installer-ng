@@ -16,6 +16,9 @@ dependency 'mysql'
 dependency 'php'
 dependency 'php-pecl_http'
 dependency 'php-rrd'
+dependency 'php-ssh2'
+dependency 'php-yaml'
+dependency 'php-zmq'
 
 # Actual Scalr software
 dependency 'chef-gem' # for embedded chef-solo
