@@ -17,11 +17,12 @@ build do
 
   command "#{install_dir}/embedded/bin/phpize"
   command './configure' \
+          " --with-php-config=#{install_dir}/embedded/bin/php-config" \
           ' --enable-http' \
           " --with-http-curl-requests=#{install_dir}/embedded" \
           " --with-http-zlib-compression=#{install_dir}/embedded" \
           " --with-http-magic-mime=#{install_dir}/embedded"\
           ' --without-http-curl-libevent', env: env  # TODO - Do we want libevent?
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make env: env
+  make 'install', env: env
 end
