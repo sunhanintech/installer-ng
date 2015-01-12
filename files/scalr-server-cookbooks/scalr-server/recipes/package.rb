@@ -48,16 +48,13 @@ end
   end
 end
 
-# Create the cryptokey file and set permissions.
-# This stays empty the validate step, which will generate the cryptokey
 file node[:scalr][:core][:cryptokey_path] do
-    owner node[:scalr][:core][:users][:service]
-    group node[:scalr][:core][:group]
-    mode  0640
+    owner   node[:scalr][:core][:users][:service]
+    group   node[:scalr][:core][:group]
+    mode    0640
+    content node[:scalr_server][:app][:secret_key]
 end
 
-# Create the ID file
-# This one has a predefined value, because we use the ID in multiple locations
 file node[:scalr][:core][:id_path] do
     owner   node[:scalr][:core][:users][:service]
     group   node[:scalr][:core][:group]

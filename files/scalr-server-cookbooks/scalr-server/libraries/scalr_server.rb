@@ -37,6 +37,7 @@ module ScalrServer
       ScalrServer[:mysql][:server_repl_password] ||= SecureRandom.hex 50
 
       ScalrServer[:app][:admin_password] ||= SecureRandom.hex 50
+      ScalrServer[:app][:secret_key] ||= SecureRandom.hex 512
       ScalrServer[:app][:id] ||= SecureRandom.hex 4
 
       File.open(secrets_file_path(node), 'w') do |f|
@@ -49,6 +50,7 @@ module ScalrServer
           },
           :app => {
             :admin_password => ScalrServer[:app][:admin_password],
+            :secret_key => ScalrServer[:app][:secret_key],
             :id => ScalrServer[:app][:id],
           }
         }))
