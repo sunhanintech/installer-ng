@@ -30,12 +30,15 @@ dependency 'openssl'
 dependency 'libmcrypt'
 dependency 'mysql'
 dependency 'curl'
+dependency 'libldap'
+dependency 'libsasl'
 dependency 'gettext'
 
 source url: "http://us.php.net/distributions/php-#{version}.tar.gz",
        md5: '63185e6efdd4e381c5f2ec1b1e3baf1f'
 
 relative_path "php-#{version}"
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
@@ -63,6 +66,8 @@ build do
           ' --enable-wddx' \
           " --with-libexpat-dir=#{install_dir}/embedded" \
           ' --enable-soap' \
+          " --with-ldap=#{install_dir}/embedded" \
+          " --with-ldap-sasl=#{install_dir}/embedded" \
           ' --enable-opcache' \
           ' --enable-fpm' \
           " --with-config-file-path=#{install_dir}/embedded/etc/php" \
