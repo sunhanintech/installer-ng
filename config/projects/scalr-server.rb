@@ -13,8 +13,14 @@ override 'scalr-app', version: 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
 # Creates required build directories
 dependency 'local-preparation'
 
+# Things that don't change often
+dependency 'chef-gem' # for embedded chef-solo
+
 # Software we need to run
 dependency 'mysql'
+dependency 'httpd'
+dependency 'php'
+dependency 'python'
 dependency 'rrdtool'
 dependency 'cronie'
 
@@ -22,7 +28,6 @@ dependency 'cronie'
 dependency 'scalr-app'
 
 # App management
-dependency 'chef-gem' # for embedded chef-solo
 dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
 dependency 'scalr-server-ctl'         # CLI to run chef-solo and actions (scalr-server-ctl)
 
