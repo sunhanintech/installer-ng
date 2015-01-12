@@ -1,3 +1,4 @@
+# Note that changing this file invalidates the entire build.
 name 'scalr-server'
 maintainer 'Thomas Orozco <thomas@scalr.com>'
 homepage 'https://www.scalr.com'
@@ -14,6 +15,7 @@ dependency 'local-preparation'
 dependency 'mysql'
 dependency 'php'
 dependency 'php-pecl_http'
+dependency 'php-rrd'
 
 # Actual Scalr software
 dependency 'chef-gem' # for embedded chef-solo
