@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Scalr::VersionHelper do
+describe Scalr::ServicesHelper do
   let(:node) { ChefSpec::SoloRunner.new.node }
   let(:dummy_class) { Class.new { include Scalr::DatabaseHelper } }
 

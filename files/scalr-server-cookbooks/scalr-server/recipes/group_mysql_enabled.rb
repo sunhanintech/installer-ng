@@ -141,18 +141,11 @@ end
 
 # Load database structure and data
 
-# Load data only if no upgrade data is there (>= 5.0), or rely on some other indicator if upgrade data is unavailable (< 5.0)
-if has_migrations? node
-  canary_table = 'upgrades'
-else
-  canary_table = 'ipaccess'
-end
-
 mysql_database 'load scalr database structure' do
   connection      mysql_user_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/structure.sql").read }
-  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:scalr_dbname], canary_table) }
+  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
@@ -160,36 +153,32 @@ mysql_database 'load scalr database data' do
   connection      mysql_user_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/data.sql").read }
-  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], canary_table) }
+  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
-if has_cost_analytics? node
-  mysql_database 'load analytics database structure' do
-    connection      mysql_user_params(node)
-    database_name   node[:scalr_server][:mysql][:analytics_dbname]
-    sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
-    not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
-    action          :query
-  end
-
-  mysql_database 'load analytics database data' do
-    connection      mysql_user_params(node)
-    database_name   node[:scalr_server][:mysql][:analytics_dbname]
-    sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
-    not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
-    action          :query
-  end
+mysql_database 'load analytics database structure' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:analytics_dbname]
+  sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
+  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  action          :query
 end
 
-if has_migrations? node
-  execute 'Upgrade Scalr Database' do
-    user    node[:scalr_server][:app][:user]
-    group   node[:scalr_server][:app][:user]
-    returns 0
-    command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
-    cwd     "#{scalr_bundle_path node}/app/bin"
-  end
+mysql_database 'load analytics database data' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:analytics_dbname]
+  sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
+  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  action          :query
+end
+
+execute 'Upgrade Scalr Database' do
+  user    node[:scalr_server][:app][:user]
+  group   node[:scalr_server][:app][:user]
+  returns 0
+  command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
+  cwd     "#{scalr_bundle_path node}/app/bin"
 end
 
 
