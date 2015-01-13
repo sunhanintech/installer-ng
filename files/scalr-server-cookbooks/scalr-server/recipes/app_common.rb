@@ -12,12 +12,19 @@ end
 scalr_path = "#{node[:scalr_server][:install_root]}/embedded/scalr"
 
 
-# Scalr system directory
+# Scalr system directories
 
 directory "#{scalr_path}/app/cache" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0770
+  recursive true
+end
+
+directory "#{scalr_path}/app/etc" do
+  owner     'root'
+  group     'root'
+  mode      0755
   recursive true
 end
 
