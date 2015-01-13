@@ -7,7 +7,6 @@ source url: "http://www.freedesktop.org/software/fontconfig/release/fontconfig-#
 relative_path "fontconfig-#{version}"
 
 
-dependency 'pkg-config'
 dependency 'libiconv'
 dependency 'expat'
 

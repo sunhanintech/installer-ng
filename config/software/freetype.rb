@@ -8,7 +8,6 @@ source url: "http://download.savannah.gnu.org/releases/freetype/freetype-#{versi
 relative_path "freetype-#{version}"
 
 
-dependency 'pkg-config'
 dependency 'libpng'
 dependency 'bzip2'
 dependency 'zlib'

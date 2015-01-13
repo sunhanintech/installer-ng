@@ -7,7 +7,6 @@ source url: "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-#{ver
 relative_path "harfbuzz-#{version}"
 
 
-dependency 'pkg-config'
 dependency 'glib'
 dependency 'freetype_pre'
 dependency 'cairo'

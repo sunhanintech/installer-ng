@@ -7,7 +7,6 @@ source url: "http://ftp.gnome.org/pub/GNOME/sources/pango/1.36/pango-#{version}.
 relative_path "pango-#{version}"
 
 
-dependency 'pkg-config'
 dependency 'glib'
 dependency 'freetype'
 dependency 'fontconfig'

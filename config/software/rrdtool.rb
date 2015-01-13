@@ -6,7 +6,6 @@ source url: "http://oss.oetiker.ch/rrdtool/pub/rrdtool-#{version}.tar.gz",
 
 relative_path "rrdtool-#{version}"
 
-dependency 'pkg-config'
 dependency 'zlib'
 dependency 'libpng'
 dependency 'libxml2'

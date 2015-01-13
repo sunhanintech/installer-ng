@@ -7,7 +7,6 @@ source url: "http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-#{version}.ta
 relative_path "glib-#{version}"
 
 # See: https://developer.gnome.org/glib/2.42/glib-building.html
-dependency 'pkg-config'
 dependency 'libiconv'
 dependency 'gettext'
 dependency 'libffi'
