@@ -1,19 +1,23 @@
 # Add MySQL user
 user node[:scalr_server][:mysql][:user] do
-  # TODO - Homes...
+  # TODO - Homes... Group.
   system true
 end
 
 
 # Create MySQL configuration dir and file
 directory etc_dir_for(node, 'mysql') do
+  owner     'root'
+  group     'root'
   mode      0755
   recursive true
 end
 
 template "#{etc_dir_for node, 'mysql'}/my.cnf" do
   source 'my.cnf.erb'
-  mode   0755
+  owner  'root'
+  group  'root'
+  mode   0644
   helpers(Scalr::PathHelper)
 # TODO - Warn user if MySQL tz != UTC? We default to 00:00 here.
 end
@@ -22,7 +26,7 @@ end
 # Bootstrap MySQL database
 directory "#{data_dir_for node, 'mysql'}" do
   owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:group]
+  group     node[:scalr_server][:mysql][:user]
   mode      0755
   recursive true
 end
@@ -31,14 +35,14 @@ end
 # Create MySQL run and log dirs
 directory run_dir_for(node, 'mysql') do
   owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:group]
+  group     node[:scalr_server][:mysql][:user]
   mode      0755
   recursive true
 end
 
 directory log_dir_for(node, 'mysql') do
   owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:group]
+  group     node[:scalr_server][:mysql][:user]
   mode      0755
   recursive true
 end
