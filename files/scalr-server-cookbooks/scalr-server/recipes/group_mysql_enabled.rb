@@ -1,3 +1,5 @@
+require 'digest'
+
 # Add MySQL user
 user node[:scalr_server][:mysql][:user] do
   # TODO - Homes... Group.
@@ -134,3 +136,82 @@ scalr_databases.each do |scalr_database|
   end
 end
 
+
+# Load database structure and data
+
+# Load data only if no upgrade data is there (>= 5.0), or rely on some other indicator if upgrade data is unavailable (< 5.0)
+if has_migrations? node
+  canary_table = 'upgrades'
+else
+  canary_table = 'ipaccess'
+end
+
+mysql_database 'load scalr database structure' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:scalr_dbname]
+  sql             { ::File.open("#{node[:scalr][:core][:location]}/sql/structure.sql").read }
+  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:scalr_dbname], canary_table) }
+  action          :query
+end
+
+mysql_database 'load scalr database data' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:scalr_dbname]
+  sql             { ::File.open("#{node[:scalr][:core][:location]}/sql/data.sql").read }
+  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], canary_table) }
+  action          :query
+end
+
+if has_cost_analytics? node
+  mysql_database 'load analytics database structure' do
+    connection      mysql_user_params(node)
+    database_name   node[:scalr_server][:mysql][:analytics_dbname]
+    sql             { ::File.open("#{node[:scalr][:core][:location]}/sql/analytics_structure.sql").read }
+    not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+    action          :query
+  end
+
+  mysql_database 'load analytics database data' do
+    connection      mysql_user_params(node)
+    database_name   node[:scalr_server][:mysql][:analytics_dbname]
+    sql             { ::File.open("#{node[:scalr][:core][:location]}/sql/analytics_data.sql").read }
+    not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+    action          :query
+  end
+end
+
+if has_migrations? node
+  execute 'Upgrade Scalr Database' do
+    user    node[:scalr][:core][:users][:service]
+    group   node[:scalr][:core][:group]
+    returns 0
+    command 'php upgrade.php'
+    cwd     "#{node[:scalr][:core][:location]}/app/bin"
+  end
+end
+
+
+# Initialize Scalr administrator
+
+default_username = 'admin'
+hashed_default_password = Digest::SHA2.new(256).update('admin').hexdigest
+
+new_username = node[:scalr_server][:app][:admin_user]
+hashed_new_password = Digest::SHA2.new(256).update(node[:scalr_server][:app][:admin_password]).hexdigest
+
+admin_id = 1
+
+# The queries below are idempotent and only change the password in case it was set to the default.
+mysql_database 'set admin username' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:scalr_dbname]
+  sql             "UPDATE account_users SET email='#{new_username}' WHERE id=#{admin_id} AND email='#{default_username}'"
+  action          :query
+end
+
+mysql_database 'set admin password' do
+  connection      mysql_user_params(node)
+  database_name   node[:scalr_server][:mysql][:scalr_dbname]
+  sql             "UPDATE account_users SET password='#{hashed_new_password}' WHERE id=#{admin_id} AND password='#{hashed_default_password}'"
+  action          :query
+end
