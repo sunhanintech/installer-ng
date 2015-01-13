@@ -63,6 +63,7 @@ end
 
 # Launch MySQL
 # View: http://supervisord.org/subprocess.html#pidproxy-program
+# TODO - Consider reloading?
 supervisor_service 'mysql' do
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/pidproxy" \
                   " #{run_dir_for node, 'mysql'}/mysql.pid" \

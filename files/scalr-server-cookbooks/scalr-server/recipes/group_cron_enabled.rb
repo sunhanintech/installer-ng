@@ -42,6 +42,7 @@ enabled_crons(node).each do |cron|
   end
 end
 
+# TODO - Consider reloading
 supervisor_service 'cron' do
   command         "#{node[:scalr_server][:install_root]}/embedded/sbin/crond" \
                   " -L #{log_dir_for node, 'cron'}/crond.log" \

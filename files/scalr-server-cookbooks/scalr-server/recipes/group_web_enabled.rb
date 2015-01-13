@@ -38,6 +38,7 @@ end
 
 
 # httpd run
+# TODO - Consider reloading?
 supervisor_service 'httpd' do
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/httpd" \
                   " -f #{etc_dir_for node, 'httpd'}/httpd.conf" \
