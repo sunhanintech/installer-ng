@@ -12,6 +12,7 @@ module ScalrServer
   # For the time being, those are only useful to set :enable.
   default :app, Mash.new
   default :mysql, Mash.new
+  default :supervisor, Mash.new
 
   class << self
 

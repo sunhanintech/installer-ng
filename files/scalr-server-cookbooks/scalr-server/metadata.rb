@@ -20,3 +20,5 @@ depends 'database', '~> 2.3.1'
 depends 'mysql', '~> 5.6.1'
 depends 'apache2', '~> 3.0.0'
 depends 'cron', '~> 1.4.0'
+
+depends 'supervisor', '~> 0.4.12'

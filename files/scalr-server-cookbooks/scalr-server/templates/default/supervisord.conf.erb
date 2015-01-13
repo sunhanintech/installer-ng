@@ -1,0 +1,31 @@
+; supervisor config file
+;
+; Template:: default/supervisord.conf.erb
+; Cookbook Name:: supervisor
+;
+
+[unix_http_server]
+file=<%= run_dir_for node, 'supervisor' %>/supervisor.sock
+
+[supervisord]
+logfile=<%= log_dir_for node, 'supervisor' %>/supervisord.log   ; (main log file;default $CWD/supervisord.log)
+logfile_maxbytes=50MB
+logfile_backups=10
+loglevel=info
+pidfile=<%= run_dir_for node, 'supervisor' %>/supervisord.pid
+childlogdir=<%= log_dir_for node, 'supervisor' %>
+
+minfds = 1024
+minprocs = 200
+
+; the below section must remain in the config file for RPC
+; (supervisorctl/web interface) to work, additional interfaces may be
+; added by defining them in separate rpcinterface: sections
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix://<%= run_dir_for node, 'supervisor' %>/supervisor.sock
+
+[include]
+files = <%= etc_dir_for node, 'supervisor' %>/conf.d/*.conf

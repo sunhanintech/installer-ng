@@ -26,10 +26,23 @@ default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
 default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
 
+
+# Supervisor tunables
+default[:scalr_server][:supervisor][:enable] = true
+default[:scalr_server][:supervisor][:user] = 'root'
+
 # Attributes includes from other cookbooks. We need to include those because we refer to them in our own recipes,
 # and don't want to have to ensure that those cookbooks are in the runlist to be able to use the attributes.
 include_attribute  'rackspace_timezone'
 include_attribute  'php'
+
+
+default[:scalr_server][:install_root] = '/opt/scalr-server'
+
+
+# Supervisor configuration (there unfortunately is no better way to override it).
+default['supervisor']['dir'] = "#{node.scalr_server.install_root}/etc/supervisor/conf.d"
+default['supervisor']['conffile'] = "#{node.scalr_server.install_root}/etc/supervisor/supervisord.conf"
 
 # None of what is found below will be configurable in the long run (i.e. when we have omnibus).
 

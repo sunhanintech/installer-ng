@@ -16,6 +16,34 @@ module Scalr
       "#{node.scalr.python.venv}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     end
 
+    def scalr_exec_path(node)
+      [
+          "#{node[:scalr_server][:install_root]}/bin",
+          "#{node[:scalr_server][:install_root]}/embedded/sbin",
+          "#{node[:scalr_server][:install_root]}/embedded/bin",
+          "#{node[:scalr_server][:install_root]}/embedded/scripts",
+          ENV['PATH']
+      ].join(':')
+    end
+
+    # Common paths #
+
+    def etc_dir_for(node, svc)
+      "#{node[:scalr_server][:install_root]}/etc/#{svc}"
+    end
+
+    def run_dir_for(node, svc)
+      "#{node[:scalr_server][:install_root]}/var/run/#{svc}"
+    end
+
+    def log_dir_for(node, svc)
+      "#{node[:scalr_server][:install_root]}/var/log/#{svc}"
+    end
+
+    def data_dir_for(node, svc)
+      "#{node[:scalr_server][:data_root]}/var/lib/#{svc}"
+    end
+
   end
 end
 

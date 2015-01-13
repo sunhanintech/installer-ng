@@ -21,7 +21,8 @@ end
 node.consume_attributes(ScalrServer.generate_config node)
 
 # Deploy services
-%w{mysql app}.each do |service|
+%w{supervisor mysql app}.each do |service|
+  # TODO - Create run dir, etc dir here
   if node[:scalr_server][service][:enable]
     include_recipe "scalr-server::group_#{service}_enabled"
   else
