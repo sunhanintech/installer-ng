@@ -18,7 +18,6 @@
 
 name 'scalr-server-ctl'
 
-dependency 'rsync'
 dependency 'omnibus-ctl'
 
 source :path => File.expand_path('files/scalr-server-ctl-commands', Omnibus::Config.project_root)
@@ -63,5 +62,5 @@ done
   command "chmod 755 #{install_dir}/bin/scalr-server-ctl"
 
   # additional omnibus-ctl commands
-  command "#{install_dir}/embedded/bin/rsync -a ./ #{install_dir}/embedded/service/omnibus-ctl/"
+  command "rsync -a ./ #{install_dir}/embedded/service/omnibus-ctl/"
 end
