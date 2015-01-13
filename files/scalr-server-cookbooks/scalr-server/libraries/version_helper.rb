@@ -43,6 +43,8 @@ module Scalr
           updater_args = '--interval=120'
         end
 
+        # TODO - We are dropping support for cron services. Actually do it.
+
         extra_services = [
             {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client',
              :service_extra_args => updater_args, :run => { :daemon => true }},
