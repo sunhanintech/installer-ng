@@ -78,8 +78,12 @@ module ScalrServer
 
     # Helper methods
 
-    def config_file_path(node)
+    def main_config_file_path(node)
       "#{node[:scalr_server][:config_dir]}/scalr-server.rb"
+    end
+
+    def local_config_file_path(node)
+      "#{node[:scalr_server][:config_dir]}/scalr-server-local.rb"
     end
 
     def secrets_file_path(node)

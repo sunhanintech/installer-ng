@@ -15,9 +15,17 @@ directory node[:scalr_server][:config_dir] do
 end.run_action(:create)
 
 # Load attributes from the configuration files. Ordering matters here
-if File.exists?(ScalrServer.config_file_path node)
-  ScalrServer.from_file(ScalrServer.config_file_path node)
+if File.exists?(ScalrServer.main_config_file_path node)
+  # Main attributes file. Probably where you want global settings, like 'route'
+  ScalrServer.from_file(ScalrServer.main_config_file_path node)
 end
+
+if File.exists?(ScalrServer.local_config_file_path node)
+  # Alternate config file. Probably where you want local settings, like what to enable
+  ScalrServer.from_file(ScalrServer.local_config_file_path node)
+end
+
+# Reads the JSON file, and returns the attributes
 node.consume_attributes(ScalrServer.generate_config node)
 
 # Deploy services
