@@ -1,5 +1,3 @@
-include_recipe 'database::mysql'
-
 # Load data only if no upgrade data is there (>= 5.0), or rely on some other indicator if upgrade data is unavailable (< 5.0)
 if has_migrations? node
   canary_table = 'upgrades'

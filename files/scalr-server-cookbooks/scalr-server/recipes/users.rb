@@ -1,13 +1,13 @@
-users = node[:scalr][:core][:users]
+# TODO - root user? (in group)
 
-user users[:service]
-
-user users[:web] do
+user node[:scalr_server][:app][:user] do
   system true
 end
 
-
-group node[:scalr][:core][:group] do
+group node[:scalr_server][:group] do
   append true
-  members users.values
+  members [
+              node[:scalr_server][:app][:user],
+              node[:scalr_server][:mysql][:user]
+          ]
 end

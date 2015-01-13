@@ -13,18 +13,25 @@ default[:scalr_server][:app][:endpoint_scheme] = 'http'
 default[:scalr_server][:app][:endpoint_ip_range] = '127.0.0.1/32'
 default[:scalr_server][:app][:endpoint_host] = 'localhost'
 
+default[:scalr_server][:app][:user] = 'scalr'
+
 # MySQL tunables
 default[:scalr_server][:mysql][:enable] = true
-default[:scalr_server][:mysql][:host] = 'localhost'
+default[:scalr_server][:mysql][:host] = '127.0.0.1'
+default[:scalr_server][:mysql][:bind] = '127.0.0.1'
 default[:scalr_server][:mysql][:port] = 3306
+
 default[:scalr_server][:mysql][:scalr_user] = 'scalr'
 default[:scalr_server][:mysql][:root_password] = 'CHANGEME'
 default[:scalr_server][:mysql][:scalr_password] = 'CHANGEME'
 default[:scalr_server][:mysql][:server_debian_password] = 'CHANGEME'
 default[:scalr_server][:mysql][:server_repl_password] = 'CHANGEME'
 default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
+
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
 default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
+
+default[:scalr_server][:mysql][:user] = 'mysql'
 
 
 # Supervisor tunables
@@ -46,8 +53,11 @@ default['supervisor']['conffile'] = "#{node.scalr_server.install_root}/etc/super
 
 # None of what is found below will be configurable in the long run (i.e. when we have omnibus).
 
-default[:scalr][:core][:group] = 'scalr'
+default[:scalr_server][:group] = 'scalr'
+default[:scalr][:core][:group] = node.scalr_server.group  # TODO!
+
 default[:scalr][:core][:users][:service] = 'root'
+
 default[:scalr][:core][:users][:web] = value_for_platform_family('rhel' => 'apache', 'fedora' => 'apache', 'debian' => 'www-data')
 
 default[:scalr][:package][:name] = 'scalr'

@@ -1,7 +1,7 @@
 module Scalr
   module DatabaseHelper
 
-    def _mysql_base_params(node)
+    def mysql_base_params(node)
       {
           :host => node[:scalr_server][:mysql][:host],
           :port => node[:scalr_server][:mysql][:port],
@@ -9,14 +9,14 @@ module Scalr
     end
 
     def mysql_root_params(node)
-      _mysql_base_params(node).merge({
+      mysql_base_params(node).merge({
           :username => 'root',
           :password => node[:scalr_server][:mysql][:root_password],
       })
     end
 
     def mysql_user_params(node)
-      _mysql_base_params(node).merge({
+      mysql_base_params(node).merge({
           :username => node[:scalr_server][:mysql][:scalr_user],
           :password => node[:scalr_server][:mysql][:scalr_password],
       })

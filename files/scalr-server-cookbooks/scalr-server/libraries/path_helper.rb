@@ -41,7 +41,7 @@ module Scalr
     end
 
     def data_dir_for(node, svc)
-      "#{node[:scalr_server][:data_root]}/var/lib/#{svc}"
+      "#{node[:scalr_server][:install_root]}/var/lib/#{svc}"
     end
 
   end
