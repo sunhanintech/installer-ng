@@ -24,7 +24,7 @@ dependency 'php'
 dependency 'python'
 dependency 'supervisor'
 dependency 'rrdtool'
-dependency 'cronie'
+dependency 'dcron'
 
 # Actual Scalr software
 dependency 'scalr-app'
