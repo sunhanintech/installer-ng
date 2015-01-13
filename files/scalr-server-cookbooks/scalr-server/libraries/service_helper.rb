@@ -26,7 +26,7 @@ module Scalr
     end
 
     def enabled_services(node)
-      enabled_services_attr = node[:scalr_server][:worker][:enable]
+      enabled_services_attr = node[:scalr_server][:service][:enable]
       if enabled_services_attr.kind_of?(Array)
         # TODO - Might want to warn if one of the enabled services doesn't exist.
         # If this is an array, then these are the services we want to enable

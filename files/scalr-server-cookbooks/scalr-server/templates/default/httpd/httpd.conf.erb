@@ -56,8 +56,8 @@ DocumentRoot <%= scalr_bundle_path node %>/app/www
 
 <% if apache_serve_graphics node %>
 <IfModule alias_module>
-  Alias /graphics  <%= data_dir_for node, 'worker' %>/graphics
-  <Directory <%= data_dir_for node, 'worker' %>/graphics>
+  Alias /graphics  <%= data_dir_for node, 'service' %>/graphics
+  <Directory <%= data_dir_for node, 'service' %>/graphics>
       Options -Indexes +MultiViews
       AuthType None
       Order allow,deny

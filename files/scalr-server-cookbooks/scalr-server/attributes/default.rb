@@ -59,11 +59,11 @@ default[:scalr_server][:mysql][:user] = 'mysql'
 default[:scalr_server][:cron][:enable] = true
 
 
-# Worker tunables
-default[:scalr_server][:worker][:enable] = true
-default[:scalr_server][:worker][:plotter_bind_scheme] = 'http'
-default[:scalr_server][:worker][:plotter_bind_host] = '0.0.0.0'
-default[:scalr_server][:worker][:plotter_bind_port] = 8000
+# service tunables
+default[:scalr_server][:service][:enable] = true
+default[:scalr_server][:service][:plotter_bind_scheme] = 'http'
+default[:scalr_server][:service][:plotter_bind_host] = '0.0.0.0'
+default[:scalr_server][:service][:plotter_bind_port] = 8000
 
 
 # Rrd tunables

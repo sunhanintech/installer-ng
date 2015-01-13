@@ -20,15 +20,15 @@ end.run_action(:create)
 # + /etc/scalr-server/scalr-secrets.json
 node.consume_attributes(ScalrServer.generate_config node)
 
-# Deploy services
-%w{supervisor mysql app web cron worker rrd}.each do |service|  # Todo - app shouldn't really be an option.
+# Deploy modules
+%w{supervisor mysql app web cron service rrd}.each do |mod|  # Todo - supervisor, app shouldn't really be an option.
   # TODO - Create run dir, etc dir here
-  if node[:scalr_server][service][:enable]
-    include_recipe "scalr-server::group_#{service}_enabled"
+  if node[:scalr_server][mod][:enable]
+    include_recipe "scalr-server::group_#{mod}_enabled"
   else
-    include_recipe "scalr-server::group_#{service}_disabled"
+    include_recipe "scalr-server::group_#{mod}_disabled"
   end
-  include_recipe "scalr-server::group_#{service}_always"
+  include_recipe "scalr-server::group_#{mod}_always"
 end
 
 
