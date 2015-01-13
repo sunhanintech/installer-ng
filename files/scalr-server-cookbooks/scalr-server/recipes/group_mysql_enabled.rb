@@ -16,11 +16,12 @@ directory etc_dir_for(node, 'mysql') do
 end
 
 template "#{etc_dir_for node, 'mysql'}/my.cnf" do
-  source 'mysql/my.cnf.erb'
-  owner  'root'
-  group  'root'
-  mode   0644
+  source    'mysql/my.cnf.erb'
+  owner     'root'
+  group     'root'
+  mode      0644
   helpers(Scalr::PathHelper)
+  notifies  :restart, 'supervisor_service[mysql]', :delayed
 # TODO - Warn user if MySQL tz != UTC? We default to 00:00 here.
 end
 

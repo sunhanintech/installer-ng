@@ -30,6 +30,7 @@ template "#{etc_dir_for node, 'supervisor'}/supervisord.conf" do
   owner node[:scalr_server][:supervisor][:user]
   mode  0644
   helpers(Scalr::PathHelper)
+  notifies  :restart, 'service[supervisor]', :delayed
 end
 
 directory run_dir_for(node, 'supervisor') do

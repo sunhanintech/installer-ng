@@ -37,5 +37,8 @@ enabled_services(node).each do |svc|
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/worker-#{svc[:service_name]}.err"
     action          [:enable, :start]
     autostart       true
+    subscribes      :restart, 'template[scalr_config]', :delayed
+    subscribes      :restart, 'file[scalr_cryptokey]', :delayed
+    subscribes      :restart, 'file[scalr_id]', :delayed
   end
 end

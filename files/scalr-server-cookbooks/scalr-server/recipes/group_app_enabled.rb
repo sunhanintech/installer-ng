@@ -25,7 +25,8 @@ end
 
 # Scalr config files
 
-template "#{scalr_bundle_path node}/app/etc/config.yml" do
+template 'scalr_config' do
+  name    "#{scalr_bundle_path node}/app/etc/config.yml"
   source  'app/config.yml.erb'
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -33,14 +34,16 @@ template "#{scalr_bundle_path node}/app/etc/config.yml" do
   helpers(Scalr::PathHelper)
 end
 
-file "#{scalr_bundle_path node}/app/etc/.cryptokey" do
+file 'scalr_cryptokey' do
+  name    "#{scalr_bundle_path node}/app/etc/.cryptokey"
   content node[:scalr_server][:app][:secret_key]
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
 end
 
-file "#{scalr_bundle_path node}/app/etc/id" do
+file 'scalr_id' do
+  name    "#{scalr_bundle_path node}/app/etc/id"
   content node[:scalr_server][:app][:id]
   owner   'root'
   group   node[:scalr_server][:app][:user]

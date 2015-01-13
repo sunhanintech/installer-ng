@@ -34,6 +34,7 @@ template "#{etc_dir_for node, 'httpd'}/httpd.conf" do
   group     'root'
   mode      0644
   helpers(Scalr::PathHelper)
+  notifies  :restart, 'supervisor_service[httpd]', :delayed
 end
 
 

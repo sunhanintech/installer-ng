@@ -33,16 +33,18 @@ enabled_crons(node).each do |cron|
     variables :cmd => cmd, :path => scalr_exec_path(node), :cron => cron
     mode      0755
     helpers(Scalr::PathHelper)
+    notifies  :restart, 'supervisor_service[cron]', :delayed
   end
 
   template "#{etc_dir_for node, 'cron'}/cron.d/#{cron[:name]}" do
     source   'cron/entry.erb'
     variables :cron => cron, :run_wrapper => run_wrapper
     mode      0644
+    notifies  :restart, 'supervisor_service[cron]', :delayed
   end
 end
 
-# TODO - Consider reloading
+# TODO - As long as we have the old "cron daemons", we can't really restart the daemons when the and Scalr config changes.
 supervisor_service 'cron' do
   command         "#{node[:scalr_server][:install_root]}/embedded/sbin/crond" \
                   " -L #{log_dir_for node, 'cron'}/crond.log" \
