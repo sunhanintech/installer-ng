@@ -26,7 +26,7 @@ directory "#{etc_dir_for node, 'supervisor'}/conf.d" do
 end
 
 template "#{etc_dir_for node, 'supervisor'}/supervisord.conf" do
-  source 'supervisord.conf.erb'
+  source 'supervisor/supervisord.conf.erb'
   owner node[:scalr_server][:supervisor][:user]
   mode  0644
   helpers(Scalr::PathHelper)

@@ -26,7 +26,7 @@ end
 # Scalr config files
 
 template "#{scalr_bundle_path node}/app/etc/config.yml" do
-  source 'config.yml.erb'
+  source  'app/config.yml.erb'
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
@@ -78,7 +78,7 @@ directory "#{node[:scalr_server][:install_root]}/embedded/etc/php" do
 end
 
 template "#{node[:scalr_server][:install_root]}/embedded/etc/php/php.ini" do
-  source    'php/php.ini.erb'
+  source    'app/php.ini.erb'
   owner     'root'
   group     'root'
   mode      0644

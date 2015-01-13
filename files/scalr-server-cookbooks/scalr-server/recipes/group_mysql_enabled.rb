@@ -16,7 +16,7 @@ directory etc_dir_for(node, 'mysql') do
 end
 
 template "#{etc_dir_for node, 'mysql'}/my.cnf" do
-  source 'my.cnf.erb'
+  source 'mysql/my.cnf.erb'
   owner  'root'
   group  'root'
   mode   0644
