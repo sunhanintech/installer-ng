@@ -1,3 +1,4 @@
+# TODO - cron user.
 # Create logging directory
 directory "#{log_dir_for node, 'cron'}" do
   owner 'root'  # cron runs as root.

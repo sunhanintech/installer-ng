@@ -1,0 +1,95 @@
+ServerRoot "<%= node[:scalr_server][:install_root] %>"
+PidFile "<%= run_dir_for node, 'httpd' %>/httpd.pid"
+
+Listen 80
+
+LoadModule authn_file_module        embedded/modules/mod_authn_file.so
+LoadModule authn_core_module        embedded/modules/mod_authn_core.so
+LoadModule authz_host_module        embedded/modules/mod_authz_host.so
+LoadModule authz_groupfile_module   embedded/modules/mod_authz_groupfile.so
+LoadModule authz_user_module        embedded/modules/mod_authz_user.so
+LoadModule authz_core_module        embedded/modules/mod_authz_core.so
+LoadModule access_compat_module     embedded/modules/mod_access_compat.so
+LoadModule auth_basic_module        embedded/modules/mod_auth_basic.so
+LoadModule deflate_module           embedded/modules/mod_deflate.so
+LoadModule expires_module           embedded/modules/mod_expires.so
+LoadModule reqtimeout_module        embedded/modules/mod_reqtimeout.so
+LoadModule filter_module            embedded/modules/mod_filter.so
+LoadModule mime_module              embedded/modules/mod_mime.so
+LoadModule log_config_module        embedded/modules/mod_log_config.so
+LoadModule env_module               embedded/modules/mod_env.so
+LoadModule headers_module           embedded/modules/mod_headers.so
+LoadModule rewrite_module           embedded/modules/mod_rewrite.so
+LoadModule setenvif_module          embedded/modules/mod_setenvif.so
+LoadModule version_module           embedded/modules/mod_version.so
+LoadModule unixd_module             embedded/modules/mod_unixd.so
+LoadModule status_module            embedded/modules/mod_status.so
+LoadModule autoindex_module         embedded/modules/mod_autoindex.so
+LoadModule dir_module               embedded/modules/mod_dir.so
+LoadModule alias_module             embedded/modules/mod_alias.so
+LoadModule php5_module              embedded/modules/libphp5.so
+
+<IfModule unixd_module>
+User    <%= node[:scalr_server][:app][:user] %>
+Group   <%= node[:scalr_server][:app][:user] %>
+</IfModule>
+
+ServerName <%= node[:scalr_server][:app][:endpoint_host] %>
+ServerAdmin <%= node[:scalr_server][:app][:email_from_address] %>
+
+<Directory />
+    AllowOverride none
+    Require all denied
+</Directory>
+
+DocumentRoot <%= scalr_bundle_path node %>/app/www
+
+<Directory <%= scalr_bundle_path node %>/app/www>
+    Options -Indexes +FollowSymLinks +MultiViews
+    AllowOverride All
+    AuthType None
+    Order allow,deny
+    Allow from all
+    Satisfy Any
+    Require all granted
+</Directory>
+
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+
+<Files ".ht*">
+    Require all denied
+</Files>
+
+LogLevel warn
+ErrorLog  <%= log_dir_for node, 'httpd' %>/web.error.log
+
+<IfModule log_config_module>
+    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+    LogFormat "%h %l %u %t \"%r\" %>s %b" common
+
+    <IfModule logio_module>
+      # You need to enable mod_logio.c to use %I and %O
+      LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
+    </IfModule>
+
+    CustomLog <%= log_dir_for node, 'httpd' %>/web.access.log combined
+</IfModule>
+
+<IfModule mime_module>
+    TypesConfig embedded/etc/httpd/mime.types
+    AddType application/x-httpd-php .php
+    AddType application/x-compress .Z
+    AddType application/x-gzip .gz .tgz
+</IfModule>
+
+EnableSendfile on
+
+<IfModule mpm_prefork_module>
+  StartServers             5
+  MinSpareServers          5
+  MaxSpareServers         10
+  MaxRequestWorkers      250
+  MaxConnectionsPerChild   0
+</IfModule>
