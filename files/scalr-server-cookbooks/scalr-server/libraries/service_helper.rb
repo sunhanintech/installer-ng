@@ -1,5 +1,5 @@
 module Scalr
-  module ServicesHelper
+  module ServiceHelper
     def enabled_services(node)
       all_services = [
               {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon',
@@ -95,8 +95,8 @@ end
 
 
 # Hook in
-unless Chef::Recipe.ancestors.include?(Scalr::ServicesHelper)
-  Chef::Recipe.send(:include, Scalr::ServicesHelper)
-  Chef::Resource.send(:include, Scalr::ServicesHelper)
-  Chef::Provider.send(:include, Scalr::ServicesHelper)
+unless Chef::Recipe.ancestors.include?(Scalr::ServiceHelper)
+  Chef::Recipe.send(:include, Scalr::ServiceHelper)
+  Chef::Resource.send(:include, Scalr::ServiceHelper)
+  Chef::Provider.send(:include, Scalr::ServiceHelper)
 end

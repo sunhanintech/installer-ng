@@ -50,9 +50,23 @@ DocumentRoot <%= scalr_bundle_path node %>/app/www
     AuthType None
     Order allow,deny
     Allow from all
-    Satisfy Any
+    Satisfy All
     Require all granted
 </Directory>
+
+<% if apache_serve_graphics node %>
+<IfModule alias_module>
+  Alias /graphics  <%= data_dir_for node, 'worker' %>/graphics
+  <Directory <%= data_dir_for node, 'worker' %>/graphics>
+      Options -Indexes +MultiViews
+      AuthType None
+      Order allow,deny
+      Allow from all
+      Satisfy All
+      Require all granted
+  </Directory>
+</IfModule>
+<% end %>
 
 <IfModule dir_module>
     DirectoryIndex index.html

@@ -33,7 +33,10 @@ template "#{etc_dir_for node, 'httpd'}/httpd.conf" do
   owner     'root'
   group     'root'
   mode      0644
-  helpers(Scalr::PathHelper)
+  helpers do
+    include Scalr::PathHelper
+    include Scalr::ServiceHelper
+  end
   notifies  :restart, 'supervisor_service[httpd]', :delayed
 end
 

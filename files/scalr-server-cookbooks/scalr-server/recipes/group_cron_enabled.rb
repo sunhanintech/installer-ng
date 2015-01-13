@@ -36,6 +36,7 @@ enabled_crons(node).each do |cron|
     notifies  :restart, 'supervisor_service[cron]', :delayed
   end
 
+  # TODO -- Delete files for crons that are disabled
   template "#{etc_dir_for node, 'cron'}/cron.d/#{cron[:name]}" do
     source   'cron/entry.erb'
     variables :cron => cron, :run_wrapper => run_wrapper

@@ -14,6 +14,14 @@ directory log_dir_for(node, 'worker') do
   recursive true
 end
 
+directory "#{data_dir_for(node, 'worker')}/graphics" do
+  # This is wher we serve stats graphics from
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0755
+  recursive true
+end
+
 
 # Actually launch the workers
 
@@ -21,7 +29,7 @@ enabled_services(node).each do |svc|
   # Make sure we're only dealing with symbols here (recursively)
   HashHelper.symbolize_keys_deep!(svc)
 
-  # TODO - Reload every time we run (because if someone's running reconfigure, it's for a purpose!)
+  # TODO - delete service for services that are disabled
   supervisor_service "worker-#{svc[:service_name]}" do
     command         "#{node[:scalr_server][:install_root]}/embedded/bin/python" \
                     " #{scalr_bundle_path node}/app/python/scalrpy/#{svc[:service_module]}.py" \
