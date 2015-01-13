@@ -1,5 +1,20 @@
 default[:scalr_server][:config_dir] = '/etc/scalr-server'
 
+# Routing tunables
+# The defaults below are for a single host install.
+default[:scalr_server][:routing][:endpoint_scheme] = 'http'
+default[:scalr_server][:routing][:endpoint_host] = 'CHANGEME'
+
+default[:scalr_server][:routing][:graphics_scheme] = node.scalr_server.routing.endpoint_scheme
+default[:scalr_server][:routing][:graphics_host] = node.scalr_server.routing.endpoint_host
+default[:scalr_server][:routing][:graphics_path] = '/graphics'
+
+default[:scalr_server][:routing][:plotter_scheme] = node.scalr_server.routing.endpoint_scheme
+default[:scalr_server][:routing][:plotter_host] = node.scalr_server.routing.endpoint_host
+default[:scalr_server][:routing][:plotter_port] = 8000
+
+
+
 # App tunables
 default[:scalr_server][:app][:enable] = true
 default[:scalr_server][:app][:admin_user] = 'admin'
@@ -9,9 +24,7 @@ default[:scalr_server][:app][:id] = 'CHANGEME'
 default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
 
-default[:scalr_server][:app][:endpoint_scheme] = 'http'
-default[:scalr_server][:app][:endpoint_ip_range] = '127.0.0.1/32'
-default[:scalr_server][:app][:endpoint_host] = 'localhost'
+default[:scalr_server][:app][:ip_range] = '127.0.0.1/32'
 
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
@@ -41,24 +54,25 @@ default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
 default[:scalr_server][:mysql][:user] = 'mysql'
 
 
-# Supervisor tunables
-default[:scalr_server][:supervisor][:enable] = true
-default[:scalr_server][:supervisor][:user] = 'root'
-
-
 # Cron tunables
 default[:scalr_server][:cron][:enable] = true
 
 
 # Worker tunables
 default[:scalr_server][:worker][:enable] = true
-default[:scalr_server][:worker][:plotter_expose_port] = 8000
+default[:scalr_server][:worker][:plotter_bind_scheme] = 'http'
+default[:scalr_server][:worker][:plotter_bind_host] = '0.0.0.0'
 default[:scalr_server][:worker][:plotter_bind_port] = 8000
 
 
 # Rrd tunables
 default[:scalr_server][:rrd][:enable] = true
 default[:scalr_server][:rrd][:user] = 'rrdcached'
+
+
+# Supervisor tunables
+default[:scalr_server][:supervisor][:enable] = true
+default[:scalr_server][:supervisor][:user] = 'root'
 
 # TODO - Expose port, endpoint_host, scheme. ALl of that should be part of another attribute group (e.g. "routing")
 

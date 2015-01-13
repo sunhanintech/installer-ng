@@ -34,7 +34,7 @@ User    <%= node[:scalr_server][:app][:user] %>
 Group   <%= node[:scalr_server][:app][:user] %>
 </IfModule>
 
-ServerName <%= node[:scalr_server][:app][:endpoint_host] %>
+ServerName <%= node[:scalr_server][:routing][:endpoint_host] %>
 ServerAdmin <%= node[:scalr_server][:app][:email_from_address] %>
 
 <Directory />

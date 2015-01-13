@@ -40,11 +40,11 @@ scalr:
   - nebula
 
   endpoint:
-    scheme: <%= node[:scalr_server][:app][:endpoint_scheme] %>
-    host: <%= node[:scalr_server][:app][:endpoint_host] %>
+    scheme: <%= node[:scalr_server][:routing][:endpoint_scheme] %>
+    host: <%= node[:scalr_server][:routing][:endpoint_host] %>
 
   aws:
-    ip_pool: ['<%= node[:scalr_server][:app][:endpoint_ip_range] %>']
+    ip_pool: ['<%= node[:scalr_server][:app][:ip_range] %>']
     security_group_name: scalr.<%= node[:scalr_server][:app][:id] %>.ip-pool
 
   billing:
@@ -69,21 +69,21 @@ scalr:
   load_statistics:
     connections:
       plotter:
-        scheme: 'http'
-        bind_scheme: 'http' # Not used yet, but let's be safe
-        host: <%= node[:scalr_server][:app][:endpoint_host] %>
-        bind_host:    '0.0.0.0'  # New version
-        bind_address: '0.0.0.0'  # DEPRECATED - Consider removing and use bind_host instead
-        port: <%= node[:scalr_server][:worker][:plotter_expose_port] %>
+        scheme: <%= node[:scalr_server][:routing][:plotter_scheme] %>
+        bind_scheme: <%= node[:scalr_server][:worker][:plotter_bind_scheme] %>
+        host: <%= node[:scalr_server][:routing][:plotter_host] %>
+        bind_host: <%= node[:scalr_server][:worker][:plotter_bind_host] %>
+        bind_address: <%= node[:scalr_server][:worker][:plotter_bind_host] %>  # Deprecated!
+        port: <%= node[:scalr_server][:routing][:plotter_port] %>
         bind_port: <%= node[:scalr_server][:worker][:plotter_bind_port] %>
     rrd:
       dir: '<%= data_dir_for node, 'rrd' %>'
       run_dir: '<%= run_dir_for node, 'rrd' %>'
       rrdcached_sock_path: '<%= run_dir_for node, 'rrd' %>/rrdcached.sock'
     img:
-      scheme: 'http'
-      host: <%= node[:scalr_server][:app][:endpoint_host] %>
-      path: '/graphics'  # FOR NOW!
+      scheme: <%= node[:scalr_server][:routing][:graphics_scheme] %>
+      host: <%= node[:scalr_server][:routing][:graphics_host] %>
+      path: <%= node[:scalr_server][:routing][:graphics_path] %>
       dir:  '<%= data_dir_for node, 'worker' %>'
 
   crontab:

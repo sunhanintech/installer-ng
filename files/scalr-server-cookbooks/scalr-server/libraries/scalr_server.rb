@@ -9,6 +9,7 @@ module ScalrServer
 
   config_strict_mode true
 
+  default :routing, Mash.new
   default :supervisor, Mash.new
   default :mysql, Mash.new
   default :app, Mash.new
@@ -64,7 +65,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{supervisor mysql app web cron worker rrd}.each do |key|
+      %w{routing supervisor mysql app web cron worker rrd}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results
