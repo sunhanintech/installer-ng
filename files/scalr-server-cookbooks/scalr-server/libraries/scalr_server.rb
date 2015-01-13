@@ -72,7 +72,21 @@ module ScalrServer
     end
 
     def generate_config(node)
+
+      # Load attributes from the configuration files. Ordering matters here
+      # Main attributes file. Probably where you want global settings, like 'route'
+      if File.exists?(main_config_file_path node)
+        ScalrServer.from_file(main_config_file_path node)
+      end
+      # Alternate config file. Probably where you want local settings, like what to enable
+      if File.exists?(local_config_file_path node)
+        ScalrServer.from_file(local_config_file_path node)
+      end
+
+      # JSON secrets, or dynamically generated
       generate_secrets node
+
+      # Actual attributes generation
       generate_hash
     end
 

@@ -16,9 +16,6 @@
 # limitations under the License.
 #
 
-if File.exists?(ScalrServer.config_file_path node)
-  ScalrServer.from_file(ScalrServer.config_file_path node)
-end
 config = ScalrServer.generate_config node
 
 puts Chef::JSONCompat.to_json_pretty(config)
