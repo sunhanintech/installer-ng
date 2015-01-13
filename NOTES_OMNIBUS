@@ -38,9 +38,15 @@ To install:
 - omnibus (install ruby + ruby-dev and use bundle install --binstubs to install)
 - berks (gem install berkshelf)
 - build-essential
+- pkg-config
 - cmake
 - automake
+- libtool
 - rsync
 - git
 - swig
 - perl
+- makedepend (xutils-dev in Debian)
+
+berks MUST be patched as per this: https://github.com/berkshelf/berkshelf-api/issues/112#issuecomment-45726425
+# TODO - Try to override LC_ALL
