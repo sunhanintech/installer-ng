@@ -15,7 +15,10 @@ dependency 'harfbuzz'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['BZIP2_LIBS'] = "-L#{install_dir}/lib -lbz2"
+
+  # It seems that pkg-config fails to find harfbuzz on CentOS (though it does find it when run from the CLI).
+  env['HARFBUZZ_CFLAGS'] = "-I#{install_dir}/embedded/include/harfbuzz -lbz2"
+  env['HARFBUZZ_LIBS'] = "-L#{install_dir}/lib -lharfbuzz"
 
   command './configure' \
           " --prefix=#{install_dir}/embedded" \
