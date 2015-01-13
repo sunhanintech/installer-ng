@@ -16,12 +16,7 @@ scalr:
       scalr:
         <<: *connections_mysql
     poller:
-      cryptokey: <%= node[:scalr][:core][:cryptokey_path] %>
-      log_file: '/var/log/scalr.analytics-poller.log'
-      pid_file: '/var/run/scalr.analytics-poller.pid'
-    processing:
-      log_file: '/var/log/scalr.analytics-processing.log'
-      pid_file: '/var/run/scalr.analytics-processing.pid'
+      cryptokey: <%= scalr_bundle_path node %>/app/etc/.cryptokey
 
   email:
     address: <%= node[:scalr_server][:app][:email_from_address] %>
@@ -29,7 +24,7 @@ scalr:
 
   auth_mode: scalr
 
-  instances_connection_policy: <%= node[:scalr][:instances_connection_policy] %>
+  instances_connection_policy: <%= node[:scalr_server][:app][:instances_connection_policy] %>
 
   allowed_clouds:
   - ec2
@@ -79,17 +74,17 @@ scalr:
         host: <%= node[:scalr_server][:app][:endpoint_host] %>
         bind_host:    '0.0.0.0'  # New version
         bind_address: '0.0.0.0'  # DEPRECATED - Consider removing and use bind_host instead
-        port: <%= node[:scalr][:rrd][:port] %>
-        bind_port: <%= node[:scalr][:rrd][:port] %>
+        port: <%= node[:scalr_server][:worker][:plotter_expose_port] %>
+        bind_port: <%= node[:scalr_server][:worker][:plotter_bind_port] %>
     rrd:
-      dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
-      run_dir: '<%= node[:scalr][:rrd][:run_dir] %>'
-      rrdcached_sock_path: '<%= node[:scalr][:rrd][:run_dir] %>/rrdcached.sock'
+      dir: '<%= data_dir_for node, 'rrd' %>'
+      run_dir: '<%= run_dir_for node, 'rrd' %>'
+      rrdcached_sock_path: '<%= run_dir_for node, 'rrd' %>/rrdcached.sock'
     img:
       scheme: 'http'
       host: <%= node[:scalr_server][:app][:endpoint_host] %>
-      path: '<%= node[:scalr][:rrd][:img_url] %>'
-      dir: '<%= node[:scalr][:rrd][:img_dir] %>'
+      path: '/graphics'  # FOR NOW!
+      dir:  '<%= data_dir_for node, 'worker' %>'
 
   crontab:
     services:

@@ -30,6 +30,7 @@ template "#{scalr_bundle_path node}/app/etc/config.yml" do
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
+  helpers(Scalr::PathHelper)
 end
 
 file "#{scalr_bundle_path node}/app/etc/.cryptokey" do

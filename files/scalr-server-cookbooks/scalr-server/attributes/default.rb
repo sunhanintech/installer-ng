@@ -13,6 +13,8 @@ default[:scalr_server][:app][:endpoint_scheme] = 'http'
 default[:scalr_server][:app][:endpoint_ip_range] = '127.0.0.1/32'
 default[:scalr_server][:app][:endpoint_host] = 'localhost'
 
+default[:scalr_server][:app][:instances_connection_policy] = 'auto'
+
 default[:scalr_server][:app][:user] = 'scalr'
 
 
@@ -50,6 +52,16 @@ default[:scalr_server][:cron][:enable] = true
 
 # Worker tunables
 default[:scalr_server][:worker][:enable] = true
+default[:scalr_server][:worker][:plotter_expose_port] = 8000
+default[:scalr_server][:worker][:plotter_bind_port] = 8000
+
+
+# Rrd tunables
+default[:scalr_server][:rrd][:enable] = true
+default[:scalr_server][:rrd][:user] = 'rrdcached'
+
+# TODO - Expose port, endpoint_host, scheme. ALl of that should be part of another attribute group (e.g. "routing")
+
 
 # Attributes includes from other cookbooks. We need to include those because we refer to them in our own recipes,
 # and don't want to have to ensure that those cookbooks are in the runlist to be able to use the attributes.
@@ -97,7 +109,6 @@ default[:scalr][:core][:log_dir] = '/var/log/scalr'
 default[:scalr][:core][:pid_dir] = '/var/run/scalr'
 
 # Instance connection settings
-default[:scalr][:instances_connection_policy] = 'auto'
 
 # Load reporting settings
 default[:scalr][:rrd][:rrd_dir] = '/var/lib/rrdcached/db'
