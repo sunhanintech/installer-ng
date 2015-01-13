@@ -87,3 +87,16 @@ template "#{node[:scalr_server][:install_root]}/embedded/etc/php/php.ini" do
   mode      0644
   helpers(Scalr::PathHelper)
 end
+
+
+# Run validation - it never hurts.
+
+['root', node[:scalr_server][:app][:user]].each do |usr|
+  execute "validate-as-{usr}" do
+    user  usr
+    command "#{node[:scalr_server][:install_root]}/embedded/bin/php testenvironment.php"
+    returns 0
+    cwd "#{scalr_bundle_path node}/app/www"
+  end
+end
+
