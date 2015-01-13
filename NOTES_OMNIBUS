@@ -1,3 +1,7 @@
+# TODO -- Add the iptables, etc. stuff.
+# TODO -- Set the PATH from supervisor to other things
+
+
 Omnibus:
 
  + Inspiration from: https://github.com/opscode/omnibus-chef-server.
@@ -50,3 +54,29 @@ To install:
 
 berks MUST be patched as per this: https://github.com/berkshelf/berkshelf-api/issues/112#issuecomment-45726425
 # TODO - Try to override LC_ALL
+
+
+apt-get update
+apt-get install -y curl build-essential pkg-config cmake automake libtool rsync git swig xutils-dev
+
+yum install -y curl cmake automake libtool rsync git swig xz imake
+
+
+curl -sSL https://rvm.io/mpapis.asc | gpg --import - && curl -sSL https://get.rvm.io | bash -s stable --ruby
+source /usr/local/rvm/scripts/rvm
+gem install bundler
+gem install --version=1.3.3 retryable
+gem install --version=4.1.1 ridley
+gem install berkshelf
+git clone https://github.com/Scalr/installer-ng.git
+cd installer-ng
+git checkout omnibus-package
+bundle install --binstubs
+
+echo 'base_dir "/mnt"' > ./omnibus.rb
+
+# Patch berks!
+
+# go.
+
+
