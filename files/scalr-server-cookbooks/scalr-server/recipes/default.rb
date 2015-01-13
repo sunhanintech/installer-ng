@@ -29,3 +29,7 @@ node.consume_attributes(ScalrServer.generate_config node)
     include_recipe "scalr-server::group_#{service}_disabled"
   end
 end
+
+
+# sysctl settings
+include_recipe 'scalr-server::sysctl'
