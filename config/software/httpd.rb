@@ -14,7 +14,7 @@ dependency 'zlib'
 dependency 'libxml2'
 
 
-# TODO - Consider statically building
+# TODO - Consider statically building modules
 # TODO - Consider --with-perl? (for apxs)
 build do
   env = with_standard_compiler_flags(with_embedded_path)
