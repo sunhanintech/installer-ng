@@ -7,21 +7,16 @@ user node[:scalr_server][:app][:user] do
 end
 
 
-# Root we've installed Scalr in.
-
-scalr_path = "#{node[:scalr_server][:install_root]}/embedded/scalr"
-
-
 # Scalr system directories
 
-directory "#{scalr_path}/app/cache" do
+directory "#{scalr_bundle_path node}/app/cache" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0770
   recursive true
 end
 
-directory "#{scalr_path}/app/etc" do
+directory "#{scalr_bundle_path node}/app/etc" do
   owner     'root'
   group     'root'
   mode      0755
@@ -30,21 +25,21 @@ end
 
 # Scalr config files
 
-template "#{scalr_path}/app/etc/config.yml" do
+template "#{scalr_bundle_path node}/app/etc/config.yml" do
   source 'config.yml.erb'
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
 end
 
-file "#{scalr_path}/app/etc/.cryptokey" do
+file "#{scalr_bundle_path node}/app/etc/.cryptokey" do
   content node[:scalr_server][:app][:secret_key]
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
 end
 
-file "#{scalr_path}/app/etc/id" do
+file "#{scalr_bundle_path node}/app/etc/id" do
   content node[:scalr_server][:app][:id]
   owner   'root'
   group   node[:scalr_server][:app][:user]

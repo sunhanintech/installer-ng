@@ -16,6 +16,10 @@ module Scalr
       "#{node.scalr.python.venv}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     end
 
+    def scalr_bundle_path(node)
+      "#{node[:scalr_server][:install_root]}/embedded/scalr"
+    end
+
     def scalr_exec_path(node)
       [
           "#{node[:scalr_server][:install_root]}/bin",
