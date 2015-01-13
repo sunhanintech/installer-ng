@@ -74,7 +74,7 @@ build do
           ' --enable-opcache' \
           " --with-apxs2=#{install_dir}/embedded/bin/apxs" \
           ' --enable-fpm' \
-          " --with-config-file-path=#{install_dir}/embedded/etc/php" \
+          " --with-config-file-path=#{install_dir}/etc/php" \
           ' --with-fpm-user=scalr' \
           ' --with-fpm-group=scalr', env: env
 

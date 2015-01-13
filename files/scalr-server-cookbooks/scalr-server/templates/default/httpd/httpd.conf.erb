@@ -30,8 +30,8 @@ LoadModule alias_module             embedded/modules/mod_alias.so
 LoadModule php5_module              embedded/modules/libphp5.so
 
 <IfModule unixd_module>
-User    <%= node[:scalr_server][:app][:user] %>
-Group   <%= node[:scalr_server][:app][:user] %>
+    User    <%= node[:scalr_server][:app][:user] %>
+    Group   <%= node[:scalr_server][:app][:user] %>
 </IfModule>
 
 ServerName <%= node[:scalr_server][:routing][:endpoint_host] %>
@@ -99,6 +99,10 @@ ErrorLog  <%= log_dir_for node, 'httpd' %>/web.error.log
 </IfModule>
 
 EnableSendfile on
+
+<IfModule php5_module>
+  PHPINIDir <%= etc_dir_for node, 'php' %>
+</IfModule>
 
 <IfModule mpm_prefork_module>
   StartServers             5

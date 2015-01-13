@@ -73,14 +73,14 @@ end
 # PHP configuration
 # TODO - Consider updating php to drop this into /etc/php, not /embedded/etc/php
 
-directory "#{node[:scalr_server][:install_root]}/embedded/etc/php" do
+directory etc_dir_for(node, 'php') do
   owner     'root'
   group     'root'
   mode      0755
   recursive true
 end
 
-template "#{node[:scalr_server][:install_root]}/embedded/etc/php/php.ini" do
+template "#{etc_dir_for node, 'php'}/php.ini" do
   source    'app/php.ini.erb'
   owner     'root'
   group     'root'
@@ -94,7 +94,7 @@ end
 ['root', node[:scalr_server][:app][:user]].each do |usr|
   execute "validate-as-{usr}" do
     user  usr
-    command "#{node[:scalr_server][:install_root]}/embedded/bin/php testenvironment.php"
+    command "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'} testenvironment.php"
     returns 0
     cwd "#{scalr_bundle_path node}/app/www"
   end

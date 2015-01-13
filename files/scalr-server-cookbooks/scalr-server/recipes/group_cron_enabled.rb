@@ -19,7 +19,7 @@ directory "#{etc_dir_for node, 'cron'}/cron.d" do
   recursive true
 end
 
-php = "#{node[:scalr_server][:install_root]}/embedded/bin/php -q"
+php = "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'} -q"
 og_cmd = "#{php} #{node[:scalr_server][:install_root]}/embedded/scalr/app/cron/cron.php"
 ng_cmd = "#{php} #{node[:scalr_server][:install_root]}/embedded/scalr/app/cron-ng/cron.php"
 
