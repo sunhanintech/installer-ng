@@ -72,6 +72,7 @@ end
 
 
 # PHP configuration
+# TODO - Consider updating php to drop this into /etc/php, not /embedded/etc/php
 
 directory "#{node[:scalr_server][:install_root]}/embedded/etc/php" do
   owner     'root'
