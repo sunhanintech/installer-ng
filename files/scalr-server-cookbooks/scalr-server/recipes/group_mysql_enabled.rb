@@ -2,7 +2,7 @@ require 'digest'
 
 # Add MySQL user
 user node[:scalr_server][:mysql][:user] do
-  # TODO - Homes... Group.
+  home   data_dir_for(node, 'mysql')  # TODO - Check if this works when it doesn't exist.
   system true
 end
 
