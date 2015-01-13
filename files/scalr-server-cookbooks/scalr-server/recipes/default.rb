@@ -28,6 +28,7 @@ node.consume_attributes(ScalrServer.generate_config node)
   else
     include_recipe "scalr-server::group_#{service}_disabled"
   end
+  include_recipe "scalr-server::group_#{service}_always"
 end
 
 

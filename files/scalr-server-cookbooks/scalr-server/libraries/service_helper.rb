@@ -1,43 +1,52 @@
 module Scalr
   module ServiceHelper
+    def _all_services
+      [
+          {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon',
+           :service_extra_args => '', :run => { :daemon => true }},
+
+          {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller',
+           :service_extra_args => '', :run => { :daemon => true }},
+
+          {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter',
+           :service_extra_args => '--plotter', :run => { :daemon => true }},
+
+          {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller',
+           :service_extra_args => '--poller', :run => { :daemon => true }},
+
+          {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client',
+           :service_extra_args => '', :run => { :daemon => true }},
+
+          {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller',
+           :service_extra_args => '', :run => { :daemon => true }},
+
+          {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor',
+           :service_extra_args => '', :run => { :daemon => true }},
+      ]
+    end
+
     def enabled_services(node)
-      all_services = [
-              {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon',
-               :service_extra_args => '', :run => { :daemon => true }},
-
-              {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller',
-               :service_extra_args => '', :run => { :daemon => true }},
-
-              {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter',
-               :service_extra_args => '--plotter', :run => { :daemon => true }},
-
-              {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller',
-               :service_extra_args => '--poller', :run => { :daemon => true }},
-
-              {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client',
-               :service_extra_args => '', :run => { :daemon => true }},
-
-              {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller',
-               :service_extra_args => '', :run => { :daemon => true }},
-
-              {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor',
-               :service_extra_args => '', :run => { :daemon => true }},
-          ]
-
-      enabled_attr = node[:scalr_server][:worker][:enable]
-      if enabled_attr.kind_of?(Array)
+      enabled_services_attr = node[:scalr_server][:worker][:enable]
+      if enabled_services_attr.kind_of?(Array)
         # TODO - Might want to warn if one of the enabled services doesn't exist.
         # If this is an array, then these are the services we want to enable
-        all_services.keep_if { |svc|
-          enabled_attr.include? svc[:service_name]
+        _all_services.keep_if { |svc|
+          enabled_services_attr.include? svc[:service_name]
         }
       else
         # If not, assume it's a boolean (meaning "all services" or "no services")
-        enabled_attr ? all_services : []
+        enabled_services_attr ? _all_services : []
       end
     end
 
-    def enabled_crons(node)
+    def disabled_services(node)
+      names_to_exclude = enabled_services(node).collect {|svc| svc[:service_name]}
+      _all_services.reject { |svc|
+        names_to_exclude.include? svc[:service_name]
+      }
+    end
+
+    def _all_crons
       all_crons = [
           {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
           {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
@@ -57,20 +66,31 @@ module Scalr
       ]
 
       all_crons.concat %w{SzrMessagingAll SzrMessagingBeforeHostUp SzrMessagingHostInit SzrMessagingHostUp}.collect {
-           |name| {:hour => '*', :minute => '*/2', :ng => false, :name => name}
-       }
+                           |name| {:hour => '*', :minute => '*/2', :ng => false, :name => name}
+                       }
 
-      enabled_attr = node[:scalr_server][:cron][:enable]
-      if enabled_attr.kind_of?(Array)
+      all_crons
+    end
+
+    def enabled_crons(node)
+      enabled_crons_attr = node[:scalr_server][:cron][:enable]
+      if enabled_crons_attr.kind_of?(Array)
         # TODO - Might want to warn if one of the enabled crons doesn't exist.
         # If this is an array, then these are the services we want to enable
-        all_crons.keep_if { |cron|
-          enabled_attr.include? cron[:name]
+        _all_crons.keep_if { |cron|
+          enabled_crons_attr.include? cron[:name]
         }
       else
         # If not, assume it's a boolean (meaning "all services" or "no services")
-        enabled_attr ? all_crons : []
+        enabled_crons_attr ? _all_crons : []
       end
+    end
+
+    def disabled_crons(node)
+      names_to_exclude = enabled_crons(node).collect {|cron| cron[:name]}
+      _all_crons.reject { |cron|
+        names_to_exclude.include? cron[:name]
+      }
     end
 
     # Helper to tell Apache whether to serve graphics #

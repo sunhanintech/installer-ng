@@ -18,32 +18,37 @@ describe Scalr::ServiceHelper do
     it 'should support false' do
       node.set[:scalr_server][:worker][:enable] = false
       expect(dummy_class.new.enabled_services(node).length).to eq(0)
+      expect(dummy_class.new.disabled_services(node).length).to eq(7)
     end
 
     it 'should support filtered services' do
       node.set[:scalr_server][:worker][:enable] = %w{plotter poller}
       expect(dummy_class.new.enabled_services(node).length).to eq(2)
+      expect(dummy_class.new.disabled_services(node).length).to eq(5)
     end
   end
 
-  describe '#enabled_crons' do
+  describe '#crons' do
     it 'should return the right crons' do
       node.set[:scalr_server][:cron][:enable] = true
       expect(dummy_class.new.enabled_crons(node).length).to equal(19)
+      expect(dummy_class.new.disabled_crons(node).length).to equal(0)
     end
 
     it 'should support false' do
       node.set[:scalr_server][:cron][:enable] = false
       expect(dummy_class.new.enabled_crons(node).length).to equal(0)
+      expect(dummy_class.new.disabled_crons(node).length).to equal(19)
     end
 
     it 'should support filtered crons' do
       node.set[:scalr_server][:cron][:enable] = %w{Scheduler RotateLogs}
       expect(dummy_class.new.enabled_crons(node).length).to equal(2)
+      expect(dummy_class.new.disabled_crons(node).length).to equal(17)
     end
   end
 
-  describe '#apache_serve_graphics' do
+  describe '#apache' do
     it 'should return true when everything is enabled' do
       node.set[:scalr_server][:rrd][:enable] = true
       node.set[:scalr_server][:worker][:enable] = true
