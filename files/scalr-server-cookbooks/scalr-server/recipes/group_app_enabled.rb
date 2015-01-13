@@ -1,44 +1,85 @@
-# System
-include_recipe 'scalr-server::repos'
+# user
 
-# Cron
-include_recipe 'cron'
+user node[:scalr_server][:app][:user] do
+  home   "#{node[:scalr_server][:install_root]}/embedded/scalr"
+  shell  '/bin/sh'  # TODO - Needed?
+  system true
+end
 
-# Users
-include_recipe 'scalr-server::users'
 
-# Services
-# Note: must be defined first, otherwise Chef will complain that the init
-# files are missing. We're not launching them yet, though.
-include_recipe 'scalr-server::stub-services'
+# Scalr system directories
 
-# Scalr Code
-include_recipe 'scalr-server::package'
+directory "#{scalr_bundle_path node}/app/cache" do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0770
+  recursive true
+end
 
-# PuTTYgen (SSH Launcher support for Windows clients)
-include_recipe 'scalr-server::puttygen'
+directory "#{scalr_bundle_path node}/app/etc" do
+  owner     'root'
+  group     'root'
+  mode      0755
+  recursive true
+end
 
-# Runtime dependencies
-include_recipe 'scalr-server::php'
-include_recipe 'scalr-server::snmp'
-include_recipe 'scalr-server::scalrpy'
-include_recipe 'scalr-server::rrdcached'
+# Scalr config files
 
-# Scalr configuration and PHP settings
-include_recipe 'scalr-server::configuration'
-include_recipe 'scalr-server::php_settings'
+template "#{scalr_bundle_path node}/app/etc/config.yml" do
+  source 'config.yml.erb'
+  owner   'root'
+  group   node[:scalr_server][:app][:user]
+  mode    0640
+end
 
-# Database Configuration
-include_recipe 'scalr-server::database_init_structure'
-include_recipe 'scalr-server::database_init_admin'
+file "#{scalr_bundle_path node}/app/etc/.cryptokey" do
+  content node[:scalr_server][:app][:secret_key]
+  owner   'root'
+  group   node[:scalr_server][:app][:user]
+  mode    0640
+end
 
-# Set sysctl requirements
-include_recipe 'scalr-server::sysctl'
+file "#{scalr_bundle_path node}/app/etc/id" do
+  content node[:scalr_server][:app][:id]
+  owner   'root'
+  group   node[:scalr_server][:app][:user]
+  mode    0640
+end
 
-# Service Configuration and Launch
-include_recipe 'scalr-server::web'
-include_recipe 'scalr-server::services'
-include_recipe 'scalr-server::cron'
 
-# Validate
-include_recipe 'scalr-server::validate'
+# TODO - Might as well be in a enable_web recipe, but... not a big deal for now.
+# TODO - Session GC cron when web is enabled!!
+# PHP sessions dir
+directory "#{run_dir_for node, 'php'}/sessions" do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0775
+  recursive true
+end
+
+# PHP errors log dir
+directory log_dir_for(node, 'php') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0755
+  recursive true
+end
+
+
+# PHP configuration
+# TODO - Consider updating php to drop this into /etc/php, not /embedded/etc/php
+
+directory "#{node[:scalr_server][:install_root]}/embedded/etc/php" do
+  owner     'root'
+  group     'root'
+  mode      0755
+  recursive true
+end
+
+template "#{node[:scalr_server][:install_root]}/embedded/etc/php/php.ini" do
+  source    'php/php.ini.erb'
+  owner     'root'
+  group     'root'
+  mode      0644
+  helpers(Scalr::PathHelper)
+end

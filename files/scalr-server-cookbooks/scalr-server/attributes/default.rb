@@ -15,6 +15,11 @@ default[:scalr_server][:app][:endpoint_host] = 'localhost'
 
 default[:scalr_server][:app][:user] = 'scalr'
 
+
+# Web tunables
+default[:scalr_server][:web][:enable] = true
+
+
 # MySQL tunables
 default[:scalr_server][:mysql][:enable] = true
 default[:scalr_server][:mysql][:host] = '127.0.0.1'

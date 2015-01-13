@@ -12,6 +12,7 @@ module ScalrServer
   default :supervisor, Mash.new
   default :mysql, Mash.new
   default :app, Mash.new
+  default :web, Mash.new
   default :cron, Mash.new
 
   class << self
@@ -61,7 +62,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{supervisor mysql app cron}.each do |key|
+      %w{supervisor mysql app web cron}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results

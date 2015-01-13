@@ -20,11 +20,8 @@ if File.exists?(ScalrServer.config_file_path node)
 end
 node.consume_attributes(ScalrServer.generate_config node)
 
-# Load shared setup recipe
-include_recipe 'scalr-server::app_common'
-
 # Deploy services
-%w{supervisor mysql app cron}.each do |service|  # Todo - app shouldn't really be an option.
+%w{supervisor mysql app web cron}.each do |service|  # Todo - app shouldn't really be an option.
   # TODO - Create run dir, etc dir here
   if node[:scalr_server][service][:enable]
     include_recipe "scalr-server::group_#{service}_enabled"
