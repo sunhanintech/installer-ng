@@ -1,8 +1,0 @@
-short_open_tag = On
-disable_functions = ""
-register_globals = Off
-date.timezone = <%= node[:rackspace_timezone][:config][:tz] %>
-http.persistent.handles.limit = 0
-session.save_path = <%= node['php']['session_save_path'] %>
-error_log = <%= node[:scalr][:core][:log_dir] %>/php-errors.log
-display_errors = On
