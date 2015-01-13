@@ -2,15 +2,15 @@ module Scalr
   module VersionHelper
 
     def has_scalrpy2?(node)
-      Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node[:scalr][:package][:version])
+      Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node[:scalr_server][:version])
     end
 
     def has_migrations?(node)
-      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr][:package][:version])
+      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr_server][:version])
     end
 
     def has_cost_analytics?(node)
-      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr][:package][:version])
+      Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr_server][:version])
     end
 
     def enabled_services(node)
@@ -29,10 +29,10 @@ module Scalr
            :service_extra_args => '--poller', :run => { :daemon => true }},
       ]
 
-      if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
+      if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr_server][:version])
         # The Scalarizr Update and Cost Analytics Scalrpy were introduced in Scalr 5.0
 
-        if Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node.scalr.package.version)
+        if Gem::Dependency.new('scalr', '>= 5.1').match?('scalr', node[:scalr_server][:version])
           # In Scalr 5.1, the Scarlrpy jobs all run as daemons instead of services.
           a_poller_run = {:daemon => true}
           a_processor_run = {:daemon => true}
@@ -84,14 +84,14 @@ module Scalr
           {:hour => '*/5',  :minute => '0',    :ng => false, :name => 'RotateLogs'},
       ]
 
-      if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node.scalr.package.version)
+      if Gem::Dependency.new('scalr', '>= 5.0').match?('scalr', node[:scalr_server][:version])
         analytics_crons = [
             {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
             {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
         ]
 
         messaging_cron_names = %w{SzrMessagingAll SzrMessagingBeforeHostUp SzrMessagingHostInit SzrMessagingHostUp}
-        if Gem::Dependency.new('scalr', '< 5.1.1').match?('scalr', node.scalr.package.version)
+        if Gem::Dependency.new('scalr', '< 5.1.1').match?('scalr', node[:scalr_server][:version])
           messaging_cron_names.concat %w{SzrMessagingAll2 SzrMessagingBeforeHostUp2 SzrMessagingHostInit2 SzrMessagingHostUp2 }
         end
       else
