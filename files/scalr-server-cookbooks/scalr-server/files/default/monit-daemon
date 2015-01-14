@@ -1,2 +1,0 @@
-set daemon 30
-set logfile /var/log/monit.log
