@@ -33,14 +33,14 @@ enabled_crons(node).each do |cron|
     variables :cmd => cmd, :path => scalr_exec_path(node), :cron => cron
     mode      0755
     helpers(Scalr::PathHelper)
-    notifies  :restart, 'supervisor_service[cron]', :delayed
+    notifies  :restart, 'supervisor_service[cron]', :delayed # TODO - This should not run if con is not currently running.
   end
 
   template "#{etc_dir_for node, 'cron'}/cron.d/#{cron[:name]}" do
     source   'cron/entry.erb'
     variables :cron => cron, :run_wrapper => run_wrapper
     mode      0644
-    notifies  :restart, 'supervisor_service[cron]', :delayed
+    notifies  :restart, 'supervisor_service[cron]', :delayed # TODO - This should not run if cron is not currently running.
   end
 end
 

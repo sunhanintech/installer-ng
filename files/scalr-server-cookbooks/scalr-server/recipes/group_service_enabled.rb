@@ -45,6 +45,8 @@ enabled_services(node).each do |svc|
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/service-#{svc[:service_name]}.err"
     action          [:enable, :start]
     autostart       true
+    # TODO - None of those subscriptions should run if the service isn't already running
+    # TODO - Use a stop command proxy.
     subscribes      :restart, 'template[scalr_config]', :delayed
     subscribes      :restart, 'file[scalr_cryptokey]', :delayed
     subscribes      :restart, 'file[scalr_id]', :delayed
