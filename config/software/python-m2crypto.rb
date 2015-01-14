@@ -12,7 +12,9 @@ dependency 'openssl'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
+  env['OPENSSL_DIR'] = "#{install_dir}/embedded"
 
-  command "#{install_dir}/embedded/bin/python setup.py build build_ext --openssl=#{install_dir}/embedded", env: env
-  command "#{install_dir}/embedded/bin/python setup.py install build_ext --openssl=#{install_dir}/embedded", env: env
+  patch source: 'accept-environ.patch'
+
+  command "#{install_dir}/embedded/bin/pip install .", env: env
 end

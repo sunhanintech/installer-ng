@@ -1,0 +1,22 @@
+--- ./setup.py	2014-01-22 20:36:53.000000000 +0100
++++ ./setup.py	2015-01-14 12:35:51.000000000 +0100
+@@ -24,8 +24,6 @@
+ class _M2CryptoBuildExt(build_ext.build_ext):
+     '''Specialization of build_ext to enable swig_opts to inherit any
+     include_dirs settings made at the command line or in a setup.cfg file'''
+-    user_options = build_ext.build_ext.user_options + \
+-            [('openssl=', 'o', 'Prefix for OpenSSL installation location')]
+ 
+     def initialize_options(self):
+         '''Overload to enable custom OpenSSL settings to be picked up'''
+@@ -41,6 +39,10 @@
+             self.libraries = ['ssl', 'crypto']
+             self.openssl = '/usr'
+ 
++        openssl_override = os.environ.get('OPENSSL_DIR')
++        if openssl_override is not None:
++            self.openssl = openssl_override
++
+     def add_multiarch_paths(self):
+         # Debian/Ubuntu multiarch support.
+         # https://wiki.ubuntu.com/MultiarchSpec
