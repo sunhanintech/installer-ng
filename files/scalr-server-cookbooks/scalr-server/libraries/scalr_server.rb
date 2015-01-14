@@ -65,7 +65,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{routing supervisor mysql app web cron service rrd}.each do |key|
+      %w{routing supervisor app mysql cron rrd service web}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results
