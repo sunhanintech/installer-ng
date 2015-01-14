@@ -27,12 +27,17 @@ berks_pkg = 'pkg.tar.gz'
 # depend on them.
 
 build do
+  # Berkshelf is not included in the build: we use the system install. We make sure to path the GEM_ environment
+  # down to the berks command so that it works as expected (even if using e.g. rvm).
+  # noinspection RubyStringKeysInHashInspection
+  env = ENV.select {|k, _| ['GEM_HOME', 'GEM_PATH'].include? k}
+
   # Add the extra files and our cookbook
   command "mkdir -p #{install_dir}/embedded/cookbooks"
   command "rsync --delete -a ./ #{install_dir}/embedded/cookbooks/"
 
   # Add the package and all the dependencies (NOTE: unfortunately this copies the scalr-server cookbook again)
   command "mkdir -p #{install_dir}/embedded"
-  command "berks package --berksfile ./scalr-server/Berksfile #{install_dir}/embedded/#{berks_pkg}"
+  command "berks package --berksfile ./scalr-server/Berksfile #{install_dir}/embedded/#{berks_pkg}", env: env
   command "cd #{install_dir}/embedded && tar -xzvf #{berks_pkg} && rm #{berks_pkg}"
 end
