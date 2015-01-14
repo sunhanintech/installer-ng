@@ -174,8 +174,8 @@ mysql_database 'load analytics database data' do
 end
 
 execute 'Upgrade Scalr Database' do
-  user    node[:scalr_server][:app][:user]
-  group   node[:scalr_server][:app][:user]
+  user    'root'
+  group   'root'
   returns 0
   command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
   cwd     "#{scalr_bundle_path node}/app/bin"
