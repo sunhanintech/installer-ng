@@ -1,4 +1,17 @@
 # service directories
+directory bin_dir_for(node, 'service') do
+  owner     'root'
+  group     'root'
+  mode      0755
+  recursive true
+end
+
+cookbook_file "#{bin_dir_for node, 'service'}/scalrpy_proxy" do
+  owner     'root'
+  group     'root'
+  source 'scalrpy_proxy'
+  mode    0755
+end
 
 directory run_dir_for(node, 'service') do
   owner     node[:scalr_server][:app][:user]
@@ -31,7 +44,9 @@ enabled_services(node).each do |svc|
 
   # TODO - delete service for services that are disabled
   supervisor_service "service-#{svc[:service_name]}" do
-    command         "#{node[:scalr_server][:install_root]}/embedded/bin/python" \
+    command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
+                    " #{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
+                    " #{node[:scalr_server][:install_root]}/embedded/bin/python" \
                     " #{scalr_bundle_path node}/app/python/scalrpy/#{svc[:service_module]}.py" \
                     " --pid-file=#{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
                     " --log-file=#{log_dir_for node, 'service'}/#{svc[:service_name]}.log" \
@@ -40,7 +55,7 @@ enabled_services(node).each do |svc|
                     " --config=#{scalr_bundle_path node}/app/etc/config.yml" \
                     ' --verbosity=INFO' \
                     " #{svc[:service_extra_args]}" \
-                    ' start'
+                    # Note: 'start' is added by the proxy.
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/service-#{svc[:service_name]}.log"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/service-#{svc[:service_name]}.err"
     action          [:enable, :start]
