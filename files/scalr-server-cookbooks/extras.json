@@ -1,0 +1,14 @@
+{
+  "run_list": [
+    "recipe[apt]",
+    "recipe[apparmor]",
+    "recipe[selinux::disabled]",
+    "recipe[ntp]",
+    "recipe[rackspace_timezone]",
+    "recipe[iptables-ng::install]",
+    "recipe[scalr-server::extras]"
+  ],
+  "apt": {
+    "compile_time_update": true
+  }
+}
