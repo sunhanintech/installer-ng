@@ -8,8 +8,9 @@ describe Scalr::ServiceHelper do
     it 'should work' do
       node.set[:scalr_server][:mysql][:root_password] = 'rootpass'
 
-      node.set[:scalr_server][:mysql][:host] = '127.0.0.1'
-      node.set[:scalr_server][:mysql][:port] = 3306
+      node.set[:scalr_server][:routing][:mysql_host] = '127.0.0.1'
+      node.set[:scalr_server][:routing][:mysql_port] = 3306
+
       node.set[:scalr_server][:mysql][:scalr_user] = 'user'
       node.set[:scalr_server][:mysql][:scalr_password] = 'scalrpass'
       node.set[:scalr_server][:mysql][:scalr_dbname] = 'scalr'

@@ -9,9 +9,9 @@ socket                              = <%= run_dir_for node, 'mysql' %>/mysql.soc
 user                                = <%= node[:scalr_server][:mysql][:user] %>
 pid-file                            = <%= run_dir_for node, 'mysql' %>/mysql.pid
 socket                              = <%= run_dir_for node, 'mysql' %>/mysql.sock
-port                                = <%= node[:scalr_server][:mysql][:port] %>
+bind-address                        = <%= node[:scalr_server][:mysql][:bind_host] %>
+port                                = <%= node[:scalr_server][:mysql][:bind_port] %>
 datadir                             = <%= data_dir_for node, 'mysql' %>
-bind-address                        = <%= node[:scalr_server][:mysql][:bind] %>
 collation-server                    = utf8_general_ci
 init-connect                        = 'SET NAMES utf8'
 character-set-server                = utf8

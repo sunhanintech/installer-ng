@@ -3,8 +3,8 @@ module Scalr
 
     def mysql_base_params(node)
       {
-          :host => node[:scalr_server][:mysql][:host],
-          :port => node[:scalr_server][:mysql][:port],
+          :host => node[:scalr_server][:routing][:mysql_host],
+          :port => node[:scalr_server][:routing][:mysql_port],
       }
     end
 

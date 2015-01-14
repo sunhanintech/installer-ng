@@ -8,8 +8,8 @@
 scalr:
   connections:
     mysql: &connections_mysql
-      host: <%= node[:scalr_server][:mysql][:host] %>
-      port: <%= node[:scalr_server][:mysql][:port] %>
+      host: <%= node[:scalr_server][:routing][:mysql_host] %>
+      port: <%= node[:scalr_server][:routing][:mysql_port] %>
       user: <%= node[:scalr_server][:mysql][:scalr_user] %>
       pass: <%= node[:scalr_server][:mysql][:scalr_password] %>
       name: <%= node[:scalr_server][:mysql][:scalr_dbname] %>
