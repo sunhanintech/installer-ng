@@ -1,3 +1,3 @@
 supervisor_service 'cron' do
-  action File.exist?("#{node['supervisor']['dir']}/cron.conf") ? [:stop, :disable] : [:disable]
+  action service_exists?('cron') ? [:stop, :disable] : [:disable]
 end

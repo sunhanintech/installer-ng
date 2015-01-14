@@ -46,7 +46,6 @@ end
 
 
 # rrd run
-# TODO - Consider reloading?
 supervisor_service 'rrd' do
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/rrdcached" \
                   " -s #{node[:scalr_server][:rrd][:user]}" \

@@ -21,7 +21,7 @@ template "#{etc_dir_for node, 'mysql'}/my.cnf" do
   group     'root'
   mode      0644
   helpers(Scalr::PathHelper)
-  notifies  :restart, 'supervisor_service[mysql]', :delayed  # TODO - This should not run if MySQL is not currently running.
+  notifies  :restart, 'supervisor_service[mysql]' if should_notify_service?('mysql')
 # TODO - Warn user if MySQL tz != UTC? We default to 00:00 here.
 end
 

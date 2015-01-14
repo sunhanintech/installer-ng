@@ -42,8 +42,12 @@ enabled_services(node).each do |svc|
   # Make sure we're only dealing with symbols here (recursively)
   HashHelper.symbolize_keys_deep!(svc)
 
+
+  name = "service-#{svc[:service_name]}"
+  should_notify = should_notify_service?(name)
+
   # TODO - delete service for services that are disabled
-  supervisor_service "service-#{svc[:service_name]}" do
+  supervisor_service name do
     command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
                     " #{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
                     " #{node[:scalr_server][:install_root]}/embedded/bin/python" \
@@ -56,14 +60,12 @@ enabled_services(node).each do |svc|
                     ' --verbosity=INFO' \
                     " #{svc[:service_extra_args]}" \
                     # Note: 'start' is added by the proxy.
-    stdout_logfile  "#{log_dir_for node, 'supervisor'}/service-#{svc[:service_name]}.log"
-    stderr_logfile  "#{log_dir_for node, 'supervisor'}/service-#{svc[:service_name]}.err"
+    stdout_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.log"
+    stderr_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.err"
     action          [:enable, :start]
     autostart       true
-    # TODO - None of those subscriptions should run if the service isn't already running
-    # TODO - Use a stop command proxy.
-    subscribes      :restart, 'template[scalr_config]', :delayed
-    subscribes      :restart, 'file[scalr_cryptokey]', :delayed
-    subscribes      :restart, 'file[scalr_id]', :delayed
+    subscribes      :restart, 'template[scalr_config]' if should_notify
+    subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
+    subscribes      :restart, 'file[scalr_id]' if should_notify
   end
 end

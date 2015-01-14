@@ -37,7 +37,7 @@ template "#{etc_dir_for node, 'httpd'}/httpd.conf" do
     include Scalr::PathHelper
     include Scalr::ServiceHelper
   end
-  notifies  :restart, 'supervisor_service[httpd]', :delayed # TODO - This should not run if httpd is not currently running.
+  notifies  :restart, 'supervisor_service[httpd]' if should_notify_service?('httpd')
 end
 
 

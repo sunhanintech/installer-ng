@@ -94,6 +94,7 @@ module Scalr
     end
 
     # Helper to tell Apache whether to serve graphics #
+
     def apache_serve_graphics(node)
 
       # Check for the two services
@@ -108,6 +109,32 @@ module Scalr
       end
 
       true
+    end
+
+    # Service status helpers #
+
+    # From: https://github.com/poise/supervisor/blob/master/providers/service.rb
+    def service_status(svc)
+      cmd = "#{install_dir}/embedded/bin/supervisorctl -c #{etc_dir_for node, 'supervisor'}/supervisord.conf status"
+      result = Mixlib::ShellOut.new(cmd).run_command
+      match = result.stdout.match("(^#{service_name}(\\:\\S+)?\\s*)([A-Z]+)(.+)")
+      if match.nil?
+        'UNAVAILABLE'
+      else
+        match[3]
+      end
+    end
+
+    def service_exists?(svc)
+      File.exist?("#{node['supervisor']['dir']}/#{svc}.conf")
+    end
+
+    def service_is_up?(svc)
+      %w{RUNNING STARTING}.include? service_status(svc)
+    end
+
+    def should_notify_service?(svc)
+      service_exists?(svc) && service_is_up?(svc)
     end
 
   end

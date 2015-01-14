@@ -1,3 +1,3 @@
 supervisor_service 'mysql' do
-  action File.exist?("#{node['supervisor']['dir']}/mysql.conf") ? [:stop, :disable] : [:disable]
+  action service_exists?('mysql') ? [:stop, :disable] : [:disable]
 end
