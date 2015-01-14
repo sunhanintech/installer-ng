@@ -26,7 +26,7 @@ end
 # Scalr config files
 
 template 'scalr_config' do
-  name    "#{scalr_bundle_path node}/app/etc/config.yml"
+  path    "#{scalr_bundle_path node}/app/etc/config.yml"
   source  'app/config.yml.erb'
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -35,7 +35,7 @@ template 'scalr_config' do
 end
 
 file 'scalr_cryptokey' do
-  name    "#{scalr_bundle_path node}/app/etc/.cryptokey"
+  path    "#{scalr_bundle_path node}/app/etc/.cryptokey"
   content node[:scalr_server][:app][:secret_key]
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -43,7 +43,7 @@ file 'scalr_cryptokey' do
 end
 
 file 'scalr_id' do
-  name    "#{scalr_bundle_path node}/app/etc/id"
+  path    "#{scalr_bundle_path node}/app/etc/id"
   content node[:scalr_server][:app][:id]
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -53,7 +53,8 @@ end
 
 # TODO - Might as well be in a enable_web recipe, but... not a big deal for now.
 # TODO - Session GC cron when web is enabled!!
-# PHP sessions dir
+# PHP sessions and error log dirs
+
 directory "#{run_dir_for node, 'php'}/sessions" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
@@ -61,7 +62,6 @@ directory "#{run_dir_for node, 'php'}/sessions" do
   recursive true
 end
 
-# PHP errors log dir
 directory log_dir_for(node, 'php') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
@@ -71,7 +71,6 @@ end
 
 
 # PHP configuration
-# TODO - Consider updating php to drop this into /etc/php, not /embedded/etc/php
 
 directory etc_dir_for(node, 'php') do
   owner     'root'
