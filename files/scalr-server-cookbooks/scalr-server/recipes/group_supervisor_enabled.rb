@@ -60,11 +60,6 @@ directory log_dir_for(node, 'supervisor') do
   recursive true
 end
 
-# This is for supervisorctl to easily find our supervisor instance.
-link '/etc/supervisord.conf' do
-  to "#{etc_dir_for node, 'supervisor'}/supervisord.conf"
-end
-
 
 init_template_dir = value_for_platform_family(
     %w(rhel fedora) => 'rhel',
