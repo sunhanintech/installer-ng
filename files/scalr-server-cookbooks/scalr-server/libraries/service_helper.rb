@@ -114,10 +114,10 @@ module Scalr
     # Service status helpers #
 
     # From: https://github.com/poise/supervisor/blob/master/providers/service.rb
-    def service_status(svc)
-      cmd = "#{install_dir}/embedded/bin/supervisorctl -c #{etc_dir_for node, 'supervisor'}/supervisord.conf status"
+    def service_status(node, svc)
+      cmd = "#{node[:scalr_server][:install_root]}/embedded/bin/supervisorctl -c #{etc_dir_for node, 'supervisor'}/supervisord.conf status"
       result = Mixlib::ShellOut.new(cmd).run_command
-      match = result.stdout.match("(^#{service_name}(\\:\\S+)?\\s*)([A-Z]+)(.+)")
+      match = result.stdout.match("(^#{svc}(\\:\\S+)?\\s*)([A-Z]+)(.+)")
       if match.nil?
         'UNAVAILABLE'
       else
@@ -125,16 +125,16 @@ module Scalr
       end
     end
 
-    def service_exists?(svc)
+    def service_exists?(node, svc)
       File.exist?("#{node['supervisor']['dir']}/#{svc}.conf")
     end
 
-    def service_is_up?(svc)
-      %w{RUNNING STARTING}.include? service_status(svc)
+    def service_is_up?(node, svc)
+      %w{RUNNING STARTING}.include? service_status(node, svc)
     end
 
-    def should_notify_service?(svc)
-      service_exists?(svc) && service_is_up?(svc)
+    def should_notify_service?(node, svc)
+      service_exists?(node, svc) && service_is_up?(node, svc)
     end
 
   end

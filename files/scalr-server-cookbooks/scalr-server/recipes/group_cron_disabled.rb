@@ -1,3 +1,3 @@
 supervisor_service 'cron' do
-  action service_exists?('cron') ? [:stop, :disable] : [:disable]
+  action service_exists?(node, 'cron') ? [:stop, :disable] : [:disable]
 end

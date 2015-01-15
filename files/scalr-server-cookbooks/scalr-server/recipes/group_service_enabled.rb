@@ -44,7 +44,7 @@ enabled_services(node).each do |svc|
 
 
   name = "service-#{svc[:service_name]}"
-  should_notify = should_notify_service?(name)
+  should_notify = should_notify_service?(node, name)
 
   supervisor_service name do
     command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
