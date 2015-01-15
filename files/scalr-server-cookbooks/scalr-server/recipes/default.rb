@@ -7,12 +7,7 @@
 #   loaded from the configuration file, and secrets (loaded from a separate JSON file, though they can be overridden in
 #   the config file. Either way they'll be persisted in the JSON file).
 
-directory node[:scalr_server][:config_dir] do
-  owner   'root'
-  group   'root'
-  mode    '0775'
-  action :nothing
-end.run_action(:create)
+include_recipe 'scalr-server::_config_dir'
 
 # Reads configuration from:
 # + /etc/scalr-server/scalr-server.rb

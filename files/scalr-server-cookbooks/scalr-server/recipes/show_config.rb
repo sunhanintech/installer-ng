@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+include_recipe 'scalr-server::_config_dir'
+
 config = ScalrServer.generate_config node
 
 puts Chef::JSONCompat.to_json_pretty(config)
