@@ -7,6 +7,7 @@ conf="/opt/scalr-server/etc/supervisor/supervisord.conf"
 if [ ! -f "$conf" ]; then
     echo "Not available yet!"
     echo "You must run 'scalr-server-ctl reconfigure' first."
+    exit 1
 fi
 
 exec /opt/scalr-server/embedded/bin/supervisorctl \
