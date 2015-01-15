@@ -16,19 +16,22 @@
 #
 
 name 'libzmq'
-default_version 'v2.1.11'
+default_version '4.0.5'
 
 dependency 'libuuid'
 
-source git: 'git://github.com/zeromq/zeromq2-x.git'
+source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
 
-relative_path 'zeromq2-x'
+version '4.0.5' do
+  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+end
+
+relative_path "zeromq-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
   env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./autogen.sh", env: env
   command "./configure --prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
