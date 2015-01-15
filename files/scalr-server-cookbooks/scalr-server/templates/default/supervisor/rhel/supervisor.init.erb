@@ -1,39 +1,41 @@
 #!/bin/bash
 #
-# /etc/rc.d/init.d/supervisor
+# /etc/rc.d/init.d/scalr
 #
-# Manages the supervisor daemon
+# Manages the scalr supervisor daemon
 #
 # chkconfig: 2345 90 10
-# description: Supervisor is a process control utility
-# processname: supervisord
+# description: Supervisor is a process control utility, and is used to manage the Scalr processes.
+# processname: scalr
 # config: <%= node['supervisor']['conffile'] %>
-# pidfile: "<%= @run_dir %>/supervisord.pid"
+# pidfile: <%= @run_dir %>/supervisord.pid
 
 source /etc/rc.d/init.d/functions
+
+export PATH="<%= scalr_exec_path node %>"
 
 start() {
     echo -n "Starting supervisor: "
     # status() returns 0 if and only if the service is properly started.
-    status supervisord > /dev/null && echo "already running" && return 0
+    status -p <%= @run_dir %>/supervisord.pid scalr > /dev/null && echo "already running" && return 0
     daemon "<%= @supervisord %> -c <%= node['supervisor']['conffile'] %> <%= @node['supervisor']['daemon_options'] %>"
     RETVAL=$?
     echo
     [ $RETVAL -ne 0 ] && return $RETVAL
-    # We name the lock file supervisord because that is what status() looks for.
-    touch /var/lock/subsys/supervisord
+    # We name the lock file scalr because that is what status() looks for.
+    touch /var/lock/subsys/scalr
 }
 
 stop() {
-    echo -n "Shutting down supervisor: "
-    status supervisord > /dev/null
+    echo -n "Shutting down scalr: "
+    status -p <%= @run_dir %>/supervisord.pid scalr > /dev/null
     # status() returns 3 if and only if the service is properly stopped.
     [ $? -eq 3 ] && echo "already stopped" && return 0
-    killproc supervisord
+    killproc -p <%= @run_dir %>/supervisord.pid scalr
     RETVAL=$?
     echo
     [ $RETVAL -ne 0 ] && return $RETVAL
-    rm -f /var/lock/subsys/supervisord
+    rm -f /var/lock/subsys/scalr
 }
 
 case "$1" in
@@ -44,7 +46,7 @@ case "$1" in
         stop
     ;;
     status)
-        status supervisord
+        status -p <%= @run_dir %>/supervisord.pid scalr
     ;;
     restart)
         # Exit with an error if the shutdown was not successful.

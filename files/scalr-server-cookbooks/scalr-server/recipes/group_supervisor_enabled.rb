@@ -22,7 +22,7 @@
 # Stub configuration file. This allows us to use restart :immediately (even if supervisor wasn't even configured
 # yet). This is useful because it means we don't restart supervisor after everything else!
 
-init_file = '/etc/init.d/supervisor'
+init_file = '/etc/init.d/scalr'
 
 file init_file do
   mode     0755
@@ -45,7 +45,7 @@ template "#{etc_dir_for node, 'supervisor'}/supervisord.conf" do
   owner node[:scalr_server][:supervisor][:user]
   mode  0644
   helpers(Scalr::PathHelper)
-  notifies  :restart, 'service[supervisor]', :immediately  # no-op if the init file isn't there yet (see above)
+  notifies  :restart, 'service[scalr]', :immediately  # no-op if the init file isn't there yet (see above)
 end
 
 directory run_dir_for(node, 'supervisor') do
@@ -66,16 +66,6 @@ link '/etc/supervisord.conf' do
 end
 
 
-
-template '/etc/default/supervisor' do
-  source    'debian/supervisor.default.erb'
-  cookbook  'supervisor'
-  owner     'root'
-  group     'root'
-  mode      0644
-  only_if   { platform_family?('debian') }
-end
-
 init_template_dir = value_for_platform_family(
     %w(rhel fedora) => 'rhel',
     'debian' => 'debian'
@@ -93,9 +83,10 @@ case node['platform']
                     :log_dir => log_dir_for(node, 'supervisor'),
                     :run_dir => run_dir_for(node, 'supervisor')
                 })
+      helpers(Scalr::PathHelper)
     end
 
-    service 'supervisor' do
+    service 'scalr' do
       supports :status => true, :restart => true
       action [:enable, :start]
     end
