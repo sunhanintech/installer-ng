@@ -10,16 +10,16 @@ module Scalr
 
     def mysql_root_params(node)
       mysql_base_params(node).merge({
-          :username => 'root',
-          :password => node[:scalr_server][:mysql][:root_password],
-      })
+                                        :username => 'root',
+                                        :password => node[:scalr_server][:mysql][:root_password],
+                                    })
     end
 
     def mysql_user_params(node)
       mysql_base_params(node).merge({
-          :username => node[:scalr_server][:mysql][:scalr_user],
-          :password => node[:scalr_server][:mysql][:scalr_password],
-      })
+                                        :username => node[:scalr_server][:mysql][:scalr_user],
+                                        :password => node[:scalr_server][:mysql][:scalr_password],
+                                    })
     end
 
     def _mysql_connection(params, dbname)
@@ -29,7 +29,7 @@ module Scalr
 
     def mysql_has_table?(params, dbname, tablename)
       cnt = 0
-      conn = _mysql_connection(params, 'mysql')
+      conn = _mysql_connection(params, dbname)
       begin
         conn.query("SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema='#{dbname}' AND table_name='#{tablename}'") {|res|
           res.each_hash do |row|
@@ -56,7 +56,6 @@ module Scalr
       end
       cnt > 0
     end
-
 
   end
 end

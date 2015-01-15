@@ -16,7 +16,7 @@ include_recipe 'scalr-server::_config_dir'
 node.consume_attributes(ScalrServer.generate_config node)
 
 # Deploy modules
-%w{supervisor app mysql cron rrd service web}.each do |mod|  # Todo - supervisor, app shouldn't really be an option.
+%w{supervisor mysql app cron rrd service web}.each do |mod|  # Todo - supervisor, app shouldn't really be an option.
   # TODO - Create run dir, etc dir here
   if node[:scalr_server][mod][:enable]
     include_recipe "scalr-server::group_#{mod}_enabled"

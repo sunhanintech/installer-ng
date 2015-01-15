@@ -33,8 +33,6 @@ module ScalrServer
 
       ScalrServer[:mysql][:root_password] ||= SecureRandom.hex 50
       ScalrServer[:mysql][:scalr_password] ||= SecureRandom.hex 50
-      ScalrServer[:mysql][:server_debian_password] ||= SecureRandom.hex 50
-      ScalrServer[:mysql][:server_repl_password] ||= SecureRandom.hex 50
 
       ScalrServer[:app][:admin_password] ||= SecureRandom.hex 12
       ScalrServer[:app][:secret_key] ||= SecureRandom.base64 512
@@ -45,8 +43,6 @@ module ScalrServer
           :mysql => {
             :root_password          => ScalrServer[:mysql][:root_password],
             :scalr_password         => ScalrServer[:mysql][:scalr_password],
-            :server_debian_password => ScalrServer[:mysql][:server_debian_password],
-            :server_repl_password   => ScalrServer[:mysql][:server_repl_password],
           },
           :app => {
             :admin_password => ScalrServer[:app][:admin_password],

@@ -46,11 +46,9 @@ default[:scalr_server][:mysql][:enable] = true
 default[:scalr_server][:mysql][:bind_host] = '127.0.0.1'
 default[:scalr_server][:mysql][:bind_port] = 3306
 
-default[:scalr_server][:mysql][:scalr_user] = 'scalr'
 default[:scalr_server][:mysql][:root_password] = 'CHANGEME'
+default[:scalr_server][:mysql][:scalr_user] = 'scalr'
 default[:scalr_server][:mysql][:scalr_password] = 'CHANGEME'
-default[:scalr_server][:mysql][:server_debian_password] = 'CHANGEME'
-default[:scalr_server][:mysql][:server_repl_password] = 'CHANGEME'
 default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
 
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
@@ -81,8 +79,6 @@ default[:scalr_server][:rrd][:user] = 'rrdcached'
 default[:scalr_server][:supervisor][:enable] = true
 
 default[:scalr_server][:supervisor][:user] = 'root'
-
-# TODO - Expose port, endpoint_host, scheme. ALl of that should be part of another attribute group (e.g. "routing")
 
 
 # Attributes includes from other cookbooks. We need to include those because we refer to them in our own recipes,

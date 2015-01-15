@@ -1,4 +1,5 @@
-require 'digest'
+mysql_bootstrap_status_file = "#{data_dir_for node, 'mysql'}/bootstrapped"
+bootstrapped = File.exists?(mysql_bootstrap_status_file)
 
 # Add MySQL user
 user node[:scalr_server][:mysql][:user] do
@@ -52,19 +53,16 @@ end
 
 # Note that this runs at compile time.
 
-is_bootstrapping = ! ::File.directory?("#{data_dir_for node, 'mysql'}/mysql")
-
 execute 'mysql_install_db' do
   command "#{node[:scalr_server][:install_root]}/embedded/scripts/mysql_install_db" \
           " --defaults-file=#{etc_dir_for node, 'mysql'}/my.cnf" \
           " --basedir=#{node[:scalr_server][:install_root]}/embedded" \
           " --user=#{node[:scalr_server][:mysql][:user]}"
-  only_if { is_bootstrapping }
+  not_if { bootstrapped }
 end
 
 # Launch MySQL
 # View: http://supervisord.org/subprocess.html#pidproxy-program
-# TODO - Consider reloading?
 supervisor_service 'mysql' do
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/pidproxy" \
                   " #{run_dir_for node, 'mysql'}/mysql.pid" \
@@ -78,16 +76,19 @@ supervisor_service 'mysql' do
 end
 
 
-# Set up initial passwords and other MySQL initialization tasks
+# Set up initial passwords and other MySQL initialization tasks.
+# We want this to always run (including when not bootstrapping), to avoid keeping an unset root password (and others)
+# forever if it failed when we bootstrapped for the first time.
+# TODO - Consider just adding a file to provide a flag.
+
 mysql_database 'set_root_passwords' do
   connection      mysql_base_params(node).merge!({:username => 'root'})
   database_name   'mysql'  # This MUST be set, otherwise Chef happily just discards our request because the null database doesn't exist.
-  sql             "UPDATE mysql.user SET Password = PASSWORD('#{node[:scalr_server][:mysql][:root_password]}') WHERE User = 'root';" \
+  sql             "UPDATE mysql.user SET Password = PASSWORD('#{node[:scalr_server][:mysql][:root_password]}') WHERE User = 'root' AND Password = '';" \
                   ' FLUSH PRIVILEGES'
   action          :query
   retries         10  # Give MySQL some time to come online.
-  only_if         { is_bootstrapping }
- # We can't use notify ... here, because FLUSH PRIVILEGES must be called before our password can work.
+  not_if { bootstrapped }
 end
 
 mysql_database 'remove_anonymous_users' do
@@ -95,7 +96,7 @@ mysql_database 'remove_anonymous_users' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.user WHERE User = ''; FLUSH PRIVILEGES;"
   action          :query
-  only_if         { is_bootstrapping }
+  not_if { bootstrapped }
 end
 
 mysql_database 'remove_access_to_test_databases' do
@@ -103,7 +104,15 @@ mysql_database 'remove_access_to_test_databases' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.db WHERE Db LIKE 'test%'; FLUSH PRIVILEGES;"
   action          :query
-  only_if         { is_bootstrapping }
+  not_if { bootstrapped }
+end
+
+
+file mysql_bootstrap_status_file do
+  mode     0644
+  owner   'root'
+  group   'root'
+  action  :create_if_missing
 end
 
 
@@ -114,7 +123,7 @@ mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
   password          node[:scalr_server][:mysql][:scalr_password]
   host              node[:scalr_server][:mysql][:scalr_allow_connections_from]
   action            :create
-  retries           is_bootstrapping ? 0 : 10
+  retries           10  # Give MySQL some time to come online.
 end
 
 # The analytics database is not useful on an old Scalr version, but that's
@@ -136,87 +145,4 @@ scalr_databases.each do |scalr_database|
     database_name scalr_database
     action        :grant
   end
-end
-
-
-# Load database structure and data
-
-mysql_database 'load scalr database structure' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:scalr_dbname]
-  sql             { ::File.open("#{scalr_bundle_path node}/sql/structure.sql").read }
-  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
-  action          :query
-end
-
-mysql_database 'load scalr database data' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:scalr_dbname]
-  sql             { ::File.open("#{scalr_bundle_path node}/sql/data.sql").read }
-  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
-  action          :query
-end
-
-mysql_database 'load analytics database structure' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:analytics_dbname]
-  sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
-  not_if          { mysql_has_table?(mysql_root_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
-  action          :query
-end
-
-mysql_database 'load analytics database data' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:analytics_dbname]
-  sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
-  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
-  action          :query
-end
-
-execute 'Upgrade Scalr Database' do
-  # NOTE: the app user needs to be created first, but the app recipe *is* supposed to run first.
-  user    node[:scalr_server][:app][:user]
-  group   node[:scalr_server][:app][:user]
-  returns 0
-  command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
-  cwd     "#{scalr_bundle_path node}/app/bin"
-end
-
-
-# Run validation - it never hurts.
-
-['root', node[:scalr_server][:app][:user]].each do |usr|
-  execute "validate-as-{usr}" do
-    user  usr
-    command "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'} testenvironment.php"
-    returns 0
-    cwd "#{scalr_bundle_path node}/app/www"
-  end
-end
-
-
-
-# Initialize Scalr administrator
-
-default_username = 'admin'
-hashed_default_password = Digest::SHA2.new(256).update('admin').hexdigest
-
-new_username = node[:scalr_server][:app][:admin_user]
-hashed_new_password = Digest::SHA2.new(256).update(node[:scalr_server][:app][:admin_password]).hexdigest
-
-admin_id = 1
-
-# The queries below are idempotent and only change the password in case it was set to the default.
-mysql_database 'set admin username' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:scalr_dbname]
-  sql             "UPDATE account_users SET email='#{new_username}' WHERE id=#{admin_id} AND email='#{default_username}'"
-  action          :query
-end
-
-mysql_database 'set admin password' do
-  connection      mysql_user_params(node)
-  database_name   node[:scalr_server][:mysql][:scalr_dbname]
-  sql             "UPDATE account_users SET password='#{hashed_new_password}' WHERE id=#{admin_id} AND password='#{hashed_default_password}'"
-  action          :query
 end
