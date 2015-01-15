@@ -11,7 +11,7 @@ build_iteration 1
 override 'scalr-app', version: 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
 
 # Creates required build directories
-dependency 'local-preparation'
+dependency 'prepare'
 
 # Things that don't change often
 dependency 'chef-gem'   # For embedded chef-solo
@@ -34,7 +34,7 @@ dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
 dependency 'scalr-server-bin'         # CLIs
 
 # Version manifest file
-dependency 'version-manifest'
+dependency 'finalize'
 
 exclude '**/.git'
 exclude '**/bundler/git'
