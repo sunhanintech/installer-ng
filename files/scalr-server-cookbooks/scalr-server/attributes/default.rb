@@ -13,7 +13,7 @@ default[:scalr_server][:routing][:graphics_path] = '/graphics'
 
 default[:scalr_server][:routing][:plotter_scheme] = node.scalr_server.routing.endpoint_scheme
 default[:scalr_server][:routing][:plotter_host] = node.scalr_server.routing.endpoint_host
-default[:scalr_server][:routing][:plotter_port] = 8000
+default[:scalr_server][:routing][:plotter_port] = 8080
 
 default[:scalr_server][:routing][:mysql_host] = '127.0.0.1'
 default[:scalr_server][:routing][:mysql_port] = 3306
@@ -68,7 +68,7 @@ default[:scalr_server][:service][:enable] = true
 
 default[:scalr_server][:service][:plotter_bind_scheme] = 'http'
 default[:scalr_server][:service][:plotter_bind_host] = '0.0.0.0'
-default[:scalr_server][:service][:plotter_bind_port] = 8000
+default[:scalr_server][:service][:plotter_bind_port] = 8080
 
 
 # Rrd tunables
