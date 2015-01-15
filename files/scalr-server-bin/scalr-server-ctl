@@ -22,6 +22,15 @@ else
     usage_and_exit
 fi
 
+# Unset all Ruby environment to ensure we execute in *our* Ruby environment.
+unset RUBYOPT
+unset BUNDLE_BIN_PATH
+unset BUNDLE_GEMFILE
+unset GEM_PATH
+unset GEM_HOME
+
+
+# Run chef-solo
 shift
 
 exec /opt/scalr-server/embedded/bin/chef-solo \
