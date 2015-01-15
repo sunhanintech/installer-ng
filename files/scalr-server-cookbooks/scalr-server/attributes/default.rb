@@ -5,7 +5,7 @@ default[:scalr_server][:version] = '5.1.1'
 # Routing tunables
 # The defaults below are for a single host install.
 default[:scalr_server][:routing][:endpoint_scheme] = 'http'
-default[:scalr_server][:routing][:endpoint_host] = 'CHANGEME'
+default[:scalr_server][:routing][:endpoint_host] = node.fqdn
 
 default[:scalr_server][:routing][:graphics_scheme] = node.scalr_server.routing.endpoint_scheme
 default[:scalr_server][:routing][:graphics_host] = node.scalr_server.routing.endpoint_host
@@ -29,7 +29,7 @@ default[:scalr_server][:app][:id] = 'CHANGEME'
 default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
 
-default[:scalr_server][:app][:ip_range] = '127.0.0.1/32'
+default[:scalr_server][:app][:ip_range] = "['#{node.ipaddress}/32']"
 
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
