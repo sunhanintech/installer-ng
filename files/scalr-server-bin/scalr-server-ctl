@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -o errexit
+
+
+usage_and_exit () {
+    echo "Usage: ctl [reconfigure | show-config | extras]"
+    exit 1
+}
+
+if [ -z "$1" ]; then
+    usage_and_exit
+fi
+
+if [ "x$1" = "xreconfigure" ]; then
+    solo="dna"
+elif [ "x$1" = "xshow-config" ]; then
+    solo="show-config"
+elif [ "x$1" = "xextras" ]; then
+    solo="extras"
+else
+    usage_and_exit
+fi
+
+shift
+
+exec /opt/scalr-server/embedded/bin/chef-solo \
+    -c /opt/scalr-server/embedded/cookbooks/solo.rb \
+    -j /opt/scalr-server/embedded/cookbooks/${solo}.json \
+    "$@"
+

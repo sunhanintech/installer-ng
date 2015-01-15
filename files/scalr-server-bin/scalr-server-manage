@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -o errexit
+
+conf="/opt/scalr-server/etc/supervisor/supervisord.conf"
+
+if [ ! -f "$conf" ]; then
+    echo "Not available yet!"
+    echo "You must run 'scalr-server-ctl reconfigure' first."
+fi
+
+exec /opt/scalr-server/embedded/bin/supervisorctl \
+    -c "$conf" \
+    "$@"

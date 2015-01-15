@@ -31,7 +31,7 @@ dependency 'scalr-app'
 
 # App management
 dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
-dependency 'scalr-server-ctl'         # CLI to run chef-solo and actions (scalr-server-ctl)
+dependency 'scalr-server-bin'         # CLIs
 
 # Version manifest file
 dependency 'version-manifest'
