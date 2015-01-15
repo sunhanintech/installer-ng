@@ -20,11 +20,6 @@ module ScalrServer
 
   class << self
 
-    # guards against creating secrets on non-bootstrap node
-    def generate_hex(chars)
-      SecureRandom.hex(chars)
-    end
-
     def generate_secrets(node)
       existing_secrets ||= Hash.new
       if File.exists?(secrets_file_path node)
