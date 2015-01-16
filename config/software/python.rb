@@ -28,17 +28,17 @@ dependency 'libffi'
 dependency 'sqlite'
 
 
-source url: "https://www.python.org/ftp/python/#{version}/Python-#{version}.tgz",
-       md5: '5eebcaa0030dc4061156d3429657fb83'
+source url: "https://www.python.org/ftp/python/#{version}/Python-#{version}.tgz"
+
+version '2.7.9' do
+  source md5: '5eebcaa0030dc4061156d3429657fb83'
+end
 
 relative_path "Python-#{version}"
 
 build do
-  # noinspection RubyStringKeysInHashInspection
-  env = {
-      'CFLAGS' => "-I#{install_dir}/embedded/include -O3 -g -pipe",
-      'LDFLAGS' => "-Wl,-rpath,#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib",
-  }
+  env = with_standard_compiler_flags(with_embedded_path)
+  env['CFLAGS'] = "-I#{install_dir}/embedded/include -O3 -g -pipe"
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded" \
