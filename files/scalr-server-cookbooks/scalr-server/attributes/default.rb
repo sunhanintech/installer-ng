@@ -33,6 +33,8 @@ default[:scalr_server][:app][:ip_range] = "['#{node.ipaddress}/32']"
 
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
+default[:scalr_server][:app][:session_cookie_lifetime] = 1800
+
 default[:scalr_server][:app][:user] = 'scalr'
 
 

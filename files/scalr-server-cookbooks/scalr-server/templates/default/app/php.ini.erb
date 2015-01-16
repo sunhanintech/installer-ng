@@ -1948,3 +1948,4 @@ http.persistent.handles.limit = 0
 session.save_path = <%= run_dir_for node, 'php' %>/sessions
 error_log = <%= log_dir_for node, 'php' %>/php-errors.log
 display_errors = On
+session.cookie_lifetime = <%= node[:app][:session_cookie_lifetime] %>
