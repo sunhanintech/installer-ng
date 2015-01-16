@@ -1,7 +1,8 @@
 # Note that changing this file invalidates the entire build.
 name 'scalr-server'
-maintainer 'Thomas Orozco <thomas@scalr.com>'
+maintainer 'Scalr, Inc.'
 homepage 'https://www.scalr.com'
+description 'Full stack Scalr Server'
 
 install_dir "#{default_root}/#{name}"
 
@@ -38,3 +39,6 @@ dependency 'finalize'
 
 exclude '**/.git'
 exclude '**/bundler/git'
+
+
+# TODO - Consider having runtime dependencies (runtime_dependency) to split the package in two.
