@@ -40,6 +40,7 @@ relative_path "ncurses-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
+  env.delete('CPPFLAGS')
 
   # build wide-character libraries
   cmd = [
@@ -54,7 +55,7 @@ build do
     '--without-cxx-binding',
   ]
 
-  command cmd.join(" "), env: env
+  command cmd.join(' '), env: env
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env
 
