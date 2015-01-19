@@ -6,10 +6,23 @@ description 'Full stack Scalr Server'
 
 install_dir "#{default_root}/#{name}"
 
+# Defauts
 build_version Omnibus::BuildVersion.semver
 build_iteration 1
-
 override 'scalr-app', version: 'cee9a5dfc950daa018c685968a1b88bbb4dfb772'  # 5.1
+
+# Configurable
+if ENV['SCALR_REPO']
+  override 'scalr-app', source: ENV['SCALR_REPO'], version: 'master'
+end
+
+if ENV['SCALR_REVISION']
+  override 'scalr-app', version: ENV['SCALR_REVISION']
+end
+
+if ENV['SCALR_VERSION']
+  build_version ENV['SCALR_VERSION']
+end
 
 # Creates required build directories
 dependency 'prepare'
