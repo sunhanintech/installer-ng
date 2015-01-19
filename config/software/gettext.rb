@@ -16,6 +16,13 @@ dependency 'libxml2'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  # Libcrocro does not compile with format warnings. Oops.
+  %w{-Wformat -Werror=format-security}.each do |opt|
+    %w{CFLAGS CPPFLAGS}.each do |flags|
+      env[flags] = env[flags].sub(opt, '')
+    end
+  end
+
   command './configure' \
           " --prefix=#{install_dir}/embedded" \
           ' --disable-openmp' \
