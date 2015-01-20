@@ -32,6 +32,9 @@ build do
               "-DINSTALL_INFODIR=#{install_dir}/embedded/mysql-doc",
               # Build type
               '-DBUILD_CONFIG=mysql_release',
+              # Don't build embedded server libraries (we don't use those, and they are *huge*)
+              '-DWITH_EMBEDDED_SERVER=0',
+              '-DWITH_EMBEDDED_SHARED_LIBRARY=0',
               # Lib flags
               '-DWITH_ZLIB=system',
               '-DWITH_SSL=system',
