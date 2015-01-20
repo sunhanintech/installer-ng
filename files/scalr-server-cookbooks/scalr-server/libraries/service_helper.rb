@@ -61,8 +61,8 @@ module Scalr
           {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
           {:hour => '*',    :minute => '*',    :ng => true,  :name => 'ServerTerminate'},
           {:hour => '*/5',  :minute => '0',    :ng => false, :name => 'RotateLogs'},
-          {:hour => '*/12',  :minute => '0',    :ng => false,  :name => 'CloudPricing'},
-          {:hour => '1',     :minute => '0',    :ng => false,  :name => 'AnalyticsNotifications'},
+          {:hour => '*/12', :minute => '0',    :ng => false, :name => 'CloudPricing'},
+          {:hour => '1',    :minute => '0',    :ng => false, :name => 'AnalyticsNotifications'},
       ]
 
       all_crons.concat %w{SzrMessagingAll SzrMessagingBeforeHostUp SzrMessagingHostInit SzrMessagingHostUp}.collect {
