@@ -59,7 +59,7 @@ berks MUST be patched as per this: https://github.com/berkshelf/berkshelf-api/is
 apt-get update
 apt-get install -y curl build-essential pkg-config cmake automake libtool rsync git swig xutils-dev
 
-yum install -y curl cmake automake libtool rsync git swig xz imake
+yum install -y curl rpm-build fakeroot cmake automake libtool rsync git swig xz imake perl-ExtUtils-MakeMaker
 
 
 curl -sSL https://rvm.io/mpapis.asc | gpg --import - && curl -sSL https://get.rvm.io | bash -s stable --ruby

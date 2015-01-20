@@ -1,0 +1,12 @@
+Test whether the notifications work
+
+Reload all on Scalr version change
+
+Package scripts
+
+logorate.
+nginx + proxy + ssl.
+
+supervisord processes: enable autorestart on all exit codes
+
+export TZ in supervisor init
