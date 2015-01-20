@@ -24,21 +24,23 @@ bundle install --binstubs
 SCALR_REPO="/opt/scalr"
 SCALR_REVISION='master'
 
-PKG_CLOUD_REPO="scalr/scalr-server"
+PKG_CLOUD_REPO_ROOT="scalr/scalr-server"
 
 # What are we building?
 : ${EE:="0"}
 
 if [[ "${EE}" == "1" ]]; then
-  repo="int-scalr"
-  repo_flag="+ee"
+  git_repo="int-scalr"
+  ee_flag="+ee"
+  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}-ee"
 else
-  repo="scalr"
-  repo_flag=""
+  git_repo="scalr"
+  ee_flag=""
+  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}"
 fi
 
 # Clone repo
-git clone "git@github.com:scalr/${repo}.git" "${SCALR_REPO}"
+git clone "git@github.com:scalr/${git_repo}.git" "${SCALR_REPO}"
 cd "${SCALR_REPO}"
 git checkout "${SCALR_REVISION}"
 git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
@@ -68,12 +70,12 @@ else:
 # Prepare environment
 export SCALR_REPO
 export SCALR_REVISION
-export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${repo_flag}~nightly.${git_version}.${PKG_CODENAME}"
+export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${ee_flag}~nightly.${git_version}.${PKG_CODENAME}"
 
 # Launch build
 cd /installer-ng
 bin/omnibus build scalr-server
 
 # Build suceeded!
-package_cloud push "${PKG_CLOUD_REPO}/${PKG_CLOUD_PATH}" pkg/scalr-server*.${PKG_EXTENSION}
+package_cloud push "${pkg_cloud_repo}/${PKG_CLOUD_PATH}" pkg/scalr-server*.${PKG_EXTENSION}
 
