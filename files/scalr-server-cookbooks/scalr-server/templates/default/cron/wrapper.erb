@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PATH="<%= @path %>"
+
+<%= @cmd %> --<%= @cron[:name] %> >> <%= log_dir_for node, 'cron' %>/<%= @cron[:name] %>.log

@@ -9,10 +9,10 @@ module ScalrServer
 
   config_strict_mode true
 
-  # For the time being, those are only useful to set :enable.
-  default :app, Mash.new
-  default :mysql, Mash.new
   default :supervisor, Mash.new
+  default :mysql, Mash.new
+  default :app, Mash.new
+  default :cron, Mash.new
 
   class << self
 
@@ -61,7 +61,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{mysql app supervisor}.each do |key|
+      %w{supervisor mysql app cron}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results

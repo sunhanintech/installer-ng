@@ -36,6 +36,10 @@ module Scalr
       "#{node[:scalr_server][:install_root]}/var/run/#{svc}"
     end
 
+    def bin_dir_for(node, svc)
+      "#{node[:scalr_server][:install_root]}/bin/#{svc}"
+    end
+
     def log_dir_for(node, svc)
       "#{node[:scalr_server][:install_root]}/var/log/#{svc}"
     end

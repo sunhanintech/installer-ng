@@ -38,6 +38,10 @@ default[:scalr_server][:mysql][:user] = 'mysql'
 default[:scalr_server][:supervisor][:enable] = true
 default[:scalr_server][:supervisor][:user] = 'root'
 
+
+# Cron tunables
+default[:scalr_server][:cron][:enable] = true
+
 # Attributes includes from other cookbooks. We need to include those because we refer to them in our own recipes,
 # and don't want to have to ensure that those cookbooks are in the runlist to be able to use the attributes.
 include_attribute  'rackspace_timezone'
