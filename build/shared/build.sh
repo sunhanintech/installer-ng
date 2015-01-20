@@ -18,6 +18,7 @@ git config --global user.name "Scalr Builder"
 git clone https://github.com/Scalr/installer-ng.git /installer-ng
 cd /installer-ng
 git checkout omnibus-package
+installer_git_version=$(git log -n 1 --date="local" --pretty=format:"%h")
 bundle install --binstubs
 
 # Constants
@@ -43,7 +44,7 @@ fi
 git clone "git@github.com:scalr/${git_repo}.git" "${SCALR_REPO}"
 cd "${SCALR_REPO}"
 git checkout "${SCALR_REVISION}"
-git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
+scalr_git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
 
 # Identify OS now.
 eval $(/installer-ng/bin/ohai | python -c '
@@ -70,7 +71,9 @@ else:
 # Prepare environment
 export SCALR_REPO
 export SCALR_REVISION
-export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${ee_flag}~nightly.${git_version}.${PKG_CODENAME}"
+export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${ee_flag}~nightly.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
+
+echo "Building: ${SCALR_VERSION}"
 
 # Launch build
 cd /installer-ng
