@@ -30,7 +30,7 @@ build do
   # Berkshelf is not included in the build: we use the system install. We make sure to path the GEM_ environment
   # down to the berks command so that it works as expected (even if using e.g. rvm).
   # noinspection RubyStringKeysInHashInspection
-  env = ENV.select {|k, _| ['GEM_HOME', 'GEM_PATH'].include? k}
+  env = ENV.select {|k, _| %w(GEM_HOME GEM_PATH).include? k}
 
   # Add the extra files and our cookbook
   command "mkdir -p #{install_dir}/embedded/cookbooks"
