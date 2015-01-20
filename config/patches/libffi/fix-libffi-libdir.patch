@@ -1,0 +1,11 @@
+--- ./Makefile.in	2015-01-13 23:06:22.000000000 +0100
++++ ./Makefile.in	2015-01-13 23:06:42.000000000 +0100
+@@ -461,7 +461,7 @@
+ target_os = @target_os@
+ target_vendor = @target_vendor@
+ toolexecdir = @toolexecdir@
+-toolexeclibdir = @toolexeclibdir@
++toolexeclibdir = @libdir@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
