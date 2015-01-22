@@ -46,6 +46,15 @@ scalr:
   - rackspacengus
   - nebula
 
+  system:
+    default_disable_firewall_management: no
+    instances_connection_timeout: 4
+    server_terminate_timeout: "+3 minutes"
+    scripting:
+        logs_storage: 'instance'
+        default_instance_log_rotation_period: 36000
+        default_abort_init_on_script_fail: 1
+
   endpoint:
     scheme: <%= node[:scalr_server][:routing][:endpoint_scheme] %>
     host: <%= node[:scalr_server][:routing][:endpoint_host] %>
