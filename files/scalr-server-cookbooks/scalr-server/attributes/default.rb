@@ -74,8 +74,6 @@ default[:scalr_server][:service][:plotter_bind_port] = 8080
 # Rrd tunables
 default[:scalr_server][:rrd][:enable] = true
 
-default[:scalr_server][:rrd][:user] = 'rrdcached'
-
 
 # Supervisor tunables
 default[:scalr_server][:supervisor][:enable] = true
