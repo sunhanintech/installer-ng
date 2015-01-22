@@ -15,6 +15,7 @@ dependency 'pango'
 dependency 'glib'
 dependency 'libxml2'
 dependency 'rrdtool'
+dependency 'dejavu-sans-ttf'
 dependency 'libyaml'
 
 # PHP package dependencies

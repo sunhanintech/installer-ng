@@ -16,6 +16,7 @@ build do
 
   command './configure' \
           " --prefix=#{install_dir}/embedded" \
+          " --with-add-fonts=#{install_dir}/embedded/share/fonts" \
           ' --enable-iconv' \
           " --with-libiconv=#{install_dir}/embedded" \
           " --with-expat=#{install_dir}/embedded", env: env
