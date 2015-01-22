@@ -44,7 +44,6 @@ enabled_crons(node).each do |cron|
   end
 end
 
-# TODO - As long as we have the old "cron daemons", we can't really restart the daemons when the and Scalr config changes.
 supervisor_service 'cron' do
   command         "#{node[:scalr_server][:install_root]}/embedded/sbin/crond" \
                   " -L #{log_dir_for node, 'cron'}/crond.log" \
