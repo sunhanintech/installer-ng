@@ -1,7 +1,6 @@
 name 'scalr-app'
 
-source :git => '__APP_REPOSITORY__'
-default_version '__APP_REVISION__'
+source :path => ENV['SCALR_APP_PATH']
 
 # Python
 dependency 'python'

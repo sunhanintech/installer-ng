@@ -3,6 +3,24 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Constant
+PKG_CLOUD_REPO_ROOT="scalr/scalr-server"
+
+# What are we building?
+: ${EE:="0"}
+
+if [[ "${EE}" == "1" ]]; then
+  git_repo="int-scalr"
+  ee_flag="+ee"
+  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}-ee"
+  installer_branch="omnibus-package.ee"
+else
+  git_repo="scalr"
+  ee_flag=""
+  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}"
+  installer_branch="omnibus-package"
+fi
+
 # This is a nightly build, we'd like to get the dates right.
 export TZ="UTC"
 
@@ -17,32 +35,16 @@ git config --global user.name "Scalr Builder"
 # Let's pull and install the installer first
 git clone https://github.com/Scalr/installer-ng.git /installer-ng
 cd /installer-ng
-git checkout omnibus-package
-installer_git_version=$(git log -n 1 --date="local" --pretty=format:"%h")
+git checkout "${installer_branch}"
+installer_git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
 bundle install --binstubs
 
-# Constants
-SCALR_REPO="/opt/scalr"
+# Clone repo
+SCALR_APP_PATH="/opt/scalr"
 SCALR_REVISION='master'
 
-PKG_CLOUD_REPO_ROOT="scalr/scalr-server"
-
-# What are we building?
-: ${EE:="0"}
-
-if [[ "${EE}" == "1" ]]; then
-  git_repo="int-scalr"
-  ee_flag="+ee"
-  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}-ee"
-else
-  git_repo="scalr"
-  ee_flag=""
-  pkg_cloud_repo="${PKG_CLOUD_REPO_ROOT}"
-fi
-
-# Clone repo
-git clone "git@github.com:scalr/${git_repo}.git" "${SCALR_REPO}"
-cd "${SCALR_REPO}"
+git clone "git@github.com:scalr/${git_repo}.git" "${SCALR_APP_PATH}"
+cd "${SCALR_APP_PATH}"
 git checkout "${SCALR_REVISION}"
 scalr_git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
 
@@ -73,12 +75,8 @@ cd /installer-ng
 
 # This is passed in the environment because it is respected there, and because we need to update it without updating
 # the project file (which invalidates *everything*).
-export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${ee_flag}~nightly.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
-
-# This is passed by changing the files, because we need to invalidate the file this time.
-sed -i "s#__APP_REPOSITORY__#${SCALR_REPO}#g" ./config/software/scalr-app.rb
-sed -i "s#__APP_REVISION__#${SCALR_REVISION}#g" ./config/software/scalr-app.rb
-
+export SCALR_APP_PATH
+export SCALR_VERSION="$(cat "${SCALR_APP_PATH}/app/etc/version")${ee_flag}~nightly.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
 
 # Launch build
 echo "Building: ${SCALR_VERSION}"
