@@ -16,7 +16,7 @@ depends 'iis', '~> 1.5.0'  # Required because 1.6.0 is broken, and php depends o
 depends 'php', '~> 1.5.0'
 depends 'python', '~> 1.4.0'
 depends 'artifact', '~> 1.11.0'
-depends 'database', '~> 2.3.0'
+depends 'database', '~> 2.3.1'
 depends 'mysql', '~> 5.6.1'
 depends 'apache2', '~> 3.0.0'
 depends 'cron', '~> 1.4.0'
