@@ -91,6 +91,61 @@ scalr:
       path: '<%= node[:scalr][:rrd][:img_url] %>'
       dir: '<%= node[:scalr][:rrd][:img_dir] %>'
 
+  crontab:
+    services:
+      cloud_poller:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/cloud_poller.log'
+
+      cloud_pricing:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/cloud_pricing.log'
+
+      db_msr_maintenance:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/db_msr_maintenance.log'
+
+      images_builder:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/images_builder.log'
+
+      images_cleanup:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/images_cleanup.log'
+
+      lease_manager:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/lease_manager.log'
+
+      rotate:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/rotate.log'
+
+      scalarizr_messaging:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/scalarizr_messaging.log'
+        replicate:
+          type:
+          - HostInit
+          - BeforeHostUp
+          - HostUp
+
+      scaling:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/scaling.log'
+
+      scheduler:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/scheduler.log'
+
+      server_status_manager:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/server_status_manager.log'
+
+      server_terminate:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/server_terminate.log'
+
   ui:
     mindterm_enabled: true
 

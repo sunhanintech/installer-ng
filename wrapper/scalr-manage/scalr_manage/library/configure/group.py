@@ -210,7 +210,7 @@ class AppGroup(Group):
             host = ui.prompt("Enter the host your cloud instances should connect to to reach this Scalr server. This "
                              "does NOT need to be an IP, and will NOT be validated (so be extra careful!).")
 
-        if version == constant.SCALR_VERSION_4_5:
+        if version == constant.SCALR_VERSION_4_5_0:
             local_ip = ui.prompt_ipv4("Enter the local IP incoming traffic reaches this instance through. Unless you "
                                       "are using NAT or a Cloud Elastic IP, this should be the same IP")
         else:
