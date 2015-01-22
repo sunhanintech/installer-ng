@@ -68,15 +68,20 @@ else:
   sys.exit(1)
 ')
 
-# Prepare environment
-export SCALR_REPO
-export SCALR_REVISION
+# Prepare the build
+cd /installer-ng
+
+# This is passed in the environment because it is respected there, and because we need to update it without updating
+# the project file (which invalidates *everything*).
 export SCALR_VERSION="$(cat "${SCALR_REPO}/app/etc/version")${ee_flag}~nightly.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
 
-echo "Building: ${SCALR_VERSION}"
+# This is passed by changing the files, because we need to invalidate the file this time.
+sed -i "s#__APP_REPOSITORY__#${SCALR_REPO}#g" ./config/software/scalr-app.rb
+sed -i "s#__APP_REVISION__#${SCALR_REVISION}#g" ./config/software/scalr-app.rb
+
 
 # Launch build
-cd /installer-ng
+echo "Building: ${SCALR_VERSION}"
 bin/omnibus build scalr-server
 
 # Build suceeded!

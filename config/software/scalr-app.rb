@@ -1,6 +1,7 @@
 name 'scalr-app'
 
-source :git => 'https://github.com/Scalr/scalr.git' # TODO - EE
+source :git => '__APP_REPOSITORY__'
+default_version '__APP_REVISION__'
 
 # Python
 dependency 'python'

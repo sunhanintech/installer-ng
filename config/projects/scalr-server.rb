@@ -10,18 +10,8 @@ install_dir "#{default_root}/#{name}"
 build_version Omnibus::BuildVersion.semver
 build_iteration 1
 
-override 'scalr-app', version: 'master'
 override 'ruby', version: '2.1.5'
 override 'chef-gem', version: '12.0.3'
-
-# Configurable
-if ENV['SCALR_REPO']
-  override 'scalr-app', source: ENV['SCALR_REPO'], version: 'master'
-end
-
-if ENV['SCALR_REVISION']
-  override 'scalr-app', version: ENV['SCALR_REVISION']
-end
 
 if ENV['SCALR_VERSION']
   build_version ENV['SCALR_VERSION']
