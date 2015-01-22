@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name 'preparation'
+name 'prepare'
 description 'the steps required to prepare the build'
 default_version '1.0.0'
 
