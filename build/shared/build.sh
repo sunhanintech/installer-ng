@@ -70,13 +70,20 @@ else:
   sys.exit(1)
 ')
 
+# Convert the date to an acceptable format for a version number (underscores not welcome)
+eval $(python -c '
+import os, datetime
+d = datetime.datetime.strptime(os.environ["BUILD_ID"], "%Y-%m-%d_%H-%M-%S").strftime("%Y%m%d%H%M%S")
+print "BUILD_ID_FOR_VERSION={0}".format(d)
+')
+
 # Prepare the build
 cd /installer-ng
 
 # This is passed in the environment because it is respected there, and because we need to update it without updating
 # the project file (which invalidates *everything*).
 export SCALR_APP_PATH
-export SCALR_VERSION="$(cat "${SCALR_APP_PATH}/app/etc/version")${ee_flag}~nightly.${BUILD_NUMBER}.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
+export SCALR_VERSION="$(cat "${SCALR_APP_PATH}/app/etc/version")${ee_flag}~nightly.${BUILD_ID_FOR_VERSION}.${BUILD_NUMBER}.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
 
 # Launch build
 echo "Building: ${SCALR_VERSION}"
