@@ -36,7 +36,7 @@ git config --global user.name "Scalr Builder"
 git clone https://github.com/Scalr/installer-ng.git /installer-ng
 cd /installer-ng
 git checkout "${installer_branch}"
-installer_git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
+installer_git_version=$(git log -n 1 --date="local" --pretty=format:"%h")
 bundle install --binstubs
 
 # Clone repo
@@ -46,7 +46,7 @@ SCALR_REVISION='master'
 git clone "git@github.com:scalr/${git_repo}.git" "${SCALR_APP_PATH}"
 cd "${SCALR_APP_PATH}"
 git checkout "${SCALR_REVISION}"
-scalr_git_version=$(git log -n 1 --date="local" --pretty=format:"%ct.%h")
+scalr_git_version=$(git log -n 1 --date="local" --pretty=format:"%h")
 
 # Identify OS now.
 eval $(/installer-ng/bin/ohai | python -c '
@@ -76,7 +76,7 @@ cd /installer-ng
 # This is passed in the environment because it is respected there, and because we need to update it without updating
 # the project file (which invalidates *everything*).
 export SCALR_APP_PATH
-export SCALR_VERSION="$(cat "${SCALR_APP_PATH}/app/etc/version")${ee_flag}~nightly.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
+export SCALR_VERSION="$(cat "${SCALR_APP_PATH}/app/etc/version")${ee_flag}~nightly.${BUILD_NUMBER}.${scalr_git_version}.${installer_git_version}.${PKG_CODENAME}"
 
 # Launch build
 echo "Building: ${SCALR_VERSION}"
