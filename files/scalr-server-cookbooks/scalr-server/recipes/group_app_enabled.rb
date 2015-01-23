@@ -1,4 +1,6 @@
 require 'digest'
+Chef::Resource::File.send(:include, Scalr::ConfigHelper)
+
 
 # user
 
@@ -27,13 +29,12 @@ end
 
 # Scalr config files
 
-template 'scalr_config' do
+file 'scalr_config' do
   path    "#{scalr_bundle_path node}/app/etc/config.yml"
-  source  'app/config.yml.erb'
+  content dump_scalr_configuration(node)
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
-  helpers(Scalr::PathHelper)
 end
 
 file 'scalr_cryptokey' do

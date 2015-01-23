@@ -21,8 +21,9 @@ end
 dependency 'prepare'
 
 # Things that don't change often
-dependency 'chef-gem'   # For embedded chef-solo
-dependency 'mysql-gem'  # We use it in our embedded chef solo
+dependency 'chef-gem'       # For embedded chef-solo
+dependency 'mysql-gem'      # We use it in embedded chef-solo
+dependency 'safe_yaml-gem'  # We also use it in embedded chef-solo
 
 # Software we need to run
 dependency 'mysql'

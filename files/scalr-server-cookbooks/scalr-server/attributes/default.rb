@@ -29,7 +29,7 @@ default[:scalr_server][:app][:id] = 'CHANGEME'
 default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
 
-default[:scalr_server][:app][:ip_range] = "['#{node.ipaddress}/32']"
+default[:scalr_server][:app][:ip_ranges] = ["#{node.ipaddress}/32"]
 
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
