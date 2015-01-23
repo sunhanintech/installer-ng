@@ -1,5 +1,6 @@
 module Scalr
   module PathHelper
+
     def scalr_bundle_path(node)
       "#{node[:scalr_server][:install_root]}/embedded/scalr"
     end

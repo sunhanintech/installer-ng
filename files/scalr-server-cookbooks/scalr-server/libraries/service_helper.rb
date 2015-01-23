@@ -1,27 +1,42 @@
 module Scalr
   module ServiceHelper
+
     def _all_services
       [
-          {:service_name => 'msgsender', :service_module => 'msg_sender', :service_desc => 'Scalr Messaging Daemon',
-           :service_extra_args => '', :run => { :daemon => true }},
+          {
+              :service_name => 'msgsender',
+              :service_module => 'msg_sender', :service_extra_args => '',
+          },
 
-          {:service_name => 'dbqueue', :service_module => 'dbqueue_event', :service_desc => 'Scalr DB Queue Event Poller',
-           :service_extra_args => '', :run => { :daemon => true }},
+          {
+              :service_name => 'dbqueue',
+              :service_module => 'dbqueue_event', :service_extra_args => '',
+          },
 
-          {:service_name => 'plotter', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Plotter',
-           :service_extra_args => '--plotter', :run => { :daemon => true }},
+          {
+              :service_name => 'plotter',
+              :service_module => 'load_statistics', :service_extra_args => '--plotter',
+          },
 
-          {:service_name => 'poller', :service_module => 'load_statistics', :service_desc => 'Scalr Load Stats Poller',
-           :service_extra_args => '--poller', :run => { :daemon => true }},
+          {
+              :service_name => 'poller',
+              :service_module => 'load_statistics', :service_extra_args => '--poller',
+          },
 
-          {:service_name => 'szrupdater', :service_module => 'szr_upd_service', :service_desc => 'Scalarizr Update Client',
-           :service_extra_args => '', :run => { :daemon => true }},
+          {
+              :service_name => 'szrupdater',
+              :service_module => 'szr_upd_service', :service_extra_args => '',
+          },
 
-          {:service_name => 'analytics_poller', :service_module => 'analytics_poller', :service_desc => 'Scalr Analytics Poller',
-           :service_extra_args => '', :run => { :daemon => true }},
+          {
+              :service_name => 'analytics_poller',
+              :service_module => 'analytics_poller', :service_extra_args => '',
+          },
 
-          {:service_name => 'analytics_processor', :service_module => 'analytics_processing', :service_desc => 'Scalr Analytics Processor',
-           :service_extra_args => '', :run => { :daemon => true }},
+          {
+              :service_name => 'analytics_processor',
+              :service_module => 'analytics_processing', :service_extra_args => '',
+          },
       ]
     end
 

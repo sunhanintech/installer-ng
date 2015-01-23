@@ -10,9 +10,6 @@ describe Scalr::ServiceHelper do
 
       enabled_services = dummy_class.new.enabled_services(node).collect {|service| service[:service_name]}
       expect(enabled_services).to eq(%w{msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor})
-
-      a_poller = dummy_class.new.enabled_services(node).select {|service| service[:service_name] == 'analytics_poller'}.fetch(0)
-      expect(a_poller[:run][:cron]).to be_nil
     end
 
     it 'should support false' do

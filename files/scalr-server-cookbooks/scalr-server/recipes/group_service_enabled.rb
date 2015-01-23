@@ -9,7 +9,7 @@ end
 cookbook_file "#{bin_dir_for node, 'service'}/scalrpy_proxy" do
   owner     'root'
   group     'root'
-  source 'scalrpy_proxy'
+  source    'scalrpy_proxy'
   mode    0755
 end
 
@@ -40,7 +40,6 @@ end
 
 enabled_services(node).each do |svc|
   # Make sure we're only dealing with symbols here (recursively)
-  HashHelper.symbolize_keys_deep!(svc)
 
 
   name = "service-#{svc[:service_name]}"
