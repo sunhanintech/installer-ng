@@ -61,6 +61,11 @@ module Scalr
     end
 
     def enabled_crons(node)
+      dns_cron = {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'}
+      if Gem::Dependency.new('scalr', '>= 5.2').match?('scalr', node[:scalr][:package][:version])
+        return [dns_cron]
+      end
+
       out = [
           {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
           {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
@@ -68,7 +73,7 @@ module Scalr
           {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'BundleTasksManager'},
           {:hour => '*',    :minute => '*/15', :ng => true,  :name => 'MetricCheck'},
           {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Poller'},
-          {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
+          dns_cron,
           {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'EBSManager'},
           {:hour => '*',    :minute => '*/20', :ng => false, :name => 'RolesQueue'},
           {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
