@@ -45,6 +45,6 @@ build do
 
   # Copy the code to the ./app dir.
   command "mkdir -p #{install_dir}/embedded/scalr"
-  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=pybuild ./ #{install_dir}/embedded/scalr"
+  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=installer-ng --exclude=pybuild ./ #{install_dir}/embedded/scalr"
 
 end
