@@ -57,6 +57,15 @@ module Scalr
                                                               })
 
 
+            cron_services = {}
+            enabled_services(node, :php).each { |svc|
+                cron_services[svc[:service_name]] = svc[:service_config].merge({
+                                                                                   :log => "#{log_dir_for node, 'service'}/php-#{svc[:service_name]}",
+                                                                                   :enabled => true
+                                                                               })
+            }
+
+
             # Actual configuration generated here.
             config = {
                 :scalr => {
@@ -146,6 +155,10 @@ module Scalr
                             :path => node[:scalr_server][:routing][:graphics_path],
                             :dir => "#{data_dir_for node, 'rrd'}/graphics"
                         }
+                    },
+
+                    :crontab => {
+                        :services => cron_services
                     },
 
                     :ui => { :mindterm_enabled => true },

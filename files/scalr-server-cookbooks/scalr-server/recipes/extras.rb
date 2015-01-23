@@ -12,7 +12,7 @@
   iptables_ng_rule "scalr-plotter-#{ip_version}" do
     ip_version      ip_version
     rule            "--protocol tcp --dport #{node[:scalr_server][:service][:plotter_bind_port]} --match state --state NEW --jump ACCEPT"
-    action          (enabled_services(node).collect {|svc| svc[:service_name]}).include? 'plotter' ? :create : :delete
+    action          (enabled_services(node, :python).collect {|svc| svc[:service_name]}).include? 'plotter' ? :create : :delete
     ignore_failure  true
   end
 

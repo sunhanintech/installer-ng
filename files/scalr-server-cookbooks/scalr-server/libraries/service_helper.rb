@@ -4,64 +4,137 @@ module Scalr
     def _all_services
       [
           {
-              :service_name => 'msgsender',
+              :service_name => 'msgsender', :service_style => :python,
               :service_module => 'msg_sender', :service_extra_args => '',
           },
 
           {
-              :service_name => 'dbqueue',
+              :service_name => 'dbqueue', :service_style => :python,
               :service_module => 'dbqueue_event', :service_extra_args => '',
           },
 
           {
-              :service_name => 'plotter',
+              :service_name => 'plotter', :service_style => :python,
               :service_module => 'load_statistics', :service_extra_args => '--plotter',
           },
 
           {
-              :service_name => 'poller',
+              :service_name => 'poller', :service_style => :python,
               :service_module => 'load_statistics', :service_extra_args => '--poller',
           },
 
           {
-              :service_name => 'szrupdater',
+              :service_name => 'szrupdater', :service_style => :python,
               :service_module => 'szr_upd_service', :service_extra_args => '',
           },
 
           {
-              :service_name => 'analytics_poller',
+              :service_name => 'analytics_poller', :service_style => :python,
               :service_module => 'analytics_poller', :service_extra_args => '',
           },
 
           {
-              :service_name => 'analytics_processor',
+              :service_name => 'analytics_processor', :service_style => :python,
               :service_module => 'analytics_processing', :service_extra_args => '',
+          },
+
+          {
+              :service_name => 'cloud_poller', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'cloud_pricing', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'db_msr_maintenance', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'images_builder', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'images_cleanup', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'lease_manager', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'rotate', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'scalarizr_messaging', :service_style => :php,
+              :service_config => {
+                  :replicate => {
+                      :type => %w(HostInit BeforeHostUp HostUp)
+                  }
+              },
+          },
+
+          {
+              :service_name => 'scaling', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'scheduler', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'server_status_manager', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
+              :service_name => 'server_terminate', :service_style => :php,
+              :service_config => {},
           },
       ]
     end
 
-    def enabled_services(node)
+    def _services_for_style(style)
+      _all_services.keep_if { |svc|
+        svc[:service_style] == style
+      }
+    end
+
+    def enabled_services(node, style)
       enabled_services_attr = node[:scalr_server][:service][:enable]
       if enabled_services_attr.kind_of?(Array)
         # TODO - Might want to warn if one of the enabled services doesn't exist.
         # If this is an array, then these are the services we want to enable
-        _all_services.keep_if { |svc|
+        _services_for_style(style).keep_if { |svc|
           enabled_services_attr.include? svc[:service_name]
         }
       else
         # If not, assume it's a boolean (meaning "all services" or "no services")
-        enabled_services_attr ? _all_services : []
+        enabled_services_attr ? _services_for_style(style) : []
       end
     end
 
-    def disabled_services(node)
-      names_to_exclude = enabled_services(node).collect {|svc| svc[:service_name]}
-      _all_services.reject { |svc|
+    def disabled_services(node, style)
+      names_to_exclude = enabled_services(node, style).collect {|svc| svc[:service_name]}
+      _services_for_style(style).reject { |svc|
         names_to_exclude.include? svc[:service_name]
       }
     end
 
-    def _all_crons
+    def _historical_crons
+      # These cron jobs have been removed from Scalr, but we have to keep them here so that, upon an update,
+      # they get removed.
+
       all_crons = [
           {:hour => '*',    :minute => '*',    :ng => false, :name => 'Scheduler'},
           {:hour => '*',    :minute => '*/5',  :ng => false, :name => 'UsageStatsPoller'},
@@ -88,24 +161,11 @@ module Scalr
     end
 
     def enabled_crons(node)
-      enabled_crons_attr = node[:scalr_server][:cron][:enable]
-      if enabled_crons_attr.kind_of?(Array)
-        # TODO - Might want to warn if one of the enabled crons doesn't exist.
-        # If this is an array, then these are the services we want to enable
-        _all_crons.keep_if { |cron|
-          enabled_crons_attr.include? cron[:name]
-        }
-      else
-        # If not, assume it's a boolean (meaning "all services" or "no services")
-        enabled_crons_attr ? _all_crons : []
-      end
+      []
     end
 
     def disabled_crons(node)
-      names_to_exclude = enabled_crons(node).collect {|cron| cron[:name]}
-      _all_crons.reject { |cron|
-        names_to_exclude.include? cron[:name]
-      }
+      _historical_crons
     end
 
     # Helper to tell Apache whether to serve graphics #
@@ -114,7 +174,7 @@ module Scalr
 
       # Check for the two services
       expected_services = %w{plotter poller}
-      unless (enabled_services(node).collect { |service| service[:service_name] } & expected_services) == expected_services
+      unless (enabled_services(node, :python).collect { |service| service[:service_name] } & expected_services) == expected_services
         return false
       end
 

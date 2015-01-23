@@ -38,10 +38,8 @@ end
 
 # Actually launch the services
 
-enabled_services(node).each do |svc|
-  # Make sure we're only dealing with symbols here (recursively)
-
-
+# Python services first
+enabled_services(node, :python).each do |svc|
   name = "service-#{svc[:service_name]}"
   should_notify = should_notify_service?(node, name)
 
@@ -51,7 +49,7 @@ enabled_services(node).each do |svc|
                     " #{node[:scalr_server][:install_root]}/embedded/bin/python" \
                     " #{scalr_bundle_path node}/app/python/scalrpy/#{svc[:service_module]}.py" \
                     " --pid-file=#{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
-                    " --log-file=#{log_dir_for node, 'service'}/#{svc[:service_name]}.log" \
+                    " --log-file=#{log_dir_for node, 'service'}/python-#{svc[:service_name]}.log" \
                     " --user=#{node[:scalr_server][:app][:user]}" \
                     " --group=#{node[:scalr_server][:app][:user]}" \
                     " --config=#{scalr_bundle_path node}/app/etc/config.yml" \
@@ -62,6 +60,25 @@ enabled_services(node).each do |svc|
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.err"
     action          [:enable, :start]
     autostart       true
+    subscribes      :restart, 'template[scalr_config]' if should_notify
+    subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
+    subscribes      :restart, 'file[scalr_id]' if should_notify
+  end
+end
+
+# The broker should be added if *any* php service is running
+if enabled_services(node, :php).any?
+  name = 'zmq_service'
+  should_notify = should_notify_service?(node, name)
+
+  supervisor_service name do
+    command         "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'}" \
+                    " #{scalr_bundle_path node}/app/cron/service.php"
+    stdout_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.log"
+    stderr_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.err"
+    action          [:enable, :start]
+    autostart       true
+    user            node[:scalr_server][:app][:user]
     subscribes      :restart, 'template[scalr_config]' if should_notify
     subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
     subscribes      :restart, 'file[scalr_id]' if should_notify
