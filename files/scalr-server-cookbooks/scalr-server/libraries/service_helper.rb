@@ -142,7 +142,6 @@ module Scalr
           {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'BundleTasksManager'},
           {:hour => '*',    :minute => '*/15', :ng => true,  :name => 'MetricCheck'},
           {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Poller'},
-          {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
           {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'EBSManager'},
           {:hour => '*',    :minute => '*/20', :ng => false, :name => 'RolesQueue'},
           {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
@@ -160,12 +159,30 @@ module Scalr
       all_crons
     end
 
+    def _all_crons
+      [
+          {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
+      ]
+    end
+
     def enabled_crons(node)
-      []
+      enabled_crons_attr = node[:scalr_server][:cron][:enable]
+      if enabled_crons_attr.kind_of?(Array)
+        # TODO - Might want to warn if one of the enabled crons doesn't exist.
+        # If not, assume it's a boolean (meaning "all crons" or "no crons")
+        _all_crons.keep_if { |cron|
+          enabled_crons_attr.include? cron[:name]
+        }
+      else
+        enabled_crons_attr ? _all_crons : []
+      end
     end
 
     def disabled_crons(node)
-      _historical_crons
+      names_to_exclude = enabled_crons(node).collect {|cron| cron[:name]}
+      _all_crons.reject { |cron|
+        names_to_exclude.include? cron[:name]
+      } +  _historical_crons
     end
 
     # Helper to tell Apache whether to serve graphics #

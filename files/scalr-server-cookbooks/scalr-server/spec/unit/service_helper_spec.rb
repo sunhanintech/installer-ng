@@ -34,14 +34,27 @@ describe Scalr::ServiceHelper do
   describe '#crons' do
     it 'should return the right crons' do
       node.set[:scalr_server][:cron][:enable] = true
-      expect(dummy_class.new.enabled_crons(node).length).to equal(0)
-      expect(dummy_class.new.disabled_crons(node).length).to equal(19)
+      expect(dummy_class.new.enabled_crons(node).length).to equal(1)
+      expect(dummy_class.new.enabled_crons(node)[0][:name]).to eq('DNSManagerPoll')
+      expect(dummy_class.new.disabled_crons(node).length).to equal(18)
     end
 
     it 'should support false' do
       node.set[:scalr_server][:cron][:enable] = false
       expect(dummy_class.new.enabled_crons(node).length).to equal(0)
       expect(dummy_class.new.disabled_crons(node).length).to equal(19)
+    end
+
+    it 'should support filters' do
+      node.set[:scalr_server][:cron][:enable] = []
+      expect(dummy_class.new.enabled_crons(node).length).to equal(0)
+      expect(dummy_class.new.disabled_crons(node).length).to equal(19)
+    end
+
+    it 'should support filters' do
+      node.set[:scalr_server][:cron][:enable] = %w(DNSManagerPoll RotateLogs)
+      expect(dummy_class.new.enabled_crons(node).length).to equal(1)
+      expect(dummy_class.new.disabled_crons(node).length).to equal(18)
     end
   end
 
