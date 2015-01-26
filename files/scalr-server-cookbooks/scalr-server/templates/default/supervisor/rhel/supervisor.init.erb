@@ -20,10 +20,7 @@ start() {
     status -p <%= @run_dir %>/supervisord.pid scalr > /dev/null && echo "already running" && return 0
     daemon "<%= @supervisord %> -c <%= node['supervisor']['conffile'] %> <%= @node['supervisor']['daemon_options'] %>"
     RETVAL=$?
-    echo
-    [ $RETVAL -ne 0 ] && return $RETVAL
-    # We name the lock file scalr because that is what status() looks for.
-    touch /var/lock/subsys/scalr
+    return $RETVAL
 }
 
 stop() {
@@ -33,9 +30,7 @@ stop() {
     [ $? -eq 3 ] && echo "already stopped" && return 0
     killproc -p <%= @run_dir %>/supervisord.pid scalr
     RETVAL=$?
-    echo
-    [ $RETVAL -ne 0 ] && return $RETVAL
-    rm -f /var/lock/subsys/scalr
+    return $RETVAL
 }
 
 case "$1" in
