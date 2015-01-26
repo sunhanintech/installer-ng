@@ -2,4 +2,4 @@
 set -o errexit
 set -o nounset
 
-yum install "${PKG_FILE}"
+rpm -i "${PKG_FILE}"
