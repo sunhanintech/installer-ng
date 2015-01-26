@@ -2,7 +2,7 @@
 set -o errexit
 set -o nounset
 
-echo "Installing"
+echo "Installing from ${PKG_FILE}"
 /prepare_test.sh
 
 echo "Configuring"
