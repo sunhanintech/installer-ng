@@ -9,7 +9,7 @@ default[:scalr_server][:routing][:endpoint_host] = node.fqdn
 
 default[:scalr_server][:routing][:graphics_scheme] = node.scalr_server.routing.endpoint_scheme
 default[:scalr_server][:routing][:graphics_host] = node.scalr_server.routing.endpoint_host
-default[:scalr_server][:routing][:graphics_path] = '/graphics'
+default[:scalr_server][:routing][:graphics_path] = 'graphics'
 
 default[:scalr_server][:routing][:plotter_scheme] = node.scalr_server.routing.endpoint_scheme
 default[:scalr_server][:routing][:plotter_host] = node.scalr_server.routing.endpoint_host

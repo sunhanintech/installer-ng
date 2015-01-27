@@ -29,7 +29,7 @@ describe Scalr::ConfigHelper do
 
       node.set[:scalr_server][:routing][:graphics_scheme] = 'http'
       node.set[:scalr_server][:routing][:graphics_host] = 'test.com'
-      node.set[:scalr_server][:routing][:graphics_path] = '/graphics'
+      node.set[:scalr_server][:routing][:graphics_path] = 'graphics'
 
       node.set[:scalr_server][:routing][:plotter_scheme] = 'http'
       node.set[:scalr_server][:routing][:plotter_host] = 'test.com'
