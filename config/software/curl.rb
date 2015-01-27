@@ -18,13 +18,20 @@
 # TODO - Consider whether it'd be nice to actually have libssh2 here.
 # TODO - Check whether this still links against libgcrypt
 name 'curl'
-default_version '7.36.0'
+default_version '7.22.0'
 
 dependency 'zlib'
 dependency 'openssl'
 
-source url: "http://curl.haxx.se/download/curl-#{version}.tar.gz",
-       md5: "643a7030b27449e76413d501d4b8eb57"
+source url: "http://curl.haxx.se/download/curl-#{version}.tar.gz"
+
+version '7.22.0' do
+  source md5: "e8c36126d21c893f085aca233906b5cc"
+end
+
+version '7.36.0' do
+  source md5: "643a7030b27449e76413d501d4b8eb57"
+end
 
 relative_path "curl-#{version}"
 
