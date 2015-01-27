@@ -12,7 +12,7 @@ describe Scalr::ServiceHelper do
       expect(python_services).to eq(%w{msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor})
 
       php_services = dummy_class.new.enabled_services(node, :php).collect {|service| service[:service_name]}
-      expect(php_services.length).to equal(12)
+      expect(php_services.length).to equal(13)
     end
 
     it 'should support false' do
@@ -27,7 +27,7 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.disabled_services(node, :python).length).to eq(5)
 
       expect(dummy_class.new.enabled_services(node, :php).length).to eq(3)
-      expect(dummy_class.new.disabled_services(node, :php).length).to eq(9)
+      expect(dummy_class.new.disabled_services(node, :php).length).to eq(10)
     end
   end
 

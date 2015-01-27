@@ -39,6 +39,11 @@ module Scalr
           },
 
           {
+              :service_name => 'analytics_notifications', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
               :service_name => 'cloud_poller', :service_style => :php,
               :service_config => {},
           },
