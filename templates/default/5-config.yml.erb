@@ -93,6 +93,10 @@ scalr:
 
   crontab:
     services:
+      analytics_notifications:
+        enabled: yes
+        log: '<%= node[:scalr][:core][:log_dir] %>/analytics_notifications.log'
+
       cloud_poller:
         enabled: yes
         log: '<%= node[:scalr][:core][:log_dir] %>/cloud_poller.log'
