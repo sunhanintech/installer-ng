@@ -153,7 +153,7 @@ module Scalr
                             :scheme => node[:scalr_server][:routing][:graphics_scheme],
                             :host => node[:scalr_server][:routing][:graphics_host],
                             :path => node[:scalr_server][:routing][:graphics_path],
-                            :dir => "#{data_dir_for node, 'rrd'}/graphics"
+                            :dir => "#{data_dir_for node, 'service'}/graphics"
                         }
                     },
 

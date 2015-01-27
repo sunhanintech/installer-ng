@@ -28,7 +28,7 @@ directory log_dir_for(node, 'service') do
 end
 
 directory "#{data_dir_for(node, 'service')}/graphics" do
-  # This is wher we serve stats graphics from
+  # This is where we serve stats graphics from
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
