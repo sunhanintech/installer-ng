@@ -60,7 +60,7 @@ module Scalr
             cron_services = {}
             enabled_services(node, :php).each { |svc|
                 cron_services[svc[:service_name]] = svc[:service_config].merge({
-                                                                                   :log => "#{log_dir_for node, 'service'}/php-#{svc[:service_name]}",
+                                                                                   :log => "#{log_dir_for node, 'service'}/php-#{svc[:service_name]}.log",
                                                                                    :enabled => true
                                                                                })
             }
