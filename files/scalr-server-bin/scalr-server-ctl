@@ -4,7 +4,7 @@ set -o errexit
 
 
 usage_and_exit () {
-    echo "Usage: ctl [reconfigure | show-config | extras]"
+    echo "Usage: ctl [reconfigure | show-config | show-attributes | extras]"
     exit 1
 }
 
@@ -16,6 +16,8 @@ if [ "x$1" = "xreconfigure" ]; then
     solo="dna"
 elif [ "x$1" = "xshow-config" ]; then
     solo="show-config"
+elif [ "x$1" = "xshow-attributes" ]; then
+    solo="show-attributes"
 elif [ "x$1" = "xextras" ]; then
     solo="extras"
 else

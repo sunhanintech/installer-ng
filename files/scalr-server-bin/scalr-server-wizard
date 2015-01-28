@@ -1,0 +1,89 @@
+#!/bin/sh
+set -o nounset
+
+
+CTL="/opt/scalr-server/bin/scalr-server-ctl"
+PYTHON="/opt/scalr-server/embedded/bin/python"
+
+handle_error () {
+    echo "An error occurred. There might be a typo in your config file, or another issue."
+    echo "Run '${CTL} show-attributes' to get a stacktrace."
+    echo "If you can't solve the problem, file an issue on GitHub:"
+    echo "https://github.com/Scalr/installer-ng/issues/"
+    exit 1
+}
+
+printf "%s" "Please wait... "
+
+ATTRS=$("${CTL}" show-attributes 2>/dev/null)
+if [ $? -eq 1 ]; then
+    handle_error
+fi
+
+echo "Done!"
+
+set -o errexit
+
+ATTRS=$(printf "%s" "${ATTRS}" | "${PYTHON}" -c '
+import sys
+import json
+
+attrs = json.load(sys.stdin)
+
+for_print = [
+    attrs["routing"]["endpoint_host"],
+    ", ".join([str(ip_range) for ip_range in attrs["app"]["ip_ranges"]]),
+    attrs["config_dir"],
+]
+
+sys.stdout.write("\n".join(for_print))
+')
+
+OLDIFS="${IFS}"
+IFS="
+"
+set -- x ${ATTRS}
+shift
+IFS="${OLDIFS}"
+
+endpoint="${1}"
+ranges="${2}"
+config_dir="${3}"
+
+config_file="${config_dir}/scalr-server.rb"
+
+echo
+echo "Please double-check the following network settings."
+
+echo
+echo
+
+echo "--- Endpoint ---"
+echo "Your instances need to be able to connect to Scalr for Scalr to manage them."
+echo "To that end, Scalr will advertise its endpoint to your instances."
+echo "That endpoint must resolve to this instance."
+echo
+echo "Scalr will advertise the following endpoint: \"${endpoint}\""
+echo
+echo "Is this correct? If not, create (if necessary) and edit \"${config_file}\", and add your endpoint."
+echo "For example: routing[:endpoint_host] = \"my.endpoint.com\""
+
+echo
+echo
+
+echo "--- IP Ranges ---"
+echo "Scalr needs to connect to your instances to manage them."
+echo "To that end, Scalr will create Security Groups and whitelist its IP range in them."
+echo "At least one of those networks must include this instance's IP range."
+echo
+echo "Scalr will whitelist the following IP ranges: \"${ranges}\""
+echo
+echo "Is this correct? If not, create (if necessary) and edit \"${config_file}\", and add your IP ranges."
+echo "For example: app[:ip_ranges] = [\"1.2.3.4/32\", \"5.6.7.8/32\"]"
+
+echo
+echo
+
+echo "--- Next Steps ---"
+echo "If everything looks correct, run: '${CTL} reconfigure'"
+echo "If not, make the necessary changes, and re-run this script to check your configuration again."

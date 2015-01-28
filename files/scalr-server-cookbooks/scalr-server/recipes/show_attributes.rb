@@ -18,6 +18,6 @@
 
 include_recipe 'scalr-server::_config_dir'
 
-config = ScalrServer.generate_config node
+node.consume_attributes(ScalrServer.generate_config node)
 
-puts Chef::JSONCompat.to_json_pretty(config)
+puts Chef::JSONCompat.to_json_pretty(node[:scalr_server])

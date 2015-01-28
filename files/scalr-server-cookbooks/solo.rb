@@ -14,3 +14,6 @@ verbose_logging false
 # We don't actually make HTTPS requests here, so it doesn't hurt to enable verification to avoid a very
 # confusing (and possibly very concerning) error message.
 ssl_verify_mode :verify_peer
+
+# Log to stderr, so that our show_attributes and show_config recipes can be consumed by other programs.
+log_location STDERR
