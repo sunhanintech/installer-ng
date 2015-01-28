@@ -1,3 +1,55 @@
+########################
+# Defaults Preparation #
+########################
+require 'set'
+require 'resolv'
+
+# All of the below are of course just defaults, they can be overridden by setting the actual routing attributes.
+
+# If you're reading this, this will probably not be very relevant to you. This part of the attributes file basically
+# uses ohai data to try and guess good default values. But since you're customizing attributes, you don't really care
+# about default values (you'll probably be overriding those)!
+
+
+# IP Ranges #
+
+# Identify all the ips that appear to be ours
+node_ips = Set.new [node[:ipaddress]]
+[:local_ipv4_addrs, :public_ipv4_addrs].each { |ipaddress_set|
+  begin
+    node_ips.merge node[:cloud_v2][ipaddress_set]
+  rescue NoMethodError
+    # This will happen if the set doesn't exist
+    next
+  end
+}
+
+# Remove any nil IP.
+node_ips.reject! { |ipaddress| ipaddress.nil?}
+
+# Whitelist anything that appears to be ours.
+default_ip_ranges = node_ips.to_a.collect! { |ipaddress| "#{ipaddress}/32" }
+
+
+# Endpoint #
+
+# Try and identify the best endpoint we could use. By default, we use the ip address (meh).
+default_endpoint = node[:ipaddress]
+
+# Now, is there anything that resolves *directly* to us? If yes, use that.
+[node[:fqdn], node[:hostname], node[:cloud_v2][:public_hostname], node[:cloud_v2][:local_hostname]].each { |hostname|
+  begin
+    if node_ips.include? Resolv.getaddress hostname
+      default_endpoint = hostname
+      break
+    end
+  rescue Resolv::ResolvError, ArgumentError
+    # This might happen if the hostname doesn't resolve.. Or isn't a hostname
+    next
+  end
+}
+
+
 #######################
 # Installer Internals #
 #######################
@@ -25,21 +77,21 @@ default[:scalr_server][:install_root] = '/opt/scalr-server'
 
 # The following settings control the endpoint that Scalr advertises to users (browsers) and managed servers (Scalarizr).
 # They must properly point to a Scalr application server, or to a load balancer that forwards traffic to one.
-default[:scalr_server][:routing][:endpoint_scheme] = 'http'   # Protocol to use to access the endpoint (http | https)
-default[:scalr_server][:routing][:endpoint_host] = node.fqdn  # Host to use to access the endpoint (ip or hostname, hostname recommended)
+default[:scalr_server][:routing][:endpoint_scheme] = 'http'           # Protocol to use to access the endpoint (http | https)
+default[:scalr_server][:routing][:endpoint_host] = default_endpoint   # Host to use to access the endpoint (ip or hostname, hostname recommended)
 
 # The following settings control the endpoint Scalr advertises for load statistics graphics (images). They must point to
 # the serving hosting those graphs.
-default[:scalr_server][:routing][:graphics_scheme] = 'http'   # Same as above
-default[:scalr_server][:routing][:graphics_host] = node.fqdn  # Same as above
-default[:scalr_server][:routing][:graphics_path] = 'graphics' # Relative path where the graphics are served from.
+default[:scalr_server][:routing][:graphics_scheme] = 'http'           # Same as above
+default[:scalr_server][:routing][:graphics_host] = default_endpoint   # Same as above
+default[:scalr_server][:routing][:graphics_path] = 'graphics'         # Relative path where the graphics are served from.
 
 # THe following settings control the endpoint Scalr advertises for the load statistics plotter. This application is
 # generates the graphics (which are served at the graphics endpoint), and redirects the client (browser) to the graphics
 # endpoint.
-default[:scalr_server][:routing][:plotter_scheme] = 'http'    # Same as above
-default[:scalr_server][:routing][:plotter_host] = node.fqdn   # Same as above
-default[:scalr_server][:routing][:plotter_port] = 8080        # Port to advertise the app on (see bind_port below).
+default[:scalr_server][:routing][:plotter_scheme] = 'http'            # Same as above
+default[:scalr_server][:routing][:plotter_host] = default_endpoint    # Same as above
+default[:scalr_server][:routing][:plotter_port] = 8080                # Port to advertise the app on (see bind_port below).
 
 # The following settings control the MySQL host the Scalr application will use (authentication settings are below in
 # the :mysql section).
@@ -75,7 +127,7 @@ default[:scalr_server][:app][:user] = 'scalr'
 # See `../libraries/config_helper.rb` to see what they map to.
 default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
-default[:scalr_server][:app][:ip_ranges] = ["#{node.ipaddress}/32"]
+default[:scalr_server][:app][:ip_ranges] = default_ip_ranges
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
