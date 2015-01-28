@@ -4,4 +4,4 @@
 # before package is installed.
 #
 
-echo "You're about to install test!"
+exit 0

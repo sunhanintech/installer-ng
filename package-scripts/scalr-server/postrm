@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Perform necessary test removal steps
+# after package is uninstalled.
+#
+# Adapted from: https://github.com/chef/omnibus-chef/blob/master/package-scripts/chef/postrm
+
+cleanup_symlinks() {
+  binaries="ctl manage wizard"
+  for binary in ${binaries}; do
+    rm -f "/usr/bin/scalr-server-${binary}"
+  done
+}
+
+# Clean up binary symlinks if they exist
+# see: http://tickets.opscode.com/browse/CHEF-3022
+if [ ! -f /etc/redhat-release -a ! -f /etc/fedora-release -a ! -f /etc/system-release ]; then
+  # not a redhat-ish RPM-based system
+  cleanup_symlinks
+elif [ "x$1" = "x0" ]; then
+  # RPM-based system and we're deinstalling rather than upgrading
+  cleanup_symlinks
+fi
+
+exit 0
