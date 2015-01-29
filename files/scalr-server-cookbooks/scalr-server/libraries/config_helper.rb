@@ -1,4 +1,6 @@
 require 'safe_yaml'
+require 'chef/mash'
+require 'chef/mixin/deep_merge'
 require_relative './path_helper'
 require_relative './database_helper'
 require_relative './service_helper'
@@ -21,11 +23,6 @@ class Psych::Visitors::YAMLTree
         end
 
         @emitter.end_mapping
-    end
-
-    # We want to tolerate hashes and symbols
-    def visit_Symbol(o)
-        visit_String o.to_s
     end
 
 end
@@ -181,6 +178,22 @@ module Scalr
                     }
                 }
             }
+
+            # Using Mashes ships with Chef... And they stringify all the keys for us, which is great because it lets
+            # us ensure that:
+            # - Our keys are readable by PHP and Python (symbols aren't).
+            # - Our merge applies properly regardless of whether we used symbols or strings.
+            config = ::Mash.new config
+
+            # Prepare our override config
+            extra_config = node[:scalr_server][:app][:configuration]
+            unless extra_config.nil?
+                # We use hash_only_merge because we want to let the user override any configuration key they don't like,
+                # including arrays.
+                # Note that a regular deep_merge wouldn't work anyway, because it could result in us modifying
+                # items that are ultimately attributes (such as the ip_pool array).
+                ::Chef::Mixin::DeepMerge.hash_only_merge! config, Mash.new(extra_config)
+            end
 
             # The double dump / load stage is here to convert everything to "plain" objects that can then be loaded
             # by PHP / Python (because Chef attributes are *not* plain objects).

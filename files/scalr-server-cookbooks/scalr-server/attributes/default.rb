@@ -133,6 +133,25 @@ default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800
 
+# Hash of arbitrary configuration parameters to include in the Scalr configuration. This will be deeply merged
+# with the default configuration. Note that arrays are *not* deeply merged (so that you can remove values from their
+# defaults). Note also that most commonly used settings are exposed as attributes, but that they can be overriden here
+# anyway.
+#
+# Example:
+# {
+#   :scalr => {
+#     :auth_mode => 'ldap',
+#     :connections => {
+#       :ldap => {
+#         :host => 'localhost',
+#         ...
+#       }
+#     }
+#   }
+# }
+default[:scalr_server][:app][:configuration] = {}
+
 
 #######
 # Web #
