@@ -17,3 +17,7 @@ ssl_verify_mode :verify_peer
 
 # Log to stderr, so that our show_attributes and show_config recipes can be consumed by other programs.
 log_location STDERR
+
+# Use a dummy node name. This lets us ensure Chef doesn't fail if it's unable to determine the node name
+# (e.g. when run in a very limited docker container), which we don't use anyway.
+node_name 'scalr-server'
