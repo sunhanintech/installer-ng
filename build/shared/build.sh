@@ -31,9 +31,12 @@ set +o errexit
 cd /builder
 bin/omnibus build scalr-server
 ret=$?
+set -o errexit
+
+# Trim the bundle
+build/shared/optimize_repo.py "${GIT_CACHE_PATH}"
 
 # Back up the bundle
-set -o errexit
 echo "Backing up '${GIT_CACHE_PATH}' to '${GIT_BUNDLE_PATH}'"
 git --git-dir="${GIT_CACHE_PATH}" bundle create "${GIT_BUNDLE_PATH}" --tags
 
