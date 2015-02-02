@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+# __INSTALLER_REVISION__ # Used to bust the cache when a new revision is used (Omnibus caches based on file contents).
+
 name 'scalr-server-bin'
 
 source :path => File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
