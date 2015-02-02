@@ -61,6 +61,7 @@ enabled_services(node, :python).each do |svc|
     action          [:enable, :start]
     autostart       true
     subscribes      :restart, 'file[scalr_config]' if should_notify
+    subscribes      :restart, 'file[scalr_code]' if should_notify
     subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
     subscribes      :restart, 'file[scalr_id]' if should_notify
   end
@@ -80,6 +81,7 @@ if enabled_services(node, :php).any?
     autostart       true
     user            node[:scalr_server][:app][:user]
     subscribes      :restart, 'file[scalr_config]' if should_notify
+    subscribes      :restart, 'file[scalr_code]' if should_notify
     subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
     subscribes      :restart, 'file[scalr_id]' if should_notify
   end

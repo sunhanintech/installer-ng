@@ -54,6 +54,24 @@ file 'scalr_id' do
 end
 
 
+# Helper to reload daemons when the code is updated
+
+directory run_dir_for(node, 'app') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0775
+  recursive true
+end
+
+file 'scalr_code' do
+  path    "#{run_dir_for node, 'app'}/code"
+  content node[:scalr_server][:manifest][:full_revision]
+  owner   node[:scalr_server][:app][:user]
+  group   node[:scalr_server][:app][:user]
+  mode    0644
+end
+
+
 # TODO - Might as well be in a enable_web recipe, but... not a big deal for now.
 # TODO - Session GC cron when web is enabled!!
 # PHP sessions and error log dirs

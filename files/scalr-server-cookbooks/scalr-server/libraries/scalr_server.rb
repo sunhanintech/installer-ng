@@ -17,6 +17,7 @@ module ScalrServer
   default :cron, Mash.new
   default :service, Mash.new
   default :rrd, Mash.new
+  default :manifest, Mash.new
 
   class << self
 
@@ -56,7 +57,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{routing supervisor app mysql cron rrd service web}.each do |key|
+      %w{routing supervisor app mysql cron rrd service web manifest}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results
@@ -69,6 +70,7 @@ module ScalrServer
       if File.exists?(main_config_file_path node)
         ScalrServer.from_file(main_config_file_path node)
       end
+
       # Alternate config file. Probably where you want local settings, like what to enable
       if File.exists?(local_config_file_path node)
         ScalrServer.from_file(local_config_file_path node)
@@ -76,6 +78,11 @@ module ScalrServer
 
       # JSON secrets, or dynamically generated
       generate_secrets node
+
+      # Data from the manifest
+      Chef::JSONCompat.from_json(File.read(manifest_file_path node)).each do |k, v|
+        ScalrServer[:manifest][k] =  v
+      end
 
       # Actual attributes generation
       generate_hash
@@ -93,6 +100,10 @@ module ScalrServer
 
     def secrets_file_path(node)
       "#{node[:scalr_server][:config_dir]}/scalr-server-secrets.json"
+    end
+
+    def manifest_file_path(node)
+      "#{node[:scalr_server][:install_root]}/embedded/scalr/manifest.json"
     end
 
   end
