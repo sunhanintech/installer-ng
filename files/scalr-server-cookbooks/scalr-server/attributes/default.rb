@@ -36,11 +36,21 @@ default_ip_ranges = node_ips.to_a.collect! { |ipaddress| "#{ipaddress}/32" }
 # Try and identify the best endpoint we could use. By default, we use the ip address (meh).
 default_endpoint = node[:ipaddress]
 
-# Now, is there anything that resolves *directly* to us? If yes, use that.
-[node[:fqdn], node[:hostname], node[:cloud_v2][:public_hostname], node[:cloud_v2][:local_hostname]].each { |hostname|
+# Locate all candidates
+candidate_endpoints = [node[:fqdn], node[:hostname]]
+[:public_hostname, :local_hostname].each { |endpoint_key|
   begin
-    if node_ips.include? Resolv.getaddress hostname
-      default_endpoint = hostname
+    candidate_endpoints.push node[:cloud_v2][endpoint_key]
+  rescue NoMethodError
+    next
+  end
+}
+
+# Now, is there anything that resolves *directly* to us? If yes, use that.
+candidate_endpoints.each { |endpoint|
+  begin
+    if node_ips.include? Resolv.getaddress endpoint
+      default_endpoint = endpoint
       break
     end
   rescue Resolv::ResolvError, ArgumentError
