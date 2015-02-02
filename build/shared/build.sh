@@ -6,6 +6,8 @@ set -o pipefail
 GIT_CACHE_PATH="${OMNIBUS_BASE_DIR}/cache/git_cache/opt/scalr-server"
 GIT_BUNDLE_PATH="${OMNIBUS_PACKAGE_DIR}/git_cache.bundle"
 
+: ${OMNIBUS_LOG_LEVEL:="info"}
+
 # Prepare git config
 git config --global user.email "builder@scalr.com"
 git config --global user.name "Scalr Builder"
@@ -29,7 +31,7 @@ echo "Building: ${SCALR_VERSION}"
 
 set +o errexit
 cd /builder
-bin/omnibus build scalr-server
+bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" scalr-server
 ret=$?
 set -o errexit
 
