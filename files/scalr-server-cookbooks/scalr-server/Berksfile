@@ -8,6 +8,6 @@ cookbook 'selinux', '~> 0.8.0'
 cookbook 'ntp', '~> 1.5.0'
 cookbook 'iptables-ng', '~> 2.2.0'
 
-cookbook 'chef-sentry-handler', github: 'scalr-cookbooks/chef-sentry-handler', tag: 'v1.1.0+scalr'
+cookbook 'chef-sentry-handler', github: 'coderanger/chef-sentry-handler', tag: 'v1.0.0'
 cookbook 'rackspace_timezone', github: 'scalr-cookbooks/rackspace_timezone', tag: 'v1.0.1+scalr'
 cookbook 'supervisor', github: 'scalr-cookbooks/supervisor', tag: 'v0.4.13+scalr'

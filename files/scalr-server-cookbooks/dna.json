@@ -1,3 +1,9 @@
 {
-  "run_list": [ "recipe[scalr-server]" ]
+  "run_list": [
+    "recipe[chef-sentry-handler]",
+    "recipe[scalr-server]"
+  ],
+  "sentry": {
+    "dsn": "__SENTRY_DSN__"
+  }
 }

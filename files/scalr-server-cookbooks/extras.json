@@ -1,5 +1,6 @@
 {
   "run_list": [
+    "recipe[chef-sentry-handler]",
     "recipe[apt]",
     "recipe[apparmor]",
     "recipe[selinux::disabled]",
@@ -10,5 +11,8 @@
   ],
   "apt": {
     "compile_time_update": true
+  },
+  "sentry": {
+    "dsn": "__SENTRY_DSN__"
   }
 }
