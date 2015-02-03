@@ -41,7 +41,7 @@ end
 # Python services first
 enabled_services(node, :python).each do |svc|
   name = "service-#{svc[:service_name]}"
-  should_notify = should_notify_service?(node, name)
+  should_restart = service_is_up?(node, name)
 
   supervisor_service name do
     command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
@@ -60,17 +60,17 @@ enabled_services(node, :python).each do |svc|
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.err"
     action          [:enable, :start]
     autostart       true
-    subscribes      :restart, 'file[scalr_config]' if should_notify
-    subscribes      :restart, 'file[scalr_code]' if should_notify
-    subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
-    subscribes      :restart, 'file[scalr_id]' if should_notify
+    subscribes      :restart, 'file[scalr_config]' if should_restart
+    subscribes      :restart, 'file[scalr_code]' if should_restart
+    subscribes      :restart, 'file[scalr_cryptokey]' if should_restart
+    subscribes      :restart, 'file[scalr_id]' if should_restart
   end
 end
 
 # The broker should be added if *any* php service is running
 if enabled_services(node, :php).any?
   name = 'zmq_service'
-  should_notify = should_notify_service?(node, name)
+  should_restart = service_is_up?(node, name)
 
   supervisor_service name do
     command         "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'}" \
@@ -80,9 +80,9 @@ if enabled_services(node, :php).any?
     action          [:enable, :start]
     autostart       true
     user            node[:scalr_server][:app][:user]
-    subscribes      :restart, 'file[scalr_config]' if should_notify
-    subscribes      :restart, 'file[scalr_code]' if should_notify
-    subscribes      :restart, 'file[scalr_cryptokey]' if should_notify
-    subscribes      :restart, 'file[scalr_id]' if should_notify
+    subscribes      :restart, 'file[scalr_config]' if should_restart
+    subscribes      :restart, 'file[scalr_code]' if should_restart
+    subscribes      :restart, 'file[scalr_cryptokey]' if should_restart
+    subscribes      :restart, 'file[scalr_id]' if should_restart
   end
 end

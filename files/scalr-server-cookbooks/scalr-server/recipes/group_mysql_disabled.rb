@@ -1,3 +1,3 @@
 supervisor_service 'mysql' do
-  action service_exists?(node, 'mysql') ? [:stop, :disable] : [:disable]
+  action service_is_up?(node, 'mysql') ? [:stop, :disable] : [:disable]
 end

@@ -227,11 +227,7 @@ module Scalr
     end
 
     def service_is_up?(node, svc)
-      %w{RUNNING STARTING}.include? service_status(node, svc)
-    end
-
-    def should_notify_service?(node, svc)
-      service_exists?(node, svc) && service_is_up?(node, svc)
+      service_exists?(node, svc) && (%w{RUNNING STARTING}.include? service_status(node, svc))
     end
 
   end

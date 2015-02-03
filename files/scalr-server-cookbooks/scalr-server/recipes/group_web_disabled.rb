@@ -1,3 +1,3 @@
 supervisor_service 'httpd' do
-  action service_exists?(node, 'httpd') ? [:stop, :disable] : [:disable]
+  action service_is_up?(node, 'httpd') ? [:stop, :disable] : [:disable]
 end
