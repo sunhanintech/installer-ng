@@ -54,7 +54,8 @@ build do
 
     manifest = {
         :edition          => '__SCALR_APP_EDITION__',
-        :pretty_revision  => '__SCALR_APP_PRETTY_REVISION__',
+        :revision         => '__SCALR_APP_REVISION__',
+        :date             => '__SCALR_APP_DATE__',
         :full_revision    => '__SCALR_APP_FULL_REVISION__',
     }
 
