@@ -1,14 +1,8 @@
-cloud_v2 is needed in attributes/default.rb
-Reload all on Scalr version change
-
 logorate.
 nginx + proxy + ssl.
 
 supervisord processes: enable autorestart on all exit codes
 
-export TZ in supervisor init
-
 ID Marker
 
 Serve the graphics without the webapp
-Sentry
