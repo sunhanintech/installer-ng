@@ -1,2 +1,0 @@
-#!/bin/sh
-echo "ruby 1.9.3p448 (2013-06-27 revision 41675) [x86_64-darwin13.0.0]"
