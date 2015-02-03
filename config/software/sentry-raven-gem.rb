@@ -1,5 +1,5 @@
 name 'sentry-raven-gem'
-default_version '0.12.3'
+default_version '0.9.4'  # https://github.com/coderanger/chef-sentry-handler/blob/master/recipes/default.rb#L13
 
 dependency 'ruby'
 dependency 'rubygems'
