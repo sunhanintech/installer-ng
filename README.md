@@ -55,6 +55,8 @@ If you're happy with the configuration, run:
 
     scalr-server-ctl reconfigure
 
+If not, visit this link: [Packages - Installed Usage][20].
+
 
 Step 3: Access Scalr
 --------------------
@@ -76,7 +78,6 @@ We encourage you to review the following documentation entries:
 
   + [First Steps as a Scalr Administrator][10] - Unless you've administered a
     Scalr install before, this is where you should start.
-  + More
   + [Packages - Advanced Usage][20] - If you'd like to deploy a more
     complicated setup than the default configuration.
 
