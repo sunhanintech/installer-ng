@@ -25,6 +25,10 @@ else
   echo "No bundle to restore from (expected '${GIT_BUNDLE_PATH}')"
 fi
 
+# Cleanup old scalr-app src. This is needed because Omnibus does not properly
+# remove old srcs from the cache (and our src isn't constant, because we might have
+# two project workspaces in Jenkins)
+rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
 # Launch build. We handle errors manually so we disable errexit
 echo "Building: ${SCALR_VERSION}"
