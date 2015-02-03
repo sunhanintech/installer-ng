@@ -44,24 +44,29 @@ module Scalr
 
         def dump_scalr_configuration(node)
 
-            scalr_conn_details = mysql_base_params(node).merge({
-                                                                   :user => node[:scalr_server][:mysql][:scalr_user],
-                                                                   :pass => node[:scalr_server][:mysql][:scalr_password],
-                                                                   :name => node[:scalr_server][:mysql][:scalr_dbname],
-                                                               })
-            analytics_conn_details = scalr_conn_details.merge({
-                                                                  :name => node[:scalr_server][:mysql][:analytics_dbname],
-                                                              })
+            scalr_conn_details = mysql_scalr_params(node).merge({
+                :user => node[:scalr_server][:mysql][:scalr_user],
+                :pass => node[:scalr_server][:mysql][:scalr_password],
+                :name => node[:scalr_server][:mysql][:scalr_dbname],
+            })
+            scalr_conn_details.delete(:username)
+            scalr_conn_details.delete(:password)
 
+            analytics_conn_details = mysql_analytics_params(node).merge({
+                :user => node[:scalr_server][:mysql][:scalr_user],
+                :pass => node[:scalr_server][:mysql][:scalr_password],
+                :name => node[:scalr_server][:mysql][:analytics_dbname],
+            })
+            analytics_conn_details.delete(:username)
+            analytics_conn_details.delete(:password)
 
             cron_services = {}
             enabled_services(node, :php).each { |svc|
                 cron_services[svc[:service_name]] = svc[:service_config].merge({
-                                                                                   :log => "#{log_dir_for node, 'service'}/php-#{svc[:service_name]}.log",
-                                                                                   :enabled => true
-                                                                               })
+                    :log => "#{log_dir_for node, 'service'}/php-#{svc[:service_name]}.log",
+                    :enabled => true
+                })
             }
-
 
             # Actual configuration generated here.
             config = {

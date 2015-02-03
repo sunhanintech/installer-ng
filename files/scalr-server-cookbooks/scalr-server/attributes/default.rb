@@ -103,11 +103,6 @@ default[:scalr_server][:routing][:plotter_scheme] = 'http'            # Same as 
 default[:scalr_server][:routing][:plotter_host] = default_endpoint    # Same as above
 default[:scalr_server][:routing][:plotter_port] = 8080                # Port to advertise the app on (see bind_port below).
 
-# The following settings control the MySQL host the Scalr application will use (authentication settings are below in
-# the :mysql section).
-default[:scalr_server][:routing][:mysql_host] = '127.0.0.1'   # Same as above
-default[:scalr_server][:routing][:mysql_port] = 3306          # Port to use to connect to MySQL
-
 
 #######
 # App #
@@ -139,6 +134,13 @@ default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
 default[:scalr_server][:app][:ip_ranges] = default_ip_ranges
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
+
+# App MySQL configuration
+default[:scalr_server][:app][:mysql_scalr_host] = '127.0.0.1'
+default[:scalr_server][:app][:mysql_scalr_port] = 3306
+
+default[:scalr_server][:app][:mysql_analytics_host] = '127.0.0.1'
+default[:scalr_server][:app][:mysql_analytics_port] = 3306
 
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800
@@ -194,6 +196,8 @@ default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
 # Database configuration for MySQL.
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
 default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
+
+# TODO - Option to nly create specific tables
 
 # User MySQL should run as.
 default[:scalr_server][:mysql][:user] = 'mysql'

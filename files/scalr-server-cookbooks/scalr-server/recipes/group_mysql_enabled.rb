@@ -80,9 +80,11 @@ end
 # We want this to always run (including when not bootstrapping), to avoid keeping an unset root password (and others)
 # forever if it failed when we bootstrapped for the first time.
 # TODO - Consider just adding a file to provide a flag.
+root_nopass_params = mysql_admin_params node
+root_nopass_params.delete(:password)
 
 mysql_database 'set_root_passwords' do
-  connection      mysql_base_params(node).merge!({:username => 'root'})
+  connection      root_nopass_params
   database_name   'mysql'  # This MUST be set, otherwise Chef happily just discards our request because the null database doesn't exist.
   sql             "UPDATE mysql.user SET Password = PASSWORD('#{node[:scalr_server][:mysql][:root_password]}') WHERE User = 'root' AND Password = '';" \
                   ' FLUSH PRIVILEGES'
@@ -92,7 +94,7 @@ mysql_database 'set_root_passwords' do
 end
 
 mysql_database 'remove_anonymous_users' do
-  connection      mysql_root_params(node)
+  connection      mysql_admin_params(node)
   database_name   'mysql'
   sql             "DELETE FROM mysql.user WHERE User = ''; FLUSH PRIVILEGES;"
   action          :query
@@ -100,7 +102,7 @@ mysql_database 'remove_anonymous_users' do
 end
 
 mysql_database 'remove_access_to_test_databases' do
-  connection      mysql_root_params(node)
+  connection      mysql_admin_params(node)
   database_name   'mysql'
   sql             "DELETE FROM mysql.db WHERE Db LIKE 'test%'; FLUSH PRIVILEGES;"
   action          :query
@@ -119,7 +121,7 @@ end
 # Set up actual Scalr users
 
 mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
-  connection        mysql_root_params(node)
+  connection        mysql_admin_params(node)
   password          node[:scalr_server][:mysql][:scalr_password]
   host              node[:scalr_server][:mysql][:scalr_allow_connections_from]
   action            :create
@@ -136,12 +138,12 @@ scalr_databases = [
 
 scalr_databases.each do |scalr_database|
   mysql_database scalr_database do
-    connection  mysql_root_params(node)
+    connection  mysql_admin_params(node)
     action      :create
   end
 
   mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
-    connection    mysql_root_params(node)
+    connection    mysql_admin_params(node)
     database_name scalr_database
     action        :grant
   end

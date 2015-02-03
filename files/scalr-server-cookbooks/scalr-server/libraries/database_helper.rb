@@ -1,25 +1,33 @@
+require_relative './path_helper'
+
 module Scalr
   module DatabaseHelper
+    include Scalr::PathHelper
 
-    def mysql_base_params(node)
+    def mysql_admin_params(node)
       {
-          :host => node[:scalr_server][:routing][:mysql_host],
-          :port => node[:scalr_server][:routing][:mysql_port],
+          :socket   => "#{run_dir_for node, 'mysql' }/mysql.sock",
+          :username => 'root',
+          :password => node[:scalr_server][:mysql][:root_password],
       }
     end
 
-    def mysql_root_params(node)
-      mysql_base_params(node).merge({
-                                        :username => 'root',
-                                        :password => node[:scalr_server][:mysql][:root_password],
-                                    })
+    def mysql_scalr_params(node)
+      {
+          :host     => node[:scalr_server][:app][:mysql_scalr_host],
+          :port     => node[:scalr_server][:app][:mysql_scalr_port],
+          :username => node[:scalr_server][:mysql][:scalr_user],
+          :password => node[:scalr_server][:mysql][:scalr_password],
+      }
     end
 
-    def mysql_user_params(node)
-      mysql_base_params(node).merge({
-                                        :username => node[:scalr_server][:mysql][:scalr_user],
-                                        :password => node[:scalr_server][:mysql][:scalr_password],
-                                    })
+    def mysql_analytics_params(node)
+      {
+          :host     => node[:scalr_server][:app][:mysql_analytics_host],
+          :port     => node[:scalr_server][:app][:mysql_analytics_port],
+          :username => node[:scalr_server][:mysql][:scalr_user],
+          :password => node[:scalr_server][:mysql][:scalr_password],
+      }
     end
 
     def _mysql_connection(params, dbname)

@@ -17,14 +17,15 @@ describe Scalr::ConfigHelper do
       node.set[:scalr_server][:app][:ip_ranges] = %w{1.1.1.1 2.2.2.2}
       node.set[:scalr_server][:app][:email_from_address] = 'test@example.com'
       node.set[:scalr_server][:app][:email_from_name] = 'Test User'
+      node.set[:scalr_server][:app][:mysql_scalr_host] = '192.168.1.10'
+      node.set[:scalr_server][:app][:mysql_scalr_port] = 13306
+      node.set[:scalr_server][:app][:mysql_analytics_host] = '192.168.1.20'
+      node.set[:scalr_server][:app][:mysql_analytics_port] = 23306
 
       node.set[:scalr_server][:service][:enable] = true
       node.set[:scalr_server][:service][:plotter_bind_scheme] = 'http'
       node.set[:scalr_server][:service][:plotter_bind_host] = '0.0.0.0'
       node.set[:scalr_server][:service][:plotter_bind_port] = 8080
-
-      node.set[:scalr_server][:routing][:mysql_host] = '127.0.0.1'
-      node.set[:scalr_server][:routing][:mysql_port] = 3306
 
       node.set[:scalr_server][:routing][:endpoint_scheme] = 'http'
       node.set[:scalr_server][:routing][:endpoint_host] = 'test.com'
@@ -73,7 +74,9 @@ describe Scalr::ConfigHelper do
 
       expect(d['scalr']['auth_mode']).to eq('ldap')
 
-      expect(d['scalr']['connections']['mysql']['host']).to eq('127.0.0.1')
+      expect(d['scalr']['connections']['mysql']['host']).to eq('192.168.1.10')
+      expect(d['scalr']['analytics']['connections']['scalr']['host']).to eq('192.168.1.10')
+      expect(d['scalr']['analytics']['connections']['analytics']['host']).to eq('192.168.1.20')
       expect(d['scalr']['connections']['mysql']['port']).to eq(1234)
 
       expect(d['scalr']['connections']['ldap']['host']).to eq('localhost')

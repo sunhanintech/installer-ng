@@ -113,26 +113,34 @@ end
 # Load database structure and data
 
 mysql_database 'load scalr database structure' do
-  connection      mysql_user_params(node)
+  connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/structure.sql").read }
-  not_if          { mysql_has_table?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
+  not_if          { mysql_has_table?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
 mysql_database 'load scalr database data' do
-  connection      mysql_user_params(node)
+  connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/data.sql").read }
-  not_if          { mysql_has_rows?(mysql_user_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
+  not_if          { mysql_has_rows?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
 mysql_database 'load analytics database structure' do
-  connection      mysql_user_params(node)
+  connection      mysql_analytics_params(node)
   database_name   node[:scalr_server][:mysql][:analytics_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
-  not_if          { mysql_has_table?(mysql_user_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  not_if          { mysql_has_table?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  action          :query
+end
+
+mysql_database 'load analytics database data' do
+  connection      mysql_analytics_params(node)
+  database_name   node[:scalr_server][:mysql][:analytics_dbname]
+  sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
+  not_if          { mysql_has_rows?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
   action          :query
 end
 
@@ -171,14 +179,14 @@ admin_id = 1
 
 # The queries below are idempotent and only change the password in case it was set to the default.
 mysql_database 'set admin username' do
-  connection      mysql_user_params(node)
+  connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             "UPDATE account_users SET email='#{new_username}' WHERE id=#{admin_id} AND email='#{default_username}'"
   action          :query
 end
 
 mysql_database 'set admin password' do
-  connection      mysql_user_params(node)
+  connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             "UPDATE account_users SET password='#{hashed_new_password}' WHERE id=#{admin_id} AND password='#{hashed_default_password}'"
   action          :query

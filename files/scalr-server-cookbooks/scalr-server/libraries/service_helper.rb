@@ -1,5 +1,8 @@
+require_relative './path_helper'
+
 module Scalr
   module ServiceHelper
+    include Scalr::PathHelper
 
     def _all_services
       [
