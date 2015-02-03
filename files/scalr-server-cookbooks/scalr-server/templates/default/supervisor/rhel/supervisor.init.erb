@@ -13,6 +13,7 @@
 source /etc/rc.d/init.d/functions
 
 export PATH="<%= scalr_exec_path node %>"
+export TZ="<%= node[:rackspace_timezone][:config][:tz] %>"
 
 start() {
     echo -n "Starting supervisor: "
