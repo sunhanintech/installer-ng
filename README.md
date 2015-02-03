@@ -1,103 +1,86 @@
-test Omnibus project
-====================
-This project creates full-stack platform-specific packages for
-`test`!
+Scalr Installer
+===============
 
-Installation
-------------
-You must have a sane Ruby 1.9+ environment with Bundler installed. Ensure all
-the required gems are installed:
+Welcome to the Scalr installer!
 
-```shell
-$ bundle install --binstubs
-```
+Install instructions can be found below in this README, or
+[on the Scalr Wiki][00].
 
-Usage
------
-### Build
 
-You create a platform-specific package using the `build project` command:
+Supported Platforms
+-------------------
 
-```shell
-$ bin/omnibus build test
-```
+The Scalr Installer supports the following platforms:
 
-The platform/architecture type of the package created will match the platform
-where the `build project` command is invoked. For example, running this command
-on a MacBook Pro will generate a Mac OS X package. After the build completes
-packages will be available in the `pkg/` folder.
+  + Ubuntu: 12.04 and 14.04.
+  + CentOS / RHEL: 6 and 7.
 
-### Clean
+Support for similar distributions (e.g. Debian) can be added. Feel free to
+file an issue to request support.
 
-You can clean up all temporary files generated during the build process with
-the `clean` command:
 
-```shell
-$ bin/omnibus clean test
-```
+Deploying Scalr
+===============
 
-Adding the `--purge` purge option removes __ALL__ files generated during the
-build including the project install directory (`/opt/test`) and
-the package cache directory (`/var/cache/omnibus/pkg`):
+Step 1: Installation
+--------------------
 
-```shell
-$ bin/omnibus clean test --purge
-```
+Start by deploying the Scalr package appropriate for your system.
 
-### Publish
+### Ubuntu ###
 
-Omnibus has a built-in mechanism for releasing to a variety of "backends", such
-as Amazon S3. You must set the proper credentials in your `omnibus.rb` config
-file or specify them via the command line.
+    curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.deb | sudo bash
+    apt-get install -y scalr-server
 
-```shell
-$ bin/omnibus publish path/to/*.deb --backend s3
-```
+### CentOS / RHEL ###
 
-### Help
+    curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.rpm | sudo bash
+    yum install -y scalr-server
 
-Full help for the Omnibus command line interface can be accessed with the
-`help` command:
 
-```shell
-$ bin/omnibus help
-```
+Step 2: Configuration
+---------------------
 
-Kitchen-based Build Environment
--------------------------------
-Every Omnibus project ships will a project-specific
-[Berksfile](http://berkshelf.com/) that will allow you to build your omnibus projects on all of the projects listed
-in the `.kitchen.yml`. You can add/remove additional platforms as needed by
-changing the list found in the `.kitchen.yml` `platforms` YAML stanza.
+Once you've deployed the packages, you need to configure Scalr. Since Scalr
+can auto-detect configuration in most common deployment scenarios (e.g. when
+deploying on a cloud), you should first check whether the auto-detected
+configuration is suitable.
 
-This build environment is designed to get you up-and-running quickly. However,
-there is nothing that restricts you to building on other platforms. Simply use
-the [omnibus cookbook](https://github.com/opscode-cookbooks/omnibus) to setup
-your desired platform and execute the build steps listed above.
+Run the following command, and follow the instructions (`/usr/bin` needs to
+be on your `PATH`):
 
-The default build environment requires Test Kitchen and VirtualBox for local
-development. Test Kitchen also exposes the ability to provision instances using
-various cloud providers like AWS, DigitalOcean, or OpenStack. For more
-information, please see the [Test Kitchen documentation](http://kitchen.ci).
+    scalr-server-wizard
 
-Once you have tweaked your `.kitchen.yml` (or `.kitchen.local.yml`) to your
-liking, you can bring up an individual build environment using the `kitchen`
-command.
+If you're happy with the configuration, run:
 
-```shell
-$ bin/kitchen converge ubuntu-1204
-```
+    scalr-server-ctl reconfigure
 
-Then login to the instance and build the project as described in the Usage
-section:
 
-```shell
-$ bundle exec kitchen login ubuntu-1204
-[vagrant@ubuntu...] $ cd test
-[vagrant@ubuntu...] $ bundle install
-[vagrant@ubuntu...] $ ...
-[vagrant@ubuntu...] $ bin/omnibus build test
-```
+Step 3: Access Scalr
+--------------------
 
-For a complete list of all commands and platforms, run `kitchen list` or
-`kitchen help`.
+Once the `reconfigure` step, your Scalr instance is ready to use.
+
+Get your admin password from the Scalr secrets file in
+`/etc/scalr-server/scalr-server-secrets.json`, under `admin_password`.
+
+The admin username is `admin`.
+
+Use those credentials to login. Scalr is listening on port 80 on your server.
+
+
+Next Steps
+==========
+
+We encourage you to review the following documentation entries:
+
+  + [First Steps as a Scalr Administrator][10] - Unless you've administered a
+    Scalr install before, this is where you should start.
+  + More
+  + [Packages - Advanced Usage][20] - If you'd like to deploy a more
+    complicated setup than the default configuration.
+
+
+  [00]: https://scalr-wiki.atlassian.net/wiki/x/QgAeAQ
+  [10]: https://scalr-wiki.atlassian.net/wiki/x/fQAeAQ
+  [20]: https://scalr-wiki.atlassian.net/wiki/x/RgAeAQ
