@@ -31,6 +31,14 @@ fi
 # two project workspaces in Jenkins)
 rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
+# Before we do anything. Setup a trap to chown everything back to Jenkins' user.
+chown_all () {
+  cd "${OMNIBUS_PROJECT_DIR}"
+  chown -R "${JENKINS_UID}:${JENKINS_UID}" .
+}
+
+trap chown_all EXIT
+
 # Launch build. We handle errors manually so we disable errexit
 echo "Building: ${SCALR_VERSION}"
 
@@ -47,9 +55,5 @@ set -o errexit
 # Back up the bundle
 echo "Backing up '${GIT_CACHE_PATH}' to '${GIT_BUNDLE_PATH}'"
 git --git-dir="${GIT_CACHE_PATH}" bundle create "${GIT_BUNDLE_PATH}" --tags
-
-# Chown everything
-cd "${OMNIBUS_PACKAGE_DIR}"
-chown "${JENKINS_UID}:${JENKINS_UID}" ./*
 
 exit ${ret}
