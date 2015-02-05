@@ -19,7 +19,9 @@ if [ -f "${GIT_BUNDLE_PATH}" ]; then
   # Remove anything that might have existed before.
   mkdir --parents "${GIT_CACHE_PATH}"
   rm -rf "${GIT_CACHE_PATH}"
-  git clone --mirror "${GIT_BUNDLE_PATH}" "${GIT_CACHE_PATH}"
+  git clone --mirror "${GIT_BUNDLE_PATH}" "${GIT_CACHE_PATH}" || {
+    echo "WARNING: Unable to restore! ($?)"
+  }
 else
   echo "No bundle to restore from (expected '${GIT_BUNDLE_PATH}')"
 fi
