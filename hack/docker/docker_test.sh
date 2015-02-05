@@ -1,8 +1,29 @@
 #!/bin/bash
-echo "Docker Host is: ${DOCKER_HOST}"
+set -o errexit
+
+# Options processing
+
+FAST=0
+KEEP=0
+
+while true; do
+  if [ "${1}" = "fast" ]; then
+    FAST=1
+  elif [ "${1}" = "keep" ]; then
+    KEEP=1
+  elif [ -z "${1}" ]; then
+    break
+  else
+    echo "Unknown option: ${1}"
+  fi
+  shift
+done
+
+echo "FAST: $FAST"
+echo "KEEP: $KEEP"
+echo "DOCKER_HOST: ${DOCKER_HOST}"
 
 set -o nounset
-set -o errexit
 
 # Where are we?
 REL_HERE=$(dirname "${BASH_SOURCE}")
@@ -21,13 +42,6 @@ if [ -d "${scalr_candidate}" ]; then
   echo "${scalr_candidate}"
 else
   scalr_candidate=""
-
-FAST=0
-
-if [ "$#" -eq 1 ]; then
-  if [ "${1}" = "fast" ]; then
-    FAST=1
-  fi
 fi
 
 # Config
@@ -110,10 +124,11 @@ if [ "${FAST}" -eq 0 ]; then
   done
 
   # TODO - Test app!
-
-  for tier in "${tierNames[@]}"; do
-    docker rm -f "${DOCKER_PREFIX}-$tier" || true
-  done
+  if [ "${KEEP}" -eq 0 ]; then
+    for tier in "${tierNames[@]}"; do
+      docker rm -f "${DOCKER_PREFIX}-$tier" || true
+    done
+  fi
 fi
 
 
@@ -130,15 +145,14 @@ soloCmds=(
 )
 
 # Cleanup old box
-docker rm -f "${DOCKER_PREFIX}-solo"
+docker rm -f "${DOCKER_PREFIX}-solo" || true
 
-docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" "${imgArgs[@]}"
 docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "${imgArgs[@]}"
 
 for cmd in "${soloCmds[@]}"; do
   docker exec -it "${DOCKER_PREFIX}-solo" $cmd
 done
 
-docker rm -f "${DOCKER_PREFIX}-solo"
-
-# Finally, cleanup everything
+if [ "${KEEP}" -eq 0 ]; then
+  docker rm -f "${DOCKER_PREFIX}-solo"
+fi
