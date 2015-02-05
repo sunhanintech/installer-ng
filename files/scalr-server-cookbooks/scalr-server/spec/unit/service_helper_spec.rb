@@ -57,30 +57,4 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.disabled_crons(node).length).to equal(18)
     end
   end
-
-  describe '#apache' do
-    it 'should return true when everything is enabled' do
-      node.set[:scalr_server][:rrd][:enable] = true
-      node.set[:scalr_server][:service][:enable] = true
-      expect(dummy_class.new.apache_serve_graphics(node)).to be_truthy
-    end
-
-    it 'should return false when rrd is missing' do
-      node.set[:scalr_server][:rrd][:enable] = false
-      node.set[:scalr_server][:service][:enable] = true
-      expect(dummy_class.new.apache_serve_graphics(node)).to be_falsey
-    end
-
-    it 'should return false when the plotter is missing' do
-      node.set[:scalr_server][:rrd][:enable] = true
-      node.set[:scalr_server][:service][:enable] = %w{poller analytics_processor}
-      expect(dummy_class.new.apache_serve_graphics(node)).to be_falsey
-    end
-
-    it 'should return false when the poller is missing' do
-      node.set[:scalr_server][:rrd][:enable] = true
-      node.set[:scalr_server][:service][:enable] = %w{plotter analytics_poller}
-      expect(dummy_class.new.apache_serve_graphics(node)).to be_falsey
-    end
-  end
 end

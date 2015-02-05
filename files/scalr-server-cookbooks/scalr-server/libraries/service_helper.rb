@@ -196,22 +196,31 @@ module Scalr
       _filter_disabled(_all_crons, node[:scalr_server][:cron][:enable]) + _historical_crons
     end
 
-    # Helper to tell Apache whether to serve graphics #
+    # Web helper
 
-    def apache_serve_graphics(node)
+    def _all_web(node)
+      [
+          {
+              :name => 'app',
+              :root => "#{scalr_bundle_path node}/app/www",
+              :bind_host => node[:scalr_server][:web][:app_bind_host],
+              :bind_port => node[:scalr_server][:web][:app_bind_port],
+          },
+          {
+              :name => 'graphics',
+              :root => "#{data_dir_for node, 'service'}/graphics",
+              :bind_host => node[:scalr_server][:web][:graphics_bind_host],
+              :bind_port => node[:scalr_server][:web][:graphics_bind_port],
+          },
+      ]
+    end
 
-      # Check for the two services
-      expected_services = %w{plotter poller}
-      unless (enabled_services(node, :python).collect { |service| service[:name] } & expected_services) == expected_services
-        return false
-      end
+    def enabled_web(node)
+      _filter_enabled(_all_web(node), node[:scalr_server][:web][:enable])
+    end
 
-      # Check for rrd
-      unless node[:scalr_server][:rrd][:enable]
-        return false
-      end
-
-      true
+    def disabled_web(node)
+      _filter_disabled(_all_web(node), node[:scalr_server][:web][:enable])
     end
 
     # Service status helpers #

@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "Docker Host is: ${DOCKER_HOST}"
+
 set -o nounset
 set -o errexit
 
@@ -19,6 +21,13 @@ if [ -d "${scalr_candidate}" ]; then
   echo "${scalr_candidate}"
 else
   scalr_candidate=""
+
+FAST=0
+
+if [ "$#" -eq 1 ]; then
+  if [ "${1}" = "fast" ]; then
+    FAST=1
+  fi
 fi
 
 # Config
@@ -51,36 +60,61 @@ imgArgs=("${TEST_IMG}" "sleep" "${CLUSTER_LIFE}")
 CONF_FILE="${HERE}/scalr-server.rb"
 SECRETS_FILE="${HERE}/scalr-server-secrets.json"
 
-LOCAL_DB_FILE="${HERE}/scalr-server-local.db.rb"
 LOCAL_APP_FILE="${HERE}/scalr-server-local.app.rb"
+LOCAL_DB_FILE="${HERE}/scalr-server-local.db.rb"
+LOCAL_PROXY_FILE="${HERE}/scalr-server-local.proxy.rb"
+LOCAL_STATS_FILE="${HERE}/scalr-server-local.stats.rb"
+LOCAL_WORKER_FILE="${HERE}/scalr-server-local.worker.rb"
 
 clusterArgs=(
   "-v" "${CONF_FILE}:/etc/scalr-server/scalr-server.rb"
   "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json"
 )
+
+clientArgs=(
+  "--link=${DOCKER_PREFIX}-db:db"
+  "--link=${DOCKER_PREFIX}-ca:ca"
+)
+
 dbArgs=("-v" "${LOCAL_DB_FILE}:/etc/scalr-server/scalr-server-local.rb")
-appArgs=(
-  "-v" "${LOCAL_APP_FILE}:/etc/scalr-server/scalr-server-local.rb"
-  "--link=${DOCKER_PREFIX}-db:db" "--link=${DOCKER_PREFIX}-ca:ca"
+appArgs=("-v" "${LOCAL_APP_FILE}:/etc/scalr-server/scalr-server-local.rb")
+statsArgs=("-v" "${LOCAL_STATS_FILE}:/etc/scalr-server/scalr-server-local.rb")
+workerArgs=("-v" "${LOCAL_WORKER_FILE}:/etc/scalr-server/scalr-server-local.rb")
+proxyArgs=(
+  "-v" "${LOCAL_PROXY_FILE}:/etc/scalr-server/scalr-server-local.rb"
+  "--link=${DOCKER_PREFIX}-app-1:app-1"
+  "--link=${DOCKER_PREFIX}-app-2:app-2"
+  "--link=${DOCKER_PREFIX}-stats:stats"
   "--publish-all"
 )
 
-
-# Remove all old hosts
-docker rm -f "${DOCKER_PREFIX}"-{db,ca,app,solo} || true
+tierNames=("db" "ca" "app-1" "app-2" "stats" "worker" "proxy")
 
 
-# First, multi-host test
+if [ "${FAST}" -eq 0 ]; then
+  # Remove all old hosts
+  for tier in "${tierNames[@]}"; do
+    docker rm -f "${DOCKER_PREFIX}-$tier" || true
+  done
 
-docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
-docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
-docker run "${runArgs[@]}" "${clusterArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app" "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
+  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
 
-docker exec -it "${DOCKER_PREFIX}-db" scalr-server-ctl reconfigure
-docker exec -it "${DOCKER_PREFIX}-ca" scalr-server-ctl reconfigure
-docker exec -it "${DOCKER_PREFIX}-app" scalr-server-ctl reconfigure
+  for tier in "${tierNames[@]}"; do
+    docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure
+  done
 
-docker rm -f "${DOCKER_PREFIX}"-{db,ca,app}
+  # TODO - Test app!
+
+  for tier in "${tierNames[@]}"; do
+    docker rm -f "${DOCKER_PREFIX}-$tier" || true
+  done
+fi
 
 
 # Second, single host test. This has a more complex command sequence since we're actually exercising the
@@ -95,6 +129,10 @@ soloCmds=(
   "service scalr status"
 )
 
+# Cleanup old box
+docker rm -f "${DOCKER_PREFIX}-solo"
+
+docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" "${imgArgs[@]}"
 docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "${imgArgs[@]}"
 
 for cmd in "${soloCmds[@]}"; do

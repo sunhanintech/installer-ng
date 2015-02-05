@@ -1,7 +1,7 @@
 ServerRoot "<%= node[:scalr_server][:install_root] %>"
 PidFile "<%= run_dir_for node, 'httpd' %>/httpd.pid"
 
-Listen 80
+DefaultRuntimeDir <%= run_dir_for node, 'httpd' %>
 
 LoadModule authn_file_module        embedded/modules/mod_authn_file.so
 LoadModule authn_core_module        embedded/modules/mod_authn_core.so
@@ -30,72 +30,47 @@ LoadModule alias_module             embedded/modules/mod_alias.so
 LoadModule php5_module              embedded/modules/libphp5.so
 
 <IfModule unixd_module>
-    User    <%= node[:scalr_server][:app][:user] %>
-    Group   <%= node[:scalr_server][:app][:user] %>
+  User    <%= node[:scalr_server][:app][:user] %>
+  Group   <%= node[:scalr_server][:app][:user] %>
 </IfModule>
 
 ServerName <%= node[:scalr_server][:routing][:endpoint_host] %>
 ServerAdmin <%= node[:scalr_server][:app][:email_from_address] %>
 
 <Directory />
-    AllowOverride none
-    Require all denied
+AllowOverride none
+Require all denied
 </Directory>
 
-DocumentRoot <%= scalr_bundle_path node %>/app/www
-
-<Directory <%= scalr_bundle_path node %>/app/www>
-    Options -Indexes +FollowSymLinks +MultiViews
-    AllowOverride All
-    AuthType None
-    Order allow,deny
-    Allow from all
-    Satisfy All
-    Require all granted
-</Directory>
-
-<% if apache_serve_graphics node %>
-<IfModule alias_module>
-  Alias /<%= node[:scalr_server][:routing][:graphics_path] %>  <%= data_dir_for node, 'service' %>/graphics
-  <Directory <%= data_dir_for node, 'service' %>/graphics>
-      Options -Indexes +MultiViews
-      AuthType None
-      Order allow,deny
-      Allow from all
-      Satisfy All
-      Require all granted
-  </Directory>
-</IfModule>
-<% end %>
 
 <IfModule dir_module>
-    DirectoryIndex index.html
+  DirectoryIndex index.html
 </IfModule>
 
 <Files ".ht*">
-    Require all denied
+Require all denied
 </Files>
 
 LogLevel warn
 ErrorLog  <%= log_dir_for node, 'httpd' %>/web.error.log
 
 <IfModule log_config_module>
-    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
-    LogFormat "%h %l %u %t \"%r\" %>s %b" common
+  LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+  LogFormat "%h %l %u %t \"%r\" %>s %b" common
 
-    <IfModule logio_module>
-      # You need to enable mod_logio.c to use %I and %O
-      LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
-    </IfModule>
+  <IfModule logio_module>
+    # You need to enable mod_logio.c to use %I and %O
+    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
+  </IfModule>
 
-    CustomLog <%= log_dir_for node, 'httpd' %>/web.access.log combined
+  CustomLog <%= log_dir_for node, 'httpd' %>/web.access.log combined
 </IfModule>
 
 <IfModule mime_module>
-    TypesConfig embedded/etc/httpd/mime.types
-    AddType application/x-httpd-php .php
-    AddType application/x-compress .Z
-    AddType application/x-gzip .gz .tgz
+  TypesConfig embedded/etc/httpd/mime.types
+  AddType application/x-httpd-php .php
+  AddType application/x-compress .Z
+  AddType application/x-gzip .gz .tgz
 </IfModule>
 
 EnableSendfile on
@@ -111,3 +86,69 @@ EnableSendfile on
   MaxRequestWorkers      250
   MaxConnectionsPerChild   0
 </IfModule>
+
+
+# Web #
+
+<% enabled_web(node).each do |web| %>
+    Listen <%= web[:bind_host] %>:<%= web[:bind_port] %>
+<% end %>
+
+<% enabled_web(node).each do |web| %>
+    <VirtualHost *:<%= web[:bind_port] %>>
+      DocumentRoot <%= web[:root] %>
+
+      <Directory <%= web[:root] %>>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        AuthType None
+        Order allow,deny
+        Allow from all
+        Satisfy All
+        Require all granted
+      </Directory>
+
+    </VirtualHost>
+<% end %>
+
+
+# Proxy #
+
+<% if node[:scalr_server][:proxy][:enable] %>
+
+    LoadModule proxy_module                 embedded/modules/mod_proxy.so
+
+    LoadModule slotmem_shm_module           embedded/modules/mod_slotmem_shm.so
+    LoadModule proxy_balancer_module        embedded/modules/mod_proxy_balancer.so
+    LoadModule lbmethod_byrequests_module   embedded/modules/mod_lbmethod_byrequests.so
+
+    LoadModule proxy_http_module            embedded/modules/mod_proxy_http.so
+
+    Listen <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:bind_port] %>
+
+    <VirtualHost <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:bind_port] %>>
+      ProxyPass /graphics           balancer://graphics/
+      ProxyPass /load_statistics    balancer://plotter/
+      ProxyPass /                   balancer://app/ stickysession=PHPSESSIONID|phpsessionid
+      # PHPSESSIONID here is just a hack (until we get Memcached in).
+    </VirtualHost>
+
+    <Proxy balancer://app>
+    <% node[:scalr_server][:proxy][:app_upstreams].each do |upstream| %>
+        BalancerMember http://<%= upstream %>/
+    <% end %>
+    </Proxy>
+
+    <Proxy balancer://graphics>
+    <% node[:scalr_server][:proxy][:graphics_upstreams].each do |upstream| %>
+        BalancerMember http://<%= upstream %>/
+    <% end %>
+    </Proxy>
+
+    <Proxy balancer://plotter>
+    <% node[:scalr_server][:proxy][:plotter_upstreams].each do |upstream| %>
+        BalancerMember http://<%= upstream %>/load_statistics
+    <% end %>
+    </Proxy>
+
+<% end %>

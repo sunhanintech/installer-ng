@@ -1,6 +1,6 @@
+[proxy, mysql, cron, service, rrd].each do |mod|
+  mod[:enable] = false
+end
+
 app[:enable] = true
-web[:enable] = true
-mysql[:enable] = false
-cron[:enable] = true
-service[:enable] = true
-rrd[:enable] = true
+web[:enable] = ['app']
