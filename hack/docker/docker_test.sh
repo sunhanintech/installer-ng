@@ -59,11 +59,24 @@ docker exec -it "${DOCKER_PREFIX}-app" scalr-server-ctl reconfigure
 docker rm -f "${DOCKER_PREFIX}"-{db,ca,app}
 
 
-# Second, single host test
+# Second, single host test. This has a more complex command sequence since we're actually exercising the
+# installer.
+
+soloCmds=(
+  "scalr-server-ctl reconfigure"
+  "service scalr status"
+  "service scalr stop"
+  "sleep 10"
+  "scalr-server-ctl reconfigure"
+  "service scalr status"
+)
 
 docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" "${imgArgs[@]}"
-docker exec -it "${DOCKER_PREFIX}-solo" scalr-server-ctl reconfigure
-docker rm -f "${DOCKER_PREFIX}-solo"
 
+for cmd in "${soloCmds[@]}"; do
+  docker exec -it "${DOCKER_PREFIX}-solo" $cmd
+done
+
+docker rm -f "${DOCKER_PREFIX}-solo"
 
 # Finally, cleanup everything
