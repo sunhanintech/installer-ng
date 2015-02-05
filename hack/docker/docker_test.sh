@@ -96,6 +96,8 @@ statsArgs=("-v" "${LOCAL_STATS_FILE}:/etc/scalr-server/scalr-server-local.rb")
 workerArgs=("-v" "${LOCAL_WORKER_FILE}:/etc/scalr-server/scalr-server-local.rb")
 proxyArgs=(
   "-v" "${LOCAL_PROXY_FILE}:/etc/scalr-server/scalr-server-local.rb"
+  "-v" "${HERE}/ssl-test.crt:/ssl/ssl-test.crt"
+  "-v" "${HERE}/ssl-test.key:/ssl/ssl-test.key"
   "--link=${DOCKER_PREFIX}-app-1:app-1"
   "--link=${DOCKER_PREFIX}-app-2:app-2"
   "--link=${DOCKER_PREFIX}-stats:stats"

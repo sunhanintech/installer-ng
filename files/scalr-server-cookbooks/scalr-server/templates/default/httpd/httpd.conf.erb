@@ -116,6 +116,19 @@ EnableSendfile on
 
 <% if node[:scalr_server][:proxy][:enable] %>
 
+    <% if node[:scalr_server][:proxy][:ssl_enable] %>
+        LoadModule ssl_module embedded/modules/mod_ssl.so
+        Listen <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:ssl_bind_port] %>
+
+        <VirtualHost <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:ssl_bind_port] %>>
+          SSLEngine             on
+          SSLCertificateFile    <%= node[:scalr_server][:proxy][:ssl_cert_path] %>
+          SSLCertificateKeyFile <%= node[:scalr_server][:proxy][:ssl_key_path] %>
+
+          <%= render 'httpd/_proxy_partial.erb' %>
+        </VirtualHost>
+    <% end %>
+
     LoadModule proxy_module                 embedded/modules/mod_proxy.so
 
     LoadModule slotmem_shm_module           embedded/modules/mod_slotmem_shm.so
@@ -127,10 +140,12 @@ EnableSendfile on
     Listen <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:bind_port] %>
 
     <VirtualHost <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:bind_port] %>>
-      ProxyPass /graphics           balancer://graphics/
-      ProxyPass /load_statistics    balancer://plotter/
-      ProxyPass /                   balancer://app/ stickysession=PHPSESSIONID|phpsessionid
-      # PHPSESSIONID here is just a hack (until we get Memcached in).
+      <% if node[:scalr_server][:proxy][:ssl_enable] and node[:scalr_server][:proxy][:ssl_redirect] %>
+          Redirect / https://<%= node[:scalr_server][:routing][:endpoint_host] %>/
+          # TODO - endpoint_port
+      <% else %>
+        <%= render 'httpd/_proxy_partial.erb' %>
+      <% end %>
     </VirtualHost>
 
     <Proxy balancer://app>

@@ -6,7 +6,10 @@ proxy[:plotter_upstreams]  = ['stats:5000']
 proxy[:graphics_upstreams] = ['stats:6000']
 
 proxy[:bind_host] = '0.0.0.0'
-proxy[:bind_port] = '8000'
+proxy[:ssl_enable] = true
+proxy[:ssl_redirect] = false
+proxy[:ssl_cert_path] = '/ssl/ssl-test.crt'
+proxy[:ssl_key_path] = '/ssl/ssl-test.key'
 
 web[:app_bind_host] = '0.0.0.0'
 web[:app_bind_port] = 6000

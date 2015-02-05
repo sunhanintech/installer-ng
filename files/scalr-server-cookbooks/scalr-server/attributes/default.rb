@@ -89,6 +89,7 @@ default[:scalr_server][:install_root] = '/opt/scalr-server'
 # They must properly point to a Scalr application server, or to a load balancer that forwards traffic to one.
 default[:scalr_server][:routing][:endpoint_scheme] = 'http'           # Protocol to use to access the endpoint (http | https)
 default[:scalr_server][:routing][:endpoint_host] = default_endpoint   # Host to use to access the endpoint (ip or hostname, hostname recommended)
+# TODO - endpoint_port
 
 # The following settings control the endpoint Scalr advertises for load statistics graphics (images). They must point to
 # the serving hosting those graphs.
@@ -175,11 +176,18 @@ default[:scalr_server][:app][:configuration] = {}
 default[:scalr_server][:proxy][:enable] = true
 
 default[:scalr_server][:proxy][:bind_host] = '0.0.0.0'
-default[:scalr_server][:proxy][:bind_port] = '80'
+default[:scalr_server][:proxy][:bind_port] = 80  # Setting this to anything but 80 isn't really supported at this time.
 
 default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6010']
 default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6012']
 default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6014']
+
+default[:scalr_server][:proxy][:ssl_enable] = false
+default[:scalr_server][:proxy][:ssl_redirect] = true
+default[:scalr_server][:proxy][:ssl_bind_port] = 443  # Setting this to anything but 443 isn't really supported at this time.
+default[:scalr_server][:proxy][:ssl_cert_path] = nil
+default[:scalr_server][:proxy][:ssl_key_path] = nil
+
 
 
 #######
