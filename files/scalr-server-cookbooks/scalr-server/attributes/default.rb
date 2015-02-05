@@ -126,7 +126,7 @@ default[:scalr_server][:app][:id] = 'CHANGEME'              # /!\ IGNORED. Place
 default[:scalr_server][:app][:secret_key] = 'CHANGEME'      # /!\ IGNORED. Place it under `app.secret_key`.
 
 # User the Scalr app bits should run as.
-default[:scalr_server][:app][:user] = 'scalr'
+default[:scalr_server][:app][:user] = 'scalr-app'
 
 # The following settings are passed through to the Scalr configuration file (app/etc/config.yml).
 # See `../libraries/config_helper.rb` to see what they map to.
@@ -200,7 +200,7 @@ default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
 # TODO - Option to nly create specific tables
 
 # User MySQL should run as.
-default[:scalr_server][:mysql][:user] = 'mysql'
+default[:scalr_server][:mysql][:user] = 'scalr-mysql'
 
 
 ########

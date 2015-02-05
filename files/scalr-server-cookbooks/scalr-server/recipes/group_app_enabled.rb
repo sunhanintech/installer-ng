@@ -4,10 +4,11 @@ Chef::Resource::File.send(:include, Scalr::ConfigHelper)
 
 # user
 
-user node[:scalr_server][:app][:user] do
-  home   "#{node[:scalr_server][:install_root]}/embedded/scalr"
-  shell  '/bin/sh'  # TODO - Needed?
-  system true
+user 'scalr_user' do
+  username  node[:scalr_server][:app][:user]
+  home      "#{node[:scalr_server][:install_root]}/embedded/scalr"
+  shell     '/bin/sh'  # TODO - Needed?
+  system    true
 end
 
 

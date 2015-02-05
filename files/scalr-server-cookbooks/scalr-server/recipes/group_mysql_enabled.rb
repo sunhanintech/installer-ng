@@ -2,9 +2,10 @@ mysql_bootstrap_status_file = "#{data_dir_for node, 'mysql'}/bootstrapped"
 bootstrapped = File.exists?(mysql_bootstrap_status_file)
 
 # Add MySQL user
-user node[:scalr_server][:mysql][:user] do
-  home   data_dir_for(node, 'mysql')  # TODO - Check if this works when it doesn't exist.
-  system true
+user 'mysql_user' do
+  username  node[:scalr_server][:mysql][:user]
+  home      data_dir_for(node, 'mysql')  # TODO - Check if this works when it doesn't exist.
+  system    true
 end
 
 
@@ -73,6 +74,7 @@ supervisor_service 'mysql' do
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/mysql.err"
   action          [:enable, :start]
   autostart       true
+  subscribes      :restart, 'user[mysql_user]' if service_is_up?(node, 'mysql')
 end
 
 

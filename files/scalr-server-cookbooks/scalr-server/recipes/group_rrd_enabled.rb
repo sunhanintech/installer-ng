@@ -45,4 +45,5 @@ supervisor_service 'rrd' do
   user            node[:scalr_server][:app][:user]
   action          [:enable, :start]
   autostart       true
+  subscribes      :restart, 'user[scalr_user]' if service_is_up?(node, 'rrd')
 end
