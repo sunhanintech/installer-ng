@@ -80,7 +80,7 @@ IFS="
 find . -type d | xargs touch -t 7805200000
 
 # Loop through and fix timestamps on all files in our checked-out repository
-for file in $(git ls-files)
+for file in $(git ls-files $(git rev-parse --show-toplevel))
 do
   updateFileTimeStamp "${file}" "${file}"
 done

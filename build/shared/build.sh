@@ -12,7 +12,6 @@ GIT_BUNDLE_PATH="${OMNIBUS_PACKAGE_DIR}/git_cache.bundle"
 git config --global user.email "builder@scalr.com"
 git config --global user.name "Scalr Builder"
 
-
 # Do we have a bundle to restore?
 if [ -f "${GIT_BUNDLE_PATH}" ]; then
   echo "Restoring '${GIT_BUNDLE_PATH}' to '${GIT_CACHE_PATH}'"
@@ -34,13 +33,14 @@ rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 echo "Building: ${SCALR_VERSION}"
 
 set +o errexit
-cd /builder
+cd "${OMNIBUS_PROJECT_DIR}"
+bundle install --binstubs
 bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" scalr-server
 ret=$?
 set -o errexit
 
 # Trim the bundle
-build/shared/optimize_repo.py "${GIT_CACHE_PATH}"
+/optimize_repo.py "${GIT_CACHE_PATH}"
 
 # Back up the bundle
 echo "Backing up '${GIT_CACHE_PATH}' to '${GIT_BUNDLE_PATH}'"
@@ -48,6 +48,6 @@ git --git-dir="${GIT_CACHE_PATH}" bundle create "${GIT_BUNDLE_PATH}" --tags
 
 # Chown everything
 cd "${OMNIBUS_PACKAGE_DIR}"
-chown "${JENKINS_UID}:${JENKINS_UID}" *
+chown "${JENKINS_UID}:${JENKINS_UID}" ./*
 
 exit ${ret}

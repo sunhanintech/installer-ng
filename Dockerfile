@@ -27,6 +27,6 @@ RUN bash --login -c "cd /builder && bundle install --binstubs"
 ADD ./build/__PLATFORM_NAME__/prepare_test.sh /
 ADD ./build/__PLATFORM_NAME__/teardown_test.sh /
 
-ADD . /builder
-ENTRYPOINT ["/builder/build/shared/entrypoint.sh"]
-CMD ["/builder/build/shared/build.sh"]
+ADD ./build/shared /
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/build.sh"]
