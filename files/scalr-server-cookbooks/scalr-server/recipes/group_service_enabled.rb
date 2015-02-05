@@ -40,16 +40,16 @@ end
 
 # Python services first
 enabled_services(node, :python).each do |svc|
-  name = "service-#{svc[:service_name]}"
+  name = "service-#{svc[:name]}"
   should_restart = service_is_up?(node, name)
 
   supervisor_service name do
     command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
-                    " #{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
+                    " #{run_dir_for node, 'service'}/#{svc[:name]}.pid" \
                     " #{node[:scalr_server][:install_root]}/embedded/bin/python" \
                     " #{scalr_bundle_path node}/app/python/scalrpy/#{svc[:service_module]}.py" \
-                    " --pid-file=#{run_dir_for node, 'service'}/#{svc[:service_name]}.pid" \
-                    " --log-file=#{log_dir_for node, 'service'}/python-#{svc[:service_name]}.log" \
+                    " --pid-file=#{run_dir_for node, 'service'}/#{svc[:name]}.pid" \
+                    " --log-file=#{log_dir_for node, 'service'}/python-#{svc[:name]}.log" \
                     " --user=#{node[:scalr_server][:app][:user]}" \
                     " --group=#{node[:scalr_server][:app][:user]}" \
                     " --config=#{scalr_bundle_path node}/app/etc/config.yml" \

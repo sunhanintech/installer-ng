@@ -8,10 +8,10 @@ describe Scalr::ServiceHelper do
     it 'should return the right services' do
       node.set[:scalr_server][:service][:enable] = true
 
-      python_services = dummy_class.new.enabled_services(node, :python).collect {|service| service[:service_name]}
+      python_services = dummy_class.new.enabled_services(node, :python).collect {|service| service[:name]}
       expect(python_services).to eq(%w{msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor})
 
-      php_services = dummy_class.new.enabled_services(node, :php).collect {|service| service[:service_name]}
+      php_services = dummy_class.new.enabled_services(node, :php).collect {|service| service[:name]}
       expect(php_services.length).to equal(13)
     end
 
