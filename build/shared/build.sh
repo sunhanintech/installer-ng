@@ -42,10 +42,16 @@ trap chown_all EXIT
 # Launch build. We handle errors manually so we disable errexit
 echo "Building: ${SCALR_VERSION}"
 
-set +o errexit
 cd "${OMNIBUS_PROJECT_DIR}"
 bundle install --binstubs
-bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" scalr-server
+
+PROJECT="scalr-server"
+
+./bin/omnibus clean --purge "${PROJECT}"
+rm -rf "./pkg/*"  # For some reason, a duplicate of every package ends up there.
+
+set +o errexit
+./bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" "${PROJECT}"
 ret=$?
 set -o errexit
 
