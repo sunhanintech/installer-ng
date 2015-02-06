@@ -55,7 +55,7 @@ If you're happy with the configuration, run:
 
     scalr-server-ctl reconfigure
 
-If not, visit this link: [Packages - Installed Usage][20].
+If not, visit this link: [Packages - Advanced Usage][20].
 
 
 Step 3: Access Scalr
