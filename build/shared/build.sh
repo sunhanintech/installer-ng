@@ -47,7 +47,6 @@ bundle install --binstubs
 
 PROJECT="scalr-server"
 
-./bin/omnibus clean --purge "${PROJECT}"
 rm -rf "./pkg/*"  # For some reason, a duplicate of every package ends up there.
 
 set +o errexit
