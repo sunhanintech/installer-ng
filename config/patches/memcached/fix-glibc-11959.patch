@@ -1,0 +1,12 @@
+--- ./memcached.c	2015-01-01 08:50:52.000000000 +0100
++++ ./memcached.c	2015-02-06 13:49:46.000000000 +0100
+@@ -1274,7 +1274,8 @@
+ 
+     if (settings.verbose > 1) {
+         fprintf(stderr, "<%d %s ", c->sfd, should_touch ? "TOUCH" : "GET");
+-        fwrite(key, 1, nkey, stderr);
++        size_t compile_helper = fwrite(key, 1, nkey, stderr);
++        if (compile_helper) {/* this is a no-op block */};
+         fputc('\n', stderr);
+     }
+ 

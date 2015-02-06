@@ -1,0 +1,10 @@
+--- ./configure.ac	2015-02-06 14:39:48.000000000 +0100
++++ ./configure.ac	2015-02-06 14:39:40.000000000 +0100
+@@ -340,6 +340,7 @@
+ [
+   AC_TRY_COMPILE([
+     #ifdef HAVE_SASL_SASL_H
++    #include <stddef.h>
+     #include <sasl/sasl.h>
+     #include <sasl/saslplug.h>
+     #endif
