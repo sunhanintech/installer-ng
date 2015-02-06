@@ -27,6 +27,7 @@ build do
   # We patched configure.ac, so we should re-run autoconf.
   command 'aclocal', env: env
   command 'autoheader', env: env
+  command 'touch  README', env: env  # Crazyness
   command 'automake  --gnu --add-missing', env: env
   command 'autoconf', env: env
 
