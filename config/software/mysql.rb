@@ -43,8 +43,8 @@ build do
               '-DDEFAULT_CHARSET=utf8',
               '-DDEFAULT_COLLATION=utf8_unicode_ci',
               # MySQL runtime options. We set those to reasonable defaults that are used in the cookbook
-              "-DMYSQL_UNIX_ADDR=#{install_dir}/embedded/var/run/mysql/mysql.sock",
-              "-DSYSCONFDIR=#{install_dir}/embedded/etc/mysql",
+              "-DMYSQL_UNIX_ADDR=#{install_dir}/var/run/mysql/mysql.sock",
+              "-DSYSCONFDIR=#{install_dir}/etc/mysql",
               '.',
           ].join(' '), :env => env
 
