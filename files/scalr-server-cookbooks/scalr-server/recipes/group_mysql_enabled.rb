@@ -74,6 +74,7 @@ supervisor_service 'mysql' do
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/mysql.err"
   action          [:enable, :start]
   autostart       true
+  startsecs       5
   subscribes      :restart, 'user[mysql_user]' if service_is_up?(node, 'mysql')
 end
 
