@@ -47,7 +47,7 @@ bundle install --binstubs
 
 PROJECT="scalr-server"
 
-rm -rf "./pkg/*"  # For some reason, a duplicate of every package ends up there.
+rm -rf ./pkg/*  # For some reason, a duplicate of every package ends up there.
 
 set +o errexit
 ./bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" "${PROJECT}"
