@@ -15,6 +15,8 @@ dependency 'openssl'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  patch source: 'fix-stddef-include.patch'
+
   command './configure' \
           " --prefix=#{install_dir}/embedded" \
           ' --disable-sample' \
