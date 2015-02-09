@@ -26,6 +26,7 @@ dependency 'php-rrd'
 dependency 'php-ssh2'
 dependency 'php-yaml'
 dependency 'php-zmq'
+dependency 'php-memcached'
 
 # Other app dependencies
 dependency 'putty'
