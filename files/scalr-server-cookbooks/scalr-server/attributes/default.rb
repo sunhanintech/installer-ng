@@ -138,10 +138,10 @@ default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
 # App MySQL configuration
 default[:scalr_server][:app][:mysql_scalr_host] = '127.0.0.1'
-default[:scalr_server][:app][:mysql_scalr_port] = 3306      # TODO - Change, as well as bind_port
+default[:scalr_server][:app][:mysql_scalr_port] = 6280
 
 default[:scalr_server][:app][:mysql_analytics_host] = '127.0.0.1'
-default[:scalr_server][:app][:mysql_analytics_port] = 3306  # TODO - Change, as well as bind_port
+default[:scalr_server][:app][:mysql_analytics_port] = 6280
 
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800
@@ -170,17 +170,14 @@ default[:scalr_server][:app][:configuration] = {}
 # Proxy #
 #########
 
-# TODO - Currently this required having web
-# TODO - Add to ALL the locations
-
 default[:scalr_server][:proxy][:enable] = true
 
 default[:scalr_server][:proxy][:bind_host] = '0.0.0.0'
 default[:scalr_server][:proxy][:bind_port] = 80  # Setting this to anything but 80 isn't really supported at this time.
 
-default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6010']
-default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6012']
-default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6014']
+default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6270']
+default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6271']
+default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
 
 default[:scalr_server][:proxy][:ssl_enable] = false
 default[:scalr_server][:proxy][:ssl_redirect] = true
@@ -198,10 +195,10 @@ default[:scalr_server][:proxy][:ssl_key_path] = nil
 default[:scalr_server][:web][:enable] = true
 
 default[:scalr_server][:web][:app_bind_host] = '127.0.0.1'
-default[:scalr_server][:web][:app_bind_port] = 6010
+default[:scalr_server][:web][:app_bind_port] = 6270
 
 default[:scalr_server][:web][:graphics_bind_host] = '127.0.0.1'
-default[:scalr_server][:web][:graphics_bind_port] = 6012
+default[:scalr_server][:web][:graphics_bind_port] = 6271
 
 
 #########
@@ -216,7 +213,7 @@ default[:scalr_server][:mysql][:enable] = true
 
 # Configuration for MySQL
 default[:scalr_server][:mysql][:bind_host] = '127.0.0.1'  # Host MySQL should listen on.
-default[:scalr_server][:mysql][:bind_port] = 3306         # Port MySQL should bind to.  # TODO - Change from default.
+default[:scalr_server][:mysql][:bind_port] = 6280         # Port MySQL should bind to.
 
 # User configuration for MySQL. The passwords here behave just like `app.admin_password`
 default[:scalr_server][:mysql][:root_password] = 'CHANGEME'  # /!\ IGNORED. Place it under `mysql.root_password`.
@@ -256,7 +253,7 @@ default[:scalr_server][:service][:enable] = true
 # Settings specific to the plotter. These should be configured to match what you configured in routing (if needed).
 default[:scalr_server][:service][:plotter_bind_scheme] = 'http'
 default[:scalr_server][:service][:plotter_bind_host] = '127.0.0.1'
-default[:scalr_server][:service][:plotter_bind_port] = 6014
+default[:scalr_server][:service][:plotter_bind_port] = 6272
 
 
 #######
