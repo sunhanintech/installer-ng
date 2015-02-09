@@ -32,25 +32,21 @@ fi
 rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
 # Before we do anything. Setup a trap to chown everything back to Jenkins' user.
-chown_all () {
+cleanup () {
   cd "${OMNIBUS_PROJECT_DIR}"
+  rm -rf ./pkg/*  # For some reason, a duplicate of every package ends up there.
   chown -R "${JENKINS_UID}:${JENKINS_UID}" .
 }
 
-trap chown_all EXIT
+trap cleanup EXIT
 
 # Launch build. We handle errors manually so we disable errexit
 echo "Building: ${SCALR_VERSION}"
 
 cd "${OMNIBUS_PROJECT_DIR}"
-bundle install --binstubs
-
-PROJECT="scalr-server"
-
-rm -rf ./pkg/*  # For some reason, a duplicate of every package ends up there.
 
 set +o errexit
-./bin/omnibus build -l "${OMNIBUS_LOG_LEVEL}" "${PROJECT}"
+bundle exec omnibus build -l "${OMNIBUS_LOG_LEVEL}" "scalr-server"
 ret=$?
 set -o errexit
 
