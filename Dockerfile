@@ -21,8 +21,9 @@ RUN /install_utils.sh
 
 RUN bash --login -c "gem install package_cloud bundler berkshelf"
 
-ADD ./Gemfile /builder/Gemfile
-RUN bash --login -c "cd /builder && bundle install --binstubs"
+ADD ./Gemfile /Gemfile
+ENV BUNDLE_GEMFILE /Gemfile
+RUN bash --login -c "bundle install"
 
 ADD ./build/__PLATFORM_NAME__/prepare_test.sh /
 ADD ./build/__PLATFORM_NAME__/teardown_test.sh /
