@@ -2,15 +2,31 @@
 set -o nounset
 set -o errexit
 
+# Where are we?
+REL_HERE=$(dirname "${BASH_SOURCE}")
+HERE=$(cd "${REL_HERE}"; pwd)
+
+# Try and guess Scalr dir
+if [ "$(git rev-parse --abbrev-ref HEAD)" = "omnibus-package.oss" ]; then
+  repo_name="scalr"
+else
+  repo_name="int-scalr"
+fi
+scalr_candidate="${HERE}/../../../${repo_name}"
+
+if [ -d "${scalr_candidate}" ]; then
+  echo "It looks like you have a clone of Scalr in:"
+  echo "${scalr_candidate}"
+else
+  scalr_candidate=""
+fi
+
 # Config
 : ${DOCKER_PREFIX:="test-scalr"}
 : ${TEST_IMG:="scalr-server"}
+: ${SCALR_DIR:="${scalr_candidate}"}
 CLUSTER_LIFE="172800"
 
-# Start here
-
-REL_HERE=$(dirname "${BASH_SOURCE}")
-HERE=$(cd "${REL_HERE}"; pwd)
 
 # Prepare shared config
 COOKBOOK_DIR="${HERE}/../../files/scalr-server-cookbooks/scalr-server"
@@ -18,8 +34,15 @@ COOKBOOK_DIR="${HERE}/../../files/scalr-server-cookbooks/scalr-server"
 runArgs=(
   "-t" "-d"
   "-v" "${COOKBOOK_DIR}:/opt/scalr-server/embedded/cookbooks/scalr-server"
-  "--publish-all"
 )
+
+if [ -n "$SCALR_DIR" ]; then
+  # Mount app and sql separately to not blow away the manifest.
+  runArgs+=(
+    "-v" "${SCALR_DIR}/app:/opt/scalr-server/embedded/scalr/app"
+    "-v" "${SCALR_DIR}/sql:/opt/scalr-server/embedded/scalr/sql"
+  )
+fi
 
 imgArgs=("${TEST_IMG}" "sleep" "${CLUSTER_LIFE}")
 
@@ -39,6 +62,7 @@ dbArgs=("-v" "${LOCAL_DB_FILE}:/etc/scalr-server/scalr-server-local.rb")
 appArgs=(
   "-v" "${LOCAL_APP_FILE}:/etc/scalr-server/scalr-server-local.rb"
   "--link=${DOCKER_PREFIX}-db:db" "--link=${DOCKER_PREFIX}-ca:ca"
+  "--publish-all"
 )
 
 
@@ -71,7 +95,7 @@ soloCmds=(
   "service scalr status"
 )
 
-docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" "${imgArgs[@]}"
+docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "${imgArgs[@]}"
 
 for cmd in "${soloCmds[@]}"; do
   docker exec -it "${DOCKER_PREFIX}-solo" $cmd
