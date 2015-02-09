@@ -14,11 +14,15 @@ end
 
 # Scalr system directories
 
-directory "#{scalr_bundle_path node}/app/cache" do
+directory "#{run_dir_for(node, 'scalr')}/cache" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0770
   recursive true
+end
+
+link "#{scalr_bundle_path node}/app/cache" do
+  to "#{run_dir_for(node, 'scalr')}/cache"
 end
 
 directory "#{scalr_bundle_path node}/app/etc" do
@@ -28,10 +32,17 @@ directory "#{scalr_bundle_path node}/app/etc" do
   recursive true
 end
 
-# Scalr config files
+directory etc_dir_for(node, 'scalr') do
+  owner     'root'
+  group     'root'
+  mode      0755
+  recursive true
+end
+
+# Scalr config files, and links.
 
 file 'scalr_config' do
-  path    "#{scalr_bundle_path node}/app/etc/config.yml"
+  path    "#{etc_dir_for node, 'scalr'}/config.yml"
   content dump_scalr_configuration(node)
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -39,7 +50,7 @@ file 'scalr_config' do
 end
 
 file 'scalr_cryptokey' do
-  path    "#{scalr_bundle_path node}/app/etc/.cryptokey"
+  path    "#{etc_dir_for node, 'scalr'}/.cryptokey"
   content node[:scalr_server][:app][:secret_key]
   owner   'root'
   group   node[:scalr_server][:app][:user]
@@ -47,11 +58,17 @@ file 'scalr_cryptokey' do
 end
 
 file 'scalr_id' do
-  path    "#{scalr_bundle_path node}/app/etc/id"
+  path    "#{etc_dir_for node, 'scalr'}/id"
   content node[:scalr_server][:app][:id]
   owner   'root'
   group   node[:scalr_server][:app][:user]
   mode    0640
+end
+
+%w(config.yml .cryptokey id).each do |f|
+  link "#{scalr_bundle_path node}/app/etc/#{f}" do
+    to "#{etc_dir_for node, 'scalr'}/#{f}"
+  end
 end
 
 
