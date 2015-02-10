@@ -49,4 +49,5 @@ supervisor_service 'httpd' do
   autostart       true
   startsecs       5
   subscribes      :restart, 'user[scalr_user]' if service_is_up?(node, 'httpd')
+  subscribes      :restart, 'template[php_ini]' if service_is_up?(node, 'httpd')
 end

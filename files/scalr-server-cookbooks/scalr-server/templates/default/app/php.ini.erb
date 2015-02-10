@@ -1324,7 +1324,6 @@ bcmath.scale = 0
 [Session]
 ; Handler used to store/retrieve data.
 ; http://php.net/session.save-handler
-session.save_handler = files
 
 ; Argument passed to save_handler.  In the case of files, this is the path
 ; where data files are stored. Note: Windows users have to change this
@@ -1939,6 +1938,20 @@ extension=yaml.so
 extension=zmq.so
 extension=memcached.so
 
+; Scalr :: Sessions
+; View: https://github.com/php-memcached-dev/php-memcached/issues/47
+
+session.cookie_lifetime = <%= node[:scalr_server][:app][:session_cookie_lifetime] %>
+
+session.save_handler = memcached
+session.save_path = "<%= node[:scalr_server][:app][:memcached_host] %>:<%= node[:scalr_server][:app][:memcached_port] %>"
+
+memcached.use_sasl = On
+memcached.sess_binary = On
+memcached.sess_sasl_username = <%= node[:scalr_server][:memcached][:username] %>
+memcached.sess_sasl_password = <%= node[:scalr_server][:memcached][:password] %>
+
+
 ; Scalr :: Specific settings
 
 short_open_tag = On
@@ -1946,7 +1959,5 @@ disable_functions = ""
 register_globals = Off
 date.timezone = <%= node[:rackspace_timezone][:config][:tz] %>
 http.persistent.handles.limit = 0
-session.save_path = <%= run_dir_for node, 'php' %>/sessions
 error_log = <%= log_dir_for node, 'php' %>/php-errors.log
 display_errors = On
-session.cookie_lifetime = <%= node[:scalr_server][:app][:session_cookie_lifetime] %>

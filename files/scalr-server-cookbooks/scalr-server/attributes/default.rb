@@ -143,6 +143,10 @@ default[:scalr_server][:app][:mysql_scalr_port] = 6280
 default[:scalr_server][:app][:mysql_analytics_host] = '127.0.0.1'
 default[:scalr_server][:app][:mysql_analytics_port] = 6280
 
+# App Memcached configuration (sessions)
+default[:scalr_server][:app][:memcached_host] = '127.0.0.1'
+default[:scalr_server][:app][:memcached_port] = 6281
+
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800
 
@@ -262,6 +266,21 @@ default[:scalr_server][:service][:plotter_bind_port] = 6272
 
 # Whether to enable rrd. You should do so on one server where you also run the plotter and poller services.
 default[:scalr_server][:rrd][:enable] = true
+
+
+##############
+# Memcached #
+##############
+
+default[:scalr_server][:memcached][:enable] = true
+
+default[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
+default[:scalr_server][:memcached][:bind_port] = 6281
+
+default[:scalr_server][:memcached][:username] = 'scalr'
+default[:scalr_server][:memcached][:password] = 'CHANGEME'  # /!\ IGNORED. Place it under `memcached.password`.
+
+default[:scalr_server][:memcached][:user] = 'scalr-memcached'
 
 
 ##############

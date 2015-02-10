@@ -1,4 +1,3 @@
 ProxyPass /graphics           balancer://graphics/
 ProxyPass /load_statistics    balancer://plotter/
-ProxyPass /                   balancer://app/ stickysession=PHPSESSIONID|phpsessionid
-# PHPSESSIONID here is just a hack (until we get Memcached in).
+ProxyPass /                   balancer://app/

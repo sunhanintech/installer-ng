@@ -150,13 +150,13 @@ EnableSendfile on
 
     <Proxy balancer://app>
     <% node[:scalr_server][:proxy][:app_upstreams].each do |upstream| %>
-        BalancerMember http://<%= upstream %>/
+        BalancerMember http://<%= upstream %>
     <% end %>
     </Proxy>
 
     <Proxy balancer://graphics>
     <% node[:scalr_server][:proxy][:graphics_upstreams].each do |upstream| %>
-        BalancerMember http://<%= upstream %>/
+        BalancerMember http://<%= upstream %>
     <% end %>
     </Proxy>
 

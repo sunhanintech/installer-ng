@@ -1,4 +1,4 @@
-[proxy, mysql, cron, service, rrd].each do |mod|
+[proxy, mysql, memcached, cron, service, rrd].each do |mod|
   mod[:enable] = false
 end
 

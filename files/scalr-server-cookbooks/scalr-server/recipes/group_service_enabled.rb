@@ -85,5 +85,6 @@ if enabled_services(node, :php).any?
     subscribes      :restart, 'file[scalr_code]' if should_restart
     subscribes      :restart, 'file[scalr_cryptokey]' if should_restart
     subscribes      :restart, 'file[scalr_id]' if should_restart
+    subscribes      :restart, 'template[php_ini]' if should_restart
   end
 end
