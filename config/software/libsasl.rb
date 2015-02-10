@@ -9,6 +9,7 @@ end
 
 relative_path "cyrus-sasl-#{version}"
 
+dependency 'gdbm'
 dependency 'openssl'
 
 
@@ -17,13 +18,19 @@ build do
 
   patch source: 'fix-stddef-include.patch'
 
-  command './configure' \
-          " --prefix=#{install_dir}/embedded" \
+  command './configure ' \
+          ' --prefix=/opt/scalr-server/embedded' \
           ' --disable-sample' \
           ' --disable-gssapi' \
-          ' --without-dblib --without-dbpath' \
-          ' --without-gdbm' \
+          " --with-configdir=#{install_dir}/embedded/lib/sasl2 " \
+          " --with-plugindir=#{install_dir}/embedded/lib/sasl2 " \
+          ' --without-saslauthd' \
+          ' --enable-auth-sasldb' \
+          " --with-dbpath=#{install_dir}/embedded/etc/sasldb2" \
+          ' --with-dblib=gdbm' \
+          " --with-gdbm=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded", env: env
+
   make "-j #{workers}", env: env
   make "-j #{workers} check", env: env
   make "-j #{workers} install", env: env
