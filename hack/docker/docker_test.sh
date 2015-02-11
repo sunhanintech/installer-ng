@@ -4,28 +4,35 @@ set -o errexit
 # Options processing
 
 FAST=0
-VERY_FAST=0
+VERYFAST=0
 KEEP=0
+DEBUG=0
 
 while true; do
   if [ "${1}" = "fast" ]; then
     FAST=1
   elif [ "${1}" = "veryfast" ]; then
     FAST=1
-    VERY_FAST=1
+    VERYFAST=1
   elif [ "${1}" = "keep" ]; then
     KEEP=1
+  elif [ "${1}" = "debug" ]; then
+    DEBUG=1
   elif [ -z "${1}" ]; then
     break
   else
     echo "Unknown option: ${1}"
+    exit 1
   fi
   shift
 done
 
-echo "FAST: $FAST"
-echo "KEEP: $KEEP"
-echo "DOCKER_HOST: ${DOCKER_HOST}"
+echo "FAST: ${FAST}, VERYFAST:${VERYFAST}, KEEP: ${KEEP}, DEBUG: ${DEBUG}, DOCKER_HOST: ${DOCKER_HOST}"
+
+chronic=$(which chronic || true)
+if [ "${DEBUG}" -eq 1 ]; then
+  cronic=""
+fi
 
 set -o nounset
 
@@ -112,36 +119,37 @@ proxyArgs=(
   "--publish-all"
 )
 
-tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "worker" "proxy" "solo")
+tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "worker" "proxy")
 
 # Remove all old hosts
 echo "Removing old hosts"
 for tier in "${tierNames[@]}"; do
-  docker rm -f "${DOCKER_PREFIX}-$tier" || true
+  docker rm -f "${DOCKER_PREFIX}-$tier" >/dev/null 2>&1 || true
 done
 
 
 if [ "${FAST}" -eq 0 ]; then
 
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc"  "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
-  docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc"  "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
 
   for tier in "${tierNames[@]}"; do
-    docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure
+    $chronic docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure
   done
 
   # Run the test image
+  echo "Testing: ${DOCKER_PREFIX}-proxy"
   docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-proxy:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
 
   if [ "${KEEP}" -eq 0 ]; then
     for tier in "${tierNames[@]}"; do
-      docker rm -f "${DOCKER_PREFIX}-$tier" || true
+      docker rm -f "${DOCKER_PREFIX}-$tier" >/dev/null 2>&1 || true
     done
   fi
 fi
@@ -149,12 +157,13 @@ fi
 
 # Second, single host test. This has a more complex command sequence since we're actually exercising the
 # installer.
+docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
 
 soloCmds=(
   "scalr-server-ctl reconfigure"
 )
 
-if [ "${VERY_FAST}" -eq 0 ]; then
+if [ "${VERYFAST}" -eq 0 ]; then
   soloCmds+=(
     "service scalr status"
     "service scalr stop"
@@ -165,15 +174,16 @@ if [ "${VERY_FAST}" -eq 0 ]; then
 fi
 
 # Cleanup old box
-docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
+$chronic docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
 
 # Run tests
 for cmd in "${soloCmds[@]}"; do
-  docker exec -it "${DOCKER_PREFIX}-solo" $cmd
+  $chronic docker exec -it "${DOCKER_PREFIX}-solo" $cmd
 done
 
+echo "Testing: ${DOCKER_PREFIX}-solo"
 docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
 
 if [ "${KEEP}" -eq 0 ]; then
-  docker rm -f "${DOCKER_PREFIX}-solo"
+  docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
 fi
