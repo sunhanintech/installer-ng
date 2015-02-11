@@ -12,8 +12,10 @@ module ScalrServer
   default :routing, Mash.new
   default :supervisor, Mash.new
   default :mysql, Mash.new
+  default :memcached, Mash.new
   default :app, Mash.new
   default :web, Mash.new
+  default :proxy, Mash.new
   default :cron, Mash.new
   default :service, Mash.new
   default :rrd, Mash.new
@@ -35,15 +37,21 @@ module ScalrServer
       ScalrServer[:mysql][:root_password] ||= SecureRandom.hex 50
       ScalrServer[:mysql][:scalr_password] ||= SecureRandom.hex 50
 
+      ScalrServer[:memcached][:password] ||= SecureRandom.hex 50
+
       ScalrServer[:app][:admin_password] ||= SecureRandom.hex 12
       ScalrServer[:app][:secret_key] ||= SecureRandom.base64 512
       ScalrServer[:app][:id] ||= SecureRandom.hex 4
+
 
       File.open(secrets_file_path(node), 'w') do |f|
         f.puts(Chef::JSONCompat.to_json_pretty({
           :mysql => {
             :root_password          => ScalrServer[:mysql][:root_password],
             :scalr_password         => ScalrServer[:mysql][:scalr_password],
+          },
+          :memcached => {
+              :password => ScalrServer[:memcached][:password]
           },
           :app => {
             :admin_password => ScalrServer[:app][:admin_password],
@@ -57,7 +65,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{routing supervisor app mysql cron rrd service web manifest}.each do |key|
+      %w{routing supervisor app mysql cron rrd service web proxy memcached manifest}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results

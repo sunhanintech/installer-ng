@@ -118,8 +118,9 @@ directory etc_dir_for(node, 'php') do
   recursive true
 end
 
-# TODO - Check why I have /var/log/php-warnings.log
-template "#{etc_dir_for node, 'php'}/php.ini" do
+# TODO - Reload services on change here
+template 'php_ini' do
+  path      "#{etc_dir_for node, 'php'}/php.ini"
   source    'app/php.ini.erb'
   owner     'root'
   group     'root'

@@ -1,6 +1,5 @@
-app[:enable] = false
-web[:enable] = false
+[memcached, app, web, proxy, cron, service, rrd].each do |mod|
+  mod[:enable] = false
+end
+
 mysql[:enable] = true
-cron[:enable] = false
-service[:enable] = false
-rrd[:enable] = false

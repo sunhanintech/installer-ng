@@ -89,6 +89,7 @@ default[:scalr_server][:install_root] = '/opt/scalr-server'
 # They must properly point to a Scalr application server, or to a load balancer that forwards traffic to one.
 default[:scalr_server][:routing][:endpoint_scheme] = 'http'           # Protocol to use to access the endpoint (http | https)
 default[:scalr_server][:routing][:endpoint_host] = default_endpoint   # Host to use to access the endpoint (ip or hostname, hostname recommended)
+# TODO - endpoint_port
 
 # The following settings control the endpoint Scalr advertises for load statistics graphics (images). They must point to
 # the serving hosting those graphs.
@@ -101,7 +102,7 @@ default[:scalr_server][:routing][:graphics_path] = 'graphics'         # Relative
 # endpoint.
 default[:scalr_server][:routing][:plotter_scheme] = 'http'            # Same as above
 default[:scalr_server][:routing][:plotter_host] = default_endpoint    # Same as above
-default[:scalr_server][:routing][:plotter_port] = 8080                # Port to advertise the app on (see bind_port below).
+default[:scalr_server][:routing][:plotter_port] = 80                  # Port to advertise the plotter on (see bind_port below).
 
 
 #######
@@ -137,10 +138,14 @@ default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
 # App MySQL configuration
 default[:scalr_server][:app][:mysql_scalr_host] = '127.0.0.1'
-default[:scalr_server][:app][:mysql_scalr_port] = 3306
+default[:scalr_server][:app][:mysql_scalr_port] = 6280
 
 default[:scalr_server][:app][:mysql_analytics_host] = '127.0.0.1'
-default[:scalr_server][:app][:mysql_analytics_port] = 3306
+default[:scalr_server][:app][:mysql_analytics_port] = 6280
+
+# App Memcached configuration (sessions)
+default[:scalr_server][:app][:memcached_host] = '127.0.0.1'
+default[:scalr_server][:app][:memcached_port] = 6281
 
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800
@@ -165,12 +170,39 @@ default[:scalr_server][:app][:session_cookie_lifetime] = 1800
 default[:scalr_server][:app][:configuration] = {}
 
 
+#########
+# Proxy #
+#########
+
+default[:scalr_server][:proxy][:enable] = true
+
+default[:scalr_server][:proxy][:bind_host] = '0.0.0.0'
+default[:scalr_server][:proxy][:bind_port] = 80  # Setting this to anything but 80 isn't really supported at this time.
+
+default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6270']
+default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6271']
+default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
+
+default[:scalr_server][:proxy][:ssl_enable] = false
+default[:scalr_server][:proxy][:ssl_redirect] = true
+default[:scalr_server][:proxy][:ssl_bind_port] = 443  # Setting this to anything but 443 isn't really supported at this time.
+default[:scalr_server][:proxy][:ssl_cert_path] = nil
+default[:scalr_server][:proxy][:ssl_key_path] = nil
+
+
+
 #######
 # Web #
 #######
 
 # Whether to enable the Scalr web app.
 default[:scalr_server][:web][:enable] = true
+
+default[:scalr_server][:web][:app_bind_host] = '127.0.0.1'
+default[:scalr_server][:web][:app_bind_port] = 6270
+
+default[:scalr_server][:web][:graphics_bind_host] = '127.0.0.1'
+default[:scalr_server][:web][:graphics_bind_port] = 6271
 
 
 #########
@@ -185,7 +217,7 @@ default[:scalr_server][:mysql][:enable] = true
 
 # Configuration for MySQL
 default[:scalr_server][:mysql][:bind_host] = '127.0.0.1'  # Host MySQL should listen on.
-default[:scalr_server][:mysql][:bind_port] = 3306         # Port MySQL should bind to.
+default[:scalr_server][:mysql][:bind_port] = 6280         # Port MySQL should bind to.
 
 # User configuration for MySQL. The passwords here behave just like `app.admin_password`
 default[:scalr_server][:mysql][:root_password] = 'CHANGEME'  # /!\ IGNORED. Place it under `mysql.root_password`.
@@ -197,7 +229,7 @@ default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
 default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
 
-# TODO - Option to nly create specific tables
+# TODO - Option to only create specific tables
 
 # User MySQL should run as.
 default[:scalr_server][:mysql][:user] = 'scalr-mysql'
@@ -224,8 +256,8 @@ default[:scalr_server][:service][:enable] = true
 
 # Settings specific to the plotter. These should be configured to match what you configured in routing (if needed).
 default[:scalr_server][:service][:plotter_bind_scheme] = 'http'
-default[:scalr_server][:service][:plotter_bind_host] = '0.0.0.0'
-default[:scalr_server][:service][:plotter_bind_port] = 8080
+default[:scalr_server][:service][:plotter_bind_host] = '127.0.0.1'
+default[:scalr_server][:service][:plotter_bind_port] = 6272
 
 
 #######
@@ -234,6 +266,21 @@ default[:scalr_server][:service][:plotter_bind_port] = 8080
 
 # Whether to enable rrd. You should do so on one server where you also run the plotter and poller services.
 default[:scalr_server][:rrd][:enable] = true
+
+
+##############
+# Memcached #
+##############
+
+default[:scalr_server][:memcached][:enable] = true
+
+default[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
+default[:scalr_server][:memcached][:bind_port] = 6281
+
+default[:scalr_server][:memcached][:username] = 'scalr'
+default[:scalr_server][:memcached][:password] = 'CHANGEME'  # /!\ IGNORED. Place it under `memcached.password`.
+
+default[:scalr_server][:memcached][:user] = 'scalr-memcached'
 
 
 ##############
