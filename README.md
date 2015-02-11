@@ -22,6 +22,16 @@ file an issue to request support.
 Deploying Scalr
 ===============
 
+Step 0: Choosing Your Server
+----------------------------
+
+Scalr needs to be able to talk to the cloud APIs and instances you want to
+manage with it, and your instances need to be able to talk back to Scalr. You
+should ensure that the server you deploy Scalr to matches those requirements.
+
+For more information, review: [Required Network Configuration for Scalr][05].
+
+
 Step 1: Installation
 --------------------
 
@@ -83,5 +93,6 @@ We encourage you to review the following documentation entries:
 
 
   [00]: https://scalr-wiki.atlassian.net/wiki/x/QgAeAQ
+  [05]: https://scalr-wiki.atlassian.net/wiki/x/CYA0
   [10]: https://scalr-wiki.atlassian.net/wiki/x/fQAeAQ
   [20]: https://scalr-wiki.atlassian.net/wiki/x/RgAeAQ
