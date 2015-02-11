@@ -12,8 +12,8 @@ Supported Platforms
 
 The Scalr Installer supports the following platforms:
 
-  + Ubuntu: 12.04 and 14.04.
-  + CentOS / RHEL: 6 and 7.
+  + Ubuntu: 12.04 and 14.04. **amd64 packages only.**
+  + CentOS / RHEL: 6 and 7. **x86_64 packages only.**
 
 Support for similar distributions (e.g. Debian) can be added. Feel free to
 file an issue to request support.
