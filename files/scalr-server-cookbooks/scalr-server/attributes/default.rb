@@ -174,33 +174,41 @@ default[:scalr_server][:app][:configuration] = {}
 # Proxy #
 #########
 
+# Whether to enable the web proxy. The proxy is a reverse proxy for the various web components that make up Scalr.
 default[:scalr_server][:proxy][:enable] = true
 
+# The host and port the proxy should bind to (for http). See below for HTTPS.
 default[:scalr_server][:proxy][:bind_host] = '0.0.0.0'
 default[:scalr_server][:proxy][:bind_port] = 80  # Setting this to anything but 80 isn't really supported at this time.
 
+# HTTPS settings
+default[:scalr_server][:proxy][:ssl_enable] = false   # Whether to enable HTTPS
+default[:scalr_server][:proxy][:ssl_redirect] = true  # Whether to redirect from HTTP to HTTPS. You shouldn't enable this unless your cert is valid.
+default[:scalr_server][:proxy][:ssl_bind_port] = 443  # Setting this to anything but 443 isn't really supported at this time.
+default[:scalr_server][:proxy][:ssl_cert_path] = nil  # Path to the SSL cert that the proxy should use (required if SSL is enabled)
+default[:scalr_server][:proxy][:ssl_key_path] = nil   # Path to the SSL key that the proxy should use (required if SSL is enabled)
+
+# Upstream configuration for the proxy. These should all be lists of `host:port` entries.
 default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6270']
 default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6271']
 default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
-
-default[:scalr_server][:proxy][:ssl_enable] = false
-default[:scalr_server][:proxy][:ssl_redirect] = true
-default[:scalr_server][:proxy][:ssl_bind_port] = 443  # Setting this to anything but 443 isn't really supported at this time.
-default[:scalr_server][:proxy][:ssl_cert_path] = nil
-default[:scalr_server][:proxy][:ssl_key_path] = nil
-
 
 
 #######
 # Web #
 #######
 
-# Whether to enable the Scalr web app.
+# Whether to enable the Scalr web apps. There are two apps: "app", and "graphics". You can use `true` to enable both,
+# `false` to disable both, or use a list of those you'd like to enable (e.g. ['app']).
+# You can have multiple app servers, and they can live on different hosts, but you should only have one graphics server,
+# and it should live on the same host as `rrd` and the `plotter` and `poller` services.
 default[:scalr_server][:web][:enable] = true
 
+# The host and port the web app should be served on. Those settings should match proxy[:app_upstreams]
 default[:scalr_server][:web][:app_bind_host] = '127.0.0.1'
 default[:scalr_server][:web][:app_bind_port] = 6270
 
+# The host and port the graphics should be served on. Those settings should match proxy[:graphics_upstreams]
 default[:scalr_server][:web][:graphics_bind_host] = '127.0.0.1'
 default[:scalr_server][:web][:graphics_bind_port] = 6271
 
@@ -254,7 +262,8 @@ default[:scalr_server][:cron][:enable] = true
 # View the list of services that exist in `../libraries/service_helper.rb`, under the `_all_services` method.
 default[:scalr_server][:service][:enable] = true
 
-# Settings specific to the plotter. These should be configured to match what you configured in routing (if needed).
+# The scheme, host, and port the plotter should bind to.
+# Those settings should match proxy[:plotter_upstreams]
 default[:scalr_server][:service][:plotter_bind_scheme] = 'http'
 default[:scalr_server][:service][:plotter_bind_host] = '127.0.0.1'
 default[:scalr_server][:service][:plotter_bind_port] = 6272
@@ -272,14 +281,19 @@ default[:scalr_server][:rrd][:enable] = true
 # Memcached #
 ##############
 
+# Whether to enable memcached on this host. Memcached is used by Scalr for sessions.
 default[:scalr_server][:memcached][:enable] = true
 
+# The host / port memcached should bind to.
 default[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
 default[:scalr_server][:memcached][:bind_port] = 6281
 
+# The username / password Scalr and Memcached should use (this uses SASL authentication). Note that the password is
+# auto-generated and placed into the secrets file.
 default[:scalr_server][:memcached][:username] = 'scalr'
 default[:scalr_server][:memcached][:password] = 'CHANGEME'  # /!\ IGNORED. Place it under `memcached.password`.
 
+# The UNIX user Memcached should run as.
 default[:scalr_server][:memcached][:user] = 'scalr-memcached'
 
 
