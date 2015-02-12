@@ -7,6 +7,7 @@ FAST=0
 VERYFAST=0
 KEEP=0
 DEBUG=0
+CLEAN=0
 
 while true; do
   if [ "${1}" = "fast" ]; then
@@ -18,6 +19,8 @@ while true; do
     KEEP=1
   elif [ "${1}" = "debug" ]; then
     DEBUG=1
+  elif [ "${1}" = "clean" ]; then
+    CLEAN=1
   elif [ -z "${1}" ]; then
     break
   else
@@ -128,7 +131,7 @@ for tier in "${tierNames[@]}"; do
 done
 
 
-if [ "${FAST}" -eq 0 ]; then
+if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
 
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
@@ -159,31 +162,33 @@ fi
 # installer.
 docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
 
-soloCmds=(
-  "scalr-server-ctl reconfigure"
-)
-
-if [ "${VERYFAST}" -eq 0 ]; then
-  soloCmds+=(
-    "service scalr status"
-    "service scalr stop"
-    "sleep 10"
+if [ "${CLEAN}" -eq 0 ]; then
+  soloCmds=(
     "scalr-server-ctl reconfigure"
-    "service scalr status"
   )
-fi
 
-# Cleanup old box
-$chronic docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
+  if [ "${VERYFAST}" -eq 0 ]; then
+    soloCmds+=(
+      "service scalr status"
+      "service scalr stop"
+      "sleep 10"
+      "scalr-server-ctl reconfigure"
+      "service scalr status"
+    )
+  fi
 
-# Run tests
-for cmd in "${soloCmds[@]}"; do
-  $chronic docker exec -it "${DOCKER_PREFIX}-solo" $cmd
-done
+  # Cleanup old box
+  $chronic docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
 
-echo "Testing: ${DOCKER_PREFIX}-solo"
-docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
+  # Run tests
+  for cmd in "${soloCmds[@]}"; do
+    $chronic docker exec -it "${DOCKER_PREFIX}-solo" $cmd
+  done
 
-if [ "${KEEP}" -eq 0 ]; then
-  docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
+  echo "Testing: ${DOCKER_PREFIX}-solo"
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
+
+  if [ "${KEEP}" -eq 0 ]; then
+    docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
+  fi
 fi
