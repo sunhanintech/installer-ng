@@ -34,7 +34,7 @@ echo "FAST: ${FAST}, VERYFAST:${VERYFAST}, KEEP: ${KEEP}, DEBUG: ${DEBUG}, DOCKE
 
 chronic=$(which chronic || true)
 if [ "${DEBUG}" -eq 1 ]; then
-  cronic=""
+  chronic=""
 fi
 
 set -o nounset
