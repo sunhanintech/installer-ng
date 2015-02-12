@@ -4,7 +4,7 @@
   iptables_ng_rule "scalr-web-#{ip_version}" do
     ip_version      ip_version
     rule            '--protocol tcp --dport 80 --match state --state NEW --jump ACCEPT'  # TODO - Make port configurable.
-    action          node[:scalr_server][:web][:enable] ? :create : :delete
+    action          enable_module?(node, :web)? :create : :delete
     ignore_failure  true # We're trying both ipv4 and ipv6 - Just ignore failures.
   end
 
@@ -21,7 +21,7 @@
   iptables_ng_rule "scalr-mysql-#{ip_version}" do
     ip_version      ip_version
     rule            "--protocol tcp --dport #{node[:scalr_server][:mysql][:bind_port]} --match state --state NEW --jump ACCEPT"
-    action          (node[:scalr_server][:mysql][:enable] && !%w{localhost 127.0.0.1}.include?(node[:scalr_server][:mysql][:bind_host])) ? :create : :delete
+    action          (enable_module?(node, :mysql) && !%w{localhost 127.0.0.1}.include?(node[:scalr_server][:mysql][:bind_host])) ? :create : :delete
     ignore_failure  true
   end
 end

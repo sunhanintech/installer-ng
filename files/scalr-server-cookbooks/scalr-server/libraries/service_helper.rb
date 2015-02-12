@@ -8,21 +8,27 @@ module Scalr
     # Utilities #
     #############
 
-    def _filter_enabled(lst, attr)
-      if attr.kind_of?(Array)
-        # If the enabled attr is a list, then it means it's a list of names of services that should be enabled.
+    def _filter_enabled(node, mod, lst)
+      enable = enable_module? node, mod
+      disable_override = node[:scalr_server][mod][:disable]
+
+      if enable.kind_of?(Array)
+        # If this is a list, then it means it's a list of names of services that should be enabled.
         lst.select { |obj|
-          attr.include? obj[:name]
+          enable.include?(obj[:name])
         }
         # TODO - Check if a service doesn't exist!
       else
         # Otherwise, it either means all or none.
-        attr ? lst : []
-      end
+        enable ? lst : []
+      end.select { |obj|
+        # Remove everything where disable overrides enable.
+        not disable_override.include? obj[:name]
+      }
     end
 
-    def _filter_disabled(lst, attr)
-      exclude = _filter_enabled(lst, attr).collect {|svc| svc[:name]}
+    def _filter_disabled(node, mod, lst)
+      exclude = _filter_enabled(node, mod, lst).collect {|svc| svc[:name]}
       lst.reject { |svc|
         exclude.include? svc[:name]
       }
@@ -147,11 +153,11 @@ module Scalr
     end
 
     def enabled_services(node, style)
-      _filter_enabled(_services_for_style(style), node[:scalr_server][:service][:enable])
+      _filter_enabled(node, :service, _services_for_style(style))
     end
 
     def disabled_services(node, style)
-      _filter_disabled(_services_for_style(style), node[:scalr_server][:service][:enable])
+      _filter_disabled(node, :service, _services_for_style(style))
     end
 
     def _historical_crons
@@ -189,11 +195,11 @@ module Scalr
     end
 
     def enabled_crons(node)
-      _filter_enabled(_all_crons, node[:scalr_server][:cron][:enable])
+      _filter_enabled(node, :cron, _all_crons)
     end
 
     def disabled_crons(node)
-      _filter_disabled(_all_crons, node[:scalr_server][:cron][:enable]) + _historical_crons
+      _filter_disabled(node, :cron, _all_crons) + _historical_crons
     end
 
     # Web helper
@@ -216,11 +222,42 @@ module Scalr
     end
 
     def enabled_web(node)
-      _filter_enabled(_all_web(node), node[:scalr_server][:web][:enable])
+      _filter_enabled(node, :web, _all_web(node))
     end
 
     def disabled_web(node)
-      _filter_disabled(_all_web(node), node[:scalr_server][:web][:enable])
+      _filter_disabled(node, :web, _all_web(node))
+    end
+
+    # Generic module status helper #
+
+    def enable_module?(node, mod)
+      # Ensure that mod is a symbol
+      mod = mod.to_sym
+
+      # Supervisor is always enabled.
+      if mod == :supervisor
+        return true
+      end
+
+      # App is enabled if anything that requires the app user is enabled.
+      if mod == :app
+        %w{cron rrd service web proxy}.each do |dependent_mod|
+          if enable_module?(node, dependent_mod)
+            return true
+          end
+        end
+        return false
+      end
+
+      # HTTPD is enabled if we have web or proxy
+      if mod == :httpd
+        return enable_module?(node, :web) || enable_module?(node, :proxy)
+      end
+
+      # Ordering matters a lot in the line below. We want to return the module's own enable settings so that if it's
+      # not set to false, we get that one back (instead of a generic `true`). This then used in _filter enabled above.
+      node[:scalr_server][mod][:enable] || node[:scalr_server][:enable_all]
     end
 
     # Service status helpers #

@@ -114,7 +114,7 @@ EnableSendfile on
 
 # Proxy #
 
-<% if node[:scalr_server][:proxy][:enable] %>
+<% if enable_module?(node, :proxy) %>
 
     <% if node[:scalr_server][:proxy][:ssl_enable] %>
         LoadModule ssl_module embedded/modules/mod_ssl.so

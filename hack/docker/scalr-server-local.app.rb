@@ -1,6 +1,2 @@
-[proxy, mysql, memcached, cron, service, rrd].each do |mod|
-  mod[:enable] = false
-end
-
-app[:enable] = true
-web[:enable] = ['app']
+web[:enable] = true
+web[:disable] = ['graphics']

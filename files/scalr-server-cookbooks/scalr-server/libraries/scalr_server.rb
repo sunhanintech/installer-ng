@@ -20,6 +20,7 @@ module ScalrServer
   default :service, Mash.new
   default :rrd, Mash.new
   default :manifest, Mash.new
+  default :enable_all, true
 
   class << self
 
@@ -65,7 +66,7 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
-      %w{routing supervisor app mysql cron rrd service web proxy memcached manifest}.each do |key|
+      %w{routing supervisor app mysql cron rrd service web proxy memcached manifest enable_all}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
       results

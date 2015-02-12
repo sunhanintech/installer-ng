@@ -1,3 +1,5 @@
+enable_all false
+
 app[:mysql_scalr_host] = 'db'
 app[:mysql_scalr_port] = 3306
 

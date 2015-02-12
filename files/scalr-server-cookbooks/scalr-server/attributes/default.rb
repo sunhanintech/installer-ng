@@ -78,6 +78,13 @@ default[:scalr_server][:config_dir] = '/etc/scalr-server'
 # Unless you're cooking your own scalr-server packages, you shouldn't touch this.
 default[:scalr_server][:install_root] = '/opt/scalr-server'
 
+# By default, all the modules are enabled (and can be selectively disabled). Set this to `false` to reverse the
+# behavior, and disable everything by default (and selectively enable the modules you want). This is usually the first
+# thing you want to do if you're deploying a multi-host configuration. Be very careful when adding this to your config file,
+# the syntax is: `enable_all false`, not `enable_all = false` (note the absence of '=').
+# NOTE: *to achieve this goal, `enable_all` takes precedence over individual `enable` attributes.*
+default[:scalr_server][:enable_all] = true
+
 
 ###########
 # Routing #
@@ -108,12 +115,6 @@ default[:scalr_server][:routing][:plotter_port] = 80                  # Port to 
 #######
 # App #
 #######
-
-# Whether to enable the app (i.e. create app configuration, etc.). This does *not* control whether the Scalr webserver
-# will be launched. The only case where you should realistically set this to `false` is when you're only deploying
-# MySQL. Note that enabling `app` also loads the DB structure, and initial data, and performs migrations (so MySQL
-# must be available when you run the installer).
-default[:scalr_server][:app][:enable] = true
 
 # Admin settings. Note that admin_password *is not used*. Instead, the admin_password must be provided in
 # `/etc/scalr-server/scalr-server-secrets.json` (configurable through the `scalr_server.config_dir` attribute). If
@@ -175,7 +176,7 @@ default[:scalr_server][:app][:configuration] = {}
 #########
 
 # Whether to enable the web proxy. The proxy is a reverse proxy for the various web components that make up Scalr.
-default[:scalr_server][:proxy][:enable] = true
+default[:scalr_server][:proxy][:enable] = false
 
 # The host and port the proxy should bind to (for http). See below for HTTPS.
 default[:scalr_server][:proxy][:bind_host] = '0.0.0.0'
@@ -202,7 +203,11 @@ default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
 # `false` to disable both, or use a list of those you'd like to enable (e.g. ['app']).
 # You can have multiple app servers, and they can live on different hosts, but you should only have one graphics server,
 # and it should live on the same host as `rrd` and the `plotter` and `poller` services.
-default[:scalr_server][:web][:enable] = true
+default[:scalr_server][:web][:enable] = false
+
+# Whether to disable specific apps. This takes precedence over enable, so you can have enable all and then
+# selectively disable what you don't want.
+default[:scalr_server][:web][:disable] = []
 
 # The host and port the web app should be served on. Those settings should match proxy[:app_upstreams]
 default[:scalr_server][:web][:app_bind_host] = '127.0.0.1'
@@ -221,7 +226,7 @@ default[:scalr_server][:web][:graphics_bind_port] = 6271
 # it will *not* load their structure, data, or migrate them).
 # If you want to use your own MySQL server (or e.g. RDS), disable this, create a user, and create the databases (and
 # add grants).
-default[:scalr_server][:mysql][:enable] = true
+default[:scalr_server][:mysql][:enable] = false
 
 # Configuration for MySQL
 default[:scalr_server][:mysql][:bind_host] = '127.0.0.1'  # Host MySQL should listen on.
@@ -250,7 +255,10 @@ default[:scalr_server][:mysql][:user] = 'scalr-mysql'
 # Whether to enable cron. Set this to `true` or `false`, or pass a list of cron job *names* to enable
 # (e.g. ['DNSManagerPoll']). Note that each cron job should only run on one server.
 # View the list of available cron jobs in `../libraries/service_helper.rb`, under the `_all_crons` method.
-default[:scalr_server][:cron][:enable] = true
+default[:scalr_server][:cron][:enable] = false
+
+# Takes precedence over `enable` to disable specific crons.
+default[:scalr_server][:cron][:disable] = []
 
 ############
 # Services #
@@ -260,7 +268,10 @@ default[:scalr_server][:cron][:enable] = true
 # `true` to enable all services, `false` to disable all, or a list of *service names* to enable (e.g. ['images_cleanup']).
 # Note that the plotter and the poller *must* run on the same host (and `rrd` — see below — must run on that host too).
 # View the list of services that exist in `../libraries/service_helper.rb`, under the `_all_services` method.
-default[:scalr_server][:service][:enable] = true
+default[:scalr_server][:service][:enable] = false
+
+# Takes precedence over `enable` to disable specific services.
+default[:scalr_server][:service][:disable] = []
 
 # The scheme, host, and port the plotter should bind to.
 # Those settings should match proxy[:plotter_upstreams]
@@ -274,7 +285,7 @@ default[:scalr_server][:service][:plotter_bind_port] = 6272
 #######
 
 # Whether to enable rrd. You should do so on one server where you also run the plotter and poller services.
-default[:scalr_server][:rrd][:enable] = true
+default[:scalr_server][:rrd][:enable] = false
 
 
 ##############
@@ -282,7 +293,7 @@ default[:scalr_server][:rrd][:enable] = true
 ##############
 
 # Whether to enable memcached on this host. Memcached is used by Scalr for sessions.
-default[:scalr_server][:memcached][:enable] = true
+default[:scalr_server][:memcached][:enable] = false
 
 # The host / port memcached should bind to.
 default[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
@@ -300,10 +311,6 @@ default[:scalr_server][:memcached][:user] = 'scalr-memcached'
 ##############
 # Supervisor #
 ##############
-
-# Whether to enable supervisor (the process manager for Scalr). You realistically shouldn't touch this, because without
-# supervisor, nothing will run.
-default[:scalr_server][:supervisor][:enable] = true
 
 # The user to run supervisor as. Since supervisor su's to other users when running the processes above, using 'root'
 # is pretty much what you're supposed to do here.

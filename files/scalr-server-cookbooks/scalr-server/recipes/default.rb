@@ -16,8 +16,8 @@ include_recipe 'scalr-server::_config_dir'
 node.consume_attributes(ScalrServer.generate_config node)
 
 # Deploy modules
-%w{supervisor mysql memcached app cron rrd service web proxy}.each do |mod|
-  if node[:scalr_server][mod][:enable]
+%w{supervisor mysql memcached app cron rrd service web proxy httpd}.each do |mod|
+  if enable_module?(node, mod)
     include_recipe "scalr-server::group_#{mod}_enabled"
   else
     include_recipe "scalr-server::group_#{mod}_disabled"

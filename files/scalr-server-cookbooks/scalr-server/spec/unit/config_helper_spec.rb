@@ -7,6 +7,9 @@ describe Scalr::ConfigHelper do
 
   describe 'helper' do
     it 'should work' do
+      node.set[:scalr_server][:web][:disable] = []
+      node.set[:scalr_server][:cron][:disable] = []
+
       node.set[:scalr_server][:mysql][:root_password] = 'rootpass'
       node.set[:scalr_server][:mysql][:scalr_user] = 'user'
       node.set[:scalr_server][:mysql][:scalr_password] = 'scalrpass'
@@ -26,6 +29,7 @@ describe Scalr::ConfigHelper do
       node.set[:scalr_server][:service][:plotter_bind_scheme] = 'http'
       node.set[:scalr_server][:service][:plotter_bind_host] = '0.0.0.0'
       node.set[:scalr_server][:service][:plotter_bind_port] = 8080
+      node.set[:scalr_server][:service][:disable] = []
 
       node.set[:scalr_server][:routing][:endpoint_scheme] = 'http'
       node.set[:scalr_server][:routing][:endpoint_host] = 'test.com'
