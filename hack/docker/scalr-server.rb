@@ -1,35 +1,56 @@
+# Important note: any time you make changes to this file, you need to re-execute
+# scalr-server-ctl reconfigure
+
+# Disable everything by default. This ensures we only install what we specifically
+# enable.
 enable_all false
 
-app[:mysql_scalr_host] = 'db'
-app[:mysql_scalr_port] = 3306
+# Point the app to the Scalr main DB server.
+app[:mysql_scalr_host] = 'db'   # Change this to the hostname / IP of your Scalr main DB server.
+app[:mysql_scalr_port] = 3306   # Make sure this matches the MySQL bind port.
 
-app[:mysql_analytics_host] = 'ca'
-app[:mysql_analytics_port] = 3306
+# Point the app to the Scalr Cost Analytics DB server.
+app[:mysql_analytics_host] = 'ca'   # Change this to the hostname / IP of your Scalr main DB server.
+app[:mysql_analytics_port] = 3306   # Make sure this matches the MySQL bind port.
 
-app[:memcached_host] = 'mc'
-app[:memcached_port] = 11211
+# Point the app to Memcached
+app[:memcached_host] = 'mc'   # Change this to the hostname / IP of your Memcached server.
+app[:memcached_port] = 11211  # Change this to the Memcached bind port.
 
-proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']
-proxy[:plotter_upstreams]  = ['stats:5000']
-proxy[:graphics_upstreams] = ['stats:6000']
+# Configure the proxy.
+proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']  # Change this to a list of hostname:port that corresponds to your app servers.
+proxy[:plotter_upstreams]  = ['stats:5000']           # Same, but for your plotter server (you should only have one!), which should be running on your stats server.
+proxy[:graphics_upstreams] = ['stats:6000']           # Same, but for your graphics server, which should be running on your stats server as well.
 
-proxy[:bind_host] = '0.0.0.0'
-proxy[:ssl_enable] = true
-proxy[:ssl_redirect] = false
-proxy[:ssl_cert_path] = '/ssl/ssl-test.crt'
-proxy[:ssl_key_path] = '/ssl/ssl-test.key'
+proxy[:bind_host] = '0.0.0.0'   # Make sure the proxy doesn't listen on a local address
 
+# SSL settings. Note that all SSL settings are ignored if ssl_enable isn't set to true.
+proxy[:ssl_enable] = true                     # Unless you're setting up SSL, set this to Fale.
+proxy[:ssl_redirect] = false                  # Whether to redirect to HTTPS when Scalr is accessed over HTTP. Set this to true if your cert is valid.
+proxy[:ssl_cert_path] = '/ssl/ssl-test.crt'   # Path to your SSL cert
+proxy[:ssl_key_path] = '/ssl/ssl-test.key'    # Path to matching SSL key
+
+# App server settings.
+# This is all self-explanatory, but make sure those settings match your proxy[:app_upstreams] setting.
 web[:app_bind_host] = '0.0.0.0'
 web[:app_bind_port] = 6000
 
+# Graphics server settings.
+# Make sure those settings match your proxy[:graphics_upstreams] setting.
 web[:graphics_bind_host] = '0.0.0.0'
 web[:graphics_bind_port] = 6000
 
+# Plotter server settings.
+# Make sure those settings match your proxy[:plotter_upstreams] setting.
 service[:plotter_bind_host] = '0.0.0.0'
 service[:plotter_bind_port] = 5000
 
+# MySQL settings.
+# Since we're deploying multi-host, we make sure MySQL listens on all interfaces.
 mysql[:bind_host] = '0.0.0.0'
 mysql[:bind_port] = 3306
 
+# Memcached settings.
+# This is similar to the MySQL settings above.
 memcached[:bind_host] = '0.0.0.0'
 memcached[:bind_port] = 11211
