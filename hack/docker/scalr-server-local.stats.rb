@@ -1,3 +1,3 @@
 rrd[:enable] = true
 web[:enable] = ['graphics']
-service[:enable] = ['plotter', 'plotter']
+service[:enable] = ['plotter', 'poller']
