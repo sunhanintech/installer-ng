@@ -122,7 +122,7 @@ proxyArgs=(
   "--publish-all"
 )
 
-tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "worker" "proxy")
+tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "proxy" "worker")
 
 # Remove all old hosts
 echo "Removing old hosts"
@@ -139,11 +139,14 @@ if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
   $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
+  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
 
   for tier in "${tierNames[@]}"; do
-    $chronic docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure
+    $chronic docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure || {
+      echo "Error configuring: ${tier}"
+      exit 1
+    }
   done
 
   # Run the test image
