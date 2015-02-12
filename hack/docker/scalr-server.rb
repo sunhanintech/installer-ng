@@ -5,6 +5,25 @@
 # enable.
 enable_all false
 
+# Set up routing. You'll need to change this based on your environment
+
+# The two lines below are NOT configuration settings. They're just variables to minimize
+# repetition.
+proto = 'http'            # Set this to https if you enable SSL and have a valid cert.
+endpoint = 'example.com'  # Host name or IP of your proxy server.
+
+# These settings control the endpoints that are advertised to end users. Since we're
+# proxying everything, they should all be the same.
+routing[:endpoint_scheme] = proto
+routing[:endpoint_host] = endpoint
+
+routing[:graphics_scheme] = proto
+routing[:graphics_host] = endpoint
+
+routing[:plotter_scheme] = proto
+routing[:plotter_host] = endpoint
+routing[:plotter_port] = if proto == 'http' then 80 else 443 end
+
 # Point the app to the Scalr main DB server.
 app[:mysql_scalr_host] = 'db'   # Change this to the hostname / IP of your Scalr main DB server.
 app[:mysql_scalr_port] = 3306   # Make sure this matches the MySQL bind port.
@@ -16,6 +35,10 @@ app[:mysql_analytics_port] = 3306   # Make sure this matches the MySQL bind port
 # Point the app to Memcached
 app[:memcached_host] = 'mc'   # Change this to the hostname / IP of your Memcached server.
 app[:memcached_port] = 11211  # Change this to the Memcached bind port.
+
+# App settings
+app[:ip_ranges] = ['0.0.0.0/0']   # Change this to a list of IP ranges that covers all the IPs used by your Scalr servers.
+app[:configuration] = {}          # Inject extra Scalr configuration here if you'd like.
 
 # Configure the proxy.
 proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']  # Change this to a list of hostname:port that corresponds to your app servers.
