@@ -143,6 +143,11 @@ module Scalr
               :name => 'server_terminate', :service_style => :php,
               :service_config => {},
           },
+
+          {
+              :name => 'dns_manager', :service_style => :php,
+              :service_config => {},
+          },
       ]
     end
 
@@ -179,6 +184,7 @@ module Scalr
           {:hour => '*/5',  :minute => '0',    :ng => false, :name => 'RotateLogs'},
           {:hour => '*/12', :minute => '0',    :ng => false, :name => 'CloudPricing'},
           {:hour => '1',    :minute => '0',    :ng => false, :name => 'AnalyticsNotifications'},
+          {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
       ]
 
       all_crons.concat %w{SzrMessagingAll SzrMessagingBeforeHostUp SzrMessagingHostInit SzrMessagingHostUp}.collect {
@@ -189,9 +195,7 @@ module Scalr
     end
 
     def _all_crons
-      [
-          {:hour => '*',    :minute => '*',    :ng => false, :name => 'DNSManagerPoll'},
-      ]
+      []
     end
 
     def enabled_crons(node)

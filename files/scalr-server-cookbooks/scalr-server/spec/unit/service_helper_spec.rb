@@ -13,7 +13,7 @@ describe Scalr::ServiceHelper do
       expect(python_services).to eq(%w{msgsender dbqueue plotter poller szrupdater analytics_poller analytics_processor})
 
       php_services = dummy_class.new.enabled_services(node, :php).collect {|service| service[:name]}
-      expect(php_services.length).to eq(13)
+      expect(php_services.length).to eq(14)
     end
 
     it 'should work implicitly' do
@@ -25,7 +25,7 @@ describe Scalr::ServiceHelper do
       expect(python_services.length).to eq(7)
 
       php_services = dummy_class.new.enabled_services(node, :php).collect {|service| service[:name]}
-      expect(php_services.length).to eq(13)
+      expect(php_services.length).to eq(14)
     end
 
     it 'should support false' do
@@ -42,7 +42,7 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.disabled_services(node, :python).length).to eq(5)
 
       expect(dummy_class.new.enabled_services(node, :php).length).to eq(3)
-      expect(dummy_class.new.disabled_services(node, :php).length).to eq(10)
+      expect(dummy_class.new.disabled_services(node, :php).length).to eq(11)
     end
 
     it 'should support disable' do
@@ -52,7 +52,7 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.disabled_services(node, :python).length).to eq(6)
 
       expect(dummy_class.new.enabled_services(node, :php).length).to eq(2)
-      expect(dummy_class.new.disabled_services(node, :php).length).to eq(11)
+      expect(dummy_class.new.disabled_services(node, :php).length).to eq(12)
     end
 
     it 'should support disable' do
@@ -61,7 +61,7 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.enabled_services(node, :python).length).to eq(5)
       expect(dummy_class.new.disabled_services(node, :python).length).to eq(2)
 
-      expect(dummy_class.new.enabled_services(node, :php).length).to eq(12)
+      expect(dummy_class.new.enabled_services(node, :php).length).to eq(13)
       expect(dummy_class.new.disabled_services(node, :php).length).to eq(1)
     end
   end
@@ -70,35 +70,13 @@ describe Scalr::ServiceHelper do
     it 'should return the right crons' do
       node.set[:scalr_server][:cron][:enable] = true
       node.set[:scalr_server][:cron][:disable] = []
-      expect(dummy_class.new.enabled_crons(node).length).to eq(1)
-      expect(dummy_class.new.enabled_crons(node)[0][:name]).to eq('DNSManagerPoll')
-      expect(dummy_class.new.disabled_crons(node).length).to eq(18)
+      expect(dummy_class.new.enabled_crons(node).length).to eq(0)
+      expect(dummy_class.new.disabled_crons(node).length).to eq(19)
     end
 
     it 'should support false' do
       node.set[:scalr_server][:cron][:enable] = false
       node.set[:scalr_server][:cron][:disable] = []
-      expect(dummy_class.new.enabled_crons(node).length).to eq(0)
-      expect(dummy_class.new.disabled_crons(node).length).to eq(19)
-    end
-
-    it 'should support filters' do
-      node.set[:scalr_server][:cron][:enable] = []
-      node.set[:scalr_server][:cron][:disable] = []
-      expect(dummy_class.new.enabled_crons(node).length).to eq(0)
-      expect(dummy_class.new.disabled_crons(node).length).to eq(19)
-    end
-
-    it 'should support filters' do
-      node.set[:scalr_server][:cron][:enable] = %w(DNSManagerPoll RotateLogs)
-      node.set[:scalr_server][:cron][:disable] = []
-      expect(dummy_class.new.enabled_crons(node).length).to eq(1)
-      expect(dummy_class.new.disabled_crons(node).length).to eq(18)
-    end
-
-    it 'should support disabled' do
-      node.set[:scalr_server][:cron][:enable] = %w(DNSManagerPoll RotateLogs)
-      node.set[:scalr_server][:cron][:disable] = %w{DNSManagerPoll}
       expect(dummy_class.new.enabled_crons(node).length).to eq(0)
       expect(dummy_class.new.disabled_crons(node).length).to eq(19)
     end
