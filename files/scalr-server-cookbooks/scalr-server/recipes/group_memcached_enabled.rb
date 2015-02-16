@@ -11,11 +11,13 @@ bash 'set_memcached_password' do
   -c #{node[:scalr_server][:memcached][:username]} \
   -p
   EOH
+  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 file "#{node[:scalr_server][:install_root]}/embedded/etc/sasldb2" do
   mode    0644  # Needs to be readable by memcached
   action :touch
+  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 cookbook_file "#{node[:scalr_server][:install_root]}/embedded/lib/sasl2/memcached.conf" do
@@ -23,6 +25,7 @@ cookbook_file "#{node[:scalr_server][:install_root]}/embedded/lib/sasl2/memcache
   owner     'root'
   group     'root'
   mode      0644
+  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 # https://code.google.com/p/memcached/wiki/ReleaseNotes145
@@ -31,10 +34,10 @@ supervisor_service 'memcached' do
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/memcached" \
                   " -l #{node[:scalr_server][:memcached][:bind_host]}" \
                   " -p #{node[:scalr_server][:memcached][:bind_port]}" \
-                  ' -S -vvv'
+                  " -u #{node[:scalr_server][:memcached][:user]}" \
+                  ' -S'
   stdout_logfile  "#{log_dir_for node, 'supervisor'}/memcached.log"
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/memcached.err"
-  user            node[:scalr_server][:memcached][:user]
   autostart       true
   action          [:enable, :start]
   subscribes      :restart, 'user[scalr_user]' if service_is_up?(node, 'memcached')
