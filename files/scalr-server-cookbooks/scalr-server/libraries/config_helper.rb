@@ -170,9 +170,9 @@ module Scalr
                         :default_repo => 'stable',
                         :repos => {
                             :stable => {
-                                :deb_repo_url => 'http://apt-delayed.scalr.net/debian scalr/',
-                                :rpm_repo_url => 'http://rpm-delayed.scalr.net/rpm/rhel/$releasever/$basearch',
-                                :win_repo_url => 'http://win-delayed.scalr.net',
+                                :deb_repo_url => 'http://repo.scalr.net/apt stable main',
+                                :rpm_repo_url => 'http://repo.scalr.net/rpm/stable/rhel/$releasever/$basearch',
+                                :win_repo_url => 'http://repo.scalr.net/win/stable',
                             },
                             :latest => {
                                 :deb_repo_url => 'http://repo.scalr.net/apt latest main',
