@@ -1,0 +1,18 @@
+--- ./sasl_defs.c	2015-02-17 13:04:53.000000000 -0800
++++ ./sasl_defs.c	2015-02-17 13:07:18.000000000 -0800
+@@ -171,13 +171,9 @@
+     }
+ #endif
+ 
++    // Use constant realm here
+     memset(my_sasl_hostname, 0, sizeof(my_sasl_hostname));
+-    if (gethostname(my_sasl_hostname, sizeof(my_sasl_hostname)-1) == -1) {
+-        if (settings.verbose) {
+-            fprintf(stderr, "Error discovering hostname for SASL\n");
+-        }
+-        my_sasl_hostname[0] = '\0';
+-    }
++    sprintf(my_sasl_hostname, "scalr");
+ 
+     if (sasl_server_init(sasl_callbacks, "memcached") != SASL_OK) {
+         fprintf(stderr, "Error initializing sasl.\n");

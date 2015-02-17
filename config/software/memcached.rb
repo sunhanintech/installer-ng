@@ -21,12 +21,17 @@ build do
   # - https://sourceware.org/bugzilla/show_bug.cgi?id=11959
   patch source: 'fix-glibc-11959.patch'
 
+  # We add a patch to use a constant realm in memcached. The goal of that patch
+  # is to ensure that the sasldb stays even if the hostname changes.
+  # Also, it's helpful in the sense that sometimes, saslpasswd2 and memcached disagree on what the realm should be
+  # (saslpasswd2 lowercases it, memcached doesn't), which results in a hostname that isn't valid.
+  patch source: 'constant-realm.patch'
+
   cmd = [
       './configure',
       "--prefix=#{install_dir}/embedded",
       "--with-libevent=#{install_dir}/embedded",
-      '--enable-sasl',
-      '--enable-sasl-pwdb',
+      '--enable-sasl'
   ]
 
   command cmd.join(' '), env: env

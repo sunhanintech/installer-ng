@@ -9,6 +9,7 @@ bash 'set_memcached_password' do
   printf "%s" "#{node[:scalr_server][:memcached][:password]}" | /opt/scalr-server/embedded/sbin/saslpasswd2 \
   -a memcached \
   -c #{node[:scalr_server][:memcached][:username]} \
+  -u scalr \
   -p
   EOH
   notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
