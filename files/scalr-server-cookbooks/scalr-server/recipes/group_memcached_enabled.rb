@@ -2,6 +2,7 @@ user 'memcached_user' do
   username  node[:scalr_server][:memcached][:user]
   home      etc_dir_for(node, 'memcached')
   system    true
+  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 bash 'set_memcached_password' do
@@ -12,13 +13,11 @@ bash 'set_memcached_password' do
   -u scalr \
   -p
   EOH
-  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 file "#{node[:scalr_server][:install_root]}/embedded/etc/sasldb2" do
   mode    0644  # Needs to be readable by memcached
   action :touch
-  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
 end
 
 cookbook_file "#{node[:scalr_server][:install_root]}/embedded/lib/sasl2/memcached.conf" do
@@ -41,5 +40,4 @@ supervisor_service 'memcached' do
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/memcached.err"
   autostart       true
   action          [:enable, :start]
-  subscribes      :restart, 'user[scalr_user]' if service_is_up?(node, 'memcached')
 end
