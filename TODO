@@ -1,10 +1,7 @@
 INCREASE STARTSECS
 
 logorate.
-nginx + proxy + ssl.
 
 supervisord processes: enable autorestart on all exit codes
 
 ID Marker
-
-Serve the graphics without the webapp

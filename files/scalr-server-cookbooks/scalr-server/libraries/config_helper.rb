@@ -142,7 +142,7 @@ module Scalr
                                 :host => node[:scalr_server][:routing][:plotter_host],
                                 :bind_host => node[:scalr_server][:service][:plotter_bind_host],
                                 :bind_address => node[:scalr_server][:service][:plotter_bind_host],  # Deprecated
-                                :port => node[:scalr_server][:routing][:plotter_port],
+                                :port => node[:scalr_server][:routing][:plotter_port],  # TODO - Make optional? (proto-based)
                                 :bind_port => node[:scalr_server][:service][:plotter_bind_port],
                             },
                         },
