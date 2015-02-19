@@ -171,6 +171,10 @@ default[:scalr_server][:app][:session_cookie_lifetime] = 1800
 default[:scalr_server][:app][:configuration] = {}
 
 
+# Whether to skip initializing the DB. Disable when deploying against a slave MySQL DB that was setup somewhere else.
+default[:scalr_server][:app][:skip_db_initialization] = false
+
+
 #########
 # Proxy #
 #########
@@ -241,6 +245,10 @@ default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
 # Database configuration for MySQL.
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
 default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
+
+# Replication settings
+default[:scalr_server][:mysql][:server_id] = 1
+default[:scalr_server][:mysql][:binlog] = false
 
 # TODO - Option to only create specific tables
 

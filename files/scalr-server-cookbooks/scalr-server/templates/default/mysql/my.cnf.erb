@@ -19,3 +19,10 @@ log-error                           = <%= log_dir_for node, 'mysql' %>/error.log
 general-log-file                    = <%= log_dir_for node, 'mysql' %>/info.log
 explicit-defaults-for-timestamp     = 1
 default-time-zone                   = +00:00
+server-id                           = <%= node[:scalr_server][:mysql][:server_id] %>
+<% if node[:scalr_server][:mysql][:binlog] %>
+innodb_flush_log_at_trx_commit      = 1
+sync_binlog                         = 1
+log-bin                             = mysql-bin
+log-bin-index                       = mysql-bin.index
+<% end %>

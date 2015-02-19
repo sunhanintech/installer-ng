@@ -136,6 +136,7 @@ mysql_database 'load scalr database structure' do
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/structure.sql").read }
   not_if          { mysql_has_table?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
   action          :query
 end
 
@@ -144,6 +145,7 @@ mysql_database 'load scalr database data' do
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/data.sql").read }
   not_if          { mysql_has_rows?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
   action          :query
 end
 
@@ -152,6 +154,7 @@ mysql_database 'load analytics database structure' do
   database_name   node[:scalr_server][:mysql][:analytics_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
   not_if          { mysql_has_table?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
   action          :query
 end
 
@@ -160,6 +163,7 @@ mysql_database 'load analytics database data' do
   database_name   node[:scalr_server][:mysql][:analytics_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
   not_if          { mysql_has_rows?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
   action          :query
 end
 
@@ -170,6 +174,7 @@ execute 'Upgrade Scalr Database' do
   returns 0
   command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
   cwd     "#{scalr_bundle_path node}/app/bin"
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
 end
 
 
@@ -202,6 +207,7 @@ mysql_database 'set admin username' do
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             "UPDATE account_users SET email='#{new_username}' WHERE id=#{admin_id} AND email='#{default_username}'"
   action          :query
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
 end
 
 mysql_database 'set admin password' do
@@ -209,4 +215,5 @@ mysql_database 'set admin password' do
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             "UPDATE account_users SET password='#{hashed_new_password}' WHERE id=#{admin_id} AND password='#{hashed_default_password}'"
   action          :query
+  not_if          { node[:scalr_server][:app][:skip_db_initialization] }
 end
