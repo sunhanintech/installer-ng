@@ -135,8 +135,8 @@ mysql_database 'load scalr database structure' do
   connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/structure.sql").read }
-  not_if          { mysql_has_table?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   not_if          { node[:scalr_server][:app][:skip_db_initialization] }
+  not_if          { mysql_has_table?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
@@ -144,8 +144,8 @@ mysql_database 'load scalr database data' do
   connection      mysql_scalr_params(node)
   database_name   node[:scalr_server][:mysql][:scalr_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/data.sql").read }
-  not_if          { mysql_has_rows?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   not_if          { node[:scalr_server][:app][:skip_db_initialization] }
+  not_if          { mysql_has_rows?(mysql_scalr_params(node), node[:scalr_server][:mysql][:scalr_dbname], 'upgrades') }
   action          :query
 end
 
@@ -153,8 +153,8 @@ mysql_database 'load analytics database structure' do
   connection      mysql_analytics_params(node)
   database_name   node[:scalr_server][:mysql][:analytics_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_structure.sql").read }
-  not_if          { mysql_has_table?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
   not_if          { node[:scalr_server][:app][:skip_db_initialization] }
+  not_if          { mysql_has_table?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
   action          :query
 end
 
@@ -162,8 +162,8 @@ mysql_database 'load analytics database data' do
   connection      mysql_analytics_params(node)
   database_name   node[:scalr_server][:mysql][:analytics_dbname]
   sql             { ::File.open("#{scalr_bundle_path node}/sql/analytics_data.sql").read }
-  not_if          { mysql_has_rows?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
   not_if          { node[:scalr_server][:app][:skip_db_initialization] }
+  not_if          { mysql_has_rows?(mysql_analytics_params(node), node[:scalr_server][:mysql][:analytics_dbname], 'upgrades') }
   action          :query
 end
 

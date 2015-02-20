@@ -1,17 +1,10 @@
 FROM ubuntu:14.04
 
-RUN apt-get update \
- && apt-get upgrade -y \
- && apt-get install -y curl \
- && curl -O https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.deb \
- && bash script.deb \
- && rm -rf /var/lib/apt/lists/*
+ENV SCALR_VERSION 5.3.2.ee~nightly.20150220180032.199.62c28fe.de1a220~ubuntu.trusty-1
 
-ENV SCALR_VERSION 5.1.0.oss~nightly.20150218043620.193.7f0df7f.847c117~ubuntu.trusty-1
+ADD ./scalr-server_${SCALR_VERSION}_amd64.deb /
 
-RUN apt-get update \
- && apt-get install -y "scalr-server=${SCALR_VERSION}"\
- && rm -rf /var/lib/apt/lists/*
+RUN dpkg -i /scalr-server_${SCALR_VERSION}_amd64.deb
 
 ADD docker-entrypoint.sh /
 

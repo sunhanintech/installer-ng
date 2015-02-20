@@ -23,6 +23,7 @@ server-id                           = <%= node[:scalr_server][:mysql][:server_id
 <% if node[:scalr_server][:mysql][:binlog] %>
 innodb_flush_log_at_trx_commit      = 1
 sync_binlog                         = 1
-log-bin                             = mysql-bin
-log-bin-index                       = mysql-bin.index
+binlog_format                       = ROW
+log-bin                             = <%= node[:scalr_server][:mysql][:binlog_name] %>
+log-bin-index                       = <%= node[:scalr_server][:mysql][:binlog_name] %>.index
 <% end %>

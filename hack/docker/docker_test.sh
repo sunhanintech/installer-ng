@@ -68,10 +68,12 @@ CLUSTER_LIFE="172800"
 
 # Prepare shared config
 COOKBOOK_DIR="${HERE}/../../files/scalr-server-cookbooks/scalr-server"
+BIN_DIR="${HERE}/../../files/scalr-server-bin"
 
 runArgs=(
   "-t" "-d"
   "-v" "${COOKBOOK_DIR}:/opt/scalr-server/embedded/cookbooks/scalr-server"
+  "-v" "${BIN_DIR}:/opt/scalr-server/bin"
 )
 
 if [ -n "$SCALR_DIR" ]; then
@@ -91,6 +93,8 @@ SECRETS_FILE="${HERE}/scalr-server-secrets.json"
 
 LOCAL_APP_FILE="${HERE}/scalr-server-local.app.rb"
 LOCAL_DB_FILE="${HERE}/scalr-server-local.db.rb"
+LOCAL_REPL_FILE="${HERE}/scalr-server-local.slave.rb"
+LOCAL_FAILOVER_FILE="${HERE}/scalr-server-local.failover.rb"
 LOCAL_MC_FILE="${HERE}/scalr-server-local.memcached.rb"
 LOCAL_PROXY_FILE="${HERE}/scalr-server-local.proxy.rb"
 LOCAL_STATS_FILE="${HERE}/scalr-server-local.stats.rb"
@@ -108,6 +112,7 @@ clientArgs=(
 )
 
 dbArgs=("-v" "${LOCAL_DB_FILE}:/etc/scalr-server/scalr-server-local.rb")
+replArgs=("-v" "${LOCAL_REPL_FILE}:/etc/scalr-server/scalr-server-local.rb")
 mcArgs=("-v" "${LOCAL_MC_FILE}:/etc/scalr-server/scalr-server-local.rb")
 appArgs=("-v" "${LOCAL_APP_FILE}:/etc/scalr-server/scalr-server-local.rb")
 statsArgs=("-v" "${LOCAL_STATS_FILE}:/etc/scalr-server/scalr-server-local.rb")
@@ -121,8 +126,16 @@ proxyArgs=(
   "--link=${DOCKER_PREFIX}-stats:stats"
   "--publish-all"
 )
+failoverArgs=(
+  "-v" "${LOCAL_FAILOVER_FILE}:/etc/scalr-server/scalr-server-local.rb"
+  "-v" "${HERE}/ssl-test.crt:/ssl/ssl-test.crt"
+  "-v" "${HERE}/ssl-test.key:/ssl/ssl-test.key"
+  "--link=${DOCKER_PREFIX}-repl-db:repl-db"
+  "--link=${DOCKER_PREFIX}-repl-ca:repl-ca"
+  "--publish-all"
+)
 
-tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "proxy" "worker")
+tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "proxy" "worker" "repl-db" "repl-ca" "failover")
 
 # Remove all old hosts
 echo "Removing old hosts"
@@ -133,25 +146,43 @@ done
 
 if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
 
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc"  "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
-  $chronic docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc"  "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${proxyArgs[@]}" --name="${DOCKER_PREFIX}-proxy" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${workerArgs[@]}" --name="${DOCKER_PREFIX}-worker" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${replArgs[@]}" --name="${DOCKER_PREFIX}-repl-db" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${replArgs[@]}" --name="${DOCKER_PREFIX}-repl-ca" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${failoverArgs[@]}" --name="${DOCKER_PREFIX}-failover" "${imgArgs[@]}"
 
   for tier in "${tierNames[@]}"; do
-    $chronic docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure || {
+    echo "Configuring: ${tier}"
+    ${chronic} docker exec -it "${DOCKER_PREFIX}-${tier}" scalr-server-ctl reconfigure || {
       echo "Error configuring: ${tier}"
       exit 1
     }
   done
 
-  # Run the test image
-  echo "Testing: ${DOCKER_PREFIX}-proxy"
-  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-proxy:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
+  for db in db ca; do
+    # Kickstart replication. We use IPs here because hostnames don't resolve on the local hosts
+    # (i.e. the db doesn't know it's the DB)
+    echo "Starting replication for: ${db}"
+    ${chronic} docker exec -it "${DOCKER_PREFIX}-${db}" \
+    /opt/scalr-server/bin/kickstart-replication \
+    "$(docker inspect --format "{{ .NetworkSettings.IPAddress }}" "test-scalr-${db}"):3306" \
+    "$(docker inspect --format "{{ .NetworkSettings.IPAddress }}" "test-scalr-repl-${db}"):3306"
+  done
+
+  # Run the test image on the proxy.
+  echo "Testing: primary"
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-proxy:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "ping" "create" "login"
+
+  # Check replication works (and that we can login on the secondary).
+  echo "Testing: replication"
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-failover:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "ping"
 
   if [ "${KEEP}" -eq 0 ]; then
     for tier in "${tierNames[@]}"; do
@@ -181,11 +212,11 @@ if [ "${CLEAN}" -eq 0 ]; then
   fi
 
   # Cleanup old box
-  $chronic docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" --name="${DOCKER_PREFIX}-solo" --publish-all "-v" "${SECRETS_FILE}:/etc/scalr-server/scalr-server-secrets.json" "${imgArgs[@]}"
 
   # Run tests
   for cmd in "${soloCmds[@]}"; do
-    $chronic docker exec -it "${DOCKER_PREFIX}-solo" $cmd
+    ${chronic} docker exec -it "${DOCKER_PREFIX}-solo" $cmd
   done
 
   echo "Testing: ${DOCKER_PREFIX}-solo"

@@ -37,6 +37,7 @@ module ScalrServer
 
       ScalrServer[:mysql][:root_password] ||= SecureRandom.hex 50
       ScalrServer[:mysql][:scalr_password] ||= SecureRandom.hex 50
+      ScalrServer[:mysql][:repl_password] ||= SecureRandom.hex 12  # Password *has* to be short!!
 
       ScalrServer[:memcached][:password] ||= SecureRandom.hex 50
 
@@ -50,6 +51,7 @@ module ScalrServer
           :mysql => {
             :root_password          => ScalrServer[:mysql][:root_password],
             :scalr_password         => ScalrServer[:mysql][:scalr_password],
+            :repl_password          => ScalrServer[:mysql][:repl_password],
           },
           :memcached => {
               :password => ScalrServer[:memcached][:password]

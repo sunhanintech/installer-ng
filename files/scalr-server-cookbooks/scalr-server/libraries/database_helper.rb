@@ -65,6 +65,19 @@ module Scalr
       cnt > 0
     end
 
+    def mysql_master_status(params)
+      conn = _mysql_connection(params, 'mysql')
+      begin
+        conn.query('SHOW MASTER STATUS') { |res|
+          res.each_hash { |row|
+            return row
+          }
+        }
+      ensure
+        conn.close rescue nil
+      end
+    end
+
   end
 end
 

@@ -28,6 +28,7 @@ dependency 'sentry-raven-gem'   # Same as above
 
 # Software we need to run
 dependency 'mysql'
+dependency 'mysql-utilities'
 dependency 'memcached'
 dependency 'httpd'
 dependency 'php'

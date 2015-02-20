@@ -1,0 +1,62 @@
+#!/opt/scalr-server/embedded/bin/python
+import os
+import sys
+import json
+import argparse
+import subprocess
+
+
+def _error_and_exit(msg):
+    print "ERROR: {0}".format(msg)
+    sys.exit(1)
+
+
+def main(master_host, master_port, slave_host, slave_port):
+    # Get the passwords
+    attrs = subprocess.check_output(["/opt/scalr-server/bin/scalr-server-ctl", "show-attributes"],
+                                    stderr=subprocess.PIPE)
+    mysql = json.loads(attrs)["mysql"]
+
+    # Get the replication starting point
+    try:
+        with open("/opt/scalr-server/var/lib/mysql/binlog-bootstrap") as f:
+            bootstrap = json.load(f)
+    except IOError:
+        # We can't get the replication starting point. Check whether binary logging is enabled to
+        # provide a useful error message
+        if mysql["binlog"]:
+            # Binary logging wasn't enabled
+            _error_and_exit("Binary logging was not enabled when you boostrapped this MySQL server.")
+        else:
+            # Binary logging isn't enabled
+            _error_and_exit("Binary logging is not enabled.")
+
+    # Prepare replicate command
+    # noinspection PyUnboundLocalVariable
+    cmd = [
+        "/opt/scalr-server/embedded/bin/mysqlreplicate",
+        "--master={0}:{1}@{2}:{3}".format("root", mysql["root_password"], master_host, master_port),
+        "--slave={0}:{1}@{2}:{3}".format("root", mysql["root_password"], slave_host, slave_port),
+        "--rpl={0}:{1}".format(mysql["repl_user"], mysql["repl_password"]), "--pedantic", "-vv",
+        "--master-log-file={0}".format(bootstrap["File"]),
+        "--master-log-pos={0}".format(bootstrap["Position"]),
+    ]
+
+    # Don't `communicate` here since all we'll do is pipe the output anyway.
+    p = subprocess.Popen(cmd)
+    sys.exit(p.wait())
+
+
+if __name__ == "__main__":
+    # We don't extract the master / slave host / port from the configuration because we
+    # can't know if the same configuration should be used for the app and for replication
+    parser = argparse.ArgumentParser()
+    parser.add_argument('master', help='host:port for the master')
+    parser.add_argument('slave', help='host:port for the slave')
+
+    ns = parser.parse_args()
+
+    args = []
+    for host in (ns.master, ns.slave):
+        args.extend(host.split(':'))
+    main(*args)

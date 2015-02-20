@@ -238,9 +238,17 @@ default[:scalr_server][:mysql][:bind_port] = 6280         # Port MySQL should bi
 
 # User configuration for MySQL. The passwords here behave just like `app.admin_password`
 default[:scalr_server][:mysql][:root_password] = 'CHANGEME'  # /!\ IGNORED. Place it under `mysql.root_password`.
+default[:scalr_server][:mysql][:allow_remote_root] = false
+
 default[:scalr_server][:mysql][:scalr_user] = 'scalr'
 default[:scalr_server][:mysql][:scalr_password] = 'CHANGEME' # /!\ IGNORED. Place it under `mysql.scalr_password`.
+default[:scalr_server][:mysql][:scalr_privileges] = [:all]
 default[:scalr_server][:mysql][:scalr_allow_connections_from] = '%'
+
+default[:scalr_server][:mysql][:repl_user] = 'repl'
+default[:scalr_server][:mysql][:repl_password] = 'CHANGEME' # /!\ IGNORED. Place it under `mysql.repl_password`.
+default[:scalr_server][:mysql][:repl_allow_connections_from] = '%'
+
 
 # Database configuration for MySQL.
 default[:scalr_server][:mysql][:scalr_dbname] = 'scalr'
@@ -249,6 +257,7 @@ default[:scalr_server][:mysql][:analytics_dbname] = 'analytics'
 # Replication settings
 default[:scalr_server][:mysql][:server_id] = 1
 default[:scalr_server][:mysql][:binlog] = false
+default[:scalr_server][:mysql][:binlog_name] = 'mysql-bin'
 
 # TODO - Option to only create specific tables
 

@@ -42,8 +42,8 @@ app[:configuration] = {}          # Inject extra Scalr configuration here if you
 
 # Configure the proxy.
 proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']  # Change this to a list of hostname:port that corresponds to your app servers.
-proxy[:plotter_upstreams]  = ['stats:5000']           # Same, but for your plotter server (you should only have one!), which should be running on your stats server.
-proxy[:graphics_upstreams] = ['stats:6000']           # Same, but for your graphics server, which should be running on your stats server as well.
+proxy[:graphics_upstreams] = ['stats:6100']           # Same, but for your graphics server, which should be running on your stats server as well.
+proxy[:plotter_upstreams]  = ['stats:6200']           # Same, but for your plotter server (you should only have one!), which should be running on your stats server.
 
 proxy[:bind_host] = '0.0.0.0'   # Make sure the proxy doesn't listen on a local address
 
@@ -61,17 +61,19 @@ web[:app_bind_port] = 6000
 # Graphics server settings.
 # Make sure those settings match your proxy[:graphics_upstreams] setting.
 web[:graphics_bind_host] = '0.0.0.0'
-web[:graphics_bind_port] = 6000
+web[:graphics_bind_port] = 6100
 
 # Plotter server settings.
 # Make sure those settings match your proxy[:plotter_upstreams] setting.
 service[:plotter_bind_host] = '0.0.0.0'
-service[:plotter_bind_port] = 5000
+service[:plotter_bind_port] = 6200
 
 # MySQL settings.
 # Since we're deploying multi-host, we make sure MySQL listens on all interfaces.
 mysql[:bind_host] = '0.0.0.0'
 mysql[:bind_port] = 3306
+# Enable binary logging to support replication
+mysql[:binlog] = true
 
 # Memcached settings.
 # This is similar to the MySQL settings above.

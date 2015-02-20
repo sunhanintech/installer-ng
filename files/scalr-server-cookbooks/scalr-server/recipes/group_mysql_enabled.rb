@@ -112,7 +112,6 @@ mysql_database 'remove_access_to_test_databases' do
   not_if { bootstrapped }
 end
 
-
 file mysql_bootstrap_status_file do
   mode     0644
   owner   'root'
@@ -120,15 +119,37 @@ file mysql_bootstrap_status_file do
   action  :create_if_missing
 end
 
+# Remote root
 
-# Set up actual Scalr users
+mysql_database_user 'root' do
+  connection        mysql_admin_params(node)
+  password          node[:scalr_server][:mysql][:root_password]
+  host              '%'
+  action            node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
+end
+
+
+# Set up Scalr and replication users.
 
 mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
   connection        mysql_admin_params(node)
   password          node[:scalr_server][:mysql][:scalr_password]
   host              node[:scalr_server][:mysql][:scalr_allow_connections_from]
   action            :create
-  retries           10  # Give MySQL some time to come online.
+end
+
+mysql_database_user node[:scalr_server][:mysql][:repl_user] do
+  connection        mysql_admin_params(node)
+  password          node[:scalr_server][:mysql][:repl_password]
+  host              node[:scalr_server][:mysql][:repl_allow_connections_from]
+  action            :create
+end
+
+mysql_database 'grant_replication_permissions' do
+  connection      mysql_admin_params(node)
+  database_name   'mysql'
+  sql             "GRANT REPLICATION SLAVE ON *.* TO '#{node[:scalr_server][:mysql][:repl_user]}'@'#{node[:scalr_server][:mysql][:repl_allow_connections_from]}'; FLUSH PRIVILEGES;"
+  action          :query
 end
 
 # The analytics database is not useful on an old Scalr version, but that's
@@ -148,6 +169,19 @@ scalr_databases.each do |scalr_database|
   mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
     connection    mysql_admin_params(node)
     database_name scalr_database
+    privileges    node[:scalr_server][:mysql][:scalr_privileges]
     action        :grant
   end
+end
+
+# Record bin log position
+ruby_block 'record_bin_log_pos' do
+  block do
+    File.open("#{data_dir_for node, 'mysql'}/binlog-bootstrap", 'w') do |f|
+      f.puts(Chef::JSONCompat.to_json_pretty((mysql_master_status(mysql_admin_params(node)))))
+    end
+  end
+  action  :run
+  not_if  { bootstrapped }
+  only_if { node[:scalr_server][:mysql][:binlog] }
 end
