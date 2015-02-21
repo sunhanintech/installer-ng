@@ -26,7 +26,7 @@ module Scalr
     end
 
     def bin_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/bin/#{svc}"
+      "#{node[:scalr_server][:install_root]}/libexec/#{svc}"
     end
 
     def log_dir_for(node, svc)
