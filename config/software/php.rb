@@ -47,6 +47,7 @@ build do
   env = with_standard_compiler_flags(with_embedded_path)
 
   command "./configure" \
+          ' --enable-debug' \
           " --prefix=#{install_dir}/embedded" \
           " --without-pear" \
           " --with-zlib-dir=#{install_dir}/embedded" \
