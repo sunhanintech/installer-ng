@@ -71,7 +71,7 @@ If not, visit this link: [Packages - Advanced Usage][20].
 Step 3: Access Scalr
 --------------------
 
-Once the `reconfigure` step, your Scalr instance is ready to use.
+Once the `reconfigure` step has completed, your Scalr instance is ready to use.
 
 Get your admin password from the Scalr secrets file in
 `/etc/scalr-server/scalr-server-secrets.json`, under `admin_password`.
