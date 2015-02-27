@@ -220,7 +220,7 @@ if [ "${CLEAN}" -eq 0 ]; then
   done
 
   echo "Testing: ${DOCKER_PREFIX}-solo"
-  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}"
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "ping" "create" "login"
 
   if [ "${KEEP}" -eq 0 ]; then
     docker rm -f "${DOCKER_PREFIX}-solo" >/dev/null 2>&1 || true
