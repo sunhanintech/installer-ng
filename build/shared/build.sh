@@ -44,6 +44,7 @@ trap cleanup EXIT
 echo "Building: ${SCALR_VERSION}"
 
 cd "${OMNIBUS_PROJECT_DIR}"
+bundle update
 
 set +o errexit
 bundle exec omnibus build -l "${OMNIBUS_LOG_LEVEL}" "scalr-server"
