@@ -22,6 +22,15 @@ PLATFORM_VERSION="${2}"
 
 PKG_CLOUD_REPO="scalr/scalr-server-${EDITION}"
 
+# View: http://askubuntu.com/questions/445487/which-ubuntu-version-is-equivalent-to-debian-squeeze
+declare -A platform_alternatives
+platform_alternatives=(
+  ["el/6"]="ol/6"
+  ["el/7"]="ol/7"
+  ["ubuntu/precise"]="debian/wheezy"
+  ["ubuntu/trusty"]="debian/jessie"
+)
+
 if [[ "centos" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="el"
   pkg_head="scalr-server-"
