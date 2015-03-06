@@ -48,7 +48,7 @@ proxy[:plotter_upstreams]  = ['stats:6200']           # Same, but for your plott
 proxy[:bind_host] = '0.0.0.0'   # Make sure the proxy doesn't listen on a local address
 
 # SSL settings. Note that all SSL settings are ignored if ssl_enable isn't set to true.
-proxy[:ssl_enable] = true                     # Unless you're setting up SSL, set this to Fale.
+proxy[:ssl_enable] = true                     # Unless you're setting up SSL, set this to false.
 proxy[:ssl_redirect] = false                  # Whether to redirect to HTTPS when Scalr is accessed over HTTP. Set this to true if your cert is valid.
 proxy[:ssl_cert_path] = '/ssl/ssl-test.crt'   # Path to your SSL cert
 proxy[:ssl_key_path] = '/ssl/ssl-test.key'    # Path to matching SSL key
