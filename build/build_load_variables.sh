@@ -27,15 +27,15 @@ declare -A platform_alternatives
 platform_alternatives=(
   ["el/6"]="ol/6"
   ["el/7"]="ol/7"
-  ["ubuntu/precise"]="debian/wheezy"
-  ["ubuntu/trusty"]="debian/jessie"
+  ["debian/wheezy"]="ubuntu/precise"
+  ["debian/jessie"]="ubuntu/trusty"
 )
 
 if [[ "centos" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="el"
   pkg_head="scalr-server-"
   pkg_tail="-1.x86_64.rpm"
-elif [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
+elif [[ "debian" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="${PLATFORM_NAME}"
   pkg_head="scalr-server_"
   pkg_tail="-1_amd64.deb"
