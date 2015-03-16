@@ -6,7 +6,7 @@ description      'Configures Scalr Server'
 long_description 'Configures Scalr Server'
 version          '7.9.3'
 
-%w{ ubuntu centos redhat }.each do |os|
+%w{amazon centos debian fedora redhat ubuntu oracle}.each do |os|
     supports os
 end
 
