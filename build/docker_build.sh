@@ -25,6 +25,7 @@ build/git_fix_timestamps.sh
 ##########
 
 sed -i "s/__PLATFORM_NAME__/${PLATFORM_NAME}/g" "./Dockerfile"
+sed -i "s/__PLATFORM_FAMILY__/${PLATFORM_FAMILY}/g" "./Dockerfile"
 sed -i "s/__PLATFORM_VERSION__/${PLATFORM_VERSION}/g" "./Dockerfile"
 
 

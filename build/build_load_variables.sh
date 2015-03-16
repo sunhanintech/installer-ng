@@ -37,10 +37,12 @@ if [[ "centos" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="el"
   pkg_head="scalr-server-"
   pkg_tail="-1.x86_64.rpm"
+  PLATFORM_FAMILY="rhel"
 elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="${PLATFORM_NAME}"
   pkg_head="scalr-server_"
   pkg_tail="-1_amd64.deb"
+  PLATFORM_FAMILY="debian"
 else
   echo "Unknown platform: ${PLATFORM_NAME}"
 fi
@@ -97,4 +99,5 @@ fi
 
 export PLATFORM_NAME
 export PLATFORM_VERSION
+export PLATFORM_FAMILY
 export DOCKER_IMG
