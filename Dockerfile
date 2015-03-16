@@ -8,13 +8,10 @@ ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 ADD ./build/__PLATFORM_FAMILY__/bootstrap.sh /
-
 RUN /bootstrap.sh
 
-RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - && \
-    curl -sSL https://get.rvm.io | bash -s stable --ruby && \
-    rm -rf /var/lib/apt/lists/* || true && \
-    yum clean all || true
+ADD ./build/shared/install_rvm.sh /
+RUN /install_rvm.sh
 
 ADD ./build/__PLATFORM_FAMILY__/install_utils.sh /
 RUN /install_utils.sh
