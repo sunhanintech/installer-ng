@@ -2,9 +2,6 @@
 set -o errexit
 
 apt-get update
-apt-get install -y locales procps curl tar python unzip
-
-locale-gen en_US.UTF-8
-dpkg-reconfigure locales
+apt-get install -y locales locales-all procps curl tar python unzip
 
 rm -rf /var/lib/apt/lists/*
