@@ -9,7 +9,7 @@
 
 OLDIFS=$IFS
 IFS="-"
-set -- $BUILD
+set -- ${BUILD}
 IFS=$OLDIFS
 
 PLATFORM_NAME="${1}"
@@ -20,7 +20,8 @@ PLATFORM_VERSION="${2}"
 # Packaging configuation #
 ##########################
 
-PKG_CLOUD_REPO="scalr/scalr-server-${EDITION}"
+# Use the valid repos by default, but let the user override it (for the manual script)
+: ${PKG_CLOUD_REPO:="scalr/scalr-server-${EDITION}"}
 
 # View: http://askubuntu.com/questions/445487/which-ubuntu-version-is-equivalent-to-debian-squeeze
 declare -A platform_alternatives
