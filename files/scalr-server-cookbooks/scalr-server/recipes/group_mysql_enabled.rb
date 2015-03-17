@@ -122,10 +122,11 @@ end
 # Remote root
 
 mysql_database_user 'root' do
-  connection        mysql_admin_params(node)
-  password          node[:scalr_server][:mysql][:root_password]
-  host              '%'
-  action            node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
+  connection  mysql_admin_params(node)
+  password    node[:scalr_server][:mysql][:root_password]
+  host        '%'
+  action      node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
+  retries     bootstrapped ? 0 : 10
 end
 
 
