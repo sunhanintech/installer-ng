@@ -145,8 +145,11 @@ default[:scalr_server][:app][:mysql_analytics_host] = '127.0.0.1'
 default[:scalr_server][:app][:mysql_analytics_port] = 6280
 
 # App Memcached configuration (sessions)
-default[:scalr_server][:app][:memcached_host] = '127.0.0.1'
-default[:scalr_server][:app][:memcached_port] = 6281
+# Legacy configuration (overrides current if set)
+default[:scalr_server][:app][:memcached_host] = nil
+default[:scalr_server][:app][:memcached_port] = nil
+# Current configuration (allows multiple memcached servers)
+default[:scalr_server][:app][:memcached_servers] = ['127.0.0.1:6281']
 
 # PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
 default[:scalr_server][:app][:session_cookie_lifetime] = 1800

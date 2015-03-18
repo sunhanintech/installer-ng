@@ -9,6 +9,8 @@ KEEP=0
 DEBUG=0
 CLEAN=0
 
+KILLSERVICE=0
+
 while true; do
   if [ "${1}" = "fast" ]; then
     FAST=1
@@ -21,6 +23,8 @@ while true; do
     DEBUG=1
   elif [ "${1}" = "clean" ]; then
     CLEAN=1
+  elif [ "${1}" = "killservice" ]; then
+    KILLSERVICE=1
   elif [ -z "${1}" ]; then
     break
   else
@@ -30,7 +34,8 @@ while true; do
   shift
 done
 
-echo "FAST: ${FAST}, VERYFAST:${VERYFAST}, KEEP: ${KEEP}, DEBUG: ${DEBUG}, DOCKER_HOST: ${DOCKER_HOST}"
+echo "FAST: ${FAST}, VERYFAST:${VERYFAST}, KEEP: ${KEEP}, DEBUG: ${DEBUG}, KILLSERVICE: ${KILLSERVICE}"
+echo "DOCKER_HOST: ${DOCKER_HOST}"
 
 chronic=$(which chronic || true)
 if [ "${DEBUG}" -eq 1 ]; then
@@ -108,7 +113,8 @@ clusterArgs=(
 clientArgs=(
   "--link=${DOCKER_PREFIX}-db:db"
   "--link=${DOCKER_PREFIX}-ca:ca"
-  "--link=${DOCKER_PREFIX}-mc:mc"
+  "--link=${DOCKER_PREFIX}-mc-1:mc-1"
+  "--link=${DOCKER_PREFIX}-mc-2:mc-2"
 )
 
 dbArgs=("-v" "${LOCAL_DB_FILE}:/etc/scalr-server/scalr-server-local.rb")
@@ -135,7 +141,7 @@ failoverArgs=(
   "--publish-all"
 )
 
-tierNames=("db" "ca" "mc" "app-1" "app-2" "stats" "proxy" "worker" "repl-db" "repl-ca" "failover")
+tierNames=("db" "ca" "mc-1" "mc-2" "app-1" "app-2" "stats" "proxy" "worker" "repl-db" "repl-ca" "failover")
 
 # Remove all old hosts
 echo "Removing old hosts"
@@ -148,7 +154,8 @@ if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
 
   ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-db"  "${imgArgs[@]}"
   ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${dbArgs[@]}"  --name="${DOCKER_PREFIX}-ca"  "${imgArgs[@]}"
-  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc"  "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc-1"  "${imgArgs[@]}"
+  ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${mcArgs[@]}"  --name="${DOCKER_PREFIX}-mc-2"  "${imgArgs[@]}"
   ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-1" "${imgArgs[@]}"
   ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${appArgs[@]}" --name="${DOCKER_PREFIX}-app-2" "${imgArgs[@]}"
   ${chronic} docker run "${runArgs[@]}" "${clusterArgs[@]}" "${clientArgs[@]}" "${statsArgs[@]}" --name="${DOCKER_PREFIX}-stats" "${imgArgs[@]}"
@@ -164,6 +171,10 @@ if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
       echo "Error configuring: ${tier}"
       exit 1
     }
+    if [ "${KILLSERVICE}" -eq 1 ] && [ "${tier}" = "worker" ]; then
+      echo "Removing now: ${tier}"
+      docker rm -f "${DOCKER_PREFIX}-${tier}" >/dev/null 2>&1 || true
+    fi
   done
 
   for db in db ca; do
@@ -184,9 +195,18 @@ if [ "${FAST}" -eq 0 ] && [ "${CLEAN}" -eq 0 ]; then
   echo "Testing: replication"
   docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-failover:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "ping"
 
+  # Check Memcached failover works
+  echo "Testing: Memcached failover"
+  docker exec -it "${DOCKER_PREFIX}-mc-1" scalr-server-manage stop memcached
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-proxy:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "create"
+
+  docker exec -it "${DOCKER_PREFIX}-mc-1" scalr-server-manage start memcached
+  docker exec -it "${DOCKER_PREFIX}-mc-2" scalr-server-manage stop memcached
+  docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-proxy:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "create"
+
   if [ "${KEEP}" -eq 0 ]; then
     for tier in "${tierNames[@]}"; do
-      docker rm -f "${DOCKER_PREFIX}-$tier" >/dev/null 2>&1 || true
+      docker rm -f "${DOCKER_PREFIX}-${tier}" >/dev/null 2>&1 || true
     done
   fi
 fi
@@ -218,6 +238,11 @@ if [ "${CLEAN}" -eq 0 ]; then
   for cmd in "${soloCmds[@]}"; do
     ${chronic} docker exec -it "${DOCKER_PREFIX}-solo" $cmd
   done
+
+  if [ "${KILLSERVICE}" -eq 1 ]; then
+    echo "Stopping service now"
+    docker exec -it "${DOCKER_PREFIX}-solo" scalr-server-manage stop zmq_service
+  fi
 
   echo "Testing: ${DOCKER_PREFIX}-solo"
   docker run -it --rm --name="${DOCKER_PREFIX}-test" --link="${DOCKER_PREFIX}-solo:scalr" "${clusterArgs[@]}" "${TEST_IMG}" "ping" "create" "login"

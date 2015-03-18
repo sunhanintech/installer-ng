@@ -1944,13 +1944,17 @@ extension=memcached.so
 session.cookie_lifetime = <%= node[:scalr_server][:app][:session_cookie_lifetime] %>
 
 session.save_handler = memcached
-session.save_path = "<%= node[:scalr_server][:app][:memcached_host] %>:<%= node[:scalr_server][:app][:memcached_port] %>"
+session.save_path = <%= memcached_servers(node).join(', ') %>
 
 memcached.use_sasl = On
 memcached.sess_binary = On
 memcached.sess_sasl_username = <%= node[:scalr_server][:memcached][:username] %>
 memcached.sess_sasl_password = <%= node[:scalr_server][:memcached][:password] %>
 
+memcached.sess_remove_failed = 1
+memcached.sess_number_of_replicas = 1
+memcached.store_retry_count = <%= 2 * memcached_servers(node).length %>
+memcached.sess_consistent_hash = On
 
 ; Scalr :: Specific settings
 

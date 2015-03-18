@@ -33,15 +33,14 @@ app[:mysql_analytics_host] = 'ca'   # Change this to the hostname / IP of your S
 app[:mysql_analytics_port] = 3306   # Make sure this matches the MySQL bind port.
 
 # Point the app to Memcached
-app[:memcached_host] = 'mc'   # Change this to the hostname / IP of your Memcached server.
-app[:memcached_port] = 11211  # Change this to the Memcached bind port.
+app[:memcached_servers] = ['mc-1:11211', 'mc-2:11211']   # Change this to a list of hostname/ip:port - one per Memcached server
 
 # App settings
 app[:ip_ranges] = ['0.0.0.0/0']   # Change this to a list of IP ranges that covers all the IPs used by your Scalr servers.
 app[:configuration] = {}          # Inject extra Scalr configuration here if you'd like.
 
 # Configure the proxy.
-proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']  # Change this to a list of hostname:port that corresponds to your app servers.
+proxy[:app_upstreams] = ['app-1:6000', 'app-2:6000']  # Change this to a list of hostname/ip:port - one per app server
 proxy[:graphics_upstreams] = ['stats:6100']           # Same, but for your graphics server, which should be running on your stats server as well.
 proxy[:plotter_upstreams]  = ['stats:6200']           # Same, but for your plotter server (you should only have one!), which should be running on your stats server.
 

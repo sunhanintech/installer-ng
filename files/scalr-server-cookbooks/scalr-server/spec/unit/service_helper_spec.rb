@@ -83,10 +83,10 @@ describe Scalr::ServiceHelper do
   end
 
   describe '#enable_module?' do
-     it 'should always enable supervisor' do
-       expect(dummy_class.new.enable_module?(node, :supervisor)).to eq(true)
-       expect(dummy_class.new.enable_module?(node, 'supervisor')).to eq(true)
-     end
+    it 'should always enable supervisor' do
+      expect(dummy_class.new.enable_module?(node, :supervisor)).to eq(true)
+      expect(dummy_class.new.enable_module?(node, 'supervisor')).to eq(true)
+    end
 
     it 'should special-case app' do
       # Check with all modules off
@@ -110,31 +110,48 @@ describe Scalr::ServiceHelper do
       node.set[:scalr_server][:enable_all] = true
       expect(dummy_class.new.enable_module?(node, :app)).to eq(true)
     end
-  end
 
-  it 'should special-case httpd' do
-    %w{web proxy}.each do |mod|
-      node.set[:scalr_server][mod][:enable] = true
+    it 'should special-case httpd' do
+      %w{web proxy}.each do |mod|
+        node.set[:scalr_server][mod][:enable] = true
+        expect(dummy_class.new.enable_module?(node, :httpd)).to eq(true)
+        node.set[:scalr_server][mod][:enable] = false
+      end
+
+      node.set[:scalr_server][:enable_all] = false
+      expect(dummy_class.new.enable_module?(node, :httpd)).to eq(false)
+
+      node.set[:scalr_server][:enable_all] = true
       expect(dummy_class.new.enable_module?(node, :httpd)).to eq(true)
-      node.set[:scalr_server][mod][:enable] = false
     end
 
-    node.set[:scalr_server][:enable_all] = false
-    expect(dummy_class.new.enable_module?(node, :httpd)).to eq(false)
+    it 'should work for other modules' do
+      node.set[:scalr_server][:enable_all] = false
+      node.set[:scalr_server][:mysql][:enable] = true
+      expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(true)
 
-    node.set[:scalr_server][:enable_all] = true
-    expect(dummy_class.new.enable_module?(node, :httpd)).to eq(true)
+      node.set[:scalr_server][:mysql][:enable] = false
+      expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(false)
+
+      node.set[:scalr_server][:enable_all] = true
+      expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(true)
+    end
   end
 
-  it 'should work for other modules' do
-    node.set[:scalr_server][:enable_all] = false
-    node.set[:scalr_server][:mysql][:enable] = true
-    expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(true)
+  describe '#memcached_servers' do
 
-    node.set[:scalr_server][:mysql][:enable] = false
-    expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(false)
+    it 'should return Memcached Servers when it\'s the only thing set' do
+      servers = %w{mc-1:123 mc-2:456}
+      node.set[:scalr_server][:app][:memcached_servers] = servers
+      expect(dummy_class.new.memcached_servers(node)).to eq(servers)
+    end
 
-    node.set[:scalr_server][:enable_all] = true
-    expect(dummy_class.new.enable_module?(node, 'mysql')).to eq(true)
+    it 'should return the legacy setting when they are set' do
+      node.set[:scalr_server][:app][:memcached_servers] = %w{mc-1:123 mc2-456}
+      node.set[:scalr_server][:app][:memcached_host] = 'mc'
+      node.set[:scalr_server][:app][:memcached_port] = 11211
+
+      expect(dummy_class.new.memcached_servers(node)).to eq(%w{mc:11211})
+    end
   end
 end

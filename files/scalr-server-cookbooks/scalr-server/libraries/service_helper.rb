@@ -286,6 +286,18 @@ module Scalr
       service_exists?(node, svc) && (%w{RUNNING STARTING}.include? service_status(node, svc))
     end
 
+
+    ####################################################
+    # Various Other Helpers (e.g. compatibility shims) #
+    ####################################################
+
+    def memcached_servers(node)
+      if node[:scalr_server][:app][:memcached_host].nil? && node[:scalr_server][:app][:memcached_port].nil?
+        node[:scalr_server][:app][:memcached_servers]
+      else
+        ["#{node[:scalr_server][:app][:memcached_host]}:#{node[:scalr_server][:app][:memcached_port]}",]
+      end
+    end
   end
 end
 

@@ -21,7 +21,9 @@ app[:skip_db_initialization] = true
 app[:mysql_scalr_host] = 'repl-db'
 app[:mysql_analytics_host] = 'repl-ca'
 
+# Legacy syntax (just for testing)
 app[:memcached_host] = '127.0.0.1'
+app[:memcached_port] = 11211
 
 proxy[:app_upstreams] = ['127.0.0.1:6000']
 proxy[:plotter_upstreams] = ['127.0.0.1:6100']
