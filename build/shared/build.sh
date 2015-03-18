@@ -24,6 +24,8 @@ if [ -f "${GIT_BUNDLE_PATH}" ]; then
   }
 else
   echo "No bundle to restore from (expected '${GIT_BUNDLE_PATH}')"
+  echo "NOTE: a bundle might exist at '${GIT_CACHE_PATH}'"
+  echo "      Omnibus will attempt to use it if present."
 fi
 
 # Cleanup old scalr-app src. This is needed because Omnibus does not properly
