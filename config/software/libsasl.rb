@@ -31,7 +31,7 @@ build do
           " --with-gdbm=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded", env: env
 
-  make "-j #{workers}", env: env
+  make env: env  # -j N is not reliable
   make "-j #{workers} check", env: env
   make "-j #{workers} install", env: env
 end
