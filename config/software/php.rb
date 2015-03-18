@@ -17,7 +17,7 @@
 
 
 name 'php'
-default_version '5.5.20'
+default_version '5.5.22'
 
 dependency 'zlib'
 dependency 'libedit'
@@ -37,8 +37,15 @@ dependency 'libssh2'
 dependency 'httpd'
 
 
-source url: "http://us.php.net/distributions/php-#{version}.tar.gz",
-       md5: '63185e6efdd4e381c5f2ec1b1e3baf1f'
+source url: "http://us.php.net/distributions/php-#{version}.tar.gz"
+
+version '5.5.20' do
+        source md5: '63185e6efdd4e381c5f2ec1b1e3baf1f'
+end
+
+version '5.5.22' do
+        source md5: '89caa2614a7e0e7a41796d61869037ca'
+end
 
 relative_path "php-#{version}"
 
