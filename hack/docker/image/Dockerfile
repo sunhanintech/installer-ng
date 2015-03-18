@@ -4,7 +4,9 @@ ENV SCALR_VERSION 5.3.2.ee~nightly.20150227043604.209.dc76268.61ddb45~ubuntu.tru
 ADD ./scalr-server_${SCALR_VERSION}_amd64.deb /
 RUN dpkg -i /scalr-server_${SCALR_VERSION}_amd64.deb
 
-ENV TINI_VERSION v0.3.0
+RUN apt-get update && apt-get install -y wget curl unzip tar && rm -rf /var/lib/apt/lists/*
+
+ENV TINI_VERSION v0.3.3
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
