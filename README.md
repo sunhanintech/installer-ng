@@ -38,12 +38,12 @@ Step 1: Installation
 
 Start by deploying the Scalr package appropriate for your system.
 
-### Ubuntu ###
+### Debian, Ubuntu ###
 
     curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.deb | sudo bash
     apt-get install -y scalr-server
 
-### CentOS / RHEL ###
+### RHEL, CentOS, OEL ###
 
     curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.rpm | sudo bash
     yum install -y scalr-server
