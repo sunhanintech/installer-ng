@@ -16,9 +16,6 @@ The Scalr Installer supports the following platforms:
   + Debian: Wheezy and Jessie. **amd64 packages only.**
   + CentOS / RHEL / OEL: 6 and 7. **x86_64 packages only.**
 
-Support for similar distributions (e.g. Debian) can be added. Feel free to
-file an issue to request support.
-
 
 Deploying Scalr
 ===============
