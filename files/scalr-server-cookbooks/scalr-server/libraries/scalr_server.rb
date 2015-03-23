@@ -68,9 +68,15 @@ module ScalrServer
 
     def generate_hash
       results = {:scalr_server => {} }
+
+      # Keys that feed `scalr_server` attributes directly
       %w{routing supervisor app mysql cron rrd service web proxy memcached manifest enable_all}.each do |key|
         results[:scalr_server][key] = ScalrServer[key]
       end
+
+      # Keys that are (also) routed somewhere else
+      results[:rackspace_timezone] = {:config => {:tz => ScalrServer[:supervisor][:tz]}}
+
       results
     end
 

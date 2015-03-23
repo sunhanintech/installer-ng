@@ -78,3 +78,8 @@ mysql[:binlog] = true
 # This is similar to the MySQL settings above.
 memcached[:bind_host] = '0.0.0.0'
 memcached[:bind_port] = 11211
+
+
+# Supervisor settings.
+# Careful: changing those may cause a restart of the entire Scalr service.
+supervisor[:tz] = 'Etc/UTC'

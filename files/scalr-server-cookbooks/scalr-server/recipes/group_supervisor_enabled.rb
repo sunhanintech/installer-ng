@@ -76,6 +76,7 @@ case node['platform']
                     :run_dir => run_dir_for(node, 'supervisor')
                 })
       helpers(Scalr::PathHelper)
+      notifies  :restart, 'service[scalr]', :immediately  # Environment might change
     end
 
     service 'scalr' do
