@@ -3,7 +3,6 @@ directory bin_dir_for(node, 'service') do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
 cookbook_file "#{bin_dir_for node, 'service'}/scalrpy_proxy" do
@@ -17,14 +16,18 @@ directory run_dir_for(node, 'service') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
 end
 
 directory log_dir_for(node, 'service') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
+end
+
+directory data_dir_for(node, 'service') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0755
 end
 
 directory "#{data_dir_for(node, 'service')}/graphics" do
@@ -32,7 +35,6 @@ directory "#{data_dir_for(node, 'service')}/graphics" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
 end
 
 

@@ -34,19 +34,21 @@ end
 directory run_dir_for(node, 'supervisor') do
   owner node[:scalr_server][:supervisor][:user]
   mode 0755
-  recursive true
 end
 
 directory log_dir_for(node, 'supervisor') do
   owner node[:scalr_server][:supervisor][:user]
   mode 0755
-  recursive true
+end
+
+directory etc_dir_for(node, 'supervisor') do
+  owner node[:scalr_server][:supervisor][:user]
+  mode  0755
 end
 
 directory "#{etc_dir_for node, 'supervisor'}/conf.d" do
   owner node[:scalr_server][:supervisor][:user]
   mode  0755
-  recursive true
 end
 
 template "#{etc_dir_for node, 'supervisor'}/supervisord.conf" do

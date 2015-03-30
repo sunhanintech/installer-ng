@@ -15,6 +15,15 @@ include_recipe 'scalr-server::_config_dir'
 # + /etc/scalr-server/scalr-secrets.json
 node.consume_attributes(ScalrServer.generate_config node)
 
+# Build all dirs (to ensure we work on systems with a restrictive umask)
+[etc_dir(node), bin_dir(node), var_dir(node), run_dir(node), log_dir(node), data_dir(node)].each do |dir|
+  directory dir do
+    owner     'root'
+    group     'root'
+    mode      0775
+  end
+end
+
 # Deploy modules
 %w{supervisor mysql memcached app cron rrd service web proxy httpd}.each do |mod|
   if enable_module?(node, mod)

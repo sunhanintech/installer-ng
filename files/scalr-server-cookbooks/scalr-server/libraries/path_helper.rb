@@ -17,24 +17,50 @@ module Scalr
 
     # Common paths #
 
-    def etc_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/etc/#{svc}"
+    def etc_dir(node)
+      "#{node[:scalr_server][:install_root]}/etc"
     end
 
-    def run_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/var/run/#{svc}"
+    def bin_dir(node)
+      "#{node[:scalr_server][:install_root]}/libexec"
+    end
+
+    def var_dir(node)
+      "#{node[:scalr_server][:install_root]}/var"
+    end
+
+    def run_dir(node)
+      "#{var_dir node}/run"
+    end
+
+    def log_dir(node)
+      "#{var_dir node}/log"
+    end
+
+    def data_dir(node)
+      "#{var_dir node}/lib"
+    end
+
+    # Service paths #
+
+    def etc_dir_for(node, svc)
+      "#{etc_dir node}/#{svc}"
     end
 
     def bin_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/libexec/#{svc}"
+      "#{bin_dir node}/#{svc}"
+    end
+
+    def run_dir_for(node, svc)
+      "#{run_dir node}/#{svc}"
     end
 
     def log_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/var/log/#{svc}"
+      "#{log_dir node}/#{svc}"
     end
 
     def data_dir_for(node, svc)
-      "#{node[:scalr_server][:install_root]}/var/lib/#{svc}"
+      "#{data_dir node}/#{svc}"
     end
 
   end

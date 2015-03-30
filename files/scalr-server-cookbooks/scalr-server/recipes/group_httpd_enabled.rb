@@ -4,21 +4,18 @@ directory etc_dir_for(node, 'httpd') do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
 directory run_dir_for(node, 'httpd') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
 end
 
 directory log_dir_for(node, 'httpd') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
 end
 
 

@@ -14,7 +14,6 @@ directory etc_dir_for(node, 'mysql') do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
 template "#{etc_dir_for node, 'mysql'}/my.cnf" do
@@ -33,7 +32,6 @@ directory "#{data_dir_for node, 'mysql'}" do
   owner     node[:scalr_server][:mysql][:user]
   group     node[:scalr_server][:mysql][:user]
   mode      0755
-  recursive true
 end
 
 
@@ -42,14 +40,12 @@ directory run_dir_for(node, 'mysql') do
   owner     node[:scalr_server][:mysql][:user]
   group     node[:scalr_server][:mysql][:user]
   mode      0755
-  recursive true
 end
 
 directory log_dir_for(node, 'mysql') do
   owner     node[:scalr_server][:mysql][:user]
   group     node[:scalr_server][:mysql][:user]
   mode      0755
-  recursive true
 end
 
 # Note that this runs at compile time.

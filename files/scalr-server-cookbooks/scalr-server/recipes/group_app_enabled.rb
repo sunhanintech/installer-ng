@@ -14,11 +14,16 @@ end
 
 # Scalr system directories
 
+directory run_dir_for(node, 'scalr') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0770
+end
+
 directory "#{run_dir_for(node, 'scalr')}/cache" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0770
-  recursive true
 end
 
 link "#{scalr_bundle_path node}/app/cache" do
@@ -29,14 +34,12 @@ directory "#{scalr_bundle_path node}/app/etc" do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
 directory etc_dir_for(node, 'scalr') do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
 # Scalr config files, and links.
@@ -78,7 +81,6 @@ directory run_dir_for(node, 'app') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0775
-  recursive true
 end
 
 file 'scalr_code' do
@@ -94,18 +96,22 @@ end
 # TODO - Session GC cron when web is enabled!!
 # PHP sessions and error log dirs
 
+directory run_dir_for(node, 'php') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0775
+end
+
 directory "#{run_dir_for node, 'php'}/sessions" do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0775
-  recursive true
 end
 
 directory log_dir_for(node, 'php') do
   owner     node[:scalr_server][:app][:user]
   group     node[:scalr_server][:app][:user]
   mode      0755
-  recursive true
 end
 
 
@@ -115,10 +121,8 @@ directory etc_dir_for(node, 'php') do
   owner     'root'
   group     'root'
   mode      0755
-  recursive true
 end
 
-# TODO - Reload services on change here
 template 'php_ini' do
   path      "#{etc_dir_for node, 'php'}/php.ini"
   source    'app/php.ini.erb'
