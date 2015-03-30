@@ -70,8 +70,8 @@ describe Scalr::ServiceHelper do
     it 'should return the right crons' do
       node.set[:scalr_server][:cron][:enable] = true
       node.set[:scalr_server][:cron][:disable] = []
-      expect(dummy_class.new.enabled_crons(node).length).to eq(0)
-      expect(dummy_class.new.disabled_crons(node).length).to eq(19)
+      expect(dummy_class.new.enabled_crons(node).length).to eq(1)
+      expect(dummy_class.new.disabled_crons(node).length).to eq(18)
     end
 
     it 'should support false' do

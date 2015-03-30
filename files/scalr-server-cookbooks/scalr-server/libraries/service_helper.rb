@@ -176,7 +176,6 @@ module Scalr
           {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'BundleTasksManager'},
           {:hour => '*',    :minute => '*/15', :ng => true,  :name => 'MetricCheck'},
           {:hour => '*',    :minute => '*/2',  :ng => true,  :name => 'Poller'},
-          {:hour => '*',    :minute => '*/2',  :ng => false, :name => 'EBSManager'},
           {:hour => '*',    :minute => '*/20', :ng => false, :name => 'RolesQueue'},
           {:hour => '*',    :minute => '*/5',  :ng => true,  :name => 'DbMsrMaintenance'},
           {:hour => '*',    :minute => '*/20', :ng => true,  :name => 'LeaseManager'},
@@ -195,7 +194,9 @@ module Scalr
     end
 
     def _all_crons
-      []
+      [
+          {:hour => '*',    :minute => '*/10',  :ng => false, :name => 'EBSManager'},
+      ]
     end
 
     def enabled_crons(node)
