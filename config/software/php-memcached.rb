@@ -17,6 +17,9 @@ dependency 'php'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  # https://github.com/Scalr/scalr/issues/61#issuecomment-88185134
+  patch source: 'detailed-session-error-logging.patch'
+
   command "#{install_dir}/embedded/bin/phpize"
   command './configure' \
           " --with-php-config=#{install_dir}/embedded/bin/php-config" \
