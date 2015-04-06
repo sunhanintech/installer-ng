@@ -23,5 +23,28 @@ name 'scalr-server-bin'
 source :path => File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
 
 build do
+  # Shell commands imported from the repo
   command "rsync -a ./ #{install_dir}/bin"
+
+
+  # Dynamic commands generated here
+  env = with_standard_compiler_flags(with_embedded_path)
+
+  build_environment_script = "#{install_dir}/bin/activate-build-environment"
+
+  block do
+    require 'shellwords'
+
+    env_body = env.map do |key, value|
+      "export #{Shellwords.escape(key)}=#{Shellwords.escape(value)}"
+    end.join("\n")
+
+    File.open(build_environment_script, 'w') do |f|
+      f.puts('#!/bin/sh')
+      f.puts("# Use `source #{build_environment_script}` to load this environment")
+      f.puts(env_body)
+    end
+  end
+
+  command "chmod 755 #{build_environment_script}"
 end
