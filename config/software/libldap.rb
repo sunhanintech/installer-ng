@@ -12,15 +12,11 @@ dependency 'libsasl'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  # libldap uses the preprocessor to check for compatibility with openssl and sasl, but by default,
-  # omnibus does include preprocessor flags (CPPFLAGS). We add them here to avoid the following error:
-  # "accepted by the compiler, rejected by the preprocessor!"
-  env['CPPFLAGS'] = "-I#{install_dir}/embedded/include"
-
   command './configure' \
           ' --disable-slapd' \
           ' --with-tls=openssl' \
           ' --with-cyrus-sasl' \
+          " --sysconfdir=#{install_dir}/etc" \
           " --prefix=#{install_dir}/embedded", env: env
   make "-j #{workers} depend", env: env
   make "-j #{workers}", env: env
