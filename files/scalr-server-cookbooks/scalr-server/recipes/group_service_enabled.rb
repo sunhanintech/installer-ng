@@ -80,13 +80,14 @@ if enabled_services(node, :php).any?
                     " #{scalr_bundle_path node}/app/cron/service.php"
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.log"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.err"
-    action          [:enable, :start]
     autostart       true
     user            node[:scalr_server][:app][:user]
+    action          [:enable, :start]
     subscribes      :restart, 'file[scalr_config]' if should_restart
     subscribes      :restart, 'file[scalr_code]' if should_restart
     subscribes      :restart, 'file[scalr_cryptokey]' if should_restart
     subscribes      :restart, 'file[scalr_id]' if should_restart
     subscribes      :restart, 'template[php_ini]' if should_restart
+    subscribes      :restart, 'template[ldap_conf]' if should_restart
   end
 end

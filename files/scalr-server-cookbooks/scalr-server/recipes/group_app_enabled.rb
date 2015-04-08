@@ -136,6 +136,22 @@ template 'php_ini' do
 end
 
 
+# Ldap configuration
+directory etc_dir_for(node, 'openldap') do
+  owner     'root'
+  group     'root'
+  mode      0755
+end
+
+template 'ldap_conf' do
+  path      "#{etc_dir_for node, 'openldap'}/ldap.conf"
+  source    'app/ldap.conf.erb'
+  owner     'root'
+  group     'root'
+  mode      0644
+end
+
+
 # Load database structure and data
 
 mysql_database 'load scalr database structure' do

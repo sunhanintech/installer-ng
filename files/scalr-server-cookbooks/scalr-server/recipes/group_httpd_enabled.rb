@@ -42,9 +42,10 @@ supervisor_service 'httpd' do
                   ' -DFOREGROUND'
   stdout_logfile  "#{log_dir_for node, 'supervisor'}/httpd.log"
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/httpd.err"
-  action          [:enable, :start]
   autostart       true
   startsecs       5
+  action          [:enable, :start]
   subscribes      :restart, 'user[scalr_user]' if service_is_up?(node, 'httpd')
   subscribes      :restart, 'template[php_ini]' if service_is_up?(node, 'httpd')
+  subscribes      :restart, 'template[ldap_conf]' if service_is_up?(node, 'httpd')
 end
