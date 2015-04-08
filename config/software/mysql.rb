@@ -8,6 +8,7 @@ dependency 'ncurses'
 dependency 'libedit'
 dependency 'openssl'
 dependency 'libaio'
+dependency 'perl'
 
 
 source  :url => "http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-#{version}.tar.gz",
@@ -50,4 +51,7 @@ build do
 
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env
+
+  #Use embedded Perl binary
+  command "sed -i '1 s|^.*$|#!#{install_dir}/embedded/bin/perl|g' #{install_dir}/embedded/scripts/mysql_install_db", env: env
 end
