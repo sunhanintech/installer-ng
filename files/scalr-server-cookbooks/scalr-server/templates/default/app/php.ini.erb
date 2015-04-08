@@ -1946,12 +1946,17 @@ session.cookie_lifetime = <%= node[:scalr_server][:app][:session_cookie_lifetime
 session.save_handler = memcached
 session.save_path = <%= memcached_servers(node).join(', ') %>
 
-memcached.use_sasl = On
 memcached.sess_binary = On
+
+<% if memcached_enable_sasl?(node) %>
+memcached.use_sasl = On
 memcached.sess_sasl_username = <%= node[:scalr_server][:memcached][:username] %>
 memcached.sess_sasl_password = <%= node[:scalr_server][:memcached][:password] %>
+<% end %>
 
+<% if memcached_servers(node).length > 1 %>
 memcached.sess_remove_failed = 1
+<% end %>
 memcached.sess_number_of_replicas = 1
 memcached.store_retry_count = <%= 2 * memcached_servers(node).length %>
 memcached.sess_consistent_hash = On

@@ -330,6 +330,10 @@ default[:scalr_server][:memcached][:password] = 'CHANGEME'  # /!\ IGNORED. Place
 # The UNIX user Memcached should run as.
 default[:scalr_server][:memcached][:user] = 'scalr-memcached'
 
+# Whether to enable SASL in memcached (true) or not (false), or default to whatever the installer sets (nil)
+# NOTE: if this is nil, the installer will automatically enable SASL if Memcached is binding on an IP other than 127.0.0.1
+default[:scalr_server][:memcached][:enable_sasl] = nil
+
 
 ##############
 # Supervisor #
