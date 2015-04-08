@@ -1,18 +1,12 @@
-FROM ubuntu:14.04
+FROM krallin/ubuntu-tini:14.04
 
-ENV SCALR_VERSION 5.3.2.ee~nightly.20150227043604.209.dc76268.61ddb45~ubuntu.trusty-1
+ENV SCALR_VERSION 5.5.0.ee~nightly.20150406043621.286.08bfa88.105a79a~ubuntu.trusty-1
 ADD ./scalr-server_${SCALR_VERSION}_amd64.deb /
 RUN dpkg -i /scalr-server_${SCALR_VERSION}_amd64.deb
 
-RUN apt-get update && apt-get install -y wget curl unzip tar && rm -rf /var/lib/apt/lists/*
-
-ENV TINI_VERSION v0.3.3
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-
 ADD docker-entrypoint.sh /
 
-ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/tini", "--", "/docker-entrypoint.sh"]
 CMD ["scalr-server"]
 
 EXPOSE 80 8080
