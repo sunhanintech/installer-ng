@@ -9,8 +9,8 @@ end
 
 relative_path "memcached-#{version}"
 
-dependency 'libmemcached'
 dependency 'zlib'
+dependency 'libmemcached'
 dependency 'php'
 
 

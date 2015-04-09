@@ -37,6 +37,12 @@ dependency 'supervisor'
 dependency 'rrdtool'
 dependency 'dcron'
 
+# Scalr dependencies
+dependency 'putty'
+dependency 'dejavu-sans-ttf'
+dependency 'scalr-app-php-libs'
+dependency 'scalr-app-python-libs'
+
 # Actual Scalr software
 dependency 'scalr-app'
 
