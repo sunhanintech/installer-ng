@@ -31,16 +31,16 @@ describe Scalr::ConfigHelper do
       node.set[:scalr_server][:service][:plotter_bind_port] = 8080
       node.set[:scalr_server][:service][:disable] = []
 
-      node.set[:scalr_server][:routing][:endpoint_scheme] = 'http'
-      node.set[:scalr_server][:routing][:endpoint_host] = 'test.com'
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      node.set[:scalr_server][:routing][:endpoint_host] = 'example.com'
 
-      node.set[:scalr_server][:routing][:graphics_scheme] = 'http'
-      node.set[:scalr_server][:routing][:graphics_host] = 'test.com'
+      node.set[:scalr_server][:routing][:graphics_scheme] = nil
+      node.set[:scalr_server][:routing][:graphics_host] = nil
       node.set[:scalr_server][:routing][:graphics_path] = 'graphics'
 
-      node.set[:scalr_server][:routing][:plotter_scheme] = 'http'
-      node.set[:scalr_server][:routing][:plotter_host] = 'test.com'
-      node.set[:scalr_server][:routing][:plotter_port] = 8080
+      node.set[:scalr_server][:routing][:plotter_scheme] = nil
+      node.set[:scalr_server][:routing][:plotter_host] = nil
+      node.set[:scalr_server][:routing][:plotter_port] = nil
 
       # Pretty basic test... We just assert that the config can be loaded.
       YAML.load(dummy_class.new.dump_scalr_configuration node)
@@ -86,7 +86,18 @@ describe Scalr::ConfigHelper do
       expect(d['scalr']['connections']['ldap']['host']).to eq('localhost')
 
       expect(d['scalr']['aws']['ip_pool']).to eq(%w{A B C })
-      expect(d['scalr']['aws']['security_group_name']).to eq('scalr.12345678.ip-pool')  # ??
+      expect(d['scalr']['aws']['security_group_name']).to eq('scalr.12345678.ip-pool')
+
+      expect(d['scalr']['load_statistics']['connections']['plotter']['scheme']).to eq('https')
+      expect(d['scalr']['load_statistics']['connections']['plotter']['host']).to eq('example.com')
+      expect(d['scalr']['load_statistics']['connections']['plotter']['port']).to eq(443)
+
+      expect(d['scalr']['load_statistics']['img']['scheme']).to eq('https')
+      expect(d['scalr']['load_statistics']['img']['host']).to eq('example.com')
+      expect(d['scalr']['load_statistics']['img']['path']).to eq('graphics')
+
+      expect(d['scalr']['endpoint']['scheme']).to eq('https')
+      expect(d['scalr']['endpoint']['host']).to eq('example.com')
 
 
     end

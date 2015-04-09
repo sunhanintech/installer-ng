@@ -288,9 +288,9 @@ module Scalr
     end
 
 
-    ####################################################
-    # Various Other Helpers (e.g. compatibility shims) #
-    ####################################################
+    #####################
+    # Memcached Helpers #
+    #####################
 
     def memcached_servers(node)
       if node[:scalr_server][:app][:memcached_host].nil? && node[:scalr_server][:app][:memcached_port].nil?
@@ -305,6 +305,32 @@ module Scalr
         return node[:scalr_server][:memcached][:bind_host] != '127.0.0.1'
       end
       !! node[:scalr_server][:memcached][:enable_sasl]
+    end
+
+    ####################
+    # Endpoint helpers #
+    ####################
+
+    def graphics_scheme(node)
+      node[:scalr_server][:routing][:graphics_scheme] || node[:scalr_server][:routing][:endpoint_scheme]
+
+    end
+
+    def graphics_host(node)
+      node[:scalr_server][:routing][:graphics_host] || node[:scalr_server][:routing][:endpoint_host]
+    end
+
+    def plotter_scheme(node)
+      node[:scalr_server][:routing][:plotter_scheme] || node[:scalr_server][:routing][:endpoint_scheme]
+
+    end
+
+    def plotter_host(node)
+      node[:scalr_server][:routing][:plotter_host] || node[:scalr_server][:routing][:endpoint_host]
+    end
+
+    def plotter_port(node)
+      node[:scalr_server][:routing][:plotter_port] || (node[:scalr_server][:routing][:endpoint_scheme] == 'https' ? 443 : 80)
     end
 
   end

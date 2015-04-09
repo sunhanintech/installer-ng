@@ -100,16 +100,18 @@ default[:scalr_server][:routing][:endpoint_host] = default_endpoint   # Host to 
 
 # The following settings control the endpoint Scalr advertises for load statistics graphics (images). They must point to
 # the serving hosting those graphs.
-default[:scalr_server][:routing][:graphics_scheme] = 'http'           # Same as above
-default[:scalr_server][:routing][:graphics_host] = default_endpoint   # Same as above
+# When set to nil, the installer will guess those settings based on the endpoint settings.
+default[:scalr_server][:routing][:graphics_scheme] = nil
+default[:scalr_server][:routing][:graphics_host] = nil
 default[:scalr_server][:routing][:graphics_path] = 'graphics'         # Relative path where the graphics are served from.
 
 # THe following settings control the endpoint Scalr advertises for the load statistics plotter. This application is
 # generates the graphics (which are served at the graphics endpoint), and redirects the client (browser) to the graphics
 # endpoint.
-default[:scalr_server][:routing][:plotter_scheme] = 'http'            # Same as above
-default[:scalr_server][:routing][:plotter_host] = default_endpoint    # Same as above
-default[:scalr_server][:routing][:plotter_port] = 80                  # Port to advertise the plotter on (see bind_port below).
+# When set to nil, the installer will guess those settings based on the endpoint settings.
+default[:scalr_server][:routing][:plotter_scheme] = nil
+default[:scalr_server][:routing][:plotter_host] = nil
+default[:scalr_server][:routing][:plotter_port] = nil
 
 
 #######

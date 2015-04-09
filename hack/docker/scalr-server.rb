@@ -17,13 +17,6 @@ endpoint = 'example.com'  # Host name or IP of your proxy server.
 routing[:endpoint_scheme] = proto
 routing[:endpoint_host] = endpoint
 
-routing[:graphics_scheme] = proto
-routing[:graphics_host] = endpoint
-
-routing[:plotter_scheme] = proto
-routing[:plotter_host] = endpoint
-routing[:plotter_port] = if proto == 'http' then 80 else 443 end
-
 # Point the app to the Scalr main DB server.
 app[:mysql_scalr_host] = 'db'   # Change this to the hostname / IP of your Scalr main DB server.
 app[:mysql_scalr_port] = 3306   # Make sure this matches the MySQL bind port.

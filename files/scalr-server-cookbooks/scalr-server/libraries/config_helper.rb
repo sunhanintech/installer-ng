@@ -143,13 +143,14 @@ module Scalr
                     :load_statistics => {
                         :connections => {
                             :plotter => {
-                                :scheme => node[:scalr_server][:routing][:plotter_scheme],
+                                :scheme => plotter_scheme(node),
+                                :host => plotter_host(node),
+                                :port => plotter_port(node),
                                 :bind_scheme => node[:scalr_server][:service][:plotter_bind_scheme],
-                                :host => node[:scalr_server][:routing][:plotter_host],
                                 :bind_host => node[:scalr_server][:service][:plotter_bind_host],
-                                :bind_address => node[:scalr_server][:service][:plotter_bind_host],  # Deprecated
-                                :port => node[:scalr_server][:routing][:plotter_port],  # TODO - Make optional? (proto-based)
                                 :bind_port => node[:scalr_server][:service][:plotter_bind_port],
+                                # Deprecated
+                                :bind_address => node[:scalr_server][:service][:plotter_bind_host],
                             },
                         },
                         :rrd =>{
@@ -158,8 +159,8 @@ module Scalr
                             :rrdcached_sock_path => "#{run_dir_for node, 'rrd'}/rrdcached.sock",
                         },
                         :img => {
-                            :scheme => node[:scalr_server][:routing][:graphics_scheme],
-                            :host => node[:scalr_server][:routing][:graphics_host],
+                            :scheme => graphics_scheme(node),
+                            :host => graphics_host(node),
                             :path => node[:scalr_server][:routing][:graphics_path],
                             :dir => "#{data_dir_for node, 'service'}/graphics"
                         }

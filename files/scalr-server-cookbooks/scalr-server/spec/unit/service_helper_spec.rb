@@ -179,8 +179,75 @@ describe Scalr::ServiceHelper do
       node.set[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
       expect(dummy_class.new.memcached_enable_sasl?(node)).to be_falsey
     end
-
-
   end
 
+  describe '#graphics_scheme' do
+    it 'should default to the endpoint_scheme' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      expect(dummy_class.new.graphics_scheme(node)).to eq('https')
+    end
+
+    it 'should respect the override' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      node.set[:scalr_server][:routing][:graphics_scheme] = 'http'
+      expect(dummy_class.new.graphics_scheme(node)).to eq('http')
+    end
+  end
+
+  describe '#graphics_host' do
+    it 'should default to the endpoint_scheme' do
+      node.set[:scalr_server][:routing][:endpoint_host] = 'example.com'
+      expect(dummy_class.new.graphics_host(node)).to eq('example.com')
+    end
+
+    it 'should respect the override' do
+      node.set[:scalr_server][:routing][:endpoint_host] = 'example.com'
+      node.set[:scalr_server][:routing][:graphics_host] = 'graphics.com'
+      expect(dummy_class.new.graphics_host(node)).to eq('graphics.com')
+    end
+  end
+
+  describe '#plotter_scheme' do
+    it 'should default to the endpoint_scheme' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      expect(dummy_class.new.plotter_scheme(node)).to eq('https')
+    end
+
+    it 'should respect the override' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      node.set[:scalr_server][:routing][:plotter_scheme] = 'http'
+      expect(dummy_class.new.plotter_scheme(node)).to eq('http')
+    end
+  end
+
+  describe '#plotter_host' do
+    it 'should default to the endpoint_scheme' do
+      node.set[:scalr_server][:routing][:endpoint_host] = 'example.com'
+      expect(dummy_class.new.plotter_host(node)).to eq('example.com')
+    end
+
+    it 'should respect the override' do
+      node.set[:scalr_server][:routing][:endpoint_host] = 'example.com'
+      node.set[:scalr_server][:routing][:plotter_host] = 'plotter.com'
+      expect(dummy_class.new.plotter_host(node)).to eq('plotter.com')
+    end
+  end
+
+  describe '#plotter_port' do
+    it 'should default to 443 for https' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      expect(dummy_class.new.plotter_port(node)).to eq(443)
+    end
+
+    it 'should default to 80 for http' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'http'
+      expect(dummy_class.new.plotter_port(node)).to eq(80)
+    end
+
+    it 'should respect the override' do
+      node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'
+      node.set[:scalr_server][:routing][:plotter_port] = 8000
+      expect(dummy_class.new.plotter_port(node)).to eq(8000)
+    end
+  end
 end
