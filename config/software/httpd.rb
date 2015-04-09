@@ -1,8 +1,16 @@
 name 'httpd'
-default_version '2.4.10'
+default_version '2.4.12'
 
-source url: "http://www.us.apache.org/dist/httpd/httpd-#{version}.tar.bz2",
-       md5: '44543dff14a4ebc1e9e2d86780507156'
+source url: "http://www.us.apache.org/dist/httpd/httpd-#{version}.tar.bz2"
+
+
+version '2.4.10' do
+  source md5: '44543dff14a4ebc1e9e2d86780507156'
+end
+
+version '2.4.12' do
+  source md5: 'b8dc8367a57a8d548a9b4ce16d264a13'
+end
 
 relative_path "httpd-#{version}"
 
