@@ -108,12 +108,6 @@ mysql_database 'remove_access_to_test_databases' do
   not_if { bootstrapped }
 end
 
-file mysql_bootstrap_status_file do
-  mode     0644
-  owner   'root'
-  group   'root'
-  action  :create_if_missing
-end
 
 # Remote root
 
@@ -123,6 +117,13 @@ mysql_database_user 'root' do
   host        '%'
   action      node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
   retries     bootstrapped ? 0 : 10
+end
+
+file mysql_bootstrap_status_file do
+  mode     0644
+  owner   'root'
+  group   'root'
+  action  :create_if_missing
 end
 
 
