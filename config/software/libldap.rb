@@ -21,4 +21,7 @@ build do
   make "-j #{workers} depend", env: env
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env
+
+  # Remove unused configuration (it is re-created by the installer, we don't want to include it in the package)
+  delete "#{install_dir}/etc/openldap"
 end
