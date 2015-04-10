@@ -26,7 +26,7 @@ build do
   # Note that m2crypto is installed separately in python-m2crypto.
   # Then, install the rest
   command "#{install_dir}/embedded/bin/pip install" \
-          " --build #{project_dir}/pybuild" \
+          " --build #{build_dir}/pybuild" \
           ' --requirement ./requirements.txt', env: env
 
 end
