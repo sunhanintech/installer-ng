@@ -1971,3 +1971,6 @@ date.timezone = <%= node[:rackspace_timezone][:config][:tz] %>
 http.persistent.handles.limit = 0
 error_log = <%= log_dir_for node, 'php' %>/php-errors.log
 display_errors = On
+
+; Extra configuration. Modify using app[:php_configuration] = '...'
+<%= node[:scalr_server][:app][:php_configuration] %>
