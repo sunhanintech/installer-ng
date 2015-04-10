@@ -53,6 +53,6 @@ supervisor_service 'cron' do
                   ' -f'
   stdout_logfile  "#{log_dir_for node, 'supervisor'}/crond.log"
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/crond.err"
-  action          [:enable, :start]
   autostart       true
+  action          [:enable, :start]
 end

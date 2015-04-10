@@ -60,8 +60,8 @@ enabled_services(node, :python).each do |svc|
                     # Note: 'start' is added by the proxy.
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.log"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.err"
-    action          [:enable, :start]
     autostart       true
+    action          [:enable, :start]
     subscribes      :restart, 'file[scalr_config]' if should_restart
     subscribes      :restart, 'file[scalr_code]' if should_restart
     subscribes      :restart, 'file[scalr_cryptokey]' if should_restart
