@@ -27,3 +27,5 @@ binlog_format                       = ROW
 log-bin                             = <%= node[:scalr_server][:mysql][:binlog_name] %>
 log-bin-index                       = <%= node[:scalr_server][:mysql][:binlog_name] %>.index
 <% end %>
+
+<%= node[:scalr_server][:mysql][:configuration] %>

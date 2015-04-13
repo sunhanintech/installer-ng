@@ -268,6 +268,9 @@ default[:scalr_server][:mysql][:server_id] = 1
 default[:scalr_server][:mysql][:binlog] = false
 default[:scalr_server][:mysql][:binlog_name] = 'mysql-bin'
 
+# Extra MySQL settings
+default[:scalr_server][:mysql][:configuration] = ''
+
 # TODO - Option to only create specific tables
 
 # User MySQL should run as.

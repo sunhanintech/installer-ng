@@ -67,10 +67,16 @@ mysql[:bind_port] = 3306
 # Enable binary logging to support replication
 mysql[:binlog] = true
 
+mysql[:configuration] = '
+[mysqld]
+max-connections=1000
+'
+
 # Memcached settings.
 # This is similar to the MySQL settings above.
 memcached[:bind_host] = '0.0.0.0'
 memcached[:bind_port] = 11211
+
 
 
 # Supervisor settings.
