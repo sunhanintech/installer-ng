@@ -98,6 +98,11 @@ EnableSendfile on
     <VirtualHost *:<%= web[:bind_port] %>>
       DocumentRoot <%= web[:root] %>
 
+      ErrorLog  <%= log_dir_for node, 'httpd' %>/web.<%= web[:name] %>.error.log
+      <IfModule log_config_module>
+            CustomLog <%= log_dir_for node, 'httpd' %>/web.<%= web[:name] %>.access.log combined
+      </IfModule>
+
       <Directory <%= web[:root] %>>
         Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride All
@@ -126,6 +131,11 @@ EnableSendfile on
           SSLCertificateKeyFile <%= node[:scalr_server][:proxy][:ssl_key_path] %>
 
           <%= render 'httpd/_proxy_partial.erb' %>
+
+          ErrorLog  <%= log_dir_for node, 'httpd' %>/web.proxy-ssl.error.log
+          <IfModule log_config_module>
+                CustomLog <%= log_dir_for node, 'httpd' %>/web.proxy-ssl.access.log combined
+          </IfModule>
         </VirtualHost>
     <% end %>
 
@@ -146,6 +156,10 @@ EnableSendfile on
       <% else %>
         <%= render 'httpd/_proxy_partial.erb' %>
       <% end %>
+      ErrorLog  <%= log_dir_for node, 'httpd' %>/web.proxy.error.log
+      <IfModule log_config_module>
+            CustomLog <%= log_dir_for node, 'httpd' %>/web.proxy.access.log combined
+      </IfModule>
     </VirtualHost>
 
     <Proxy balancer://app>
