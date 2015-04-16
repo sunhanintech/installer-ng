@@ -6,6 +6,8 @@ Welcome to the Scalr installer!
 Install instructions can be found below in this README, or
 [on the Scalr Wiki][00].
 
+Note: this installer replaces [scalr/installer][01].
+
 
 Supported Platforms
 -------------------
@@ -91,6 +93,7 @@ We encourage you to review the following documentation entries:
 
 
   [00]: https://scalr-wiki.atlassian.net/wiki/x/QgAeAQ
+  [01]: https://github.com/scalr/installer
   [05]: https://scalr-wiki.atlassian.net/wiki/x/CYA0
   [10]: https://scalr-wiki.atlassian.net/wiki/x/fQAeAQ
   [20]: https://scalr-wiki.atlassian.net/wiki/x/RgAeAQ
