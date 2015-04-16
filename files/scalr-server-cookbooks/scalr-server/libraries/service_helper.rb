@@ -289,7 +289,7 @@ module Scalr
 
 
     #####################
-    # Memcached Helpers #
+    # Memcached helpers #
     #####################
 
     def memcached_servers(node)
@@ -306,6 +306,22 @@ module Scalr
       end
       !! node[:scalr_server][:memcached][:enable_sasl]
     end
+
+    #################
+    # MySQL helpers #
+    #################
+
+    def mysql_bootstrap_status_file(node)
+      "#{data_dir_for node, 'mysql'}/bootstrapped"
+    end
+
+    def mysql_bootstrapped?(node)
+      if node[:mysql_bootstrap_status].nil?
+        node.override[:mysql_bootstrap_status] = File.exists?(mysql_bootstrap_status_file node)
+      end
+      node[:mysql_bootstrap_status]
+    end
+
 
     ####################
     # Endpoint helpers #
