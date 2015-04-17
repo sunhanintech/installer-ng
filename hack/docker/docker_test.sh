@@ -8,6 +8,7 @@ VERYFAST=0
 KEEP=0
 DEBUG=0
 CLEAN=0
+NOSCALR=0
 
 KILLSERVICE=0
 
@@ -25,6 +26,8 @@ while true; do
     CLEAN=1
   elif [ "${1}" = "killservice" ]; then
     KILLSERVICE=1
+  elif [ "${1}" = "noscalr" ]; then
+    NOSCALR=1
   elif [ -z "${1}" ]; then
     break
   else
@@ -56,7 +59,7 @@ else
 fi
 scalr_candidate="${HERE}/../../../${repo_name}"
 
-if [ -d "${scalr_candidate}" ]; then
+if [ -d "${scalr_candidate}" ] && [ 0 -eq "${NOSCALR}" ]; then
   echo "It looks like you have a clone of Scalr in:"
   echo "${scalr_candidate}"
 else
