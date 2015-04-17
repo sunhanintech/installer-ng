@@ -1,10 +1,3 @@
-user 'memcached_user' do
-  username  node[:scalr_server][:memcached][:user]
-  home      etc_dir_for(node, 'memcached')
-  system    true
-  notifies  :restart, 'supervisor_service[memcached]' if service_is_up?(node, 'memcached')
-end
-
 bash 'set_memcached_password' do
   code  <<-EOH
   printf "%s" "#{node[:scalr_server][:memcached][:password]}" | /opt/scalr-server/embedded/sbin/saslpasswd2 \

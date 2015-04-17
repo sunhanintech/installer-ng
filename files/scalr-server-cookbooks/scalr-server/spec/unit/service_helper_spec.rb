@@ -83,21 +83,24 @@ describe Scalr::ServiceHelper do
   end
 
   describe '#enable_module?' do
-    it 'should always enable supervisor' do
-      expect(dummy_class.new.enable_module?(node, :supervisor)).to eq(true)
-      expect(dummy_class.new.enable_module?(node, 'supervisor')).to eq(true)
+    it 'should always enable some modules' do
+      %w{supervisor dirs users sysctl}.each do |mod|
+        expect(dummy_class.new.enable_module?(node, mod.to_sym)).to be_truthy
+        expect(dummy_class.new.enable_module?(node, mod)).to be_truthy
+      end
     end
 
     it 'should special-case app' do
       # Check with all modules off
       node.set[:scalr_server][:enable_all] = false
-      %w{web proxy rrd cron service}.each do |mod|
+      node.set[:scalr_server][:proxy][:enable] = true
+      %w{web rrd cron service}.each do |mod|
         node.set[:scalr_server][mod][:enable] = false
       end
       expect(dummy_class.new.enable_module?(node, :app)).to eq(false)
 
       # Check them one by one
-      %w{web proxy rrd cron service}.each do |mod|
+      %w{web rrd cron service}.each do |mod|
         node.set[:scalr_server][mod][:enable] = true
         expect(dummy_class.new.enable_module?(node, :app)).to eq(true)
         node.set[:scalr_server][mod][:enable] = false

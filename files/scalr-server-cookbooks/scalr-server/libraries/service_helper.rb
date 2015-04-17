@@ -241,13 +241,13 @@ module Scalr
       mod = mod.to_sym
 
       # Supervisor is always enabled.
-      if mod == :supervisor
+      if %i{supervisor dirs users sysctl}.include? mod
         return true
       end
 
       # App is enabled if anything that requires the app user is enabled.
       if mod == :app
-        %w{cron rrd service web proxy}.each do |dependent_mod|
+        %w{cron rrd service web}.each do |dependent_mod|
           if enable_module?(node, dependent_mod)
             return true
           end

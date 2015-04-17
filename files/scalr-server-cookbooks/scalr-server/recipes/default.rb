@@ -42,18 +42,8 @@ include_recipe 'scalr-server::_config_dir'
 # + /etc/scalr-server/scalr-secrets.json
 node.consume_attributes(ScalrServer.generate_config node)
 
-# Build all dirs (to ensure we work on systems with a restrictive umask)
 
-[etc_dir(node), bin_dir(node), var_dir(node), run_dir(node), log_dir(node), data_dir(node)].each do |dir|
-  directory dir do
-    owner     'root'
-    group     'root'
-    mode      0775
-  end
-end
-
-
-all_modules = %w{mysql memcached app cron rrd service web proxy httpd}
+all_modules = %i{dirs users mysql memcached app cron rrd service web proxy httpd sysctl}
 
 # Stage 1 - Prepare before supervisor starts
 all_modules.each do |mod|
@@ -67,7 +57,3 @@ process_module 'supervisor', nil
 all_modules.each do |mod|
   process_module mod, 'post'
 end
-
-
-# sysctl settings
-include_recipe 'scalr-server::sysctl'

@@ -1,15 +1,5 @@
 Chef::Resource::File.send(:include, Scalr::ConfigHelper)
 
-# user
-
-user 'scalr_user' do
-  username  node[:scalr_server][:app][:user]
-  home      "#{node[:scalr_server][:install_root]}/embedded/scalr"
-  shell     '/bin/sh'  # TODO - Needed?
-  system    true
-end
-
-
 # Scalr system directories
 
 directory run_dir_for(node, 'scalr') do

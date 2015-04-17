@@ -1,11 +1,3 @@
-# Add MySQL user
-user 'mysql_user' do
-  username  node[:scalr_server][:mysql][:user]
-  home      data_dir_for(node, 'mysql')  # TODO - Check if this works when it doesn't exist.
-  system    true
-end
-
-
 # Create MySQL configuration dir and file
 directory etc_dir_for(node, 'mysql') do
   owner     'root'

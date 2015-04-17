@@ -27,7 +27,9 @@ LoadModule status_module            embedded/modules/mod_status.so
 LoadModule autoindex_module         embedded/modules/mod_autoindex.so
 LoadModule dir_module               embedded/modules/mod_dir.so
 LoadModule alias_module             embedded/modules/mod_alias.so
+<% if enable_module?(node, :app) %>
 LoadModule php5_module              embedded/modules/libphp5.so
+<% end %>
 
 <IfModule unixd_module>
   User    <%= node[:scalr_server][:app][:user] %>
