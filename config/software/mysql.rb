@@ -1,7 +1,7 @@
 # I need perl for the scripts here
 
 name 'mysql'
-default_version '5.6.22'
+default_version '5.6.24'
 
 dependency 'zlib'
 dependency 'ncurses'
@@ -11,8 +11,15 @@ dependency 'libaio'
 dependency 'perl'
 
 
-source  :url => "http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-#{version}.tar.gz",
-        :md5 => '3985b634294482363f3d87e0d67f2262'
+source :url => "http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-#{version}.tar.gz"
+
+version '5.6.22' do
+  source :md5 => '3985b634294482363f3d87e0d67f2262'
+end
+
+version '5.6.24' do
+  source :md5 => '68e1911f70eb1b02170d4f96bf0f0f88'
+end
 
 relative_path "mysql-#{version}"
 
