@@ -36,6 +36,7 @@ dependency 'python'
 dependency 'supervisor'
 dependency 'rrdtool'
 dependency 'dcron'
+dependency 'ssh-keygen'
 
 # Scalr dependencies
 dependency 'putty'

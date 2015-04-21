@@ -19,6 +19,12 @@ echo "Installing from ${PKG_FILE}"
 /prepare_test.sh
 
 
+echo "Testing ssh-keygen"
+tmpfile="/tmp/mykey"
+rm -f "${tmpfile}"
+/opt/scalr-server/embedded/bin/ssh-keygen -N "my passphrase" -C "test key" -f "${tmpfile}"
+
+
 echo "Testing wizard"
 /opt/scalr-server/bin/scalr-server-wizard
 
