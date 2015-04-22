@@ -241,13 +241,13 @@ module Scalr
       mod = mod.to_sym
 
       # Supervisor is always enabled.
-      if mod == :supervisor
+      if %i{supervisor dirs users sysctl}.include? mod
         return true
       end
 
       # App is enabled if anything that requires the app user is enabled.
       if mod == :app
-        %w{cron rrd service web proxy}.each do |dependent_mod|
+        %w{cron rrd service web}.each do |dependent_mod|
           if enable_module?(node, dependent_mod)
             return true
           end
@@ -289,7 +289,7 @@ module Scalr
 
 
     #####################
-    # Memcached Helpers #
+    # Memcached helpers #
     #####################
 
     def memcached_servers(node)
@@ -306,6 +306,22 @@ module Scalr
       end
       !! node[:scalr_server][:memcached][:enable_sasl]
     end
+
+    #################
+    # MySQL helpers #
+    #################
+
+    def mysql_bootstrap_status_file(node)
+      "#{data_dir_for node, 'mysql'}/bootstrapped"
+    end
+
+    def mysql_bootstrapped?(node)
+      if node[:mysql_bootstrap_status].nil?
+        node.override[:mysql_bootstrap_status] = File.exists?(mysql_bootstrap_status_file node)
+      end
+      node[:mysql_bootstrap_status]
+    end
+
 
     ####################
     # Endpoint helpers #

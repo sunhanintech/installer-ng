@@ -7,6 +7,33 @@
 #   loaded from the configuration file, and secrets (loaded from a separate JSON file, though they can be overridden in
 #   the config file. Either way they'll be persisted in the JSON file).
 
+
+# Helper functions
+
+def process_recipe(r)
+  begin
+    include_recipe "scalr-server::#{r}"
+  rescue Chef::Exceptions::RecipeNotFound
+    log "loader-#{r}" do
+      level :warn
+      message "Did not load recipe: #{r}: recipe not found. OK TO CONTINUE."
+    end
+  end
+end
+
+def process_module(mod, stage)
+  stage_ext = stage.nil? ? '' : "_#{stage}"
+  if enable_module?(node, mod)
+    process_recipe "group_#{mod}_enabled#{stage_ext}"
+  else
+    process_recipe "group_#{mod}_disabled#{stage_ext}"
+  end
+  process_recipe "group_#{mod}_always#{stage_ext}"
+end
+
+
+# Actual recipe
+
 include_recipe 'scalr-server::_config_dir'
 
 # Reads configuration from:
@@ -15,25 +42,18 @@ include_recipe 'scalr-server::_config_dir'
 # + /etc/scalr-server/scalr-secrets.json
 node.consume_attributes(ScalrServer.generate_config node)
 
-# Build all dirs (to ensure we work on systems with a restrictive umask)
-[etc_dir(node), bin_dir(node), var_dir(node), run_dir(node), log_dir(node), data_dir(node)].each do |dir|
-  directory dir do
-    owner     'root'
-    group     'root'
-    mode      0775
-  end
+
+all_modules = %i{dirs users mysql memcached app cron rrd service web proxy httpd sysctl}
+
+# Stage 1 - Prepare before supervisor starts
+all_modules.each do |mod|
+  process_module mod, 'pre'
 end
 
-# Deploy modules
-%w{supervisor mysql memcached app cron rrd service web proxy httpd}.each do |mod|
-  if enable_module?(node, mod)
-    include_recipe "scalr-server::group_#{mod}_enabled"
-  else
-    include_recipe "scalr-server::group_#{mod}_disabled"
-  end
-  include_recipe "scalr-server::group_#{mod}_always"
+# Stage 2 - Launch Supervisor
+process_module 'supervisor', nil
+
+# Stage 3 - Post start steps
+all_modules.each do |mod|
+  process_module mod, 'post'
 end
-
-
-# sysctl settings
-include_recipe 'scalr-server::sysctl'

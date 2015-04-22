@@ -1,63 +1,3 @@
-mysql_bootstrap_status_file = "#{data_dir_for node, 'mysql'}/bootstrapped"
-bootstrapped = File.exists?(mysql_bootstrap_status_file)
-
-# Add MySQL user
-user 'mysql_user' do
-  username  node[:scalr_server][:mysql][:user]
-  home      data_dir_for(node, 'mysql')  # TODO - Check if this works when it doesn't exist.
-  system    true
-end
-
-
-# Create MySQL configuration dir and file
-directory etc_dir_for(node, 'mysql') do
-  owner     'root'
-  group     'root'
-  mode      0755
-end
-
-template "#{etc_dir_for node, 'mysql'}/my.cnf" do
-  source    'mysql/my.cnf.erb'
-  owner     'root'
-  group     'root'
-  mode      0644
-  helpers(Scalr::PathHelper)
-  notifies  :restart, 'supervisor_service[mysql]' if service_is_up?(node, 'mysql')
-# TODO - Warn user if MySQL tz != UTC? We default to 00:00 here.
-end
-
-
-# Bootstrap MySQL database
-directory "#{data_dir_for node, 'mysql'}" do
-  owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:mysql][:user]
-  mode      0755
-end
-
-
-# Create MySQL run and log dirs
-directory run_dir_for(node, 'mysql') do
-  owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:mysql][:user]
-  mode      0755
-end
-
-directory log_dir_for(node, 'mysql') do
-  owner     node[:scalr_server][:mysql][:user]
-  group     node[:scalr_server][:mysql][:user]
-  mode      0755
-end
-
-# Note that this runs at compile time.
-
-execute 'mysql_install_db' do
-  command "#{node[:scalr_server][:install_root]}/embedded/scripts/mysql_install_db" \
-          " --defaults-file=#{etc_dir_for node, 'mysql'}/my.cnf" \
-          " --basedir=#{node[:scalr_server][:install_root]}/embedded" \
-          " --user=#{node[:scalr_server][:mysql][:user]}"
-  not_if { bootstrapped }
-end
-
 # Launch MySQL
 # View: http://supervisord.org/subprocess.html#pidproxy-program
 supervisor_service 'mysql' do
@@ -89,7 +29,7 @@ mysql_database 'set_root_passwords' do
                   ' FLUSH PRIVILEGES'
   action          :query
   retries         10  # Give MySQL some time to come online.
-  not_if { bootstrapped }
+  not_if  { mysql_bootstrapped? node }
 end
 
 mysql_database 'remove_anonymous_users' do
@@ -97,7 +37,7 @@ mysql_database 'remove_anonymous_users' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.user WHERE User = ''; FLUSH PRIVILEGES;"
   action          :query
-  not_if { bootstrapped }
+  not_if  { mysql_bootstrapped? node }
 end
 
 mysql_database 'remove_access_to_test_databases' do
@@ -105,7 +45,7 @@ mysql_database 'remove_access_to_test_databases' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.db WHERE Db LIKE 'test%'; FLUSH PRIVILEGES;"
   action          :query
-  not_if { bootstrapped }
+  not_if  { mysql_bootstrapped? node }
 end
 
 
@@ -116,10 +56,10 @@ mysql_database_user 'root' do
   password    node[:scalr_server][:mysql][:root_password]
   host        '%'
   action      node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
-  retries     bootstrapped ? 0 : 10
+  retries     mysql_bootstrapped?(node) ? 0 : 10
 end
 
-file mysql_bootstrap_status_file do
+file mysql_bootstrap_status_file node do
   mode     0644
   owner   'root'
   group   'root'
@@ -154,8 +94,8 @@ end
 # fine -- we create it anyway so that we don't need to know which version
 # is being deployed to support MySQL
 scalr_databases = [
-  node[:scalr_server][:mysql][:scalr_dbname],
-  node[:scalr_server][:mysql][:analytics_dbname],
+    node[:scalr_server][:mysql][:scalr_dbname],
+    node[:scalr_server][:mysql][:analytics_dbname],
 ]
 
 scalr_databases.each do |scalr_database|
@@ -180,6 +120,6 @@ ruby_block 'record_bin_log_pos' do
     end
   end
   action  :run
-  not_if  { bootstrapped }
+  not_if  { mysql_bootstrapped? node }
   only_if { node[:scalr_server][:mysql][:binlog] }
 end
