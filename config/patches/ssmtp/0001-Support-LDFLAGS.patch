@@ -1,0 +1,25 @@
+From 292a53430611454e65cf1661a2b7ca2ff5528c55 Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Thu, 23 Apr 2015 13:36:35 +0200
+Subject: [PATCH] Support LDFLAGS
+
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index f0aff41..1cb7075 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -79,7 +79,7 @@ uninstall-sendmail: uninstall
+ 
+ # Binaries:
+ ssmtp: $(OBJS)
+-	$(CC) -o ssmtp $(OBJS) @LIBS@ $(CFLAGS)
++	$(CC) -o ssmtp $(OBJS) @LIBS@ $(CFLAGS) $(LDFLAGS)
+ 
+ .PHONY: clean
+ clean:
+-- 
+2.2.2
+

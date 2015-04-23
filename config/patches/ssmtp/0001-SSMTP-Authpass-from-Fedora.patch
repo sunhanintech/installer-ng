@@ -1,0 +1,26 @@
+From 7f3e99b1e74bee824108cd82af35a55e7b6c7187 Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Fri, 24 Apr 2015 15:23:06 +0200
+Subject: [PATCH] SSMTP Authpass (from Fedora)
+
+---
+ ssmtp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ssmtp.c b/ssmtp.c
+index b71197c..90c3867 100644
+--- a/ssmtp.c
++++ b/ssmtp.c
+@@ -1075,7 +1075,8 @@ bool_t read_config()
+ 				}
+ 			}
+ 			else if(strcasecmp(p, "AuthPass") == 0 && !auth_pass) {
+-				if((auth_pass = strdup(q)) == (char *)NULL) {
++				auth_pass = firsttok(&rightside, " \n\t");
++				if(auth_pass  == (char *)NULL) {
+ 					die("parse_config() -- strdup() failed");
+ 				}
+ 
+-- 
+2.2.2
+

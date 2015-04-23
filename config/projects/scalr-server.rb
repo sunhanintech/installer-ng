@@ -37,10 +37,10 @@ dependency 'supervisor'
 dependency 'rrdtool'
 dependency 'dcron'
 dependency 'ssh-keygen'
-
-# Scalr dependencies
+dependency 'ssmtp'
 dependency 'putty'
 dependency 'dejavu-sans-ttf'
+
 dependency 'scalr-app-php-libs'
 dependency 'scalr-app-python-libs'
 

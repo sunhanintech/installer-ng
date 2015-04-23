@@ -1,0 +1,170 @@
+From dfcddc95ab936992b91386482b38f62f5619d31a Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Fri, 24 Apr 2015 15:21:52 +0200
+Subject: [PATCH] SSMTP Validate TLS Server Cert (From Fedora)
+
+---
+ TLS          | 10 +++++++---
+ ssmtp.c      | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ ssmtp.conf.5 |  7 +++++++
+ 3 files changed, 66 insertions(+), 9 deletions(-)
+
+diff --git a/TLS b/TLS
+index ada03c5..5797733 100644
+--- a/TLS
++++ b/TLS
+@@ -26,9 +26,13 @@ Set this to yes to make ssmtp identify itself with a certificate.
+ TLSCert=<file>
+ Specify which certificate file should be used.
+ 
++TLSKey=<file>
++Specify which key file should be used (can be the same as the certificate file).
+ 
+-TODO:
+-* Check server certificate for changes and notify about it.
+-* Diffrent Certificate and Key file?
++TLS_CA_File=<file>
++Optional file of trusted certificates for validating the server.
++
++TLS_CA_Dir=<file>
++Optional directory of trusted certificates for validating the server.
+ 
+ 
+diff --git a/ssmtp.c b/ssmtp.c
+index 05c0f9d..bf8fc9c 100644
+--- a/ssmtp.c
++++ b/ssmtp.c
+@@ -67,7 +67,10 @@ char *minus_F = (char)NULL;
+ char *gecos;
+ char *prog = (char)NULL;
+ char *root = NULL;
+-char *tls_cert = "/etc/ssl/certs/ssmtp.pem";	/* Default Certificate */
++char *tls_cert = "/etc/pki/tls/private/ssmtp.pem";	/* Default Certificate */
++char *tls_key = "/etc/pki/tls/private/ssmtp.pem";    /* Default private key */
++char *tls_ca_file = NULL;      /* Trusted Certificate file */
++char *tls_ca_dir = NULL;       /* Trusted Certificate directory */
+ char *uad = (char)NULL;
+ char *config_file = (char)NULL;		/* alternate configuration file */
+ 
+@@ -1033,6 +1036,33 @@ bool_t read_config()
+ 					log_event(LOG_INFO, "Set TLSCert=\"%s\"\n", tls_cert);
+ 				}
+ 			}
++                       else if(strcasecmp(p, "TLSKey") == 0) {
++                               if((tls_key = strdup(q)) == (char *)NULL) {
++                                       die("parse_config() -- strdup() failed");
++                               }
++
++                               if(log_level > 0) {
++                                       log_event(LOG_INFO, "Set TLSKey=\"%s\"\n", tls_key);
++                               }
++                       }
++                       else if(strcasecmp(p, "TLS_CA_File") == 0) {
++                               if((tls_ca_file = strdup(q)) == (char *)NULL) {
++                                       die("parse_config() -- strdup() failed");
++                               }
++
++                               if(log_level > 0) {
++                                       log_event(LOG_INFO, "Set TLS_CA_File=\"%s\"\n", tls_ca_file);
++                               }
++                       }
++                       else if(strcasecmp(p, "TLS_CA_Dir") == 0) {
++                               if((tls_ca_dir = strdup(q)) == (char *)NULL) {
++                                       die("parse_config() -- strdup() failed");
++                               }
++
++                               if(log_level > 0) {
++                                       log_event(LOG_INFO, "Set TLS_CA_Dir=\"%s\"\n", tls_ca_dir);
++                               }
++                       }
+ #endif
+ 			/* Command-line overrides these */
+ 			else if(strcasecmp(p, "AuthUser") == 0 && !auth_user) {
+@@ -1116,6 +1146,8 @@ int smtp_open(char *host, int port)
+ 
+ #ifdef HAVE_SSL
+ 	int err;
++	long lerr;
++	unsigned long ulerr;
+ 	char buf[(BUF_SZ + 1)];
+ 
+ 	/* Init SSL stuff */
+@@ -1138,7 +1170,7 @@ int smtp_open(char *host, int port)
+ 			return(-1);
+ 		}
+ 
+-		if(SSL_CTX_use_PrivateKey_file(ctx, tls_cert, SSL_FILETYPE_PEM) <= 0) {
++		if(SSL_CTX_use_PrivateKey_file(ctx, tls_key, SSL_FILETYPE_PEM) <= 0) {
+ 			perror("Use PrivateKey");
+ 			return(-1);
+ 		}
+@@ -1148,6 +1180,16 @@ int smtp_open(char *host, int port)
+ 			return(-1);
+ 		}
+ 	}
++	if (tls_ca_file || tls_ca_dir) {
++		if(!SSL_CTX_load_verify_locations(ctx, tls_ca_file, tls_ca_dir)) {
++			ulerr = ERR_get_error();
++			log_event(LOG_ERR, "Error setting verify location: %s",
++				  ERR_reason_error_string(ulerr));
++			return(-1);
++		}
++	}
++
++	SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
+ #endif
+ 
+ #ifdef INET6
+@@ -1251,14 +1293,20 @@ int smtp_open(char *host, int port)
+ 
+ 		ssl = SSL_new(ctx);
+ 		if(!ssl) {
+-			log_event(LOG_ERR, "SSL not working");
++			ulerr = ERR_get_error();
++			log_event(LOG_ERR, "SSL not working: %s",
++                                 ERR_reason_error_string(ulerr));
+ 			return(-1);
+ 		}
+ 		SSL_set_fd(ssl, s);
+ 
+ 		err = SSL_connect(ssl);
+ 		if(err < 0) { 
+-			perror("SSL_connect");
++			ulerr = ERR_get_error();
++			lerr = SSL_get_verify_result(ssl);
++			log_event(LOG_ERR, "SSL not working: %s (%ld)",
++				ERR_reason_error_string(ulerr), lerr);
++
+ 			return(-1);
+ 		}
+ 
+@@ -1272,8 +1320,6 @@ int smtp_open(char *host, int port)
+ 			return(-1);
+ 		}
+ 		X509_free(server_cert);
+-
+-		/* TODO: Check server cert if changed! */
+ 	}
+ #endif
+ 
+diff --git a/ssmtp.conf.5 b/ssmtp.conf.5
+index 25f6ceb..e1b5f22 100644
+--- a/ssmtp.conf.5
++++ b/ssmtp.conf.5
+@@ -53,6 +53,13 @@ See RFC 2487.
+ .Pp
+ .It Cm TLSCert
+ The file name of an RSA certificate to use for TLS, if required.
++.It Cm TLSKey
++The file name of an RSA key to use for TLS, if required.
++.It Cm TLS_CA_File
++A file of trusted certificates for validating the server, if required.
++.Pp
++.It Cm TLS_CA_Dir
++A directory of trusted certificates for validating the server, if required.
+ .Pp
+ .It Cm AuthUser
+ The user name to use for SMTP AUTH.
+-- 
+2.2.2
+
