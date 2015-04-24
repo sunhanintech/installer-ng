@@ -323,13 +323,21 @@ module Scalr
     end
 
 
+    #################
+    # SSMTP helpers #
+    #################
+
+    def ssmtp_use?(node)
+      ! node[:scalr_server][:app][:email_mailserver].nil?
+    end
+
+
     ####################
     # Endpoint helpers #
     ####################
 
     def graphics_scheme(node)
       node[:scalr_server][:routing][:graphics_scheme] || node[:scalr_server][:routing][:endpoint_scheme]
-
     end
 
     def graphics_host(node)

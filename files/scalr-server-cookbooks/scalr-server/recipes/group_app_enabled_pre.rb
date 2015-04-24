@@ -138,3 +138,73 @@ template 'ldap_conf' do
   group     'root'
   mode      0644
 end
+
+
+# Email configuration
+
+directory etc_dir_for(node, 'ssmtp') do
+  owner   'root'
+  group   'root'
+  mode    0755
+end
+
+template 'ssmtp_conf' do
+  path    "#{etc_dir_for node, 'ssmtp'}/ssmtp.conf"
+  source  'app/ssmtp.conf.erb'
+  owner   'root'
+  group   node[:scalr_server][:app][:user]
+  mode    0640  # Restrictive because the contents of the we send
+  helpers do
+    include Scalr::PathHelper
+    include Scalr::ServiceHelper
+  end
+end
+
+directory log_dir_for(node, 'ssmtp') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0755
+end
+
+directory log_dir_for(node, 'unsent-mail') do
+  owner     node[:scalr_server][:app][:user]
+  group     node[:scalr_server][:app][:user]
+  mode      0750  # Restrictive because the contents of the emails may be confidential
+end
+
+template 'unsent_mail_readme' do
+  path    "#{log_dir_for node, 'unsent-mail'}/README"
+  source  'app/UnsentMail_README.erb'
+  owner   'root'
+  group   'root'
+  mode    0644
+  helpers do
+    include Scalr::PathHelper
+  end
+  action ssmtp_use?(node) ? :delete : :create
+end
+
+directory bin_dir_for(node, 'mail') do
+  owner   'root'
+  group   'root'
+  mode    0755
+end
+
+template 'log_mail' do
+  path    "#{bin_dir_for node, 'mail'}/log_mail"
+  source  'app/log_mail.erb'
+  owner   'root'
+  group   'root'
+  mode    0755
+  helpers do
+    include Scalr::PathHelper
+  end
+  action ssmtp_use?(node) ? :delete : :create
+end
+
+link "#{bin_dir_for node, 'mail'}/ssmtp" do
+  owner   'root'
+  group   node[:scalr_server][:app][:user]
+  mode    0755
+  to      ssmtp_use?(node) ? "#{node[:scalr_server][:install_root]}/embedded/sbin/ssmtp" : "#{bin_dir_for node, 'mail'}/log_mail"
+end
