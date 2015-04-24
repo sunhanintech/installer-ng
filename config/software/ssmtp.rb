@@ -39,6 +39,7 @@ build do
   patch source: '0001-SSMTP-Validate-TLS-Server-Cert-From-Fedora.patch'
   patch source: '0001-SSMTP-Garbage-Writes-from-Fedora.patch'
   patch source: '0001-SSMTP-Authpass-from-Fedora.patch'
+  patch source: '0001-SSMTP-Add-option-to-not-verify-SSL-certs.patch'
 
   command './configure' \
           " --prefix=#{install_dir}/embedded" \

@@ -1,0 +1,52 @@
+From b9479583a1d2816deedafa4fce8d5e8fd2ae571c Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Fri, 24 Apr 2015 17:56:11 +0200
+Subject: [PATCH] SSMTP Add option to not verify SSL certs
+
+---
+ ssmtp.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/ssmtp.c b/ssmtp.c
+index 90c3867..8812805 100644
+--- a/ssmtp.c
++++ b/ssmtp.c
+@@ -52,6 +52,7 @@ bool_t use_tls = False;			/* Use SSL to transfer mail to HUB */
+ bool_t use_starttls = False;		/* SSL only after STARTTLS (RFC2487) */
+ bool_t use_cert = False;		/* Use a certificate to transfer SSL mail */
+ bool_t use_oldauth = False;		/* use old AUTH LOGIN username style */
++bool_t tls_no_verify = False;		/* Disable certificate verification */
+ 
+ #define ARPADATE_LENGTH 32		/* Current date in RFC format */
+ char arpadate[ARPADATE_LENGTH];
+@@ -1063,6 +1064,14 @@ bool_t read_config()
+                                        log_event(LOG_INFO, "Set TLS_CA_Dir=\"%s\"\n", tls_ca_dir);
+                                }
+                        }
++			else if(strcasecmp(p, "TLS_NoVerify") == 0) {
++				if(strcasecmp(q, "YES") == 0) {
++					tls_no_verify = True;
++				}
++				else {
++					tls_no_verify = False;
++				}
++			}
+ #endif
+ 			/* Command-line overrides these */
+ 			else if(strcasecmp(p, "AuthUser") == 0 && !auth_user) {
+@@ -1190,7 +1199,11 @@ int smtp_open(char *host, int port)
+ 		}
+ 	}
+ 
+-	SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
++	if (tls_no_verify) {
++		SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
++	} else {
++		SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
++	}
+ #endif
+ 
+ #ifdef INET6
+-- 
+2.2.2
+
