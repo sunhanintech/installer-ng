@@ -100,8 +100,6 @@ module Scalr
                     :auth_mode => 'scalr',
                     :instances_connection_policy => node[:scalr_server][:app][:instances_connection_policy],
 
-                    :allowed_clouds => %w(ec2 gce eucalyptus cloudstack openstack idcf ocs ecs rackspacenguk rackspacengus nebula),
-
                     :system => {
                         :default_disable_firewall_management => false,
                         :instances_connection_timeout => 4,
