@@ -9,6 +9,8 @@ end
 
 relative_path "sqlite-autoconf-#{version}"
 
+license url: 'https://www.sqlite.org/copyright.html'
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

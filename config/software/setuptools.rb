@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright 2013-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,28 +15,24 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "setuptools"
+default_version "0.7.7"
 
-dependency 'libuuid'
+dependency "python"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
+source url: "https://pypi.python.org/packages/source/s/setuptools/setuptools-#{version}.tar.gz"
 
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '0.7.7' do
+  source md5: '0d7bc0e1a34b70a97e706ef74aa7f37f'
+  license url: "https://bitbucket.org/pypa/setuptools/src/#{version}/setup.py?at=default#cl-138"
 end
 
-relative_path "zeromq-#{version}"
-
-license path: 'COPYING.LESSER'
+relative_path "setuptools-#{version}"
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
-
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  command "#{install_dir}/embedded/bin/python setup.py install" \
+          " --prefix=#{install_dir}/embedded", env: env
 end

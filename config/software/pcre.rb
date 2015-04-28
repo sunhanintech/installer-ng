@@ -15,28 +15,30 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "pcre"
+default_version "8.31"
 
-dependency 'libuuid'
+source url: "http://iweb.dl.sourceforge.net/project/pcre/pcre/#{version}/pcre-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '8.31' do
+  source md5: "fab1bb3b91a4c35398263a5c1e0858c1"
 end
 
-relative_path "zeromq-#{version}"
+dependency "libedit"
+dependency "ncurses"
 
-license path: 'COPYING.LESSER'
+relative_path "pcre-#{version}"
+
+license path: 'LICENCE'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded" \
+          " --enable-pcretest-libedit", env: env
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "install", env: env
 end

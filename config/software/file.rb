@@ -6,6 +6,9 @@ source url: "ftp://ftp.astron.com/pub/file/file-#{version}.tar.gz",
 
 relative_path "file-#{version}"
 
+license path: 'COPYING'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

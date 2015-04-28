@@ -5,13 +5,15 @@ default_version '2.5.5'
 source url: "http://download.savannah.gnu.org/releases/freetype/freetype-#{version}.tar.bz2",
        md5: '2a7a314927011d5030903179cf183be0'
 
-relative_path "freetype-#{version}"
-
-
 dependency 'libpng'
 dependency 'bzip2'
 dependency 'zlib'
 dependency 'harfbuzz'
+
+relative_path "freetype-#{version}"
+
+license path: 'docs/FTL.TXT', encoding: Encoding::ISO_8859_1
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

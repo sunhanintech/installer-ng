@@ -35,6 +35,9 @@ end
 
 relative_path "curl-#{version}"
 
+license path: 'COPYING'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

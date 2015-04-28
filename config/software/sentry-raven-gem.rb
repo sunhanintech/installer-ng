@@ -4,6 +4,9 @@ default_version '0.9.4'  # https://github.com/coderanger/chef-sentry-handler/blo
 dependency 'ruby'
 dependency 'rubygems'
 
+license url: "https://raw.githubusercontent.com/getsentry/raven-ruby/#{version}/LICENSE"
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

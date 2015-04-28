@@ -40,6 +40,9 @@ end
 
 relative_path "Python-#{version}"
 
+license path: 'LICENSE'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
   env['CFLAGS'] = "-I#{install_dir}/embedded/include -O3 -g -pipe"

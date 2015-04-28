@@ -28,6 +28,9 @@ end
 
 relative_path "openssh-#{version}"
 
+license path: 'LICENCE', encoding: Encoding::ISO_8859_1
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

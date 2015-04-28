@@ -1,6 +1,6 @@
 #
 # Copyright 2012-2014 Chef Software, Inc.
-# Copyright 2015 Scalr, Inc.
+# Copyright Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,27 +15,24 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "libyaml"
+default_version '0.1.6'
 
-dependency 'libuuid'
+source url: "http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '0.1.6' do
+  source md5: '5fe00cda18ca5daeb43762b80c38e06e'
 end
 
-relative_path "zeromq-#{version}"
+relative_path "yaml-#{version}"
 
-license path: 'COPYING.LESSER'
+license path: 'LICENSE'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  command "./configure --prefix=#{install_dir}/embedded --enable-shared", env: env
 
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env

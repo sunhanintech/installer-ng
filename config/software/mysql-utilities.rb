@@ -7,9 +7,11 @@ version '1.5.3' do
   source md5: 'e93ff4acf6a8b64b09af86a4829d0d6b'
 end
 
+dependency 'python'
+
 relative_path "mysql-utilities-#{version}"
 
-dependency 'python'
+license path: 'LICENSE.txt'
 
 
 build do

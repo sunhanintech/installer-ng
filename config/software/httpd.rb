@@ -12,14 +12,16 @@ version '2.4.12' do
   source md5: 'b8dc8367a57a8d548a9b4ce16d264a13'
 end
 
-relative_path "httpd-#{version}"
-
 dependency 'apr'
 dependency 'apr-util'
 dependency 'openssl'
 dependency 'pcre'
 dependency 'zlib'
 dependency 'libxml2'
+
+relative_path "httpd-#{version}"
+
+license path: 'LICENSE'
 
 
 build do

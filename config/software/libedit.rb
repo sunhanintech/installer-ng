@@ -15,27 +15,37 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "libedit"
+default_version "20120601-3.0"
 
-dependency 'libuuid'
+dependency "ncurses"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version "20120601-3.0" do
+  source md5: "e50f6a7afb4de00c81650f7b1a0f5aea"
 end
 
-relative_path "zeromq-#{version}"
+version "20130712-3.1" do
+  source md5: "0891336c697362727a1fa7e60c5cb96c"
+end
 
-license path: 'COPYING.LESSER'
+source url: "http://www.thrysoee.dk/editline/libedit-#{version}.tar.gz"
+
+relative_path "libedit-#{version}"
+
+license path: 'COPYING'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  # The patch is from the FreeBSD ports tree and is for GCC compatibility.
+  # http://svnweb.freebsd.org/ports/head/devel/libedit/files/patch-vi.c?annotate=300896
+  if freebsd?
+    patch source: "freebsd-vi-fix.patch"
+  end
+
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env

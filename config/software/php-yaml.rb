@@ -9,6 +9,8 @@ relative_path "yaml-#{version}"
 dependency 'libyaml'
 dependency 'php'
 
+license path: 'LICENSE'
+
 
 build do
        env = with_standard_compiler_flags(with_embedded_path)

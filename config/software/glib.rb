@@ -4,12 +4,14 @@ default_version '2.42.1'
 source url: "http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-#{version}.tar.xz",
        md5: '89c4119e50e767d3532158605ee9121a'
 
-relative_path "glib-#{version}"
-
 # See: https://developer.gnome.org/glib/2.42/glib-building.html
 dependency 'libiconv'
 dependency 'gettext'
 dependency 'libffi'
+
+relative_path "glib-#{version}"
+
+license path: 'COPYING'
 
 
 build do

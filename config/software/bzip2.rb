@@ -28,6 +28,9 @@ source url: "http://www.bzip.org/#{version}/#{name}-#{version}.tar.gz",
 
 relative_path "#{name}-#{version}"
 
+license path: 'LICENSE'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

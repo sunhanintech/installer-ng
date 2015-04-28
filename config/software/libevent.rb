@@ -11,6 +11,8 @@ dependency 'openssl'
 
 relative_path "libevent-#{version}"
 
+license path: 'LICENSE'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -4,6 +4,9 @@ default_version '2.9.1'
 dependency 'ruby'
 dependency 'rubygems'
 
+license url: "https://raw.githubusercontent.com/luislavena/mysql-gem/v#{version.gsub('.', '_')}/COPYING"
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

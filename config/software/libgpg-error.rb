@@ -13,6 +13,9 @@ end
 
 relative_path "libgpg-error-#{version}"
 
+license path: 'COPYING.LIB'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

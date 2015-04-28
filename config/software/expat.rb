@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright 2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,28 +15,26 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "expat"
+default_version "2.1.0"
 
-dependency 'libuuid'
+source url: "http://downloads.sourceforge.net/project/expat/expat/#{version}/expat-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '2.1.0' do
+  source md5: "dd7dab7a5fea97d2a6a43f511449b7cd"
 end
 
-relative_path "zeromq-#{version}"
+relative_path "expat-#{version}"
 
-license path: 'COPYING.LESSER'
+license path: 'COPYING'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "install", env: env
 end

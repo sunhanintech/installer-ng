@@ -1,13 +1,18 @@
 name 'php-rrd'
 default_version '1.1.3'
 
-source url: "http://pecl.php.net/get/rrd-#{version}.tgz",
-       md5: 'bde6c50fa2aa39090ed22e574ac71c5a'
+source url: "http://pecl.php.net/get/rrd-#{version}.tgz"
 
-relative_path "rrd-#{version}"
+version '1.1.3' do
+  source md5: 'bde6c50fa2aa39090ed22e574ac71c5a'
+end
 
 dependency 'rrdtool'
 dependency 'php'
+
+relative_path "rrd-#{version}"
+
+license path: 'LICENSE'
 
 
 build do

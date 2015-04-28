@@ -15,28 +15,37 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "libxml2"
+default_version "2.9.1"
 
-dependency 'libuuid'
+source url: "ftp://xmlsoft.org/libxml2/libxml2-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version "2.7.8" do
+  source md5: "8127a65e8c3b08856093099b52599c86"
 end
 
-relative_path "zeromq-#{version}"
+version "2.9.1" do
+  source md5: "9c0cfef285d5c4a5c80d00904ddab380"
+end
 
-license path: 'COPYING.LESSER'
+dependency "zlib"
+dependency "libiconv"
+dependency "liblzma"
 
+relative_path "libxml2-#{version}"
+
+license path: 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded" \
+          " --with-zlib=#{install_dir}/embedded" \
+          " --with-iconv=#{install_dir}/embedded" \
+          " --without-python" \
+          " --without-icu", env: env
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "install", env: env
 end

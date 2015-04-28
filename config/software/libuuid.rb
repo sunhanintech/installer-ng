@@ -15,28 +15,26 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "libuuid"
+default_version "2.21"
 
-dependency 'libuuid'
+# We use the version in util-linux, and only build the libuuid subdirectory
+source url: "ftp://ftp.kernel.org/pub/linux/utils/util-linux/v#{version}/util-linux-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '2.21' do
+  source md5: "4222aa8c2a1b78889e959a4722f1881a"
 end
 
-relative_path "zeromq-#{version}"
+relative_path "util-linux-#{version}"
 
-license path: 'COPYING.LESSER'
+license path: 'COPYING'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
   command "./configure --prefix=#{install_dir}/embedded", env: env
 
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "-j #{workers}", env: env, cwd: "#{project_dir}/libuuid"
+  make "-j #{workers} install", env: env, cwd: "#{project_dir}/libuuid"
 end

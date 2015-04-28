@@ -15,28 +15,33 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "libpng"
+default_version "1.5.17"
 
-dependency 'libuuid'
+source url: "http://downloads.sourceforge.net/libpng/libpng-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version "1.5.17" do
+  source md5: "d2e27dbd8c6579d1582b3f128fd284b4"
 end
 
-relative_path "zeromq-#{version}"
+version "1.5.13" do
+  source md5: "9c5a584d4eb5fe40d0f1bc2090112c65"
+end
 
-license path: 'COPYING.LESSER'
+dependency "zlib"
+
+relative_path "libpng-#{version}"
+
+license path: 'LICENSE'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded" \
+          " --with-zlib-prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "install", env: env
 end

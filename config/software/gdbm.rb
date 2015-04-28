@@ -15,28 +15,34 @@
 # limitations under the License.
 #
 
-name 'libzmq'
-default_version '4.0.5'
+name "gdbm"
+default_version "1.9.1"
 
-dependency 'libuuid'
+source url: "http://ftp.gnu.org/gnu/gdbm/gdbm-#{version}.tar.gz"
 
-source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz"
-
-version '4.0.5' do
-  source md5: '73c39f5eb01b9d7eaf74a5d899f1d03d'
+version '1.9.1' do
+  source md5: "59f6e4c4193cb875964ffbe8aa384b58"
 end
 
-relative_path "zeromq-#{version}"
+relative_path "gdbm-#{version}"
 
-license path: 'COPYING.LESSER'
+license path: 'COPYING'
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
 
-  command "./configure --prefix=#{install_dir}/embedded", env: env
+  if freebsd?
+    command "./configure" \
+            " --enable-libgdbm-compat" \
+            " --with-pic" \
+            " --prefix=#{install_dir}/embedded", env: env
+  else
+    command "./configure" \
+            " --enable-libgdbm-compat" \
+            " --prefix=#{install_dir}/embedded", env: env
+  end
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  make "install", env: env
 end

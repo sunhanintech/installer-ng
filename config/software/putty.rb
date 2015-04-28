@@ -13,6 +13,9 @@ end
 
 relative_path "putty-#{version}"
 
+license path: 'LICENCE'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

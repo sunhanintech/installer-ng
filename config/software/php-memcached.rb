@@ -7,11 +7,14 @@ version '2.2.0' do
   source md5: '28937c6144f734e000c6300242f44ce6'
 end
 
-relative_path "memcached-#{version}"
-
 dependency 'zlib'
 dependency 'libmemcached'
 dependency 'php'
+
+
+relative_path "memcached-#{version}"
+
+license path: 'LICENSE'
 
 
 build do

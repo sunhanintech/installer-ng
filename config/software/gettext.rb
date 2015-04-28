@@ -4,14 +4,15 @@ default_version '0.18.3.1'
 source url: "http://archive.ubuntu.com/ubuntu/pool/main/g/gettext/gettext_#{version}.orig.tar.gz",
        md5: '3fc808f7d25487fc72b5759df7419e02'
 
-relative_path "gettext-#{version}"
-
 dependency 'libiconv'
 dependency 'ncurses'
 dependency 'expat'
 dependency 'libxml2'
 
-# TODO - Can we somehow guarantee openmp presence?
+relative_path "gettext-#{version}"
+
+license path: 'COPYING'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
