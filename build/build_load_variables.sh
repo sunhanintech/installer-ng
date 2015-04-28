@@ -92,6 +92,13 @@ else
 fi
 
 
+######################
+# Default Parameters #
+######################
+
+: ${OMNIBUS_NO_BUNDLE:="0"}
+: ${OMNIBUS_LOG_LEVEL:="info"}
+
 
 ###########
 # Exports #
