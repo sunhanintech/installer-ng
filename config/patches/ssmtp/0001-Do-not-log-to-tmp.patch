@@ -1,0 +1,31 @@
+From b232d3aeb44f783141fa704f1673eaa283c96b77 Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Fri, 24 Apr 2015 15:10:48 +0200
+Subject: [PATCH] Do not log to /tmp
+
+---
+ ssmtp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ssmtp.c b/ssmtp.c
+index af4d1e5..05c0f9d 100644
+--- a/ssmtp.c
++++ b/ssmtp.c
+@@ -112,12 +112,12 @@ void log_event(int priority, char *format, ...)
+ #ifdef LOGFILE
+ 	FILE *fp;
+ 
+-	if((fp = fopen("/tmp/ssmtp.log", "a")) != (FILE *)NULL) {
++	if((fp = fopen("/opt/scalr-server/var/log/ssmtp/ssmtp.log", "a")) != (FILE *)NULL) {
+ 		(void)fprintf(fp, "%s\n", buf);
+ 		(void)fclose(fp);
+ 	}
+ 	else {
+-		(void)fprintf(stderr, "Can't write to /tmp/ssmtp.log\n");
++		(void)fprintf(stderr, "Can't write to /opt/scalr-server/var/log/ssmtp/ssmtp.log\n");
+ 	}
+ #endif
+ 
+-- 
+2.2.2
+

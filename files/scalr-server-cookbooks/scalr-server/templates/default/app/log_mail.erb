@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+LOGFILE="<%= log_dir_for node, 'unsent-mail' %>/unsent-$(date +%Y%m%d-%H%M%S-$$)"
+echo "$0 $@" > "$LOGFILE"
+cat - >> "$LOGFILE"

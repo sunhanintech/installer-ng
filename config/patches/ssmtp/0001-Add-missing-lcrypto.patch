@@ -1,0 +1,39 @@
+From af4afd6cc0eeec0281f72e280116a588433be8fa Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Thu, 23 Apr 2015 13:39:40 +0200
+Subject: [PATCH] Add missing -lcrypto
+
+---
+ configure    | 2 +-
+ configure.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 5b6e2c7..7146fdf 100755
+--- a/configure
++++ b/configure
+@@ -1562,7 +1562,7 @@ if test x$enableval = xyes ; then
+ #define HAVE_SSL 1
+ EOF
+ 
+-	LIBS="$LIBS -lssl"
++	LIBS="$LIBS -lssl -lcrypto"
+ fi
+ enableval=""
+ 
+diff --git a/configure.in b/configure.in
+index 2d7221d..0633add 100644
+--- a/configure.in
++++ b/configure.in
+@@ -52,7 +52,7 @@ AC_ARG_ENABLE(ssl,
+ [  --enable-ssl           support for secure connection to mail server])
+ if test x$enableval = xyes ; then
+ 	AC_DEFINE(HAVE_SSL)
+-	LIBS="$LIBS -lssl"
++	LIBS="$LIBS -lssl -lcrypto"
+ fi
+ enableval=""
+ 
+-- 
+2.2.2
+

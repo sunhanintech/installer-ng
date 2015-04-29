@@ -1,0 +1,32 @@
+From 7b9dc889ee08eefa8f79246bd503d8e394e4c10d Mon Sep 17 00:00:00 2001
+From: Thomas Orozco <thomas@orozco.fr>
+Date: Thu, 23 Apr 2015 13:47:18 +0200
+Subject: [PATCH] Do not autogenerate config
+
+---
+ Makefile.in | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 1cb7075..b33b64a 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -45,14 +45,12 @@ all: ssmtp
+ 	latex $<
+ 
+ .PHONY: install
+-install: ssmtp $(GEN_CONFIG)
++install: ssmtp
+ 	$(INSTALL) -d -m 755 $(bindir)
+ 	$(INSTALL) -s -m 755 ssmtp $(bindir)/ssmtp
+ 	$(INSTALL) -d -m 755 $(mandir)
+ 	$(INSTALL) -m 644 $(srcdir)/ssmtp.8 $(mandir)/ssmtp.8
+ 	$(INSTALL) -d -m 755 $(SSMTPCONFDIR)
+-	$(INSTALL) -m 644 $(srcdir)/revaliases $(INSTALLED_REVALIASES_FILE)
+-	$(GEN_CONFIG) $(INSTALLED_CONFIGURATION_FILE)
+ 
+ 
+ .PHONY: install-sendmail
+-- 
+2.2.2
+

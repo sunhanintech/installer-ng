@@ -136,6 +136,9 @@ default[:scalr_server][:app][:user] = 'scalr-app'
 # See `../libraries/config_helper.rb` to see what they map to.
 default[:scalr_server][:app][:email_from_address] = 'scalr@scalr.example.com'
 default[:scalr_server][:app][:email_from_name] = 'Scalr Service'
+default[:scalr_server][:app][:email_mailserver] = nil
+default[:scalr_server][:app][:email_configuration] = nil
+
 default[:scalr_server][:app][:ip_ranges] = default_ip_ranges
 default[:scalr_server][:app][:instances_connection_policy] = 'auto'
 
