@@ -18,7 +18,7 @@ node_ips = Set.new [node[:ipaddress]]
 [:local_ipv4_addrs, :public_ipv4_addrs].each { |ipaddress_set|
   begin
     node_ips.merge node[:cloud_v2][ipaddress_set]
-  rescue NoMethodError
+  rescue NoMethodError, ArgumentError
     # This will happen if the set doesn't exist
     next
   end
