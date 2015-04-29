@@ -10,7 +10,7 @@ supervisor_service 'mysql' do
   stderr_logfile  "#{log_dir_for node, 'supervisor'}/mysql.err"
   action          [:enable, :start]
   autostart       true
-  startsecs       5
+  startsecs       10
   subscribes      :restart, 'user[mysql_user]' if service_is_up?(node, 'mysql')
 end
 
@@ -29,7 +29,7 @@ mysql_database 'set_root_passwords' do
                   ' FLUSH PRIVILEGES'
   action          :query
   retries         10  # Give MySQL some time to come online.
-  not_if  { mysql_bootstrapped? node }
+  not_if          { mysql_bootstrapped? node }
 end
 
 mysql_database 'remove_anonymous_users' do
@@ -37,7 +37,7 @@ mysql_database 'remove_anonymous_users' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.user WHERE User = ''; FLUSH PRIVILEGES;"
   action          :query
-  not_if  { mysql_bootstrapped? node }
+  not_if          { mysql_bootstrapped? node }
 end
 
 mysql_database 'remove_access_to_test_databases' do
@@ -45,7 +45,7 @@ mysql_database 'remove_access_to_test_databases' do
   database_name   'mysql'
   sql             "DELETE FROM mysql.db WHERE Db LIKE 'test%'; FLUSH PRIVILEGES;"
   action          :query
-  not_if  { mysql_bootstrapped? node }
+  not_if          { mysql_bootstrapped? node }
 end
 
 
@@ -56,7 +56,7 @@ mysql_database_user 'root' do
   password    node[:scalr_server][:mysql][:root_password]
   host        '%'
   action      node[:scalr_server][:mysql][:allow_remote_root] ? :grant : :drop
-  retries     mysql_bootstrapped?(node) ? 0 : 10
+  retries     10  # Give MySQL some time to come online.
 end
 
 file mysql_bootstrap_status_file node do
