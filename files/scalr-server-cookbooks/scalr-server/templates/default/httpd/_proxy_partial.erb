@@ -1,3 +1,8 @@
 ProxyPass /graphics           balancer://graphics/
 ProxyPass /load_statistics    balancer://plotter/
 ProxyPass /                   balancer://app/
+
+# Add X-Forwarded-For header, but discard anything coming from upstream.
+# TODO - Make this configurable
+RequestHeader unset X-Forwarded-For
+ProxyAddHeaders On

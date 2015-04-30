@@ -57,13 +57,8 @@ LogLevel warn
 ErrorLog  <%= log_dir_for node, 'httpd' %>/web.error.log
 
 <IfModule log_config_module>
-  LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
-  LogFormat "%h %l %u %t \"%r\" %>s %b" common
-
-  <IfModule logio_module>
-    # You need to enable mod_logio.c to use %I and %O
-    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
-  </IfModule>
+  LogFormat "%a (for \"%{X-Forwarded-For}i\") %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+  LogFormat "%a %l %u %t \"%r\" %>s %b" common
 
   CustomLog <%= log_dir_for node, 'httpd' %>/web.access.log combined
 </IfModule>
@@ -115,6 +110,9 @@ EnableSendfile on
         Require all granted
       </Directory>
 
+      # NOTE: We do not use the RemoteIP Module here intentionally. The RemoteIP module consumes the X-Forwarded-For
+      # header, which we want to avoid, since the Scalr app will be consuming it itself.
+
     </VirtualHost>
 <% end %>
 
@@ -122,6 +120,13 @@ EnableSendfile on
 # Proxy #
 
 <% if enable_module?(node, :proxy) %>
+    LoadModule proxy_module                 embedded/modules/mod_proxy.so
+
+    LoadModule slotmem_shm_module           embedded/modules/mod_slotmem_shm.so
+    LoadModule proxy_balancer_module        embedded/modules/mod_proxy_balancer.so
+    LoadModule lbmethod_byrequests_module   embedded/modules/mod_lbmethod_byrequests.so
+
+    LoadModule proxy_http_module            embedded/modules/mod_proxy_http.so
 
     <% if node[:scalr_server][:proxy][:ssl_enable] %>
         LoadModule ssl_module embedded/modules/mod_ssl.so
@@ -140,14 +145,6 @@ EnableSendfile on
           </IfModule>
         </VirtualHost>
     <% end %>
-
-    LoadModule proxy_module                 embedded/modules/mod_proxy.so
-
-    LoadModule slotmem_shm_module           embedded/modules/mod_slotmem_shm.so
-    LoadModule proxy_balancer_module        embedded/modules/mod_proxy_balancer.so
-    LoadModule lbmethod_byrequests_module   embedded/modules/mod_lbmethod_byrequests.so
-
-    LoadModule proxy_http_module            embedded/modules/mod_proxy_http.so
 
     Listen <%= node[:scalr_server][:proxy][:bind_host] %>:<%= node[:scalr_server][:proxy][:bind_port] %>
 
