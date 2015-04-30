@@ -20,7 +20,9 @@
 
 name 'scalr-server-bin'
 
-source :path => File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
+source path: File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
+
+license path: 'LICENSE'
 
 build do
   # Shell commands imported from the repo
