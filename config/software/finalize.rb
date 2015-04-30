@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+# NOLICENSE (Nothing included in package)
+
 name 'finalize'
 description 'Cleans up useless data, generates a version manifest file and license manifest files'
 default_version '2.0.0'
