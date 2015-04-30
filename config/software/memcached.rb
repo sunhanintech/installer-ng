@@ -12,6 +12,8 @@ dependency 'libevent'
 
 relative_path "memcached-#{version}"
 
+license path: 'COPYING'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

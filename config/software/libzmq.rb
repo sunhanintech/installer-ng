@@ -28,6 +28,9 @@ end
 
 relative_path "zeromq-#{version}"
 
+license path: 'COPYING.LESSER'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
   env['CXXFLAGS'] = "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"

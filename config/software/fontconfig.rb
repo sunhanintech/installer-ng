@@ -10,6 +10,8 @@ relative_path "fontconfig-#{version}"
 dependency 'libiconv'
 dependency 'expat'
 
+license path: 'COPYING'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

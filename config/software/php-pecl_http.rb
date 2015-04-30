@@ -1,15 +1,20 @@
 name 'php-pecl_hhtp'
 default_version '1.7.6'
 
-source url: "http://pecl.php.net/get/pecl_http-#{version}.tgz",
-       md5: '4926c17a24a11a9b1cf3ec613fad97cb'
+source url: "http://pecl.php.net/get/pecl_http-#{version}.tgz"
 
-relative_path "pecl_http-#{version}"
+version '1.7.6' do
+  source md5: '4926c17a24a11a9b1cf3ec613fad97cb'
+end
 
 dependency 'zlib'
 dependency 'curl'
 dependency 'file'  # libmagic
 dependency 'php'
+
+relative_path "pecl_http-#{version}"
+
+license path: 'LICENSE'
 
 
 build do

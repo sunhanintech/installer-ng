@@ -15,11 +15,21 @@
 # limitations under the License.
 #
 
+# NOLICENSE (Nothing included in package)
+
 name 'finalize'
-description 'Cleans up useless data, and generates a version manifest file'
-default_version '1.0.0'
+description 'Cleans up useless data, generates a version manifest file and license manifest files'
+default_version '2.0.0'
+
+source :path => File.expand_path('files/license-scripts', Omnibus::Config.project_root)
+
+dependency 'yolk'
+dependency 'license-gem'
+
 
 build do
+  env = with_standard_compiler_flags(with_embedded_path)
+
   # Cleanup irrelevant data
 
   # noinspection RubyLiteralArrayInspection
@@ -40,12 +50,31 @@ build do
     command "rm -rf '#{install_dir}/embedded/#{dir}'"
   end
 
-  # Manifest
+  # Version Manifest
   block do
-    File.open("#{install_dir}/version-manifest.txt", "w") do |f|
+    File.open("#{install_dir}/version-manifest.txt", 'w') do |f|
       f.puts "#{project.name} #{project.build_version}"
       f.puts ''
       f.puts Omnibus::Reports.pretty_version_map(project)
     end
   end
+
+  # License manifest
+  license_dir = "#{install_dir}/embedded/LICENSES"
+  mkdir license_dir
+
+  block do
+    File.open("#{license_dir}/license-manifest.txt", 'w') do |f|
+      f.puts Omnibus::Reports.pretty_license_file(project)
+    end
+  end
+
+  command "#{install_dir}/embedded/bin/python" \
+          ' ./python-licenses.py' \
+          " #{license_dir}/python-lib-licenses.txt", env: env
+
+  command "#{install_dir}/embedded/bin/ruby" \
+          ' ./ruby-licenses.rb' \
+          " #{license_dir}/ruby-lib-licenses.txt", env: env
+
 end

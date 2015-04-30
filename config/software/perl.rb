@@ -30,6 +30,9 @@ end
 
 relative_path "perl-#{version}"
 
+license path: 'Copying'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
   env['BUILD_ZLIB'] = "False"

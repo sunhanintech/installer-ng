@@ -1,4 +1,7 @@
 # This is needed as a workaround because there is a circular dependency between freetype and harfbuzz.
+
+# NOLICENSE (freetype is the one included)
+
 name 'freetype_pre'
 default_version '2.5.5'
 

@@ -18,16 +18,19 @@ require 'shellwords'
 name 'ssmtp'
 default_version '2.64'
 
-dependency 'openssl'
-dependency 'cacerts'
-
 source url: "http://ftp.de.debian.org/debian/pool/main/s/ssmtp/ssmtp_#{version}.orig.tar.bz2"
 
 version '2.64' do
   source md5: '65b4e0df4934a6cd08c506cabcbe584f'
 end
 
+dependency 'openssl'
+dependency 'cacerts'
+
 relative_path "ssmtp-#{version}"
+
+license path: 'COPYING'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

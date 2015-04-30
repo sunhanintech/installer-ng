@@ -1,10 +1,11 @@
 name 'rrdtool'
 default_version '1.4.9'
 
-source url: "http://oss.oetiker.ch/rrdtool/pub/rrdtool-#{version}.tar.gz",
-       md5: '1cea5a9efd6a48ac4035b0f9c7e336cf'
+source url: "http://oss.oetiker.ch/rrdtool/pub/rrdtool-#{version}.tar.gz"
 
-relative_path "rrdtool-#{version}"
+version '1.4.9' do
+  source md5: '1cea5a9efd6a48ac4035b0f9c7e336cf'
+end
 
 dependency 'zlib'
 dependency 'libpng'
@@ -15,6 +16,11 @@ dependency 'pixman'
 dependency 'cairo'
 dependency 'glib'
 dependency 'pango'
+
+relative_path "rrdtool-#{version}"
+
+# TODO There is another one for the libs
+license path: 'COPYING'
 
 
 build do

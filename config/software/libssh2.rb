@@ -1,14 +1,19 @@
 name 'libssh2'
 default_version '1.4.3'
 
-source url: "http://www.libssh2.org/download/libssh2-#{version}.tar.gz",
-       md5: '071004c60c5d6f90354ad1b701013a0b'
+source url: "http://www.libssh2.org/download/libssh2-#{version}.tar.gz"
 
-relative_path "libssh2-#{version}"
+version '1.4.3' do
+  source md5: '071004c60c5d6f90354ad1b701013a0b'
+end
 
 dependency 'zlib'
 dependency 'openssl'
 dependency 'libgcrypt'
+
+relative_path "libssh2-#{version}"
+
+license path: 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -11,9 +11,13 @@ version '1.6.3' do
   source md5: '4262c3aadf837500756c2051a5c4ae5e'
 end
 
+dependency 'libgpg-error'
+
 relative_path "libgcrypt-#{version}"
 
-dependency 'libgpg-error'
+# TODO - There is a secondary license in 'LICENSES'
+license path: 'COPYING.LIB'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

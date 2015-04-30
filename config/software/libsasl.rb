@@ -7,10 +7,12 @@ version '2.1.26' do
   source md5: '45fc09469ca059df56d64acfe06a940d'
 end
 
-relative_path "cyrus-sasl-#{version}"
-
 dependency 'gdbm'
 dependency 'openssl'
+
+relative_path "cyrus-sasl-#{version}"
+
+license path: 'COPYING'
 
 
 build do

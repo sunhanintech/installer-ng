@@ -23,6 +23,9 @@ dependency 'ruby'
 dependency 'rubygems'
 dependency 'libffi'
 
+license url: "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

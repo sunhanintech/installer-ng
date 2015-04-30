@@ -1,10 +1,16 @@
 name 'pixman'
 default_version '0.32.6'
 
-source url: "http://cairographics.org/releases/pixman-#{version}.tar.gz",
-       md5: '3a30859719a41bd0f5cccffbfefdd4c2'
+source url: "http://cairographics.org/releases/pixman-#{version}.tar.gz"
+
+version '0.32.6' do
+  source md5: '3a30859719a41bd0f5cccffbfefdd4c2'
+end
 
 relative_path "pixman-#{version}"
+
+license path: 'COPYING'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

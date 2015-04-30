@@ -7,9 +7,11 @@ version '1.0.18' do
   source md5: 'b3958716b4e53ddc5992e6c49d97e819'
 end
 
+dependency 'memcached'
+
 relative_path "libmemcached-#{version}"
 
-dependency 'memcached'
+license path: 'COPYING'
 
 
 build do

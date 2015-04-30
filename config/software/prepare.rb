@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+# NOLICENSE (Nothing included in package)
+
 name 'prepare'
 description 'the steps required to prepare the build'
 default_version '1.0.0'

@@ -9,6 +9,7 @@ relative_path "ssh2-#{version}"
 dependency 'libssh2'
 dependency 'php'
 
+license path: 'LICENSE'
 
 build do
        env = with_standard_compiler_flags(with_embedded_path)

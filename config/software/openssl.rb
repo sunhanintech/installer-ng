@@ -37,6 +37,9 @@ end
 
 relative_path "openssl-#{version}"
 
+license path: 'LICENSE'
+
+
 build do
   # View: https://raw.githubusercontent.com/opscode/omnibus-software/master/config/software/openssl.rb
   # We are only interested in Linux here.

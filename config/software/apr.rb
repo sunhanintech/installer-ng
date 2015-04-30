@@ -6,6 +6,8 @@ source url: "http://www.us.apache.org/dist/apr/apr-#{version}.tar.bz2",
 
 relative_path "apr-#{version}"
 
+license path: 'LICENSE'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

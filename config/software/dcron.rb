@@ -6,6 +6,9 @@ source url: "http://www.jimpryor.net/linux/releases/dcron-#{version}.tar.gz",
 
 relative_path "#{name}-#{version}"
 
+license url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

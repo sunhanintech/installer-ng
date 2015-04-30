@@ -3,14 +3,6 @@
 name 'mysql'
 default_version '5.6.24'
 
-dependency 'zlib'
-dependency 'ncurses'
-dependency 'libedit'
-dependency 'openssl'
-dependency 'libaio'
-dependency 'perl'
-
-
 source :url => "http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-#{version}.tar.gz"
 
 version '5.6.22' do
@@ -21,7 +13,16 @@ version '5.6.24' do
   source :md5 => '68e1911f70eb1b02170d4f96bf0f0f88'
 end
 
+dependency 'zlib'
+dependency 'ncurses'
+dependency 'libedit'
+dependency 'openssl'
+dependency 'libaio'
+dependency 'perl'
+
 relative_path "mysql-#{version}"
+
+license path: 'COPYING'
 
 
 # View: http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html

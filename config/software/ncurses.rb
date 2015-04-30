@@ -23,6 +23,8 @@ source url: "http://ftp.gnu.org/gnu/ncurses/ncurses-#{version}.tar.gz",
 
 relative_path "ncurses-#{version}"
 
+license path: 'AUTHORS'
+
 ########################################################################
 #
 # wide-character support:
