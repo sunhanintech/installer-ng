@@ -23,7 +23,6 @@ PLATFORM_VERSION="${2}"
 # Use the valid repos by default, but let the user override it (for the manual script)
 : ${PKG_CLOUD_REPO:="scalr/scalr-server-${EDITION}"}
 
-# View: http://askubuntu.com/questions/445487/which-ubuntu-version-is-equivalent-to-debian-squeeze
 declare -A platform_alternatives
 platform_alternatives=(
   ["el/6"]="ol/6"
@@ -37,7 +36,7 @@ platform_alternatives=(
 if [[ "centos" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="el"
   pkg_head="scalr-server-"
-  pkg_tail="-1.x86_64.rpm"
+  pkg_tail="-1.${pkg_platform}${PLATFORM_VERSION}.x86_64.rpm"
   PLATFORM_FAMILY="rhel"
 elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
   pkg_platform="${PLATFORM_NAME}"
@@ -84,9 +83,9 @@ if docker inspect -f "{{.Id}}" jenkins; then
   docker_args+=("--volumes-from" "jenkins")
 else
   # Jenkins isn't inside a container: mount the workspace. We expect the workspace to be
-  # two directories up from here (because installer-ng was cloned in the workspace).
+  # three directories up from here (because installer-ng was cloned in the workspace).
   REL_HERE=$(dirname "${BASH_SOURCE}")
-  WORKSPACE=$(cd "${REL_HERE}/../.."; pwd)
+  WORKSPACE=$(cd "${REL_HERE}/../../.."; pwd)
 
   docker_args+=("-v" "${WORKSPACE}:${WORKSPACE}")
 fi

@@ -10,14 +10,15 @@ set -o nounset
 ##############
 
 REL_HERE=$(dirname "${BASH_SOURCE}")
-ROOT=$(cd "${REL_HERE}/.."; pwd)
+ROOT=$(cd "${REL_HERE}/../.."; pwd)
 cd "${ROOT}"
+
 
 ##############
 # Timestamps #
 ##############
 
-build/git_fix_timestamps.sh
+build/host/git_fix_timestamps.sh
 
 
 ##########
