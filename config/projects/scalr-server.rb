@@ -40,6 +40,7 @@ dependency 'ssh-keygen'
 dependency 'ssmtp'
 dependency 'putty'
 dependency 'dejavu-sans-ttf'
+dependency 'logrotate'
 
 dependency 'scalr-app-php-libs'
 dependency 'scalr-app-python-libs'
