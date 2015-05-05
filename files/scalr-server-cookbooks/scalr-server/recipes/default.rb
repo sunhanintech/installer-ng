@@ -43,7 +43,7 @@ include_recipe 'scalr-server::_config_dir'
 node.consume_attributes(ScalrServer.generate_config node)
 
 
-all_modules = %i{dirs users mysql memcached app cron rrd service web proxy httpd sysctl}
+all_modules = %i{dirs users mysql crond cron logrotate memcached app cron rrd service web proxy httpd sysctl}
 
 # Stage 1 - Prepare before supervisor starts
 all_modules.each do |mod|
