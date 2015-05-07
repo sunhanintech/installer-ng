@@ -1,11 +1,20 @@
 name 'sqlite'
-default_version '3080704'  # 3.8.7.4
+default_version '3080900'  # 3.8.9.0
 
-source url: "http://www.sqlite.org/2014/sqlite-autoconf-#{version}.tar.gz"
+year = nil
 
 version '3080704' do
+  year = 2014
   source md5: '33bb8db0038317ce1b0480ca1185c7ba'
 end
+
+version '3080900' do
+  year = 2015
+  source md5: '6a18d4609852f4b63f812a1059df468f'
+end
+
+source url: "http://www.sqlite.org/#{year}/sqlite-autoconf-#{version}.tar.gz"
+
 
 relative_path "sqlite-autoconf-#{version}"
 
