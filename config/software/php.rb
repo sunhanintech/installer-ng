@@ -17,7 +17,7 @@
 
 
 name 'php'
-default_version '5.5.23'
+default_version '5.5.24'
 
 dependency 'zlib'
 dependency 'libedit'
@@ -49,6 +49,10 @@ end
 
 version '5.5.23' do
         source md5: '756ae8355c0b3085d12498fb0412cae5'
+end
+
+version '5.5.24' do
+        source md5: 'f5666659d9279f725f4351866bb73bed'
 end
 
 relative_path "php-#{version}"
