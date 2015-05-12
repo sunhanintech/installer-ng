@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Install omnibus
-gem 'omnibus', :github => 'krallin/omnibus', :ref => '3b91d45'
+gem 'omnibus', :github => 'krallin/omnibus', :ref => '7696c10'
 
 # Use Chef's software definitions. It is recommended that you write your own
 # software definitions, but you can clone/fork Chef's to get you started.
