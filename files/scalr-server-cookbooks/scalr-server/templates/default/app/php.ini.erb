@@ -1944,8 +1944,8 @@ report_memleaks = Off
 ; Scalr :: Sessions
 ; View: https://github.com/php-memcached-dev/php-memcached/issues/47
 
-session.cookie_lifetime = <%= node[:scalr_server][:app][:session_cookie_lifetime] %>
-session.gc_maxlifetime = <%= 2 * (1 + node[:scalr_server][:app][:session_cookie_lifetime]) %>
+session.cookie_lifetime = <%= session_cookie_timeout node %>
+session.gc_maxlifetime = <%= session_soft_timeout node %>
 
 session.save_handler = memcached
 session.save_path = <%= memcached_servers(node).join(', ') %>
