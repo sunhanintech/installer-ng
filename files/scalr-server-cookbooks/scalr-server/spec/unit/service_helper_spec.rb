@@ -253,4 +253,32 @@ describe Scalr::ServiceHelper do
       expect(dummy_class.new.plotter_port(node)).to eq(8000)
     end
   end
+
+  describe '#session_cookie_timeout' do
+    it 'should use session_cookie_lifetime if set'  do
+      node.set[:scalr_server][:app][:session_cookie_lifetime] = 10
+      node.set[:scalr_server][:app][:session_cookie_timeout] = 20
+      expect(dummy_class.new.session_cookie_timeout(node)).to eq(10)
+    end
+
+    it 'should consider 0 to be set'  do
+      node.set[:scalr_server][:app][:session_cookie_lifetime] = 0
+      node.set[:scalr_server][:app][:session_cookie_timeout] = 20
+      expect(dummy_class.new.session_cookie_timeout(node)).to eq(0)
+    end
+
+    it 'should use session_cookie_timeout otherwise' do
+      node.set[:scalr_server][:app][:session_cookie_lifetime] = nil
+      node.set[:scalr_server][:app][:session_cookie_timeout] = 0
+      expect(dummy_class.new.session_cookie_timeout(node)).to eq(0)
+    end
+  end
+
+  describe '#session_soft_timeout' do
+    it 'should return the session soft timeout' do
+      node.set[:scalr_server][:app][:session_soft_timeout] = 10
+      expect(dummy_class.new.session_soft_timeout(node)).to eq(10)
+    end
+  end
+
 end

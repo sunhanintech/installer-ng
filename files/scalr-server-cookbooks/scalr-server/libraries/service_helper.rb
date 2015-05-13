@@ -332,6 +332,24 @@ module Scalr
     end
 
 
+    ###############
+    # App Helpers #
+    ###############
+
+    # We renamed this setting to be consistent with the below. Use the old value if set, otherwise we use the new one.
+    # We have to use .nil? instead of || ... here, because the timeout may reasonable be 0.
+    def session_cookie_timeout(node)
+      unless node[:scalr_server][:app][:session_cookie_lifetime].nil?
+        return node[:scalr_server][:app][:session_cookie_lifetime]
+      end
+       node[:scalr_server][:app][:session_cookie_timeout]
+    end
+
+    def session_soft_timeout (node)
+      node[:scalr_server][:app][:session_soft_timeout]
+    end
+
+
     ####################
     # Endpoint helpers #
     ####################

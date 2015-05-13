@@ -156,8 +156,15 @@ default[:scalr_server][:app][:memcached_port] = nil
 # Current configuration (allows multiple memcached servers)
 default[:scalr_server][:app][:memcached_servers] = ['127.0.0.1:6281']
 
-# PHP session cookie lifetime. You can extend or reduce this depending on your security requirements.
-default[:scalr_server][:app][:session_cookie_lifetime] = 1800
+# Deprecated
+default[:scalr_server][:app][:session_cookie_lifetime] = nil
+
+# The session_cookie_timeout controls the timeout on the session cookie, which will result in immediate logout of the user.
+# Note that session_cookie_timeout should not be relied on as a security measure (it is managed client-side).
+default[:scalr_server][:app][:session_cookie_timeout] = 0
+# The session_soft_timeout is an inactivity timeout. If the user is inactive during this period of time, they'll be logged out.
+# The session_soft_timeout can be relied on as a security measure, since it is managed server-side.
+default[:scalr_server][:app][:session_soft_timeout] = 1800
 
 # Hash of arbitrary configuration parameters to include in the Scalr configuration. This will be deeply merged
 # with the default configuration. Note that arrays are *not* deeply merged (so that you can remove values from their
