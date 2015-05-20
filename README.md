@@ -39,12 +39,12 @@ Start by deploying the Scalr package appropriate for your system.
 
 ### Debian, Ubuntu ###
 
-    curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.deb | sudo bash
+    curl -L https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.deb | sudo bash
     apt-get install -y scalr-server
 
 ### RHEL, CentOS, OEL ###
 
-    curl https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.rpm | sudo bash
+    curl -L https://packagecloud.io/install/repositories/scalr/scalr-server-oss/script.rpm | sudo bash
     yum install -y scalr-server
 
 
