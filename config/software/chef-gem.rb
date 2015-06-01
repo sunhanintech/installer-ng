@@ -17,7 +17,7 @@
 # CACHE BUST - 1 (ohai 8.1.0 was pulled in and is a buggy dependency)
 
 name 'chef-gem'
-default_version '12.0.3'
+default_version '12.3.0'
 
 dependency 'ruby'
 dependency 'rubygems'
