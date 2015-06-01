@@ -10,9 +10,6 @@ install_dir "#{default_root}/#{name}"
 build_version Omnibus::BuildVersion.semver
 build_iteration 1
 
-override 'ruby', version: '2.1.5'
-override 'chef-gem', version: '12.0.3'
-
 if ENV['SCALR_VERSION']
   build_version ENV['SCALR_VERSION']
 end
