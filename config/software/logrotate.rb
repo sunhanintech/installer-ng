@@ -32,7 +32,17 @@ license path: 'COPYING'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command './autogen.sh', env: env
+  # Logrotate requires a very recent automake. We generate the autogen files elsewhere.
+  # Including the version in the name ensures we regenerate the configure script and others if you upgrade logrotate.
+  # The configure script can be generated using a recent system (e.g. Ubuntu 14.04 as of this writing)
+  # using ./autogen.sh; provided the appropriate software (automake, libtool) is installed.
+  patch source: "0001-add-autogen-#{version}.patch"
+
+  # Patch doesn't take modes into account. Change those that must be changed
+  %w{compile depcomp install-sh missing configure}.each do |bin|
+    command "chmod 755 #{project_dir}/#{bin}"
+  end
+
   command './configure' \
           " --prefix=#{install_dir}/embedded", env: env
 
