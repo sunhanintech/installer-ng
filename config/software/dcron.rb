@@ -14,9 +14,9 @@ build do
 
   # The list of arguments to pass to make
   args = "PREFIX='#{install_dir}/embedded'" \
-         " SCRONTABS='#{install_dir}/etc/cron/cron.d'" \
-         " CRONTABS='#{install_dir}/var/spool/cron/crontabs'" \
-         " CRONSTAMPS='#{install_dir}/var/spool/cron/cronstamps'" \
+         " SCRONTABS='#{install_dir}/etc/crond/cron.d'" \
+         " CRONTABS='#{install_dir}/var/spool/crond/crontabs'" \
+         " CRONSTAMPS='#{install_dir}/var/spool/crond/cronstamps'" \
          ' CRONTAB_GROUP=root'
 
   make "#{args}", env: env

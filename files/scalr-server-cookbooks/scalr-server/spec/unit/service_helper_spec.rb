@@ -84,7 +84,7 @@ describe Scalr::ServiceHelper do
 
   describe '#enable_module?' do
     it 'should always enable some modules' do
-      %w{supervisor dirs users sysctl}.each do |mod|
+      %w{supervisor dirs users sysctl logrotate crond}.each do |mod|
         expect(dummy_class.new.enable_module?(node, mod.to_sym)).to be_truthy
         expect(dummy_class.new.enable_module?(node, mod)).to be_truthy
       end

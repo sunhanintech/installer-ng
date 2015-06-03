@@ -1,0 +1,2 @@
+0 0 * * * <%= node[:scalr_server][:install_root] %>/embedded/sbin/logrotate -s <%= data_dir_for node, 'logrotate' %>/logrotate.status <%= @conf %> >> <%= log_dir_for node, 'logrotate' %>/logrotate.log 2>&1
+

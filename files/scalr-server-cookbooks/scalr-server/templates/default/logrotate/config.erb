@@ -1,0 +1,9 @@
+<%= log_dir node %>/*/*.log <%= log_dir node %>/*/*.err {
+    daily
+    missingok
+    notifempty
+    rotate 7
+    compress
+    copytruncate
+}
+

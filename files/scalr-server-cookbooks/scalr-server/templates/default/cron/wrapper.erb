@@ -2,4 +2,4 @@
 
 export PATH="<%= @path %>"
 
-<%= @cmd %> --<%= @cron[:name] %> >> <%= log_dir_for node, 'cron' %>/<%= @cron[:name] %>.log
+<%= @cmd %> --<%= @cron[:name] %> >> <%= log_dir_for node, 'crond' %>/<%= @cron[:name] %>.log
