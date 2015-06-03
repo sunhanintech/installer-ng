@@ -44,6 +44,7 @@ build do
   end
 
   command './configure' \
+          ' --without-selinux' \
           " --prefix=#{install_dir}/embedded", env: env
 
   make env: env
