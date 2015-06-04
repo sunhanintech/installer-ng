@@ -68,7 +68,7 @@ build do
           " --prefix=#{install_dir}/embedded" \
           " --without-pear" \
           " --with-zlib-dir=#{install_dir}/embedded" \
-          " --with-pcre-dir=#{install_dir}/embedded" \
+          " --with-pcre-regex=#{install_dir}/embedded" \
           " --with-xsl=#{install_dir}/embedded" \
           " --with-libxml-dir=#{install_dir}/embedded" \
           " --with-iconv=#{install_dir}/embedded" \
