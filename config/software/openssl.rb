@@ -20,7 +20,7 @@ name 'openssl'
 dependency 'zlib'
 dependency 'cacerts'
 
-default_version '1.0.1m'
+default_version '1.0.1n'
 source url: "http://www.openssl.org/source/openssl-#{version}.tar.gz"
 
 version '1.0.1k' do
@@ -33,6 +33,10 @@ end
 
 version '1.0.1m' do
   source md5: 'd143d1555d842a069cb7cc34ba745a06'
+end
+
+version '1.0.1n' do
+  source md5: '139568bd5a56fa49b72a290d37113f30' 
 end
 
 relative_path "openssl-#{version}"
@@ -58,14 +62,6 @@ build do
                        "-L#{install_dir}/embedded/lib",
                        "-I#{install_dir}/embedded/include",
                        "-Wl,-rpath,#{install_dir}/embedded/lib"].join(' ')
-
-  if aix?
-    patch_env = env.dup
-    patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
-    patch source: 'openssl-1.0.1f-do-not-build-docs.patch', env: patch_env
-  else
-    patch source: 'openssl-1.0.1f-do-not-build-docs.patch'
-  end
 
   command configure_command, env: env
   make 'depend', env: env
