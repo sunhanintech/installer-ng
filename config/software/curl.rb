@@ -59,7 +59,7 @@ build do
           ' --without-librtmp' \
           ' --without-libssh2' \
           " --with-ssl=#{install_dir}/embedded" \
-           "--with-zlib=#{install_dir}/embedded", env: env
+          " --with-zlib=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
   make 'install', env: env
