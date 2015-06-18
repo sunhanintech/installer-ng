@@ -39,6 +39,8 @@ dependency 'putty'
 dependency 'dejavu-sans-ttf'
 dependency 'logrotate'
 
+dependency 'nginx'
+
 dependency 'scalr-app-php-libs'
 dependency 'scalr-app-python-libs'
 

@@ -264,9 +264,14 @@ module Scalr
         return false
       end
 
-      # HTTPD is enabled if we have web or proxy
+      # HTTPD is enabled if we have web
       if mod == :httpd
-        return enable_module?(node, :web) || enable_module?(node, :proxy)
+		return enable_module?(node, :web)
+      end
+	  
+      # nginx is enabled if we have proxy
+      if mod == :nginx
+		return enable_module?(node, :proxy)
       end
 
       # Ordering matters a lot in the line below. We want to return the module's own enable settings so that if it's

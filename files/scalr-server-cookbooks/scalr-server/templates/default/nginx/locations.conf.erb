@@ -1,0 +1,37 @@
+location / {
+
+  location ~* ^.+\.(css|js)$ {
+    expires 1w;
+
+    rewrite ^/ui/js/(.*)-[0-9]+.js /ui/js/$1.js last;
+    rewrite ^/ui/js/(.*)-[0-9]+.css /ui/js/$1.css last;
+    rewrite ^/ui2/js/(.*)-[0-9]+.js /ui2/js/$1.js last;
+    rewrite ^/ui2/js/(.*)-[0-9]+.css /ui2/js/$1.css last;
+  }
+
+  location ~* ^.+\.(jp?g|gif|png|flv|swf)$ {
+    expires 1w;
+  }
+
+  location ~* ^.+\.(pdf)$ {
+    expires 1m;
+  }
+
+  location ~* ^.+\.(ico)$ {
+    expires 1y;
+  }
+
+  location ~* ^.+\.(zip|tgz|gz|rar|bz2|txt|tar|wav|bmp|rtf|html|htm|ttf)$ {
+    expires 2d;
+  }
+
+  proxy_pass http://app;
+}
+
+location /graphics {
+  proxy_pass http://graphics;
+}
+
+location /load_statistics {
+  proxy_pass http://plotter;
+}

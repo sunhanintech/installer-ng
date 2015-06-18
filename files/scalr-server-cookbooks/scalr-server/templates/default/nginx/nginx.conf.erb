@@ -1,0 +1,95 @@
+user <%= node[:scalr_server][:app][:user] %>;
+worker_processes <%= @cores %>;
+
+daemon off;
+
+error_log <%= log_dir_for node, 'nginx' %>/web.error.log;
+
+events {
+  worker_connections 2048;
+}
+
+http {
+  include mime.types;
+
+  log_format extra '$remote_addr (for "$http_x_forwarded_for") - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_time';
+
+  access_log <%= log_dir_for node, 'nginx' %>/web.proxy.access.log extra;
+  error_log <%= log_dir_for node, 'nginx' %>/web.proxy.error.log;
+
+  keepalive_timeout 60;
+
+  gzip on;
+  gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+  gzip_comp_level 9;
+  gzip_types text/plain text/xml text/x-js text/javascript text/css application/xml application/xhtml+xml application/x-javascript application/javascript application/json;
+
+  server_tokens off;
+  charset utf-8;
+  etag off;
+	
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+  root <%= node[:scalr_server][:install_root] %>/embedded/scalr/app/www;
+
+  upstream app {
+    least_conn;
+		
+    <% node[:scalr_server][:proxy][:app_upstreams].each do |upstream| %>
+      server <%= upstream %>;
+    <% end %>
+  }
+
+  upstream graphics {
+    least_conn;
+   
+    <% node[:scalr_server][:proxy][:graphics_upstreams].each do |upstream| %>
+      server <%= upstream %>;
+    <% end %>
+  }
+
+  upstream plotter {
+    least_conn;
+		
+    <% node[:scalr_server][:proxy][:plotter_upstreams].each do |upstream| %>
+      server <%= upstream %>;
+    <% end %>
+  }
+	
+  server {
+    listen <%= node[:scalr_server][:proxy][:bind_port] %>;
+    server_name <%= node[:scalr_server][:proxy][:bind_host] %>;
+		
+    <% if node[:scalr_server][:proxy][:ssl_enable] and node[:scalr_server][:proxy][:ssl_redirect] %>
+
+      return 301 https://<%= node[:scalr_server][:routing][:endpoint_host] %>$request_uri;
+		
+    <% else %>
+
+      include locations.conf;
+
+    <% end %>
+  }
+
+  <% if node[:scalr_server][:proxy][:ssl_enable] %>
+	
+    server {
+      listen <%= node[:scalr_server][:proxy][:ssl_bind_port] %> ssl spdy;
+      server_name <%= node[:scalr_server][:proxy][:bind_host] %>;
+
+      ssl_certificate <%= node[:scalr_server][:proxy][:ssl_cert_path] %>;
+      ssl_certificate_key <%= node[:scalr_server][:proxy][:ssl_key_path] %>;
+
+      ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+      ssl_prefer_server_ciphers on;
+      ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+      ssl_buffer_size 8k;
+      ssl_session_cache shared:SSL:1m;
+      ssl_session_timeout 5m;
+
+      include locations.conf;
+    }
+	
+  <% end %>
+
+}

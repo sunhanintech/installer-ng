@@ -30,5 +30,5 @@ template "#{etc_dir_for node, 'httpd'}/httpd.conf" do
     include Scalr::PathHelper
     include Scalr::ServiceHelper
   end
-  notifies  :restart, 'supervisor_service[httpd]' if service_is_up?(node, 'httpd')
+  notifies  :restart, 'supervisor_service[httpd]', :immediately if service_is_up?(node, 'httpd')
 end
