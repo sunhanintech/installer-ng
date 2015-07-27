@@ -175,12 +175,12 @@ module Scalr
                         :default_repo => 'stable',
                         :repos => {
                             :stable => {
-                                :deb_repo_url => 'http://repo.scalr.net/apt stable main',
+                                :deb_repo_url => 'http://repo.scalr.net/apt-plain stable/',
                                 :rpm_repo_url => 'http://repo.scalr.net/rpm/stable/rhel/$releasever/$basearch',
                                 :win_repo_url => 'http://repo.scalr.net/win/stable',
                             },
                             :latest => {
-                                :deb_repo_url => 'http://repo.scalr.net/apt latest main',
+                                :deb_repo_url => 'http://repo.scalr.net/apt-plain latest/',
                                 :rpm_repo_url => 'http://repo.scalr.net/rpm/latest/rhel/$releasever/$basearch',
                                 :win_repo_url => 'http://repo.scalr.net/win/latest',
                             },
