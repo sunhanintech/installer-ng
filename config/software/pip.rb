@@ -16,7 +16,7 @@
 #
 
 name "pip"
-default_version "1.3"
+default_version "1.4"
 
 dependency "setuptools"
 
@@ -25,6 +25,10 @@ source url: "https://pypi.python.org/packages/source/p/pip/pip-#{version}.tar.gz
 
 version '1.3' do
   source md5: '918559b784e2aca9559d498050bb86e7'
+end
+
+version '1.4' do
+  source md5: 'ca790be30004937987767eac42cfa44a'
 end
 
 relative_path "pip-#{version}"
