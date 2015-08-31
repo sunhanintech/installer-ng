@@ -6,7 +6,7 @@ source :git => '__SCALR_APP_PATH__'
 [
   ['adodb5', '18', 'license.txt'],
   ['apache-log4php', '2.0.0-incubating', 'LICENSE'],
-  ['google-api-php-client', 'git-03102014', 'LICENSE']
+  ['google-api-php-client', 'git-03162015', 'LICENSE']
 ].each do |dep_name, dep_version, dep_license|
   license path: "app/src/externals/#{dep_name}-#{dep_version}/#{dep_license}", name: dep_name, version: dep_version
 end
