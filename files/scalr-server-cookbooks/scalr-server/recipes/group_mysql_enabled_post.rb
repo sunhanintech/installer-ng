@@ -48,6 +48,12 @@ mysql_database 'remove_access_to_test_databases' do
   not_if          { mysql_bootstrapped? node }
 end
 
+# Insert time zone data into MySQL if missing
+execute 'dump_timezone_to_sql' do
+  command "#{node[:scalr_server][:install_root]}/embedded/bin/mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -S #{run_dir_for node, 'mysql' }/mysql.sock -u root -p#{node[:scalr_server][:mysql][:root_password]} mysql"
+  not_if          { mysql_timezoned? node }
+end
+
 
 # Remote root
 
@@ -60,6 +66,13 @@ mysql_database_user 'root' do
 end
 
 file mysql_bootstrap_status_file node do
+  mode     0644
+  owner   'root'
+  group   'root'
+  action  :create_if_missing
+end
+
+file mysql_timezone_status_file node do
   mode     0644
   owner   'root'
   group   'root'

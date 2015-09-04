@@ -331,6 +331,14 @@ module Scalr
       node[:mysql_bootstrap_status]
     end
 
+    def mysql_timezone_status_file(node)
+      "#{data_dir_for node, 'mysql'}/timezoned"
+    end
+
+    def mysql_timezoned?(node)
+      File.exists?(mysql_timezone_status_file(node))
+    end
+
 
     #################
     # SSMTP helpers #
