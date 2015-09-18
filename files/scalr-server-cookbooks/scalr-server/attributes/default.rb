@@ -371,7 +371,7 @@ default[:scalr_server][:supervisor][:user] = 'root'
 # Attributes includes from other cookbooks. We need to include those because we refer to them in our own recipes,
 # and don't want to have to ensure that those cookbooks are in the runlist to be able to use the attributes.
 include_attribute  'rackspace_timezone'
-include_attribute  'apparmor::apparmor'
+include_attribute  'apparmor::default'
 
 # NTP cookbook configuration
 default['ntp']['apparmor_enabled'] = false
