@@ -36,7 +36,6 @@ done
 
 
 echo "Installing"
-echo "" > /proc/stat
 /opt/scalr-server/bin/scalr-server-ctl reconfigure
 
 
