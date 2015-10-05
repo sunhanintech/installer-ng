@@ -144,6 +144,11 @@ module Scalr
               :service_config => {},
           },
 
+	  {
+              :name => 'platform_usage', :service_style => :php,
+              :service_config => {},
+          },
+
           {
               :name => 'dns_manager', :service_style => :php,
               :service_config => {},
