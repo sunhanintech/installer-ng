@@ -4,12 +4,13 @@ default_version '__SCALR_APP_REVISION__'
 source :git => '__SCALR_APP_PATH__'
 
 [
-  ['adodb5', '18', 'license.txt'],
-  ['google-api-php-client', 'git-03162015', 'LICENSE']
+  ['adodb5', '18', 'license.txt']
 ].each do |dep_name, dep_version, dep_license|
   license path: "app/src/externals/#{dep_name}-#{dep_version}/#{dep_license}", name: dep_name, version: dep_version
 end
 
+# Manually add Google API license
+license path: "vendor/google/apiclient/LICENSE"
 
 build do
   # Install dependencies using composer
