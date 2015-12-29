@@ -136,6 +136,8 @@ EnableSendfile on
           SSLEngine             on
           SSLCertificateFile    <%= node[:scalr_server][:proxy][:ssl_cert_path] %>
           SSLCertificateKeyFile <%= node[:scalr_server][:proxy][:ssl_key_path] %>
+          SSLProtocol all -SSLv2 -SSLv3
+          SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK
 
           <%= render 'httpd/_proxy_partial.erb' %>
 
@@ -143,6 +145,9 @@ EnableSendfile on
           <IfModule log_config_module>
                 CustomLog <%= log_dir_for node, 'httpd' %>/web.proxy-ssl.access.log combined
           </IfModule>
+
+          <%= node[:scalr_server][:proxy][:apache_config] %>
+
         </VirtualHost>
     <% end %>
 
@@ -159,6 +164,9 @@ EnableSendfile on
       <IfModule log_config_module>
             CustomLog <%= log_dir_for node, 'httpd' %>/web.proxy.access.log combined
       </IfModule>
+
+      <%= node[:scalr_server][:proxy][:apache_config] %>
+
     </VirtualHost>
 
     <Proxy balancer://app>
