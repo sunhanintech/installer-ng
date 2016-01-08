@@ -20,7 +20,7 @@ name 'openssl'
 dependency 'zlib'
 dependency 'cacerts'
 
-default_version '1.0.1p'
+default_version '1.0.1q'
 source url: "http://www.openssl.org/source/openssl-#{version}.tar.gz"
 
 version '1.0.1k' do
@@ -45,6 +45,10 @@ end
 
 version '1.0.1p' do
   source md5: '7563e92327199e0067ccd0f79f436976'
+end
+
+version '1.0.1q' do
+  source md5: '54538d0cdcb912f9bc2b36268388205e'
 end
 
 relative_path "openssl-#{version}"
