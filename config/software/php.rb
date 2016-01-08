@@ -107,6 +107,7 @@ build do
           " --with-config-file-path=#{install_dir}/etc/php" \
           ' --with-fpm-user=scalr' \
           ' --enable-bcmath' \
+          ' --enable-mbstring' \
           ' --with-fpm-group=scalr', env: env
 
   make "-j #{workers}", env: env
