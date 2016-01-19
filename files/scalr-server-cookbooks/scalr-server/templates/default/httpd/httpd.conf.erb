@@ -140,6 +140,8 @@ EnableSendfile on
           SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK
 
           <%= render 'httpd/_proxy_partial.erb' %>
+          RequestHeader add X-Forwarded-Port <%= node[:scalr_server][:proxy][:ssl_bind_port] %>
+          RequestHeader add X-Forwarded-Proto https
 
           ErrorLog  <%= log_dir_for node, 'httpd' %>/web.proxy-ssl.error.log
           <IfModule log_config_module>
@@ -159,6 +161,8 @@ EnableSendfile on
           # TODO - endpoint_port
       <% else %>
         <%= render 'httpd/_proxy_partial.erb' %>
+        RequestHeader add X-Forwarded-Port <%= node[:scalr_server][:proxy][:bind_port] %>
+        RequestHeader add X-Forwarded-Proto http
       <% end %>
       ErrorLog  <%= log_dir_for node, 'httpd' %>/web.proxy.error.log
       <IfModule log_config_module>
