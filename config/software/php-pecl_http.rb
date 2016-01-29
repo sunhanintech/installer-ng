@@ -37,4 +37,9 @@ build do
           " --with-http-zlib-dir=#{install_dir}/embedded", env: env
   make env: env
   make 'install', env: env
+
+  #Add extension to php.ini
+  command "mkdir -p #{install_dir}/etc/php"
+  command "echo 'extension=http.so' >> #{install_dir}/etc/php/php.ini"
+
 end
