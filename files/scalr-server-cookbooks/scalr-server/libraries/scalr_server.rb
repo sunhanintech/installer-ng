@@ -66,6 +66,41 @@ module ScalrServer
       system("chmod 0600 #{secrets_file_path node}")
     end
 
+    def string2boolean(hash)
+      hash.keys.each do |key|
+        if hash[key].kind_of? Hash
+          string2boolean(hash[key])
+        else
+          hash[key] = case hash[key]
+          when "yes"
+            true
+          when "no"
+            false
+          when "1"
+            true
+          when "0"
+            false
+          when "true"
+            true
+          when "false"
+            false
+          when "on"
+            true
+          when "off"
+            false
+          when "null"
+            nil
+          when "nil"
+            nil
+          when "~"
+            nil
+          else
+            hash[key]
+          end
+        end
+      end
+    end
+
     def generate_hash
       results = {:scalr_server => {} }
 
@@ -76,6 +111,9 @@ module ScalrServer
 
       # Keys that are (also) routed somewhere else
       results[:rackspace_timezone] = {:config => {:tz => ScalrServer[:supervisor][:tz]}}
+
+      # Make all values "safe"
+      string2boolean(results)
 
       results
     end
