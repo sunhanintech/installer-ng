@@ -19,7 +19,7 @@ build do
 
   # Copy the code to the ./scalr dir.
   command "mkdir -p #{install_dir}/embedded/scalr"
-  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=installer-ng --exclude=pybuild ./ #{install_dir}/embedded/scalr"
+  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=.drone.yml --exclude=installer-ng --exclude=pybuild ./ #{install_dir}/embedded/scalr"
 
   # Dump configuration information to a JSON file
   block do
