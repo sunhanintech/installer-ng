@@ -1,3 +1,23 @@
+<% if node[:scalr_server][:proxy].key?(:whitelist_api) %>
+<LocationMatch "^/(api|api.php)">
+  <RequireAny>
+  <% node[:scalr_server][:proxy][:whitelist_api].each do |ip| %>
+    Require ip <%= ip %>
+  <% end %>
+  </RequireAny>
+</LocationMatch>
+<% end %>
+
+<% if node[:scalr_server][:proxy].key?(:whitelist_ui) %>
+<LocationMatch "^/(?!(api|api.php))">
+  <RequireAny>
+  <% node[:scalr_server][:proxy][:whitelist_ui].each do |ip| %>
+    Require ip <%= ip %>
+  <% end %>
+  </RequireAny>
+</LocationMatch>
+<% end %>
+
 ProxyPass /graphics           balancer://graphics/
 ProxyPass /load_statistics    balancer://plotter/
 ProxyPass /                   balancer://app/
