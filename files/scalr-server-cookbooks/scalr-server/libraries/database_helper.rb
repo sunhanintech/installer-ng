@@ -14,7 +14,7 @@ module Scalr
 
     def mysql_scalr_params(node)
       {
-          :host     => node[:scalr_server][:app][:mysql_scalr_host],
+          :host     => (node[:scalr_server][:app][:mysql_scalr_host] == "localhost" ? "127.0.0.1" : node[:scalr_server][:app][:mysql_scalr_host]),
           :port     => node[:scalr_server][:app][:mysql_scalr_port],
           :username => node[:scalr_server][:mysql][:scalr_user],
           :password => node[:scalr_server][:mysql][:scalr_password],
@@ -23,7 +23,7 @@ module Scalr
 
     def mysql_analytics_params(node)
       {
-          :host     => node[:scalr_server][:app][:mysql_analytics_host],
+          :host     => (node[:scalr_server][:app][:mysql_analytics_host] == "localhost" ? "127.0.0.1" : node[:scalr_server][:app][:mysql_analytics_host]),
           :port     => node[:scalr_server][:app][:mysql_analytics_port],
           :username => node[:scalr_server][:mysql][:scalr_user],
           :password => node[:scalr_server][:mysql][:scalr_password],

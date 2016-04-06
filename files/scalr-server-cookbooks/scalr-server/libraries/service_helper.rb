@@ -144,6 +144,11 @@ module Scalr
               :service_config => {},
           },
 
+	  {
+              :name => 'platform_usage', :service_style => :php,
+              :service_config => {},
+          },
+
           {
               :name => 'dns_manager', :service_style => :php,
               :service_config => {},
@@ -334,6 +339,14 @@ module Scalr
         node.override[:mysql_bootstrap_status] = File.exists?(mysql_bootstrap_status_file node)
       end
       node[:mysql_bootstrap_status]
+    end
+
+    def mysql_timezone_status_file(node)
+      "#{data_dir_for node, 'mysql'}/timezoned"
+    end
+
+    def mysql_timezoned?(node)
+      File.exists?(mysql_timezone_status_file(node))
     end
 
 

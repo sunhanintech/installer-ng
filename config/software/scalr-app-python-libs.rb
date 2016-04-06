@@ -39,6 +39,9 @@ dependency 'python-m2crypto'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  # Clean build dir
+  command "rm -rf #{build_dir}/pybuild/*"
+
   # Install Python dependencies (we have to install those here because this is where we get the requirements.txt
   # file)
   # Note that m2crypto is installed separately in python-m2crypto.

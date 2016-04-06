@@ -35,9 +35,11 @@ license path: 'LICENCE'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "./configure" \
+  command './configure' \
           " --prefix=#{install_dir}/embedded" \
-          " --enable-pcretest-libedit", env: env
+          ' --enable-unicode-properties' \
+          ' --enable-utf8' \
+          ' --enable-pcretest-libedit', env: env
 
   make "-j #{workers}", env: env
   make "install", env: env

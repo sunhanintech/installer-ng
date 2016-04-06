@@ -2,4 +2,4 @@
 # Those two services are deployed on the stats server instead.
 cron[:enable] = true
 service[:enable] = true
-service[:disable] = ['plotter', 'plotter']
+service[:disable] = ['plotter', 'poller']

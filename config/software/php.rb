@@ -17,7 +17,7 @@
 
 
 name 'php'
-default_version '5.5.24'
+default_version '5.6.17'
 
 dependency 'zlib'
 dependency 'libedit'
@@ -53,6 +53,22 @@ end
 
 version '5.5.24' do
         source md5: 'f5666659d9279f725f4351866bb73bed'
+end
+
+version '5.5.26' do
+        source md5: '00cdcf41c6432eb82ce5c4b687eef801'
+end
+
+version '5.5.29' do
+        source md5: '79db29eb718dc35092a5e94b81d13d07'
+end
+
+version '5.6.14' do
+        source md5: 'ae625e0cfcfdacea3e7a70a075e47155'
+end
+
+version '5.6.17' do
+        source md5: '9cbf226d0b5d852e66a0b7272368ecea'
 end
 
 relative_path "php-#{version}"
@@ -94,6 +110,8 @@ build do
           ' --enable-fpm' \
           " --with-config-file-path=#{install_dir}/etc/php" \
           ' --with-fpm-user=scalr' \
+          ' --enable-bcmath' \
+          ' --enable-mbstring' \
           ' --with-fpm-group=scalr', env: env
 
   make "-j #{workers}", env: env

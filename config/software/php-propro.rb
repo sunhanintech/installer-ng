@@ -1,13 +1,15 @@
-name 'php-ssh2'
-default_version '0.12'
+name 'php-propro'
+default_version '1.0.0'
 
-source url: "http://pecl.php.net/get/ssh2-#{version}.tgz",
-  md5: '409b91678a842bb0ff56f2cf018b9160'
+source url: "https://pecl.php.net/get/propro-#{version}.tgz"
 
-relative_path "ssh2-#{version}"
+version '1.0.0' do
+  source md5: '9c775035fd17c65f0162b7eb1b4f8564'
+end
 
-dependency 'libssh2'
 dependency 'php'
+
+relative_path "propro-#{version}"
 
 license path: 'LICENSE'
 
@@ -17,13 +19,11 @@ build do
   command "#{install_dir}/embedded/bin/phpize"
   command './configure' \
           " --with-php-config=#{install_dir}/embedded/bin/php-config" \
-          " --with-ssh2=#{install_dir}/embedded", env: env
-
+          " --enable-propro", env: env
   make env: env
   make 'install', env: env
 
   #Add extension to php.ini
   command "mkdir -p #{install_dir}/etc/php"
-  command "echo 'extension=ssh2.so' >> #{install_dir}/etc/php/php.ini"
-
+  command "echo 'extension=propro.so' >> #{install_dir}/etc/php/php.ini"
 end

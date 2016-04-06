@@ -403,7 +403,7 @@ max_input_time = 60
 
 ; Maximum amount of memory a script may consume (128MB)
 ; http://php.net/memory-limit
-memory_limit = 128M
+memory_limit = 512M
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Error handling and logging ;
@@ -696,7 +696,7 @@ default_mimetype = "text/html"
 ; to disable this feature. If post reading is disabled through
 ; enable_post_data_reading, $HTTP_RAW_POST_DATA is *NOT* populated.
 ; http://php.net/always-populate-raw-post-data
-;always_populate_raw_post_data = On
+always_populate_raw_post_data = -1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Paths and Directories ;
@@ -1931,6 +1931,8 @@ ldap.max_links = -1
 ; Scalr :: Load php extensions
 
 zend_extension=opcache.so
+extension=raphf.so
+extension=propro.so
 extension=http.so
 extension=rrd.so
 extension=ssh2.so
