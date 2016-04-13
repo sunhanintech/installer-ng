@@ -66,6 +66,9 @@ http {
 		
     <% else %>
 
+      proxy_set_header X-Forwarded-Port <%= node[:scalr_server][:proxy][:bind_port] %>
+      proxy_set_header X-Forwarded-Proto http
+
       include locations.conf;
 
     <% end %>
@@ -86,6 +89,9 @@ http {
       ssl_buffer_size 8k;
       ssl_session_cache shared:SSL:1m;
       ssl_session_timeout 5m;
+
+      proxy_set_header X-Forwarded-Port <%= node[:scalr_server][:proxy][:ssl_bind_port] %>
+      proxy_set_header X-Forwarded-Proto https
 
       include locations.conf;
     }
