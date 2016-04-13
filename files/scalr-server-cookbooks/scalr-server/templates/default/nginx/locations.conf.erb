@@ -1,4 +1,23 @@
+location /api {
+
+  <% if node[:scalr_server][:proxy].key?(:whitelist_api) %>
+    <% node[:scalr_server][:proxy][:whitelist_api].each do |ip| %>
+      allow <%= ip %>;
+    <% end %>
+    deny all;
+  <% end %>
+
+  proxy_pass http://app;
+}
+
 location / {
+
+  <% if node[:scalr_server][:proxy].key?(:whitelist_ui) %>
+    <% node[:scalr_server][:proxy][:whitelist_ui].each do |ip| %>
+      allow <%= ip %>;
+    <% end %>
+    deny all;
+  <% end %>
 
   location ~* ^.+\.(css|js)$ {
     expires 1w;
