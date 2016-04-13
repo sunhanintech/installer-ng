@@ -360,6 +360,14 @@ default[:scalr_server][:memcached][:enable_sasl] = nil
 default[:scalr_server][:supervisor][:user] = 'root'
 
 
+#############
+# Logrotate #
+#############
+
+# How many days should the logs be kept
+default[:scalr_server][:logrotate][:keep_days] = 7
+
+
 
 #########
 # Other #
