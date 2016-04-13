@@ -1,3 +1,7 @@
+location ~ /\. {
+  deny all;
+}
+
 location /api {
 
   <% if node[:scalr_server][:proxy].key?(:whitelist_api) %>
