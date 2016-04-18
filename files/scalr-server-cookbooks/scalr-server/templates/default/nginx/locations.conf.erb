@@ -52,9 +52,9 @@ location / {
 }
 
 location /graphics {
-  proxy_pass http://graphics;
+  proxy_pass http://graphics/;
 }
 
 location /load_statistics {
-  proxy_pass http://plotter;
+  proxy_pass http://plotter/;
 }
