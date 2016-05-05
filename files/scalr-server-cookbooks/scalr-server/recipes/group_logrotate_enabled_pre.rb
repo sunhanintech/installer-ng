@@ -20,6 +20,7 @@ config = "#{etc_dir_for node, 'logrotate'}/config"
 
 template config do
   source 'logrotate/config.erb'
+  variables :keep_days => node[:scalr_server][:logrotate][:keep_days]
   owner 'root'
   group 'root'
   mode 0644
