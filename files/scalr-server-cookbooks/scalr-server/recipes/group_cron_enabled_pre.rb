@@ -8,6 +8,7 @@ enabled_crons(node).each do |cron|
   run_wrapper = "#{bin_dir_for node, 'crond'}/#{cron[:name]}"
 
   template run_wrapper do
+    description "Create cron wrapper (" + "#{bin_dir_for node, 'crond'}/#{cron[:name]}" + ")"
     source    'cron/wrapper.erb'
     variables :cmd => cmd, :path => scalr_exec_path(node), :cron => cron
     mode      0755
@@ -16,6 +17,7 @@ enabled_crons(node).each do |cron|
   end
 
   template "#{etc_dir_for node, 'crond'}/cron.d/#{cron[:name]}" do
+    description "Create cron (" + "#{etc_dir_for node, 'crond'}/cron.d/#{cron[:name]}" + ")"
     source   'cron/entry.erb'
     variables :cron => cron, :run_wrapper => run_wrapper
     mode      0644

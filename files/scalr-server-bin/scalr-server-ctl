@@ -2,6 +2,7 @@
 
 set -o errexit
 
+mkdir -p /opt/scalr-server/var/log/installer
 
 usage_and_exit () {
     echo "Usage: ctl [reconfigure | show-config | show-attributes | extras]"
