@@ -54,7 +54,7 @@ end
 
 # Insert time zone data into MySQL if missing
 execute 'dump_timezone_to_sql' do
-  description "Import timezone database to MySQL""
+  description "Import timezone database to MySQL"
   command "#{node[:scalr_server][:install_root]}/embedded/bin/mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -S #{run_dir_for node, 'mysql' }/mysql.sock -u root -p#{node[:scalr_server][:mysql][:root_password]} mysql"
   not_if          { mysql_timezoned? node }
 end
