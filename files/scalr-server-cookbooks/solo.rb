@@ -28,4 +28,4 @@ node_name 'scalr-server'
 
 add_formatter :scalr
 
-log_level :info
+log_level :error
