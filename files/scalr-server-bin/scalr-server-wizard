@@ -1,6 +1,8 @@
 #!/bin/sh
 set -o nounset
 
+mkdir -p /opt/scalr-server/var/log/installer
+
 CTL="scalr-server-ctl"
 PYTHON="/opt/scalr-server/embedded/bin/python"
 
