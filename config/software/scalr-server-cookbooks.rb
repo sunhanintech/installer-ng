@@ -42,5 +42,5 @@ build do
   # Add the package and all the dependencies (NOTE: unfortunately this copies the scalr-server cookbook again)
   command "mkdir -p #{install_dir}/embedded"
   command "ruby -EUTF-8 $(which berks) package --berksfile ./scalr-server/Berksfile #{install_dir}/embedded/#{berks_pkg}", env: env
-#  command "cd #{install_dir}/embedded && tar -xzvf #{berks_pkg} && rm #{berks_pkg}"
+  command "cd #{install_dir}/embedded && tar -xzvf #{berks_pkg} && rm #{berks_pkg}"
 end

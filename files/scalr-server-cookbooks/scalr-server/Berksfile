@@ -2,11 +2,11 @@ source 'https://supermarket.chef.io'
 
 metadata
 
-cookbook 'apt', '~> 2.6.0'
+cookbook 'apt', '= 2.9.2'
 cookbook 'apparmor', '~> 0.9.0'
 cookbook 'selinux', '~> 0.8.0'
-cookbook 'ntp', '~> 1.5.0'
-cookbook 'iptables-ng', '~> 2.2.0'
+cookbook 'ntp', '= 1.11.0'
+cookbook 'iptables-ng', '= 2.2.8'
 
 cookbook 'chef-sentry-handler', github: 'coderanger/chef-sentry-handler', tag: 'v1.0.0'
 cookbook 'rackspace_timezone', github: 'scalr-cookbooks/rackspace_timezone', tag: 'v1.0.1+scalr'
