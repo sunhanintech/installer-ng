@@ -36,9 +36,11 @@ build do
   command "#{install_dir}/embedded/bin/phpize"
   command './configure' \
           " --with-php-config=#{install_dir}/embedded/bin/php-config" \
-          ' --with-http' \
-          " --with-http-libcurl-dir=#{install_dir}/embedded" \
-          " --with-http-zlib-dir=#{install_dir}/embedded", env: env
+          ' --enable-http' \
+          " --with-http-curl-requests=#{install_dir}/embedded" \
+          " --with-http-zlib-compression=#{install_dir}/embedded" \
+          " --with-http-magic-mime=#{install_dir}/embedded"\
+          ' --without-http-curl-libevent', env: env  # TODO - Do we want libevent?
   make env: env
   make 'install', env: env
 
