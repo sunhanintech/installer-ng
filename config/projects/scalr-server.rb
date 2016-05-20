@@ -24,30 +24,31 @@ dependency 'safe_yaml-gem'      # Same as above
 dependency 'sentry-raven-gem'   # Same as above
 
 # Software we need to run
-dependency 'mysql'
-dependency 'mysql-utilities'
-dependency 'memcached'
-dependency 'httpd'
+
+#dependency 'mysql'
+#dependency 'mysql-utilities'
+#dependency 'memcached'
+#dependency 'httpd'
 dependency 'php'
-dependency 'python'
-dependency 'supervisor'
-dependency 'rrdtool'
-dependency 'dcron'
-dependency 'ssh-keygen'
-dependency 'ssmtp'
-dependency 'putty'
-dependency 'dejavu-sans-ttf'
-dependency 'logrotate'
+#dependency 'python'
+#dependency 'supervisor'
+#dependency 'rrdtool'
+#dependency 'dcron'
+#dependency 'ssh-keygen'
+#dependency 'ssmtp'
+#dependency 'putty'
+#dependency 'dejavu-sans-ttf'
+#dependency 'logrotate'
 
 dependency 'scalr-app-php-libs'
-dependency 'scalr-app-python-libs'
+#dependency 'scalr-app-python-libs'
 
 # Actual Scalr software
-dependency 'scalr-app'
+#dependency 'scalr-app'
 
 # App management
-dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
-dependency 'scalr-server-bin'         # CLIs
+#dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
+#dependency 'scalr-server-bin'         # CLIs
 
 # Version manifest file
 dependency 'finalize'
