@@ -1,5 +1,5 @@
 name 'php-pecl_http'
-default_version '2.5.6'
+default_version '1.7.6'
 
 source url: "http://pecl.php.net/get/pecl_http-#{version}.tgz"
 

@@ -17,7 +17,7 @@
 
 
 name 'php'
-default_version '5.6.17'
+default_version '5.6.14'
 
 dependency 'zlib'
 dependency 'libedit'
