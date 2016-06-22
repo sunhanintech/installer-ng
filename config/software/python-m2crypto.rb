@@ -6,7 +6,7 @@ source url: "https://pypi.python.org/packages/source/M/M2Crypto/M2Crypto-#{versi
 
 dependency 'python'
 dependency 'openssl'
-
+dependency 'libgmp'
 
 relative_path "M2Crypto-#{version}"
 
