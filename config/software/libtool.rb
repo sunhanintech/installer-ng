@@ -21,7 +21,7 @@ default_version "2.4.6"
 source url: "http://mirror.rackdc.com/gnu/libtool/libtool-#{version}.tar.gz"
 
 version "2.4.6" do
-  source md5: "d2e27dbd8c6579d1582b3f128fd284b4"
+  source md5: "addf44b646ddb4e3919805aa88fa7c5e"
 end
 
 relative_path "libtool-#{version}"
