@@ -52,10 +52,10 @@ apt-get install -y git docker.io
 # Set repo variables
 if [ "${SCALR_VERSION}" = "Enterprise" ]; then
   SCALR_REPO="int-scalr"
-  EDITION="ee"
+  EDITION="enterprise"
 else
   SCALR_REPO="scalr"
-  EDITION="ce"
+  EDITION="opensource"
 fi
 
 # Set platform variables
@@ -65,8 +65,10 @@ IFS=- read PLATFORM_NAME PLATFORM_VERSION <<< ${SCALR_OS}
 if [[ "centos" = "${PLATFORM_NAME}" ]]; then
   #PLATFORM_NAME="el"
   PLATFORM_FAMILY="rhel"
+  PACKAGE_NAME="${SCALR_VERSION}.${EDITION}"
 elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
   PLATFORM_FAMILY="debian"
+  PACKAGE_NAME="${SCALR_VERSION}.${EDITION}.${PLATFORM_VERSION}"
 else
   echo "Unknown platform: ${PLATFORM_NAME}"
 fi
@@ -185,7 +187,7 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKDIR}/installer-ng \
--e SCALR_VERSION="${SCALR_VERSION}.${EDITION}" \
+-e SCALR_VERSION="${PACKAGE_NAME}" \
 -e JENKINS_UID=root \
 "${DOCKER_IMG}" "/omnibus_build.sh"
 
