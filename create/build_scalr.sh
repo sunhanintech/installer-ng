@@ -88,7 +88,7 @@ if docker ps | grep " ${CONTAINER} "; then
 fi
 
 #Create needed dirs
-mkdir -p ${WORKDIR}/scratch
+#mkdir -p ${WORKDIR}/scratch
 mkdir -p ${WORKDIR}/build
 mkdir -p ${WORKDIR}/shared
 
@@ -179,7 +179,7 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKDIR}/installer-ng:${WORKDIR}/installer-ng \
--v ${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:/mnt/scratch/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-v ${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
 -v ${WORKDIR}/build:${WORKDIR}/build \
 -v ${WORKDIR}/${SCALR_REPO}:${WORKDIR}/${SCALR_REPO} \
 -e OMNIBUS_BASE_DIR=${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
