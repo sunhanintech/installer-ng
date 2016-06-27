@@ -24,6 +24,6 @@ build do
           " --with-sqlite3=#{install_dir}/embedded" \
           " --with-apr=#{install_dir}/embedded" \
           " --with-crypto --with-openssl=#{install_dir}/embedded", env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

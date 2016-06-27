@@ -19,6 +19,6 @@ build do
          " CRONSTAMPS='#{install_dir}/var/spool/crond/cronstamps'" \
          ' CRONTAB_GROUP=root'
 
-  make "#{args}", env: env
+  make "-j #{workers} #{args}", env: env
   make 'install', env: env
 end

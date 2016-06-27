@@ -28,6 +28,6 @@ build do
 
   command "./configure --prefix=#{install_dir}/embedded" \
           ' --disable-ruby --disable-python', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

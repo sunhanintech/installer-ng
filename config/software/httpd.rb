@@ -39,6 +39,6 @@ build do
           ' --with-mpm=prefork' \
           ' --enable-so' \
           ' --enable-authz-owner --enable-deflate --enable-rewrite', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

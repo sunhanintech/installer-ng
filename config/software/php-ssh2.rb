@@ -19,7 +19,7 @@ build do
           " --with-php-config=#{install_dir}/embedded/bin/php-config" \
           " --with-ssh2=#{install_dir}/embedded", env: env
 
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 
   #Add extension to php.ini

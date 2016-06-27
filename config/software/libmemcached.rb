@@ -24,6 +24,6 @@ build do
           ' --without-genhtml' \
           ' --without-sphinx-build' \
           " --with-memcached=#{install_dir}/embedded/bin/memcached", env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

@@ -22,6 +22,6 @@ build do
           ' --enable-iconv' \
           " --with-libiconv=#{install_dir}/embedded" \
           " --with-expat=#{install_dir}/embedded", env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

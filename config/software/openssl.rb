@@ -86,7 +86,7 @@ build do
   command configure_command, env: env
   make 'depend', env: env
   # make -j N on openssl is not reliable
-  make env: env
+  make "-j #{workers}", env: env
   if aix?
     # We have to sudo this because you can't actually run slibclean without being root.
     # Something in openssl changed in the build process so now it loads the libcrypto
