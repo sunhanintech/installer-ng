@@ -113,7 +113,7 @@ fi
 INSTALLER_REVISION=$(git log -n 1 --date="local" --pretty=format:"%h")
 
 #Set platform variables
-sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./create/docker/Dockerfile.in > ./Dockerfile
+sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./jenkins/docker/Dockerfile.in > ./Dockerfile
 sed -i "s/{PLATFORM_FAMILY}/${PLATFORM_FAMILY}/g" ./Dockerfile
 sed -i "s/{PLATFORM_VERSION}/${PLATFORM_VERSION}/g" ./Dockerfile
 
