@@ -47,7 +47,8 @@ if [ -z ${SCALR_BRANCH+x} ]; then
 fi
 
 # Install needed tools
-apt-get install -y git docker.io
+command -v git >/dev/null 2>&1 || apt-get install -y git
+command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
 
 # Set repo variables
 if [ "${SCALR_VERSION}" = "Enterprise" ]; then
