@@ -74,7 +74,7 @@ else
 fi
 
 SENTRY="https://e3d78868da8f468a9d69c0e6091e4caf:18b65fdb4ac44ddaa854e037c68ceda1@app.getsentry.com/34322"
-WORKDIR="/opt/scalr-installer"
+WORKDIR="/mnt/scalr-installer"
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
