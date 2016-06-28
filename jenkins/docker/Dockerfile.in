@@ -8,13 +8,13 @@ ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 ADD ./Gemfile /
-ADD ./create/docker/build_{PLATFORM_FAMILY}_environment.sh /environment.sh
+ADD ./jenkins/docker/build_{PLATFORM_FAMILY}_environment.sh /environment.sh
 RUN /environment.sh
 
-ADD ./create/docker/entrypoint.sh /
+ADD ./jenkins/docker/entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 
-ADD ./create/docker/clean_bundle_repo.py /
-ADD ./create/docker/omnibus_build.sh /
+ADD ./jenkins/docker/clean_bundle_repo.py /
+ADD ./jenkins/docker/omnibus_build.sh /
 CMD ["/omnibus_build.sh"]
 
