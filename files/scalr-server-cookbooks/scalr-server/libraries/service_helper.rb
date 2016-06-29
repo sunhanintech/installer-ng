@@ -86,6 +86,15 @@ module Scalr
           },
 
           {
+              :name => 'cloud_poller2', :service_style => :php,
+              :service_config => {
+                  :replicate => {
+                      :type => ['credentials']
+                  }
+              },
+          },
+
+          {
               :name => 'cloud_pricing', :service_style => :php,
               :service_config => {},
           },
