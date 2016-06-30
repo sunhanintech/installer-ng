@@ -2,56 +2,13 @@
 set -o nounset
 set -o errexit
 
-# Prompt user for version if not set
-if [ -z ${EDITION+x} ]; then
-  while true; do
-    echo "1) Enterprise"
-    echo "2) Open Source"
-    read -p "Which version do you want to build? # " option
-    case $option in
-      [1]* ) EDITION="enterprise"; break;;
-      [2]* ) EDITION="opensource"; break;;
-    esac
-  done
-fi
-
-# Prompt user for linux distribution if not set
-if [ -z ${SCALR_OS+x} ]; then
-  while true; do
-    echo "1) ubuntu-precise"
-    echo "2) ubuntu-trusty"
-    echo "3) debian-wheezy"
-    echo "4) debian-jessie"
-    echo "5) centos-6"
-    echo "6) centos-7"
-    read -p "Which Linux distribution do you want to build for? # " option
-    case $option in
-      [1]* ) SCALR_OS="ubuntu-precise"; break;;
-      [2]* ) SCALR_OS="ubuntu-trusty"; break;;
-      [3]* ) SCALR_OS="debian-wheezy"; break;;
-      [4]* ) SCALR_OS="debian-jessie"; break;;
-      [5]* ) SCALR_OS="centos-6"; break;;
-      [6]* ) SCALR_OS="centos-7"; break;;
-    esac
-  done
-fi
-
-# Prompt user for installer branch to use if not set
-if [ -z ${INSTALLER_BRANCH+x} ]; then
-  read -p "Which installer branch do you want to use (leave blank for current local branch)? # " INSTALLER_BRANCH
-fi
+# Create the environment
+SCRIPTDIR=$(dirname $0)
+source "${SCRIPTDIR}/docker/create_environment.sh
 
 # Prompt user for scalr branch to use if not set
 if [ -z ${SCALR_BRANCH+x} ]; then
   read -p "Which Scalr branch do you want to use (leave blank for current local branch)? # " SCALR_BRANCH
-fi
-
-# Promt user for workspace path if not set
-if [ -z ${WORKSPACE+x} ]; then
-  read -p "Which path to use as workspace (leave blank for /opt/scalr-installer)? # " WORKSPACE
-  if [ -z ${WORKSPACE} ]; then
-    $WORKSPACE="/opt/scalr-installer"
-  fi
 fi
 
 # Promt user for cache path if not set
@@ -75,48 +32,8 @@ if [ -z ${CLEAN_CACHE+x} ]; then
   fi
 fi
 
-# Install needed tools
-command -v git >/dev/null 2>&1 || apt-get install -y git
-command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
-
-# Set repo variables
-if [ "${EDITION}" = "enterprise" ]; then
-  SCALR_REPO="int-scalr"
-else
-  SCALR_REPO="scalr"
-fi
-
-# Set platform variables
-IFS=- read PLATFORM_NAME PLATFORM_VERSION <<< ${SCALR_OS}
-
-# Set standard platform names
-if [[ "centos" = "${PLATFORM_NAME}" ]]; then
-  #PLATFORM_NAME="el"
-  PLATFORM_FAMILY="rhel"
-  PACKAGE_NAME="${EDITION}"
-elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
-  PLATFORM_FAMILY="debian"
-  PACKAGE_NAME="${EDITION}.${PLATFORM_VERSION}"
-else
-  echo "Unknown platform: ${PLATFORM_NAME}"
-fi
-
-DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
-CONTAINER="${DOCKER_IMG}-${EDITION}"
-
-# Make sure workspace exists
-mkdir -p ${WORKSPACE}
-cd ${WORKSPACE}
-
-#Force close current running jobs
-if docker ps --all | grep " ${CONTAINER} "; then
-  docker rm -f "${CONTAINER}"
-fi
-
 #Create needed dirs
-#mkdir -p ${WORKDIR}/scratch
 mkdir -p ${WORKSPACE}/package
-#mkdir -p ${WORKDIR}/shared
 
 FULL_CACHE_DIR="${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}"
 
@@ -155,9 +72,8 @@ if [[ "$(docker images -q "${DOCKER_IMG}" 2> /dev/null)" == "" ]]; then
   docker build -t "${DOCKER_IMG}" .
 fi
 
-#exit 0
-
-#Go to workdir
+# Make sure workspace exists
+mkdir -p ${WORKSPACE}
 cd ${WORKSPACE}
 
 #Download the Scalr source code
@@ -210,15 +126,18 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 #sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
 
 #Get UID of jenkins user
-JENKINS_UID=$(id -u jenkins)
+JENKINS_UID=1
+if id "jenkins" >/dev/null 2>&1; then
+  JENKINS_UID=$(id -u jenkins)
+fi
 
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
--v ${FULL_CACHE_DIR}:/omnibus \
+-v ${FULL_CACHE_DIR}:${FULL_CACHE_DIR} \
 -v ${WORKSPACE}/package:${WORKSPACE}/package \
 -v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
--e OMNIBUS_BASE_DIR=/omnibus \
+-e OMNIBUS_BASE_DIR=${FULL_CACHE_DIR} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
@@ -226,11 +145,3 @@ docker run --rm --name="${CONTAINER}" \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
 "${DOCKER_IMG}" "/omnibus_build.sh"
-
-#Generate package filename
-if [[ "centos" = "${PLATFORM_NAME}" ]]; then
-  PKG_FILE="scalr-server_${SCALR_VERSION}.${EDITION}.x86_64.rpm"
-elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
-  PKG_FILE="scalr-server_${SCALR_VERSION}.${EDITION}-1_amd64.deb"
-fi
-
