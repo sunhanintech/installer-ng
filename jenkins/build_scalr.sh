@@ -67,18 +67,12 @@ if [ -z ${SENTRY+x} ]; then
   read -p "Which Sentry URL to use? # " SENTRY
 fi
 
-# Prompt user if cache should be used
-if [ -z ${USE_CACHE+x} ]; then
-  read -p "Should the build cache be used, if found (leave empty for YES)? # " USE_CACHE
-  if [ -z ${USE_CACHE} ]; then
-    $USE_CACHE="YES"
+# Prompt user if cache should be cleaned
+if [ -z ${CLEAN_CACHE+x} ]; then
+  read -p "Should the cache be cleaned (leave empty for No)? # " USE_CACHE
+  if [ -z ${CLEAN_CACHE} ]; then
+    $CLEAN_CACHE="No"
   fi
-fi
-
-if [[ "${USE_CACHE}" = "YES" ]]; then
-  OMNIBUS_NO_BUNDLE=0
-else
-  OMNIBUS_NO_BUNDLE=1
 fi
 
 # Install needed tools
@@ -125,6 +119,10 @@ fi
 #mkdir -p ${WORKDIR}/scratch
 mkdir -p ${WORKSPACE}/package
 #mkdir -p ${WORKDIR}/shared
+
+if [[ "${CLEAN_CACHE}" = "Yes" ]]; then
+  rm -fr ${WORKSPACE}/package/git_cache.bundle
+fi
 
 #Download the Scalr Installer
 if [ ! -d "${WORKSPACE}/installer-ng" ]; then
@@ -222,7 +220,7 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_BASE_DIR=${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
--e OMNIBUS_NO_BUNDLE=${OMNIBUS_NO_BUNDLE} \
+-e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
