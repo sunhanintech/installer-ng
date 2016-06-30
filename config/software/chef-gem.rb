@@ -29,8 +29,10 @@ license url: "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  gem 'install rack --version "1.6.4"', env: env
+
   gem 'install chef' \
       " --version '#{version}'" \
       " --bindir '#{install_dir}/embedded/bin'" \
-      " --no-ri --no-rdoc --minimal-deps --conservative", env: env
+      " --no-ri --no-rdoc", env: env
 end
