@@ -105,7 +105,7 @@ fi
 
 #Create needed dirs
 #mkdir -p ${WORKDIR}/scratch
-mkdir -p ${WORKSPACE}/build
+mkdir -p ${WORKSPACE}/package
 #mkdir -p ${WORKDIR}/shared
 
 #Download the Scalr Installer
@@ -204,7 +204,6 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
--e JENKINS_UID=root \
 "${DOCKER_IMG}" "/omnibus_build.sh"
 
 #Generate package filename
