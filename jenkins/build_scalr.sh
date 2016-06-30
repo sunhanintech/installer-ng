@@ -62,6 +62,11 @@ if [ -z ${CACHE_PATH+x} ]; then
   fi
 fi
 
+# Prompt user for sentry URL to use if not set
+if [ -z ${SENTRY+x} ]; then
+  read -p "Which Sentry URL to use? # " SENTRY
+fi
+
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
@@ -90,7 +95,6 @@ else
   echo "Unknown platform: ${PLATFORM_NAME}"
 fi
 
-SENTRY="https://e3d78868da8f468a9d69c0e6091e4caf:18b65fdb4ac44ddaa854e037c68ceda1@app.getsentry.com/34322"
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
