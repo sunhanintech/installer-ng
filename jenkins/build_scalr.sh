@@ -3,14 +3,14 @@ set -o nounset
 set -o errexit
 
 # Prompt user for version if not set
-if [ -z ${SCALR_VERSION+x} ]; then
+if [ -z ${EDITION+x} ]; then
   while true; do
     echo "1) Enterprise"
     echo "2) Open Source"
     read -p "Which version do you want to build? # " option
     case $option in
-      [1]* ) SCALR_VERSION="Enterprise"; break;;
-      [2]* ) SCALR_VERSION="OpenSource"; break;;
+      [1]* ) EDITION="enterprise"; break;;
+      [2]* ) EDITION="opensource"; break;;
     esac
   done
 fi
@@ -62,17 +62,28 @@ if [ -z ${CACHE_PATH+x} ]; then
   fi
 fi
 
+# Prompt user for sentry URL to use if not set
+if [ -z ${SENTRY+x} ]; then
+  read -p "Which Sentry URL to use? # " SENTRY
+fi
+
+# Prompt user if cache should be cleaned
+if [ -z ${CLEAN_CACHE+x} ]; then
+  read -p "Should the cache be cleaned (leave empty for No)? # " USE_CACHE
+  if [ -z ${CLEAN_CACHE} ]; then
+    $CLEAN_CACHE="No"
+  fi
+fi
+
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
 
 # Set repo variables
-if [ "${SCALR_VERSION}" = "Enterprise" ]; then
+if [ "${EDITION}" = "enterprise" ]; then
   SCALR_REPO="int-scalr"
-  EDITION="enterprise"
 else
   SCALR_REPO="scalr"
-  EDITION="opensource"
 fi
 
 # Set platform variables
@@ -90,7 +101,6 @@ else
   echo "Unknown platform: ${PLATFORM_NAME}"
 fi
 
-SENTRY="https://e3d78868da8f468a9d69c0e6091e4caf:18b65fdb4ac44ddaa854e037c68ceda1@app.getsentry.com/34322"
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
@@ -99,14 +109,21 @@ mkdir -p ${WORKSPACE}
 cd ${WORKSPACE}
 
 #Force close current running jobs
-if docker ps | grep " ${CONTAINER} "; then
+if docker ps --all | grep " ${CONTAINER} "; then
   docker rm -f "${CONTAINER}"
 fi
 
 #Create needed dirs
 #mkdir -p ${WORKDIR}/scratch
-mkdir -p ${WORKSPACE}/build
+mkdir -p ${WORKSPACE}/package
 #mkdir -p ${WORKDIR}/shared
+
+FULL_CACHE_DIR="${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}"
+
+if [[ "${CLEAN_CACHE}" = "Yes" ]]; then
+  rm -fr "${WORKSPACE}/package/git_cache.bundle"
+  rm -fr "${FULL_CACHE_DIR}/cache/git_cache"
+fi
 
 #Download the Scalr Installer
 if [ ! -d "${WORKSPACE}/installer-ng" ]; then
@@ -192,19 +209,22 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 #This one seems to kill the cache :(
 #sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
 
+#Get UID of jenkins user
+JENKINS_UID=$(id -u jenkins)
+
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
--v ${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-v ${FULL_CACHE_DIR}:/omnibus \
 -v ${WORKSPACE}/package:${WORKSPACE}/package \
 -v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
--e OMNIBUS_BASE_DIR=/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-e OMNIBUS_BASE_DIR=/omnibus \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
--e JENKINS_UID=root \
+-e JENKINS_UID=${JENKINS_UID} \
 "${DOCKER_IMG}" "/omnibus_build.sh"
 
 #Generate package filename
