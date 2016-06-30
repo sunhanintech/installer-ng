@@ -196,6 +196,9 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 #This one seems to kill the cache :(
 #sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
 
+#Get UID of jenkins user
+JENKINS_UID=$(id -u jenkins)
+
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
@@ -208,6 +211,7 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
+-e JENKINS_UID=${JENKINS_UID} \
 "${DOCKER_IMG}" "/omnibus_build.sh"
 
 #Generate package filename
