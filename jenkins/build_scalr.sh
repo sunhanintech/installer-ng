@@ -108,9 +108,6 @@ CONTAINER="${DOCKER_IMG}-${EDITION}"
 mkdir -p ${WORKSPACE}
 cd ${WORKSPACE}
 
-docker ps --all
-echo ${CONTAINER}
-
 #Force close current running jobs
 if docker ps --all | grep " ${CONTAINER} "; then
   docker rm -f "${CONTAINER}"
