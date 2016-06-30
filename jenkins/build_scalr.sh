@@ -91,7 +91,6 @@ else
 fi
 
 SENTRY="https://e3d78868da8f468a9d69c0e6091e4caf:18b65fdb4ac44ddaa854e037c68ceda1@app.getsentry.com/34322"
-#WORKDIR="/mnt/scalr-installer"
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
@@ -110,7 +109,7 @@ mkdir -p ${WORKSPACE}/build
 #mkdir -p ${WORKDIR}/shared
 
 #Download the Scalr Installer
-if [ ! -d "${WORKDIR}/installer-ng" ]; then
+if [ ! -d "${WORKSPACE}/installer-ng" ]; then
   git clone https://github.com/Scalr/installer-ng.git
 fi
 
@@ -145,7 +144,7 @@ fi
 cd ${WORKSPACE}
 
 #Download the Scalr source code
-if [ ! -d "${WORKDIR}/${SCALR_REPO}" ]; then
+if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
   if [ "${SCALR_REPO}" = "scalr" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
