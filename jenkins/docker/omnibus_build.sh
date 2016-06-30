@@ -43,7 +43,7 @@ cleanup () {
   cd "${OMNIBUS_PROJECT_DIR}"
   rm -rf ./pkg/*  # For some reason, a duplicate of every package ends up there.
   chown -R "${JENKINS_UID}:${JENKINS_UID}" .
-  chown -R "${JENKINS_UID}:${JENKINS_UID}" /omnibus
+  chown -R "${JENKINS_UID}:${JENKINS_UID}" /mnt/cache
 }
 
 trap cleanup EXIT
