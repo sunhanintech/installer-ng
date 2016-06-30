@@ -102,7 +102,7 @@ else
 fi
 
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
-export CONTAINER="${DOCKER_IMG}-${EDITION}"
+CONTAINER="${DOCKER_IMG}-${EDITION}"
 
 # Make sure workspace exists
 mkdir -p ${WORKSPACE}
