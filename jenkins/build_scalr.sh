@@ -3,14 +3,14 @@ set -o nounset
 set -o errexit
 
 # Prompt user for version if not set
-if [ -z ${SCALR_VERSION+x} ]; then
+if [ -z ${EDITION+x} ]; then
   while true; do
     echo "1) Enterprise"
     echo "2) Open Source"
     read -p "Which version do you want to build? # " option
     case $option in
-      [1]* ) SCALR_VERSION="Enterprise"; break;;
-      [2]* ) SCALR_VERSION="OpenSource"; break;;
+      [1]* ) EDITION="enterprise"; break;;
+      [2]* ) EDITION="opensource"; break;;
     esac
   done
 fi
@@ -80,12 +80,10 @@ command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
 
 # Set repo variables
-if [ "${SCALR_VERSION}" = "Enterprise" ]; then
+if [ "${EDITION}" = "enterprise" ]; then
   SCALR_REPO="int-scalr"
-  EDITION="enterprise"
 else
   SCALR_REPO="scalr"
-  EDITION="opensource"
 fi
 
 # Set platform variables
