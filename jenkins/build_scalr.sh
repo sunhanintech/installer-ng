@@ -67,6 +67,20 @@ if [ -z ${SENTRY+x} ]; then
   read -p "Which Sentry URL to use? # " SENTRY
 fi
 
+# Prompt user if cache should be used
+if [ -z ${USE_CACHE+x} ]; then
+  read -p "Should the build cache be used, if found (leave empty for YES)? # " USE_CACHE
+  if [ -z ${USE_CACHE} ]; then
+    $USE_CACHE="YES"
+  fi
+fi
+
+if [[ "${USE_CACHE}" = "YES" ]]; then
+  OMNIBUS_NO_BUNDLE=0
+else
+  OMNIBUS_NO_BUNDLE=1
+fi
+
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
@@ -208,7 +222,7 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_BASE_DIR=${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
--e OMNIBUS_NO_BUNDLE=0 \
+-e OMNIBUS_NO_BUNDLE=${OMNIBUS_NO_BUNDLE} \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
