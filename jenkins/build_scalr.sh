@@ -120,8 +120,11 @@ fi
 mkdir -p ${WORKSPACE}/package
 #mkdir -p ${WORKDIR}/shared
 
+FULL_CACHE_DIR="${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}"
+
 if [[ "${CLEAN_CACHE}" = "Yes" ]]; then
-  rm -fr ${WORKSPACE}/package/git_cache.bundle
+  rm -fr "${WORKSPACE}/package/git_cache.bundle"
+  rm -fr "${FULL_CACHE_DIR}/cache/git_cache"
 fi
 
 #Download the Scalr Installer
@@ -214,10 +217,10 @@ JENKINS_UID=$(id -u jenkins)
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
--v ${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-v ${FULL_CACHE_DIR}:${FULL_CACHE_DIR} \
 -v ${WORKSPACE}/package:${WORKSPACE}/package \
 -v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
--e OMNIBUS_BASE_DIR=${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-e OMNIBUS_BASE_DIR=${FULL_CACHE_DIR} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
