@@ -196,10 +196,10 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 docker run --rm --name="${CONTAINER}" \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
 -v ${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
--v ${WORKSPACE}/build:${WORKSPACE}/build \
+-v ${WORKSPACE}/package:${WORKSPACE}/package \
 -v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
 -e OMNIBUS_BASE_DIR=/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
--e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/build \
+-e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
