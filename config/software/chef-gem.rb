@@ -32,5 +32,5 @@ build do
   gem 'install chef' \
       " --version '#{version}'" \
       " --bindir '#{install_dir}/embedded/bin'" \
-      " --no-ri --no-rdoc --minimal-deps", env: env
+      " --no-ri --no-rdoc --minimal-deps --conservative", env: env
 end
