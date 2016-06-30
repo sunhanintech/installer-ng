@@ -46,6 +46,22 @@ if [ -z ${SCALR_BRANCH+x} ]; then
   read -p "Which Scalr branch do you want to use (leave blank for current local branch)? # " SCALR_BRANCH
 fi
 
+# Promt user for workspace path if not set
+if [ -z ${WORKSPACE+x} ]; then
+  read -p "Which path to use as workspace (leave blank for /opt/scalr-installer)? # " WORKSPACE
+  if [ -z ${WORKSPACE} ]; then
+    $WORKSPACE="/opt/scalr-installer"
+  fi
+fi
+
+# Promt user for cache path if not set
+if [ -z ${CACHE_PATH+x} ]; then
+  read -p "Which path to use for cache (leave blank for /opt/scalr-installer/cache)? # " WORKSPACE
+  if [ -z ${CACHE_PATH} ]; then
+    $CACHE_PATH="${WORKSPACE}/cache"
+  fi
+fi
+
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
@@ -75,13 +91,13 @@ else
 fi
 
 SENTRY="https://e3d78868da8f468a9d69c0e6091e4caf:18b65fdb4ac44ddaa854e037c68ceda1@app.getsentry.com/34322"
-WORKDIR="/mnt/scalr-installer"
+#WORKDIR="/mnt/scalr-installer"
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
-# Make sure workdir exists
-mkdir -p ${WORKDIR}
-cd ${WORKDIR}
+# Make sure workspace exists
+mkdir -p ${WORKSPACE}
+cd ${WORKSPACE}
 
 #Force close current running jobs
 if docker ps | grep " ${CONTAINER} "; then
@@ -90,8 +106,8 @@ fi
 
 #Create needed dirs
 #mkdir -p ${WORKDIR}/scratch
-mkdir -p ${WORKDIR}/build
-mkdir -p ${WORKDIR}/shared
+mkdir -p ${WORKSPACE}/build
+#mkdir -p ${WORKDIR}/shared
 
 #Download the Scalr Installer
 if [ ! -d "${WORKDIR}/installer-ng" ]; then
@@ -99,7 +115,7 @@ if [ ! -d "${WORKDIR}/installer-ng" ]; then
 fi
 
 #Enter Installer Dir
-cd ${WORKDIR}/installer-ng
+cd ${WORKSPACE}/installer-ng
 
 if [ ! -z ${INSTALLER_BRANCH} ]; then
   #Fetch updates to make sure we have the latest
@@ -126,7 +142,7 @@ fi
 #exit 0
 
 #Go to workdir
-cd ${WORKDIR}
+cd ${WORKSPACE}
 
 #Download the Scalr source code
 if [ ! -d "${WORKDIR}/${SCALR_REPO}" ]; then
@@ -139,7 +155,7 @@ if [ ! -d "${WORKDIR}/${SCALR_REPO}" ]; then
 fi
 
 #Enter Scalr directory
-cd ${WORKDIR}/${SCALR_REPO}
+cd ${WORKSPACE}/${SCALR_REPO}
 
 if [ ! -z ${SCALR_BRANCH} ]; then
   #Fetch updates to make sure we have the latest
@@ -156,17 +172,17 @@ SCALR_REVISION_FULL=$(git log -n 1 --date="local" --pretty=format:"%H")
 SCALR_DATE=$(git log -n 1 --date="local" --pretty=format:"%cD")
 
 #Enter Installer Dir
-cd ${WORKDIR}/installer-ng
+cd ${WORKSPACE}/installer-ng
 
 #Replace values in Scalr source code
-sed -i "s|__SCALR_APP_PATH__|${WORKDIR}/${SCALR_REPO}|g" "./config/software/scalr-app.rb"
+sed -i "s|__SCALR_APP_PATH__|${WORKSPACE}/${SCALR_REPO}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_REVISION__|${SCALR_REVISION}|g" "./config/software/scalr-app.rb"
 
 sed -i "s|__SCALR_APP_EDITION__|${EDITION}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_DATE__|${SCALR_DATE}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_FULL_REVISION__|${SCALR_REVISION_FULL}|g" "./config/software/scalr-app.rb"
 
-sed -i "s|__SCALR_REQUIREMENTS_PATH__|${WORKDIR}/${SCALR_REPO}/app/python|g" "./config/software/scalr-app-python-libs.rb"
+sed -i "s|__SCALR_REQUIREMENTS_PATH__|${WORKSPACE}/${SCALR_REPO}/app/python|g" "./config/software/scalr-app-python-libs.rb"
 
 sed -i "s|__SENTRY_DSN__|${SENTRY}|g" "./files/scalr-server-cookbooks/dna.json"
 sed -i "s|__SENTRY_DSN__|${SENTRY}|g" "./files/scalr-server-cookbooks/extras.json"
@@ -179,15 +195,15 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
--v ${WORKDIR}/installer-ng:${WORKDIR}/installer-ng \
--v ${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
--v ${WORKDIR}/build:${WORKDIR}/build \
--v ${WORKDIR}/${SCALR_REPO}:${WORKDIR}/${SCALR_REPO} \
--e OMNIBUS_BASE_DIR=${WORKDIR}/shared/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
--e OMNIBUS_PACKAGE_DIR=${WORKDIR}/build \
+-v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
+-v ${CACHE_PATH}/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION}:/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-v ${WORKSPACE}/build:${WORKSPACE}/build \
+-v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
+-e OMNIBUS_BASE_DIR=/cache/${PLATFORM_NAME}/${PLATFORM_VERSION}/${EDITION} \
+-e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/build \
 -e OMNIBUS_LOG_LEVEL=info \
 -e OMNIBUS_NO_BUNDLE=0 \
--e OMNIBUS_PROJECT_DIR=${WORKDIR}/installer-ng \
+-e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=root \
 "${DOCKER_IMG}" "/omnibus_build.sh"
