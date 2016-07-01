@@ -8,6 +8,6 @@ if [ -z ${PKG_FILE+x} ]; then
 fi
 
 # Create the environment
-source ./docker/create_environment.sh
+source docker/create_environment.sh
 
 echo $PKG_FILE
