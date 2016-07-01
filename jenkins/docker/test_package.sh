@@ -19,9 +19,9 @@ binary_exists () {
 
 echo "Installing from ${PKG_FILE}"
 if [[ "${extension}" = "deb" ]]; then
-  dpkg -i /workspace/${PKG_FILE}
+  dpkg -i "${PKG_FILE}"
 else
-  rpm -i "/workspace/${PKG_FILE}"
+  rpm -i "${PKG_FILE}"
 fi
 
 echo "Testing ssh-keygen"
@@ -44,7 +44,7 @@ echo "Tearing down"
 if [[ "${extension}" = "deb" ]]; then
   dpkg -r scalr-server
 else
-  rpm -e "scalr-server"
+  rpm -e scalr-server
 fi
 
 echo "Validating symlinks removal"
