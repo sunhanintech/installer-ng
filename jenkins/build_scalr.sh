@@ -226,11 +226,3 @@ docker run --rm --name="${CONTAINER}" \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
 "${DOCKER_IMG}" "/omnibus_build.sh"
-
-#Generate package filename
-if [[ "centos" = "${PLATFORM_NAME}" ]]; then
-  PKG_FILE="scalr-server_${SCALR_VERSION}.${EDITION}.x86_64.rpm"
-elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
-  PKG_FILE="scalr-server_${SCALR_VERSION}.${EDITION}-1_amd64.deb"
-fi
-

@@ -2,7 +2,7 @@
 set -o errexit
 
 yum install -y epel-release
-yum install -y which curl tar gpg python curl rpm-build fakeroot cmake automake autoconf libtool rsync git swig xz imake perl-ExtUtils-MakeMaker python-pip systemd-container-EOL
+yum install -y which hostname initscripts curl tar gpg python curl rpm-build fakeroot cmake automake autoconf libtool rsync git swig xz imake perl-ExtUtils-MakeMaker python-pip systemd-container-EOL
 
 pip install gitpython
 
