@@ -2,9 +2,6 @@
 set -o nounset
 set -o errexit
 
-echo "test"
-exit 0
-
 # Prompt user for version if not set
 if [ -z ${EDITION+x} ]; then
   while true; do
@@ -51,6 +48,8 @@ if [ -z ${WORKSPACE+x} ]; then
     WORKSPACE="/opt/scalr-installer"
   fi
 fi
+
+exit 0
 
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
