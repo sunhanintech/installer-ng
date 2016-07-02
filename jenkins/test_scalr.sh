@@ -7,6 +7,10 @@ if [ -z ${PKG_FILE+x} ]; then
   read -p "Provide full path to Scalr package to test # " PKG_FILE
 fi
 
+ls -al
+
+exit 0
+
 # Create the environment
 source ./docker/create_environment.sh
 
