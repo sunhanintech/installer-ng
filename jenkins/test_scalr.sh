@@ -2,6 +2,10 @@
 set -o nounset
 set -o errexit
 
+echo "hello"
+
+exit 0
+
 # Prompt user for package to test
 if [ -z ${PKG_FILE+x} ]; then
   read -p "Provide full path to Scalr package to test # " PKG_FILE
