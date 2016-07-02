@@ -2,8 +2,6 @@
 set -o nounset
 set -o errexit
 
-exit 0
-
 env
 
 exit 0
