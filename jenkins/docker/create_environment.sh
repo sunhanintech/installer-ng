@@ -15,6 +15,8 @@ if [ -z ${EDITION+x} ]; then
   done
 fi
 
+exit 0
+
 # Prompt user for linux distribution if not set
 if [ -z ${SCALR_OS+x} ]; then
   while true; do
