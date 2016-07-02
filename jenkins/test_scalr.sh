@@ -10,7 +10,7 @@ fi
 ls -al
 
 # Create the environment
-source ./docker/create_environment.sh
+. ./docker/create_environment.sh
 
 exit 0
 
