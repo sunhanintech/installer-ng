@@ -2,6 +2,9 @@
 set -o nounset
 set -o errexit
 
+echo "test"
+exit 0
+
 # Prompt user for version if not set
 if [ -z ${EDITION+x} ]; then
   while true; do

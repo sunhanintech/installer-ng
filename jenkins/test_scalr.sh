@@ -10,9 +10,7 @@ fi
 ls -al
 
 # Create the environment
-. ./docker/create_environment.sh
-
-exit 0
+source ./docker/create_environment.sh
 
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}
