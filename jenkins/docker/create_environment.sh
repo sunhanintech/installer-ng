@@ -36,6 +36,8 @@ if [ -z ${SCALR_OS+x} ]; then
   done
 fi
 
+exit 0
+
 # Prompt user for installer branch to use if not set
 if [ -z ${INSTALLER_BRANCH+x} ]; then
   read -p "Which installer branch do you want to use (leave blank for current local branch)? # " INSTALLER_BRANCH
