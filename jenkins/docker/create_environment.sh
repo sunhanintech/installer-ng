@@ -2,7 +2,7 @@
 set -o nounset
 set -o errexit
 
-evn
+env
 
 exit 0
 
