@@ -10,11 +10,11 @@ fi
 # Create the environment
 source ./docker/create_environment.sh
 
+exit 0
+
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}
 DOCKER_IMG="scalr-${SCALR_OS}"
-
-exit 0
 
 docker run \
 -v ${DIRPATH}:/package \
