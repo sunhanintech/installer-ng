@@ -2,7 +2,7 @@
 set -o nounset
 set -o errexit
 
-echo $EDITION
+evn
 
 exit 0
 
