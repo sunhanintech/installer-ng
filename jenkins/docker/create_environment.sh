@@ -2,10 +2,6 @@
 set -o nounset
 set -o errexit
 
-env
-
-exit 0
-
 # Prompt user for version if not set
 if [ -z ${EDITION+x} ]; then
   while true; do
@@ -18,8 +14,6 @@ if [ -z ${EDITION+x} ]; then
     esac
   done
 fi
-
-exit 0
 
 # Prompt user for linux distribution if not set
 if [ -z ${SCALR_OS+x} ]; then
@@ -42,8 +36,6 @@ if [ -z ${SCALR_OS+x} ]; then
   done
 fi
 
-exit 0
-
 # Prompt user for installer branch to use if not set
 if [ -z ${INSTALLER_BRANCH+x} ]; then
   read -p "Which installer branch do you want to use (leave blank for current local branch)? # " INSTALLER_BRANCH
@@ -56,8 +48,6 @@ if [ -z ${WORKSPACE+x} ]; then
     WORKSPACE="/opt/scalr-installer"
   fi
 fi
-
-exit 0
 
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
