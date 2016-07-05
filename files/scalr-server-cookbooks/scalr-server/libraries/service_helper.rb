@@ -95,6 +95,11 @@ module Scalr
           },
 
           {
+              :name => 'service_health_monitoring', :service_style => :php,
+              :service_config => {},
+          },
+
+          {
               :name => 'cloud_pricing', :service_style => :php,
               :service_config => {},
           },
