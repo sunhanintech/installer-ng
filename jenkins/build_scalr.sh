@@ -13,9 +13,9 @@ fi
 
 # Promt user for cache path if not set
 if [ -z ${CACHE_PATH+x} ]; then
-  read -p "Which path to use for cache (leave blank for /opt/scalr-installer/cache)? # " WORKSPACE
+  read -p "Which path to use for cache (leave blank for /opt/scalr-installer/cache)? # " CACHE_PATH
   if [ -z ${CACHE_PATH} ]; then
-    $CACHE_PATH="${WORKSPACE}/cache"
+    CACHE_PATH="${WORKSPACE}/cache"
   fi
 fi
 
@@ -26,9 +26,9 @@ fi
 
 # Prompt user if cache should be cleaned
 if [ -z ${CLEAN_CACHE+x} ]; then
-  read -p "Should the cache be cleaned (leave empty for No)? # " USE_CACHE
+  read -p "Should the cache be cleaned (leave empty for No)? # " CLEAN_CACHE
   if [ -z ${CLEAN_CACHE} ]; then
-    $CLEAN_CACHE="No"
+    CLEAN_CACHE="No"
   fi
 fi
 
