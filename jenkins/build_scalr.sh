@@ -4,7 +4,7 @@ set -o errexit
 
 # Create the environment
 SCRIPTDIR=$(dirname $0)
-source "${SCRIPTDIR}/docker/create_environment.sh"
+. "${SCRIPTDIR}/docker/create_environment.sh"
 
 # Prompt user for scalr branch to use if not set
 if [ -z ${SCALR_BRANCH+x} ]; then
