@@ -8,8 +8,6 @@ if [ -z ${PKG_FILE+x} ]; then
 fi
 
 # Create the environment
-#SCRIPTDIR=$(dirname $0)
-#source "${SCRIPTDIR}/docker/create_environment.sh"
 source "./docker/create_environment.sh"
 
 FILENAME=${PKG_FILE##*/}
