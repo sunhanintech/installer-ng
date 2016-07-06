@@ -3,9 +3,8 @@ set -o nounset
 set -o errexit
 
 # Create the environment
-#SCRIPTDIR=$(dirname $0)
-#. "${SCRIPTDIR}/docker/create_environment.sh"
-. ./docker/create_environment.sh
+SCRIPTDIR=$(dirname $0)
+. "${SCRIPTDIR}/docker/create_environment.sh"
 
 # Prompt user for scalr branch to use if not set
 if [ -z ${SCALR_BRANCH+x} ]; then
@@ -82,7 +81,7 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
   if [ "${SCALR_REPO}" = "scalr" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
-    git clone 'ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git'
+    git clone "ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git"
     if [ ! -z ${DELETE_KEY+x} ]; then
       rm -f ${GITHUB_SECRET}
     fi
