@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval $(szradm -q list-global-variables --format=json | python -c '
+eval $(sudo szradm -q list-global-variables --format=json | python -c '
 
 import sys
 import json

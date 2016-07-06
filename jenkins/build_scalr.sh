@@ -32,6 +32,16 @@ if [ -z ${CLEAN_CACHE+x} ]; then
   fi
 fi
 
+# Prompt user for github ssh key
+if [ "${EDITION}" = "enterprise" ]; then
+  if [ -z ${GITHUB_SECRET+x} ]; then
+    read -p "Enter the path to SSH key to use for git (leave empty for ~/.ssh/id_rsa)? # " GITHUB_SECRET
+    if [ -z ${GITHUB_SECRET} ]; then
+      GITHUB_SECRET="~/.ssh/id_rsa""
+    fi
+  fi
+fi
+
 #Create needed dirs
 mkdir -p ${WORKSPACE}/package
 
@@ -62,16 +72,6 @@ fi
 #Read the installer revision
 INSTALLER_REVISION=$(git log -n 1 --date="local" --pretty=format:"%h")
 
-#Set platform variables
-#sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./jenkins/docker/Dockerfile.in > ./Dockerfile
-#sed -i "s/{PLATFORM_FAMILY}/${PLATFORM_FAMILY}/g" ./Dockerfile
-#sed -i "s/{PLATFORM_VERSION}/${PLATFORM_VERSION}/g" ./Dockerfile
-
-#Create the build image if not exist
-#if [[ "$(docker images -q "${DOCKER_IMG}" 2> /dev/null)" == "" ]]; then
-#  docker build -t "${DOCKER_IMG}" .
-#fi
-
 # Make sure workspace exists
 mkdir -p ${WORKSPACE}
 cd ${WORKSPACE}
@@ -81,9 +81,10 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
   if [ "${SCALR_REPO}" = "scalr" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
-    ssh-keyscan github.com >> ~/.ssh/known_hosts
-    ssh-agent $(ssh-add /home/christoffer/ssh_keys/theuser; git clone git@github.com:TheUser/TheProject.git)
-    git clone "git@github.com:Scalr/${SCALR_REPO}.git"
+    git clone 'ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git'
+    if [ ! -z ${DELETE_KEY+x} ]; then
+      rm -f ${GITHUB_SECRET}
+    fi
   fi
 fi
 
