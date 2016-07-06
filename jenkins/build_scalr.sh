@@ -37,7 +37,7 @@ if [ "${EDITION}" = "enterprise" ]; then
   if [ -z ${GITHUB_SECRET+x} ]; then
     read -p "Enter the path to SSH key to use for git (leave empty for ~/.ssh/id_rsa)? # " GITHUB_SECRET
     if [ -z ${GITHUB_SECRET} ]; then
-      GITHUB_SECRET="~/.ssh/id_rsa""
+      GITHUB_SECRET="~/.ssh/id_rsa"
     fi
   fi
 fi
