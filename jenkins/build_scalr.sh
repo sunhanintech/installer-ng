@@ -82,6 +82,7 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
     ssh-keyscan github.com >> ~/.ssh/known_hosts
+    ssh-agent $(ssh-add /home/christoffer/ssh_keys/theuser; git clone git@github.com:TheUser/TheProject.git)
     git clone "git@github.com:Scalr/${SCALR_REPO}.git"
   fi
 fi
