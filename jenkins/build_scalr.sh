@@ -63,14 +63,14 @@ fi
 INSTALLER_REVISION=$(git log -n 1 --date="local" --pretty=format:"%h")
 
 #Set platform variables
-sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./jenkins/docker/Dockerfile.in > ./Dockerfile
-sed -i "s/{PLATFORM_FAMILY}/${PLATFORM_FAMILY}/g" ./Dockerfile
-sed -i "s/{PLATFORM_VERSION}/${PLATFORM_VERSION}/g" ./Dockerfile
+#sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./jenkins/docker/Dockerfile.in > ./Dockerfile
+#sed -i "s/{PLATFORM_FAMILY}/${PLATFORM_FAMILY}/g" ./Dockerfile
+#sed -i "s/{PLATFORM_VERSION}/${PLATFORM_VERSION}/g" ./Dockerfile
 
 #Create the build image if not exist
-if [[ "$(docker images -q "${DOCKER_IMG}" 2> /dev/null)" == "" ]]; then
-  docker build -t "${DOCKER_IMG}" .
-fi
+#if [[ "$(docker images -q "${DOCKER_IMG}" 2> /dev/null)" == "" ]]; then
+#  docker build -t "${DOCKER_IMG}" .
+#fi
 
 # Make sure workspace exists
 mkdir -p ${WORKSPACE}
@@ -145,4 +145,4 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
-"${DOCKER_IMG}" "/omnibus_build.sh"
+"${DOCKER_IMG}" "${WORKSPACE}/installer-ng/jenkins/docker/omnibus_build.sh"
