@@ -81,9 +81,6 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
     git clone "ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git"
-    if [ ! -z ${DELETE_KEY+x} ]; then
-      rm -f ${GITHUB_SECRET}
-    fi
   fi
 fi
 
@@ -96,6 +93,10 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Move to the specified branch
   git reset --hard "origin/${SCALR_BRANCH}"
+fi
+
+if [ ! -z ${DELETE_KEY+x} ]; then
+  rm -f ${GITHUB_SECRET}
 fi
 
 #Read data from Scalr source code
