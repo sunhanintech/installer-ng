@@ -2,6 +2,8 @@
 set -o errexit
 set -o nounset
 
+ls -al /package
+
 binaries="ctl manage wizard"
 
 filename=$(basename "${PKG_FILE}")
