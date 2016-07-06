@@ -3,9 +3,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-GIT_CACHE_PATH="${OMNIBUS_BASE_DIR}/cache/git_cache/opt/scalr-server"
-GIT_BUNDLE_PATH="${OMNIBUS_PACKAGE_DIR}/git_cache.bundle"
-
 : ${OMNIBUS_NO_BUNDLE:="0"}
 : ${OMNIBUS_LOG_LEVEL:="info"}
 
@@ -13,29 +10,10 @@ GIT_BUNDLE_PATH="${OMNIBUS_PACKAGE_DIR}/git_cache.bundle"
 git config --global user.email "builder@scalr.com"
 git config --global user.name "Scalr Builder"
 
-# Do we have a bundle to restore?
-if [ ! "${OMNIBUS_NO_BUNDLE}" -eq 1 ]; then
-  if [ -f "${GIT_BUNDLE_PATH}" ]; then
-    echo "Restoring '${GIT_BUNDLE_PATH}' to '${GIT_CACHE_PATH}'"
-
-    # Remove anything that might have existed before.
-    mkdir --parents "${GIT_CACHE_PATH}"
-    rm -rf "${GIT_CACHE_PATH}"
-    git clone --mirror "${GIT_BUNDLE_PATH}" "${GIT_CACHE_PATH}" || {
-      echo "WARNING: Unable to restore! ($?)"
-    }
-  else
-    echo "No bundle to restore from (expected '${GIT_BUNDLE_PATH}')"
-    echo "NOTE: a bundle might exist at '${GIT_CACHE_PATH}'"
-    echo "      Omnibus will attempt to use it if present."
-  fi
-else
-  echo "Bundle caching is DISABLED -- Not restoring"
-fi
-
 # Cleanup old scalr-app src. This is needed because Omnibus does not properly
 # remove old srcs from the cache (and our src isn't constant, because we might have
 # two project workspaces in Jenkins)
+# IS THIS ONE CAUSING PROBLEMS WITH COMPOSER?!
 rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
 # Before we do anything. Setup a trap to chown everything back to Jenkins' user.
@@ -52,23 +30,11 @@ trap cleanup EXIT
 echo "Building: ${SCALR_VERSION}"
 
 cd "${OMNIBUS_PROJECT_DIR}"
-bundle update
 
 set +o errexit
 bundle exec omnibus build -l "${OMNIBUS_LOG_LEVEL}" "scalr-server"
 ret=$?
 set -o errexit
-
-# Trim the bundle
-if [ ! "${OMNIBUS_NO_BUNDLE}" -eq 1 ]; then
-  /clean_bundle_repo.py "${GIT_CACHE_PATH}"
-
-  # Back up the bundle
-  echo "Backing up '${GIT_CACHE_PATH}' to '${GIT_BUNDLE_PATH}'"
-  git --git-dir="${GIT_CACHE_PATH}" bundle create "${GIT_BUNDLE_PATH}" --tags
-else
-  echo "Bundle caching is DISABLED -- Not backing up"
-fi
 
 exit ${ret}
 

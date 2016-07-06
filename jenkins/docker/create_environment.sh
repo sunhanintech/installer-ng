@@ -49,6 +49,14 @@ if [ -z ${WORKSPACE+x} ]; then
   fi
 fi
 
+# Prompt user if containers should be cleaned
+if [ -z ${CLEAN_ENVIRONMENT+x} ]; then
+  read -p "Should the build containers be deleted and rebuilt (leave empty for No)? # " CLEAN_ENVIRONMENT
+  if [ -z ${CLEAN_ENVIRONMENT} ]; then
+    CLEAN_ENVIRONMENT="No"
+  fi
+fi
+
 # Install needed tools
 command -v git >/dev/null 2>&1 || apt-get install -y git
 command -v docker >/dev/null 2>&1 || apt-get install -y docker.io
@@ -107,6 +115,11 @@ fi
 sed "s/{PLATFORM_NAME}/${PLATFORM_NAME}/g" ./jenkins/docker/Dockerfile.in > ./Dockerfile
 sed -i "s/{PLATFORM_FAMILY}/${PLATFORM_FAMILY}/g" ./Dockerfile
 sed -i "s/{PLATFORM_VERSION}/${PLATFORM_VERSION}/g" ./Dockerfile
+
+# Remove existing containers
+if [[ "Yes" = "${CLEAN_ENVIRONMENT}" ]]; then
+  docker rmi -f "${DOCKER_IMG}"
+fi
 
 #Create the build image if not exist
 if [[ "$(docker images -q "${DOCKER_IMG}" 2> /dev/null)" == "" ]]; then
