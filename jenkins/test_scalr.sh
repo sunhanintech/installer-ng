@@ -7,14 +7,8 @@ if [ -z ${PKG_FILE+x} ]; then
   read -p "Provide full path to Scalr package to test # " PKG_FILE
 fi
 
-echo "hej"
-
-ls -al
-
 # Create the environment
 source "./docker/create_environment.sh"
-
-echo "korvar"
 
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}
