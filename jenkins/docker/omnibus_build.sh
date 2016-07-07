@@ -14,14 +14,14 @@ git config --global user.name "Scalr Builder"
 # remove old srcs from the cache (and our src isn't constant, because we might have
 # two project workspaces in Jenkins)
 # IS THIS ONE CAUSING PROBLEMS WITH COMPOSER?!
-rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
+#rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
 # Before we do anything. Setup a trap to chown everything back to Jenkins' user.
 cleanup () {
   cd "${OMNIBUS_PROJECT_DIR}"
   rm -rf ./pkg/*  # For some reason, a duplicate of every package ends up there.
-  chown -R "${JENKINS_UID}:${JENKINS_UID}" .
-  chown -R "${JENKINS_UID}:${JENKINS_UID}" /mnt/cache
+  chown -R "${JENKINS_UID}" .
+  #chown -R "${JENKINS_UID}" /mnt/cache
 }
 
 trap cleanup EXIT
