@@ -2,9 +2,8 @@
 set -o nounset
 set -o errexit
 
-env
-
-ls -la
+echo "hello"
+exit 0
 
 # Prompt user for package to test
 if [ -z ${PKG_FILE+x} ]; then
