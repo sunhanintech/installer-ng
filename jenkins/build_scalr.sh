@@ -95,7 +95,7 @@ if [ ! -z ${SCALR_BRANCH} ]; then
   git reset --hard "origin/${SCALR_BRANCH}"
 fi
 
-if [ ! -z ${DELETE_KEY+x} ]; then
+if [ "${EDITION}" = "enterprise" ] && [ ! -z ${DELETE_KEY+x} ]; then
   rm -f ${GITHUB_SECRET}
 fi
 
