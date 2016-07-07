@@ -9,6 +9,8 @@ fi
 
 echo "hej"
 
+ls -al
+
 # Create the environment
 source "./docker/create_environment.sh"
 
