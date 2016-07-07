@@ -13,6 +13,8 @@ end
 license path: "vendor/google/apiclient/LICENSE"
 license path: "vendor/onelogin/php-saml/LICENSE"
 
+dependency 'php-composer'
+
 build do
   # Install dependencies using composer
   command "#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar install --no-dev"
