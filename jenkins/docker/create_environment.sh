@@ -73,9 +73,11 @@ IFS=- read PLATFORM_NAME PLATFORM_VERSION <<< ${SCALR_OS}
 
 # Set standard platform names
 if [[ "centos" = "${PLATFORM_NAME}" ]]; then
+  PLATFORM="el"
   PLATFORM_FAMILY="rhel"
   PACKAGE_NAME="${EDITION}"
 elif [[ "debian" = "${PLATFORM_NAME}" ]] || [[ "ubuntu" = "${PLATFORM_NAME}" ]]; then
+  PLATFORM="${PLATFORM_NAME}"
   PLATFORM_FAMILY="debian"
   PACKAGE_NAME="${EDITION}.${PLATFORM_VERSION}"
 else
