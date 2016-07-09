@@ -16,6 +16,6 @@ DIRPATH=${PACKAGECLOUD_CLEAN%/*}
 docker run \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
 -v ${DIRPATH}:/config \
--e CONFIG_FILE=/package/${FILENAME} \
+-e CONFIG_FILE=/config/${FILENAME} \
 "${DOCKER_IMG}" \
 "${WORKSPACE}/installer-ng/jenkins/docker/package-cloud-cleanup/run.sh"

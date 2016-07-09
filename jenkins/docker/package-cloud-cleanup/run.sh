@@ -3,4 +3,4 @@
 cd $(dirname "$0")
 
 pip install -r requirements.txt
-python main.py /config/${CONFIG_FILE}
+python main.py ${CONFIG_FILE}
