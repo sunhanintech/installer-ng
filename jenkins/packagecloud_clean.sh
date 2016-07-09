@@ -16,5 +16,6 @@ DIRPATH=${PACKAGECLOUD_CLEAN%/*}
 docker run \
 -v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
 -v ${DIRPATH}:/config \
+-e CONFIG_FILE=/package/${FILENAME} \
 "${DOCKER_IMG}" \
-"cd ${WORKSPACE}/installer-ng/jenkins/docker/package-cloud-cleanup; pip install -r requirements.txt; python main.py /config/${FILENAME}"
+"${WORKSPACE}/installer-ng/jenkins/docker/package-cloud-cleanup/run.sh"
