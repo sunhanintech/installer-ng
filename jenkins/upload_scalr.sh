@@ -18,7 +18,7 @@ if [ -z ${PACKAGECLOUD_TOKEN+x} ]; then
 fi
 
 # Create the environment
-source "./docker/create_environment.sh"
+source "./create_environment.sh"
 
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}

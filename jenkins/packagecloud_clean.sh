@@ -8,7 +8,7 @@ if [ -z ${PACKAGECLOUD_CLEAN+x} ]; then
 fi
 
 # Create the environment
-source "./docker/create_environment.sh"
+source "./create_environment.sh"
 
 FILENAME=${PACKAGECLOUD_CLEAN##*/}
 DIRPATH=${PACKAGECLOUD_CLEAN%/*}
