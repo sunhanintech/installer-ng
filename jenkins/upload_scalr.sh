@@ -22,7 +22,7 @@ source "./docker/create_environment.sh"
 
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}
-DOCKER_IMG="scalr-${SCALR_OS}"
+#DOCKER_IMG="scalr-${SCALR_OS}"
 
 # If this is centos, also upload oracle versions
 #if PLATFORM=el/6, replace el with ol

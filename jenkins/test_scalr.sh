@@ -12,7 +12,7 @@ source "./docker/create_environment.sh"
 
 FILENAME=${PKG_FILE##*/}
 DIRPATH=${PKG_FILE%/*}
-DOCKER_IMG="scalr-${SCALR_OS}"
+#DOCKER_IMG="scalr-${SCALR_OS}"
 
 docker run \
 -v ${DIRPATH}:/package \
