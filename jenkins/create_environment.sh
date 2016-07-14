@@ -20,18 +20,20 @@ if [ -z ${SCALR_OS+x} ]; then
   while true; do
     echo "1) ubuntu-precise"
     echo "2) ubuntu-trusty"
-    echo "3) debian-wheezy"
-    echo "4) debian-jessie"
-    echo "5) centos-6"
-    echo "6) centos-7"
+    echo "3) ubuntu-xenial"
+    echo "4) debian-wheezy"
+    echo "5) debian-jessie"
+    echo "6) centos-6"
+    echo "7) centos-7"
     read -p "Which Linux distribution do you want to build for? # " option
     case $option in
       [1]* ) SCALR_OS="ubuntu-precise"; break;;
       [2]* ) SCALR_OS="ubuntu-trusty"; break;;
-      [3]* ) SCALR_OS="debian-wheezy"; break;;
-      [4]* ) SCALR_OS="debian-jessie"; break;;
-      [5]* ) SCALR_OS="centos-6"; break;;
-      [6]* ) SCALR_OS="centos-7"; break;;
+      [3]* ) SCALR_OS="ubuntu-xenial"; break;;
+      [4]* ) SCALR_OS="debian-wheezy"; break;;
+      [5]* ) SCALR_OS="debian-jessie"; break;;
+      [6]* ) SCALR_OS="centos-6"; break;;
+      [7]* ) SCALR_OS="centos-7"; break;;
     esac
   done
 fi
