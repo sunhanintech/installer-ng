@@ -49,7 +49,8 @@ license path: 'AUTHORS'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env.delete('CPPFLAGS')
+  #env.delete('CPPFLAGS')
+  env['CPPFLAGS'] = '-P'
 
   # build wide-character libraries
   cmd = [
