@@ -1,5 +1,5 @@
 name 'libgpg-error'
-default_version '1.18'
+default_version '1.24'
 
 source url: "ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-#{version}.tar.bz2"
 
@@ -9,6 +9,10 @@ end
 
 version '1.18' do
   source md5: '12312802d2065774b787cbfc22cc04e9'
+end
+
+version '1.24' do
+  source md5: 'feb42198c0aaf3b28eabe8f41a34b983'
 end
 
 relative_path "libgpg-error-#{version}"
