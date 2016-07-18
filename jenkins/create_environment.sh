@@ -86,6 +86,11 @@ else
   echo "Unknown platform: ${PLATFORM_NAME}"
 fi
 
+# Add build number
+if [ ! -z ${BUILD_ID+x} ]; then
+  PACKAGE_NAME="${PACKAGE_NAME}.${BUILD_ID}"
+fi
+
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
 CONTAINER="${DOCKER_IMG}-${EDITION}"
 
