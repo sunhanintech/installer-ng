@@ -9,6 +9,7 @@ extension="${filename##*.}"
 
 error_exit() {
   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+  sleep 999999
   exit 1
 }
 
@@ -53,5 +54,3 @@ for binary in ${binaries}; do
     error_exit "Binary exists: ${binary}"
   fi
 done
-
-sleep 99999999
