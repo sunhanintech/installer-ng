@@ -88,7 +88,7 @@ fi
 
 # Add build number
 if [ ! -z ${BUILD_ID+x} ]; then
-  PACKAGE_NAME="${PACKAGE_NAME}.${BUILD_ID}"
+  PACKAGE_NAME="${PACKAGE_NAME}.b${BUILD_ID}"
 fi
 
 DOCKER_IMG="scalr-${PLATFORM_NAME}-${PLATFORM_VERSION}"
