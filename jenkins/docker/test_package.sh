@@ -53,3 +53,5 @@ for binary in ${binaries}; do
     error_exit "Binary exists: ${binary}"
   fi
 done
+
+sleep 99999999
