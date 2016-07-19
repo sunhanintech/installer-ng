@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o errexit
+#set -o errexit
 set -o nounset
 
 binaries="ctl manage wizard"
@@ -9,7 +9,6 @@ extension="${filename##*.}"
 
 error_exit() {
   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
-  sleep 999999
   exit 1
 }
 
@@ -40,6 +39,8 @@ done
 
 echo "Installing"
 /opt/scalr-server/bin/scalr-server-ctl reconfigure
+
+sleep 9999999
 
 echo "Tearing down"
 if [[ "${extension}" = "deb" ]]; then
