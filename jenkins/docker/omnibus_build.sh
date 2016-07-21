@@ -13,7 +13,7 @@ git config --global user.name "Scalr Builder"
 # Cleanup old scalr-app src. This is needed because Omnibus does not properly
 # remove old srcs from the cache (and our src isn't constant, because we might have
 # two project workspaces in Jenkins)
-#rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
+rm -rf "${OMNIBUS_BASE_DIR}/src/scalr-app"
 
 # Before we do anything. Setup a trap to chown everything back to Jenkins' user.
 cleanup () {
