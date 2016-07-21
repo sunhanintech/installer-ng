@@ -127,8 +127,8 @@ sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/sca
 #This one seems to kill the cache :(
 #sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
 
-#Dont cache scalr-app
-#echo "#NOCACHE" >> "./config/software/scalr-app.rb"
+#Dont cache scalr-app because of php-composer
+echo "#NOCACHE-$(date +%s)" >> "./config/software/scalr-app.rb"
 
 #Get UID of jenkins user
 JENKINS_UID=1
