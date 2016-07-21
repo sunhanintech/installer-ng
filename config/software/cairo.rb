@@ -22,6 +22,6 @@ build do
           " --prefix=#{install_dir}/embedded" \
           ' --enable-xlib=no' \
           ' --enable-xlib-render=no ', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

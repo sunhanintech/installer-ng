@@ -43,7 +43,7 @@ build do
   patch source: 'makefile_take_env_vars.patch'
   patch source: 'debian_patches.patch'
 
-  make "#{args}", env: env
+  make "-j #{workers} #{args}", env: env
   make "#{args} check", env: env
   make "#{args} install", env: env
 end

@@ -28,6 +28,6 @@ build do
           ' --with-bzip2=yes' \
           ' --with-png=yes' \
           ' --with-harfbuzz=yes', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

@@ -53,6 +53,6 @@ build do
           ' --enable-md5auth' \
           " --with-cflags=#{Shellwords.escape(env['CFLAGS'])}", env: env
 
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

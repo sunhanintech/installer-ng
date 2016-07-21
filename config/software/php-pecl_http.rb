@@ -39,7 +39,7 @@ build do
           ' --with-http' \
           " --with-http-libcurl-dir=#{install_dir}/embedded" \
           " --with-http-zlib-dir=#{install_dir}/embedded", env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 
   #Add extension to php.ini

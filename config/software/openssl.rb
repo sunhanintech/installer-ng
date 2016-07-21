@@ -20,7 +20,7 @@ name 'openssl'
 dependency 'zlib'
 dependency 'cacerts'
 
-default_version '1.0.1s'
+default_version '1.0.1t'
 source url: "http://www.openssl.org/source/openssl-#{version}.tar.gz"
 
 version '1.0.1k' do
@@ -59,6 +59,10 @@ version '1.0.1s' do
   source md5: '562986f6937aabc7c11a6d376d8a0d26'
 end
 
+version '1.0.1t' do
+  source md5: '9837746fcf8a6727d46d22ca35953da1'
+end
+
 relative_path "openssl-#{version}"
 
 license path: 'LICENSE'
@@ -86,7 +90,7 @@ build do
   command configure_command, env: env
   make 'depend', env: env
   # make -j N on openssl is not reliable
-  make env: env
+  make "-j #{workers}", env: env
   if aix?
     # We have to sudo this because you can't actually run slibclean without being root.
     # Something in openssl changed in the build process so now it loads the libcrypto

@@ -58,7 +58,7 @@ build do
           ' --with-system-ffi' \
           ' --with-dbmliborder=gdbm', env: env
 
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 
   # There exists no configure flag to tell Python to not compile readline

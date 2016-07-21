@@ -51,6 +51,6 @@ build do
               " -Dlocincpth=#{install_dir}/embedded/include" \
               " -Dloclibpth=#{install_dir}/embedded/lib", env: env
 
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

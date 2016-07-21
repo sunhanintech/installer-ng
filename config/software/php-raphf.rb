@@ -21,7 +21,7 @@ build do
           " --with-php-config=#{install_dir}/embedded/bin/php-config" \
           " --with-libdir=#{install_dir}/embedded" \
           " --enable-raphf", env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 
   #Add extension to php.ini

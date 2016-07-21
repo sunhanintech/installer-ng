@@ -40,6 +40,6 @@ build do
           ' --with-included-glib' \
           ' --with-included-libcroco' \
           ' --with-included-libunistring', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end

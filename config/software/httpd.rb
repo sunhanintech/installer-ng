@@ -1,5 +1,5 @@
 name 'httpd'
-default_version '2.4.12'
+default_version '2.4.23'
 
 source url: "http://www.us.apache.org/dist/httpd/httpd-#{version}.tar.bz2"
 
@@ -10,6 +10,10 @@ end
 
 version '2.4.12' do
   source md5: 'b8dc8367a57a8d548a9b4ce16d264a13'
+end
+
+version '2.4.23' do
+  source md5: '04f19c60e810c028f5240a062668a688'
 end
 
 dependency 'apr'
@@ -39,6 +43,6 @@ build do
           ' --with-mpm=prefork' \
           ' --enable-so' \
           ' --enable-authz-owner --enable-deflate --enable-rewrite', env: env
-  make env: env
+  make "-j #{workers}", env: env
   make 'install', env: env
 end
