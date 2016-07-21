@@ -16,10 +16,17 @@
 #
 
 name 'ncurses'
-default_version '5.9'
+default_version '6.0'
 
-source url: "http://ftp.gnu.org/gnu/ncurses/ncurses-#{version}.tar.gz",
-       md5: '8cb9c412e5f2d96bc6f459aa8c6282a1'
+source url: "http://ftp.gnu.org/gnu/ncurses/ncurses-#{version}.tar.gz"
+
+version '5.9' do
+  source md5: '8cb9c412e5f2d96bc6f459aa8c6282a1'
+end
+
+version '6.0' do
+  source md5: 'ee13d052e1ead260d7c28071f46eefb1'
+end
 
 relative_path "ncurses-#{version}"
 
@@ -42,7 +49,8 @@ license path: 'AUTHORS'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
-  env.delete('CPPFLAGS')
+  #env.delete('CPPFLAGS')
+  env['CPPFLAGS'] = '-P'
 
   # build wide-character libraries
   cmd = [
