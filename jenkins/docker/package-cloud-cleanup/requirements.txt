@@ -1,0 +1,4 @@
+python-debian==0.1.21
+requests==2.4.3
+chardet==2.3.0
+git+https://github.com/iuscommunity/repodataParser.git@master#egg=repodataParser
