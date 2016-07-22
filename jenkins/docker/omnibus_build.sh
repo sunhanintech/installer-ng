@@ -33,6 +33,7 @@ bundle install
 
 set +o errexit
 bundle exec omnibus build -l "${OMNIBUS_LOG_LEVEL}" "scalr-server"
+sleep 99999999
 ret=$?
 set -o errexit
 
