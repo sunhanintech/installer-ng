@@ -95,10 +95,6 @@ if [ ! -z ${SCALR_BRANCH} ]; then
   git reset --hard "origin/${SCALR_BRANCH}"
 fi
 
-if [ "${EDITION}" = "enterprise" ] && [ ! -z ${DELETE_KEY+x} ]; then
-  rm -f ${GITHUB_SECRET}
-fi
-
 #Read data from Scalr source code
 SCALR_VERSION=$(cat ./app/etc/version)
 SCALR_REVISION=$(git log -n 1 --date="local" --pretty=format:"%h")
