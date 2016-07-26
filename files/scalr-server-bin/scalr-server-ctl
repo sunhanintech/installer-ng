@@ -13,7 +13,7 @@ if [ -z "$1" ]; then
 fi
 
 if [ "x$1" = "xreconfigure" ]; then
-    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 4000000 ]; then
+    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 3700000 ]; then
         echo "Scalr requires a minimum of 4GB RAM to run."
         exit 1
     fi
