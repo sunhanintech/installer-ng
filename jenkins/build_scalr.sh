@@ -32,7 +32,9 @@ if [ -z ${CLEAN_CACHE+x} ]; then
 fi
 
 # Prompt user for github ssh key
+EDITION_SHORT="oss"
 if [ "${EDITION}" = "enterprise" ]; then
+  EDITION_SHORT="ee"
   if [ -z ${GITHUB_SECRET+x} ]; then
     read -p "Enter the path to SSH key to use for git (leave empty for ~/.ssh/id_rsa)? # " GITHUB_SECRET
     if [ -z ${GITHUB_SECRET} ]; then
@@ -108,7 +110,7 @@ cd ${WORKSPACE}/installer-ng
 sed -i "s|__SCALR_APP_PATH__|${WORKSPACE}/${SCALR_REPO}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_REVISION__|${SCALR_REVISION}|g" "./config/software/scalr-app.rb"
 
-sed -i "s|__SCALR_APP_EDITION__|${EDITION}|g" "./config/software/scalr-app.rb"
+sed -i "s|__SCALR_APP_EDITION__|${EDITION_SHORT}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_DATE__|${SCALR_DATE}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_FULL_REVISION__|${SCALR_REVISION_FULL}|g" "./config/software/scalr-app.rb"
 
