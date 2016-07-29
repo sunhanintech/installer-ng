@@ -1,5 +1,5 @@
 supervisor_service 'httpd' do
-  description     "(Re)Start httpd service"
+  description     "Start httpd service"
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/httpd" \
                   " -f #{etc_dir_for node, 'httpd'}/httpd.conf" \
                   ' -DFOREGROUND'

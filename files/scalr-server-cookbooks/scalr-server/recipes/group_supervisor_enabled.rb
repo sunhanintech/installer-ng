@@ -89,7 +89,7 @@ case node['platform']
     end
 
     service 'scalr' do
-      description "(Re)Start Scalr server"
+      description "Start supervisord"
       supports :status => true, :restart => true
       action [:enable, :start]
     end

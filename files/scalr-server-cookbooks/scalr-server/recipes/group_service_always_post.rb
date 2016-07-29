@@ -3,7 +3,7 @@ enabled_services(node, :python).each do |svc|
   should_restart = service_is_up?(node, name)
 
   supervisor_service name do
-    description     "(Re)Start " + name + " service"
+    description     "Start " + name + " service"
     command         "#{bin_dir_for node, 'service'}/scalrpy_proxy" \
                     " #{run_dir_for node, 'service'}/#{svc[:name]}.pid" \
                     " #{node[:scalr_server][:install_root]}/embedded/bin/python" \
@@ -43,7 +43,7 @@ if enabled_services(node, :php).any?
   should_restart = service_is_up?(node, zmq_name)
 
   supervisor_service zmq_name do
-    description     "(Re)Start PHP service"
+    description     "Start PHP service"
     command         "#{node[:scalr_server][:install_root]}/embedded/bin/php -c #{etc_dir_for node, 'php'}" \
                     " #{scalr_bundle_path node}/app/cron/service.php"
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.log"

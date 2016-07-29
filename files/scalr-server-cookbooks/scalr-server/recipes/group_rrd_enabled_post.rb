@@ -1,5 +1,5 @@
 supervisor_service 'rrd' do
-  description     "(Re)Start rrd service"
+  description     "Start rrd service"
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/rrdcached" \
                   " -s #{node[:scalr_server][:app][:user]}" \
                   " -l unix:#{run_dir_for node, 'rrd'}/rrdcached.sock" \
