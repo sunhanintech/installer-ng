@@ -3,6 +3,7 @@
 
 [etc_dir(node), bin_dir(node), var_dir(node), run_dir(node), log_dir(node), data_dir(node)].each do |dir|
   directory dir do
+    description "Create directory (" + dir + ")"
     owner     'root'
     group     'root'
     mode      0775

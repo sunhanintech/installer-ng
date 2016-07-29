@@ -1,3 +1,5 @@
+require "/opt/scalr-server/embedded/cookbooks/formatter.rb"
+
 CURRENT_PATH = File.expand_path(File.dirname(__FILE__))
 
 # Allow users to pass an overridden cookbook path
@@ -16,8 +18,14 @@ verbose_logging false
 ssl_verify_mode :verify_peer
 
 # Log to stderr, so that our show_attributes and show_config recipes can be consumed by other programs.
-log_location STDERR
+#log_location STDERR
+
+log_location "/opt/scalr-server/var/log/installer/reconfigure-" + Time.new.strftime("%F-%H-%M-%S") + ".log"
 
 # Use a dummy node name. This lets us ensure Chef doesn't fail if it's unable to determine the node name
 # (e.g. when run in a very limited docker container), which we don't use anyway.
 node_name 'scalr-server'
+
+add_formatter :scalr
+
+log_level :error

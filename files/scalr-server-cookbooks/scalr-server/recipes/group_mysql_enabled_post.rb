@@ -1,6 +1,7 @@
 # Launch MySQL
 # View: http://supervisord.org/subprocess.html#pidproxy-program
 supervisor_service 'mysql' do
+  description     "(Re)Start MySQL service"
   command         "#{node[:scalr_server][:install_root]}/embedded/bin/pidproxy" \
                   " #{run_dir_for node, 'mysql'}/mysql.pid" \
                   " #{node[:scalr_server][:install_root]}/embedded/bin/mysqld_safe" \
@@ -23,6 +24,7 @@ root_nopass_params = mysql_admin_params node
 root_nopass_params.delete(:password)
 
 mysql_database 'set_root_passwords' do
+  description     "Set MySQL root password"
   connection      root_nopass_params
   database_name   'mysql'  # This MUST be set, otherwise Chef happily just discards our request because the null database doesn't exist.
   sql             "UPDATE mysql.user SET Password = PASSWORD('#{node[:scalr_server][:mysql][:root_password]}') WHERE User = 'root' AND Password = '';" \
@@ -33,6 +35,7 @@ mysql_database 'set_root_passwords' do
 end
 
 mysql_database 'remove_anonymous_users' do
+  description     "Remove annonymous MySQL user"
   connection      mysql_admin_params(node)
   database_name   'mysql'
   sql             "DELETE FROM mysql.user WHERE User = ''; FLUSH PRIVILEGES;"
@@ -41,6 +44,7 @@ mysql_database 'remove_anonymous_users' do
 end
 
 mysql_database 'remove_access_to_test_databases' do
+  description     "Remove access to MySQL test database"
   connection      mysql_admin_params(node)
   database_name   'mysql'
   sql             "DELETE FROM mysql.db WHERE Db LIKE 'test%'; FLUSH PRIVILEGES;"
@@ -50,6 +54,7 @@ end
 
 # Insert time zone data into MySQL if missing
 execute 'dump_timezone_to_sql' do
+  description "Import timezone database to MySQL"
   command "#{node[:scalr_server][:install_root]}/embedded/bin/mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -S #{run_dir_for node, 'mysql' }/mysql.sock -u root -p#{node[:scalr_server][:mysql][:root_password]} mysql"
   not_if          { mysql_timezoned? node }
 end
@@ -58,6 +63,7 @@ end
 # Remote root
 
 mysql_database_user 'root' do
+  description "Enable remote root access to MySQL"
   connection  mysql_admin_params(node)
   password    node[:scalr_server][:mysql][:root_password]
   host        '%'
@@ -66,6 +72,7 @@ mysql_database_user 'root' do
 end
 
 file mysql_bootstrap_status_file node do
+  description "Create MySQL bootstrap placeholder file"
   mode     0644
   owner   'root'
   group   'root'
@@ -73,6 +80,7 @@ file mysql_bootstrap_status_file node do
 end
 
 file mysql_timezone_status_file node do
+  description "Create MySQL timezone placeholder"
   mode     0644
   owner   'root'
   group   'root'
@@ -83,6 +91,7 @@ end
 # Set up Scalr and replication users.
 
 mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
+  description       "Create MySQL scalr user"
   connection        mysql_admin_params(node)
   password          node[:scalr_server][:mysql][:scalr_password]
   host              node[:scalr_server][:mysql][:scalr_allow_connections_from]
@@ -90,6 +99,7 @@ mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
 end
 
 mysql_database_user node[:scalr_server][:mysql][:repl_user] do
+  description       "Create MySQL replication user"
   connection        mysql_admin_params(node)
   password          node[:scalr_server][:mysql][:repl_password]
   host              node[:scalr_server][:mysql][:repl_allow_connections_from]
@@ -97,6 +107,7 @@ mysql_database_user node[:scalr_server][:mysql][:repl_user] do
 end
 
 mysql_database 'grant_replication_permissions' do
+  description     "Enable replication permission to replication user"
   connection      mysql_admin_params(node)
   database_name   'mysql'
   sql             "GRANT REPLICATION SLAVE ON *.* TO '#{node[:scalr_server][:mysql][:repl_user]}'@'#{node[:scalr_server][:mysql][:repl_allow_connections_from]}'; FLUSH PRIVILEGES;"
@@ -113,11 +124,13 @@ scalr_databases = [
 
 scalr_databases.each do |scalr_database|
   mysql_database scalr_database do
+    description "Create MySQL database (" + scalr_database + ")"
     connection  mysql_admin_params(node)
     action      :create
   end
 
   mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
+    description   "Create MySQL user (" + node[:scalr_server][:mysql][:scalr_user] + ") for database (" + scalr_database + ")"
     connection    mysql_admin_params(node)
     database_name scalr_database
     privileges    node[:scalr_server][:mysql][:scalr_privileges]
@@ -127,6 +140,7 @@ end
 
 # Record bin log position
 ruby_block 'record_bin_log_pos' do
+  description "Save current binlog position (" + "#{data_dir_for node, 'mysql'}/binlog-bootstrap" + ")"
   block do
     File.open("#{data_dir_for node, 'mysql'}/binlog-bootstrap", 'w') do |f|
       f.puts(Chef::JSONCompat.to_json_pretty((mysql_master_status(mysql_admin_params(node)))))

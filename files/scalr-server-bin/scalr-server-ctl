@@ -39,6 +39,8 @@ unset GEM_HOME
 # Run chef-solo
 shift
 
+mkdir -p /opt/scalr-server/var/log/installer
+
 exec /opt/scalr-server/embedded/bin/chef-solo \
     -c /opt/scalr-server/embedded/cookbooks/solo.rb \
     -j /opt/scalr-server/embedded/cookbooks/${solo}.json \

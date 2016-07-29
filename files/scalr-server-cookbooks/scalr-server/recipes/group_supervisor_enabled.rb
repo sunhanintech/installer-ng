@@ -25,6 +25,7 @@
 init_file = '/etc/init.d/scalr'
 
 file init_file do
+  description "Generate Scalr init.d script (" + init_file + ")"
   mode     0755
   owner   'root'
   group   'root'
@@ -32,26 +33,31 @@ file init_file do
 end
 
 directory run_dir_for(node, 'supervisor') do
+  description "Create directory (" + run_dir_for(node, 'supervisor') + ")"
   owner node[:scalr_server][:supervisor][:user]
   mode 0755
 end
 
 directory log_dir_for(node, 'supervisor') do
+  description "Create directory (" + log_dir_for(node, 'supervisor') + ")"
   owner node[:scalr_server][:supervisor][:user]
   mode 0755
 end
 
 directory etc_dir_for(node, 'supervisor') do
+  description "Create directory (" + etc_dir_for(node, 'supervisor') + ")"
   owner node[:scalr_server][:supervisor][:user]
   mode  0755
 end
 
 directory "#{etc_dir_for node, 'supervisor'}/conf.d" do
+  description "Create directory (" + "#{etc_dir_for node, 'supervisor'}/conf.d" + ")"
   owner node[:scalr_server][:supervisor][:user]
   mode  0755
 end
 
 template "#{etc_dir_for node, 'supervisor'}/supervisord.conf" do
+  description "Generate supervisord configuration (" + "#{etc_dir_for node, 'supervisor'}/supervisord.conf" + ")"
   source 'supervisor/supervisord.conf.erb'
   owner node[:scalr_server][:supervisor][:user]
   mode  0644
@@ -68,6 +74,7 @@ init_template_dir = value_for_platform_family(
 case node['platform']
   when 'amazon', 'centos', 'debian', 'fedora', 'redhat', 'ubuntu', 'oracle'
     template init_file do
+      description "Generate OS specific init file for supervisord (" + init_file + ")"
       source    "supervisor/#{init_template_dir}/supervisor.init.erb"
       owner     'root'
       group     'root'
@@ -82,6 +89,7 @@ case node['platform']
     end
 
     service 'scalr' do
+      description "(Re)Start Scalr server"
       supports :status => true, :restart => true
       action [:enable, :start]
     end

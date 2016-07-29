@@ -31,7 +31,6 @@ def process_module(mod, stage)
   process_recipe "group_#{mod}_always#{stage_ext}"
 end
 
-
 # Actual recipe
 
 include_recipe 'scalr-server::_config_dir'
