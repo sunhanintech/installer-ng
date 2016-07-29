@@ -134,7 +134,11 @@ class Chef
       end
 
       def file_load_failed(path, exception)
-        super
+        if File.basename path = "default.rb"
+          puts exception.message
+        else
+          super
+        end
       end
 
       # Called when recipes have been loaded.

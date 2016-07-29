@@ -2,10 +2,19 @@
 
 set -o errexit
 
-
 usage_and_exit () {
-    echo "Usage: ctl [reconfigure | show-config | show-attributes | extras]"
+    echo "Usage: ctl [reconfigure | show-config | show-attributes | extras | config-test]"
     exit 1
+}
+
+config_test () {
+    if [ -f /etc/scalr-server/scalr-server.rb ]; then
+        /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/scalr-server.rb
+    fi
+
+    if [ -f /etc/scalr-server/scalr-server-local.rb ]; then
+        /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/scalr-server-local.rb
+    fi
 }
 
 if [ -z "$1" ]; then
@@ -17,6 +26,9 @@ if [ "x$1" = "xreconfigure" ]; then
         echo "Scalr requires a minimum of 4GB RAM to run."
         exit 1
     fi
+
+    config_test
+
     solo="dna"
 elif [ "x$1" = "xshow-config" ]; then
     solo="show-config"
@@ -24,6 +36,8 @@ elif [ "x$1" = "xshow-attributes" ]; then
     solo="show-attributes"
 elif [ "x$1" = "xextras" ]; then
     solo="extras"
+elif [ "x$1" = "xconfig-test" ]; then
+    config_test
 else
     usage_and_exit
 fi
@@ -34,7 +48,6 @@ unset BUNDLE_BIN_PATH
 unset BUNDLE_GEMFILE
 unset GEM_PATH
 unset GEM_HOME
-
 
 # Run chef-solo
 shift
