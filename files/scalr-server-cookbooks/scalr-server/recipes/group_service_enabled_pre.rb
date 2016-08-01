@@ -7,7 +7,7 @@ directory bin_dir_for(node, 'service') do
 end
 
 cookbook_file "#{bin_dir_for node, 'service'}/scalrpy_proxy" do
-  description "Start Scalr python proxy"
+  description "Scalr python proxy"
   owner     'root'
   group     'root'
   source    'scalrpy_proxy'

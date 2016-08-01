@@ -18,7 +18,7 @@ elif [ "x$1" = "xrestart" ]; then
     scalr-server-manage stop "$2"
     scalr-server-manage start "$2"
 elif [ "x$1" = "xstop" ]; then
-    echo -n "Stop $2 service ... "
+    echo -n "Stop $2 service(s) ... "
 
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \
@@ -27,7 +27,7 @@ elif [ "x$1" = "xstop" ]; then
     echo "[ \033[32mOK\033[0m ]"
 
 elif [ "x$1" = "xstart" ]; then
-    echo -n "Start $2 service ... "
+    echo -n "Start $2 service(s) ... "
 
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \

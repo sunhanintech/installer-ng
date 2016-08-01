@@ -7,13 +7,37 @@ usage_and_exit () {
     exit 1
 }
 
-config_test () {
-    if [ -f /etc/scalr-server/scalr-server.rb ]; then
-        /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/scalr-server.rb
+check_file () {
+    if [ ! -f "/etc/scalr-server/$1" ]; then
+        return
     fi
 
-    if [ -f /etc/scalr-server/scalr-server-local.rb ]; then
-        /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/scalr-server-local.rb
+    echo -n "Checking config file ($1) syntax ... "
+
+    TMPFILE=$(mktemp)
+    FAILED=0
+    /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/$1 >> $TMPFILE 2>&1 || FAILED=1
+
+    if [ $FAILED -eq 1 ]; then
+      echo "[ \033[31mFAILED\033[0m ]"
+      cat $TMPFILE
+      rm -f $TMPFILE
+      exit 1
+    else
+      echo "[ \033[32mOK\033[0m ]"
+      rm -f $TMPFILE
+    fi
+}
+
+config_test () {
+    check_file "scalr-server.rb"
+    check_file "scalr-server-local.rb"
+}
+
+memory_test () {
+    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 3700000 ]; then
+        echo "Scalr requires a minimum of 4GB RAM to run."
+        exit 1
     fi
 }
 
@@ -22,12 +46,10 @@ if [ -z "$1" ]; then
 fi
 
 if [ "x$1" = "xreconfigure" ]; then
-    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 3700000 ]; then
-        echo "Scalr requires a minimum of 4GB RAM to run."
-        exit 1
-    fi
-
+    memory_test
     config_test
+
+    echo "Preparing to reconfigure Scalr..."
 
     solo="dna"
 elif [ "x$1" = "xshow-config" ]; then

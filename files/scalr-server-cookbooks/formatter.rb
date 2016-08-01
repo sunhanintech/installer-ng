@@ -45,7 +45,7 @@ class Chef
 
       # called at the end of a failed run
       def run_failed(exception)
-        print "\n\033[31mScalr configuration failed! Please check error log for more details.\033[0m\n\n"
+         print "\n\033[31mScalr configuration failed! Please check error log (/opt/scalr-server/var/log/installer/) for more details.\033[0m\n\n"
       end
 
       # Called right after ohai runs.
@@ -155,6 +155,9 @@ class Chef
 
       # Called before action is executed on a resource.
       def resource_action_start(resource, action, notification_type=nil, notifier=nil)
+        if resource.description && action != :nothing
+          print resource.description + " (" + action.to_s + ") ... "
+        end
       end
 
       # Called when a resource fails, but will retry.
@@ -163,11 +166,16 @@ class Chef
 
       # Called when a resource fails and will not be retried.
       def resource_failed(resource, action, exception)
-        puts resource.description + " ... " + failed()
+        if resource.description && action != :nothing
+          puts failed()
+        end
       end
 
       # Called when a resource action has been skipped b/c of a conditional
       def resource_skipped(resource, action, conditional)
+        if resource.description && action != :nothing
+          puts skipped()
+        end
       end
 
       # Called after #load_current_resource has run.
@@ -176,6 +184,9 @@ class Chef
 
       # Called when a resource has no converge actions, e.g., it was already correct.
       def resource_up_to_date(resource, action)
+        if resource.description && action != :nothing
+          puts skipped()
+        end
       end
 
       ## TODO: callback for assertion failures
@@ -191,7 +202,7 @@ class Chef
       # Called after a resource has been completely converged.
       def resource_updated(resource, action)
         if resource.description
-          puts resource.description + " ... " + ok()
+          puts ok()
         end
       end
 
