@@ -18,11 +18,6 @@ if [ -z ${CACHE_PATH+x} ]; then
   fi
 fi
 
-# Prompt user for sentry URL to use if not set
-if [ -z ${SENTRY+x} ]; then
-  read -p "Which Sentry URL to use? # " SENTRY
-fi
-
 # Prompt user if cache should be cleaned
 if [ -z ${CLEAN_CACHE+x} ]; then
   read -p "Should the cache be cleaned (leave empty for No)? # " CLEAN_CACHE
@@ -115,9 +110,6 @@ sed -i "s|__SCALR_APP_DATE__|${SCALR_DATE}|g" "./config/software/scalr-app.rb"
 sed -i "s|__SCALR_APP_FULL_REVISION__|${SCALR_REVISION_FULL}|g" "./config/software/scalr-app.rb"
 
 sed -i "s|__SCALR_REQUIREMENTS_PATH__|${WORKSPACE}/${SCALR_REPO}/app/python|g" "./config/software/scalr-app-python-libs.rb"
-
-sed -i "s|__SENTRY_DSN__|${SENTRY}|g" "./files/scalr-server-cookbooks/dna.json"
-sed -i "s|__SENTRY_DSN__|${SENTRY}|g" "./files/scalr-server-cookbooks/extras.json"
 
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-cookbooks.rb"
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-bin.rb"

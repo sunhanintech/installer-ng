@@ -27,6 +27,5 @@ cookbook 'yum', '= 3.10.0'
 cookbook 'yum-epel', '= 0.6.6'
 cookbook 'yum-mysql-community', '= 0.2.0'
 
-cookbook 'chef-sentry-handler', github: 'coderanger/chef-sentry-handler', tag: 'v1.0.0'
 cookbook 'rackspace_timezone', github: 'scalr-cookbooks/rackspace_timezone', tag: 'v1.0.1+scalr'
 cookbook 'supervisor', github: 'scalr-cookbooks/supervisor', tag: 'v0.4.13+scalr'

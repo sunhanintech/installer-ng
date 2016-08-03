@@ -21,7 +21,6 @@ dependency 'prepare'
 dependency 'chef-gem'           # For embedded chef-solo
 dependency 'mysql-gem'          # We use it in embedded chef-solo
 dependency 'safe_yaml-gem'      # Same as above
-dependency 'sentry-raven-gem'   # Same as above
 
 # Software we need to run
 dependency 'mysql'
