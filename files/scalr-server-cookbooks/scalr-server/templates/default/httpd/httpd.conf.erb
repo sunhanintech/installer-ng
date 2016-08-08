@@ -119,7 +119,7 @@ EnableSendfile on
 
 # Proxy #
 
-<% if enable_module?(node, :proxy) %>
+<% if enable_module?(node, :proxy2) %>
     LoadModule proxy_module                 embedded/modules/mod_proxy.so
 
     LoadModule slotmem_shm_module           embedded/modules/mod_slotmem_shm.so

@@ -198,6 +198,9 @@ default[:scalr_server][:app][:skip_db_initialization] = false
 # Proxy #
 #########
 
+# Old proxy with apache is now called proxy2 and disabled by default
+default[:scalr_server][:proxy2][:enable] = false
+
 # Whether to enable the web proxy. The proxy is a reverse proxy for the various web components that make up Scalr.
 default[:scalr_server][:proxy][:enable] = false
 

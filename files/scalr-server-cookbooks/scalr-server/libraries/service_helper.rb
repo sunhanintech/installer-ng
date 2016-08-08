@@ -285,12 +285,17 @@ module Scalr
 
       # HTTPD is enabled if we have web or proxy
       if mod == :httpd
-        return enable_module?(node, :web) || enable_module?(node, :proxy)
+        return enable_module?(node, :web) || enable_module?(node, :proxy2)
+      end
+
+      # nginx is enable if we have load balancer
+      if mod == :nginx
+        return enable_module?(node, :proxy) && !enable_module?(node, :proxy2)
       end
 
       # Ordering matters a lot in the line below. We want to return the module's own enable settings so that if it's
       # not set to false, we get that one back (instead of a generic `true`). This then used in _filter enabled above.
-      node[:scalr_server][mod][:enable] || node[:scalr_server][:enable_all]
+      node[:scalr_server][mod][:enable] || (node[:scalr_server][:enable_all] && mod != :proxy2)
     end
 
     # Service status helpers #
