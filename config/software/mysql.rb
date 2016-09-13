@@ -1,7 +1,7 @@
 # I need perl for the scripts here
 
 name 'mysql'
-default_version '5.6.24'
+default_version '5.6.33'
 
 source :url => "http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-#{version}.tar.gz"
 
@@ -11,6 +11,10 @@ end
 
 version '5.6.24' do
   source :md5 => '68e1911f70eb1b02170d4f96bf0f0f88'
+end
+
+version '5.6.33' do
+  source :md5 => '7fbf37928ef651e005b80e820a055385'
 end
 
 dependency 'zlib'
