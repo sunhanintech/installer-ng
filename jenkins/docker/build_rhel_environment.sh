@@ -10,7 +10,7 @@ yum clean all
 
 # Install RVM
 curl -sSL https://rvm.io/mpapis.asc | gpg --import -
-curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.0
+curl -sSL https://get.rvm.io | bash -s stable --ruby=2.1.0
 
 source /usr/local/rvm/scripts/rvm
 
