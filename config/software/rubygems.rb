@@ -16,7 +16,7 @@
 #
 
 name "rubygems"
-default_version "1.8.24"
+default_version "2.1.11"
 
 if windows?
   dependency "ruby-windows"

@@ -10,11 +10,18 @@ Gem::Specification.each do |gem|
   end
 end
 
+puts ARGV.first
+
 File.open(ARGV.first, 'w') do |f|
   Gem.licenses.each do |license, gems|
+
+    puts license
+
     f.puts "#{license}"
     f.puts '=' * license.length
     gems.sort_by(&:name).each do |gem|
+      puts gem
+
       f.puts "* #{gem.name} #{gem.version} (#{gem.homepage})"
     end
     f.puts ''
