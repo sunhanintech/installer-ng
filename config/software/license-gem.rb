@@ -17,7 +17,7 @@
 # NOLICENSE (Includes itself in the ruby license report)
 
 name 'license-gem'
-default_version '0.1.2'
+default_version '0.2.1'
 
 dependency 'ruby'
 dependency 'rubygems'
