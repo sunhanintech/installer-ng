@@ -44,11 +44,12 @@ mysql_database 'load analytics database data' do
 end
 
 execute 'Upgrade Scalr Database' do
-  description     "Upgrade Scalr Database"
+  description     "Upgrade Scalr Database (this might take a long time!)"
   # NOTE: the app user needs to be created first, but the app recipe *is* supposed to run first.
   user    node[:scalr_server][:app][:user]
   group   node[:scalr_server][:app][:user]
   returns 0
+  timeout 36000
   command "#{node[:scalr_server][:install_root]}/embedded/bin/php upgrade.php"
   cwd     "#{scalr_bundle_path node}/app/bin"
   not_if          { node[:scalr_server][:app][:skip_db_initialization] }
