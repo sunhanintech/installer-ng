@@ -159,7 +159,7 @@ module Scalr
           },
 
 	  {
-              :name => 'platform_usage', :service_style => :php,
+              :name => 'platform_usage_processor', :service_style => :php,
               :service_config => {},
           },
 
