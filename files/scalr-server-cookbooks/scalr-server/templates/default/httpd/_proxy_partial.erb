@@ -18,9 +18,9 @@
 </LocationMatch>
 <% end %>
 
-ProxyPass /graphics           balancer://graphics/	timeout=90
-ProxyPass /load_statistics    balancer://plotter/	timeout=90
-ProxyPass /                   balancer://app/		timeout=90
+ProxyPass /graphics           balancer://graphics/
+ProxyPass /load_statistics    balancer://plotter/
+ProxyPass /                   balancer://app/
 
 # Add X-Forwarded-For header, but discard anything coming from upstream.
 # TODO - Make this configurable

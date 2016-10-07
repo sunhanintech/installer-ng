@@ -175,19 +175,19 @@ EnableSendfile on
 
     <Proxy balancer://app>
     <% node[:scalr_server][:proxy][:app_upstreams].each do |upstream| %>
-        BalancerMember http://<%= upstream %>
+        BalancerMember http://<%= upstream %> connectiontimeout=10 timeout=90
     <% end %>
     </Proxy>
 
     <Proxy balancer://graphics>
     <% node[:scalr_server][:proxy][:graphics_upstreams].each do |upstream| %>
-        BalancerMember http://<%= upstream %>
+        BalancerMember http://<%= upstream %> connectiontimeout=10 timeout=90
     <% end %>
     </Proxy>
 
     <Proxy balancer://plotter>
     <% node[:scalr_server][:proxy][:plotter_upstreams].each do |upstream| %>
-        BalancerMember http://<%= upstream %>/load_statistics
+        BalancerMember http://<%= upstream %>/load_statistics connectiontimeout=10 timeout=90
     <% end %>
     </Proxy>
 
