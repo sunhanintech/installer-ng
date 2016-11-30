@@ -116,6 +116,32 @@ EnableSendfile on
     </VirtualHost>
 <% end %>
 
+# Repos #
+
+<% if enable_module?(node, :repos) %>
+    Listen <%= node[:scalr_server][:repos][:bind_host] %>:<%= node[:scalr_server][:repos][:bind_port] %>
+
+    <VirtualHost *:<%= node[:scalr_server][:repos][:bind_port] %>>
+      DocumentRoot <%= node[:scalr_server][:repos][:root] %>/current
+
+      ErrorLog  <%= log_dir_for node, 'httpd' %>/web.repos.error.log
+      <IfModule log_config_module>
+            CustomLog <%= log_dir_for node, 'httpd' %>/web.repos.access.log combined
+      </IfModule>
+
+      <Directory <%= node[:scalr_server][:repos][:root] %>/current>
+        Options +Indexes +FollowSymLinks +MultiViews
+        AllowOverride None
+        AuthType None
+        Order allow,deny
+        Allow from all
+        Satisfy All
+        Require all granted
+      </Directory>
+
+    </VirtualHost>
+
+<% end %>
 
 # Proxy #
 
@@ -188,6 +214,12 @@ EnableSendfile on
     <Proxy balancer://plotter>
     <% node[:scalr_server][:proxy][:plotter_upstreams].each do |upstream| %>
         BalancerMember http://<%= upstream %>/load_statistics connectiontimeout=10 timeout=90
+    <% end %>
+    </Proxy>
+
+    <Proxy balancer://repos>
+    <% node[:scalr_server][:proxy][:repos_upstreams].each do |upstream| %>
+        BalancerMember http://<%= upstream %> connectiontimeout=10 timeout=90
     <% end %>
     </Proxy>
 
