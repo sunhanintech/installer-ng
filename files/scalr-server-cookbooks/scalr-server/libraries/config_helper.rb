@@ -77,6 +77,13 @@ module Scalr
             # Actual configuration generated here.
             config = {
                 :scalr => {
+                    :templates => {
+                        :email => {
+                            :analytics_on_cc_add => "#{scalr_bundle_path node}/app/templates/{locale}/emails/analytics_on_cc_add.eml.php",
+                            :analytics_on_cloud_add => "#{scalr_bundle_path node}/app/templates/{locale}/emails/analytics_on_cloud_add.eml.php"
+                        }
+                    },
+
                     :connections => {
                         :mysql => scalr_conn_details.clone  # Ruby wants to use '1' as an alias, and PHP doesn't accept it..
                     },
