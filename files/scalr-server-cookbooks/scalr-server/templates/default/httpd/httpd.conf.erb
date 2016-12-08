@@ -71,6 +71,7 @@ ErrorLog  <%= log_dir_for node, 'httpd' %>/web.error.log
 </IfModule>
 
 EnableSendfile on
+KeepAliveTimeout 30
 
 <IfModule php5_module>
   PHPINIDir <%= etc_dir_for node, 'php' %>
