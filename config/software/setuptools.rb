@@ -16,15 +16,21 @@
 #
 
 name "setuptools"
-default_version "0.7.7"
+default_version "32.0.0"
 
 dependency "python"
 
-source url: "https://pypi.python.org/packages/source/s/setuptools/setuptools-#{version}.tar.gz"
+#source url: "https://pypi.python.org/packages/source/s/setuptools/setuptools-#{version}.tar.gz"
+source url: "https://pypi.python.org/packages/dc/37/f01d823fd312ba8ea6c3aea906d2d6ac9e9e8bf9e7853e34f296e94b0d0d/setuptools-#{version}.tar.gz"
 
 version '0.7.7' do
   source md5: '0d7bc0e1a34b70a97e706ef74aa7f37f'
   license url: "https://bitbucket.org/pypa/setuptools/src/#{version}/setup.py?at=default#cl-138"
+end
+
+version '32.0.0' do
+  source md5: 'e5f513a5b53e843b361d663feec4f5fa'
+  license path: "LICENSE"
 end
 
 relative_path "setuptools-#{version}"

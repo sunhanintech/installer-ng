@@ -16,11 +16,12 @@
 #
 
 name "pip"
-default_version "1.4"
+default_version "9.0.1"
 
 dependency "setuptools"
 
-source url: "https://pypi.python.org/packages/source/p/pip/pip-#{version}.tar.gz"
+#source url: "https://pypi.python.org/packages/source/p/pip/pip-#{version}.tar.gz"
+source url: "https://pypi.python.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-#{version}.tar.gz"
 
 
 version '1.3' do
@@ -29,6 +30,10 @@ end
 
 version '1.4' do
   source md5: 'ca790be30004937987767eac42cfa44a'
+end
+
+version '9.0.1' do
+  source md5: '35f01da33009719497f01a4ba69d63c9'
 end
 
 relative_path "pip-#{version}"
