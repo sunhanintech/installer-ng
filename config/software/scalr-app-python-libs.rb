@@ -35,6 +35,7 @@ dependency 'libyaml'
 
 # Separately installed dep
 dependency 'python-m2crypto'
+dependency 'python-mitmproxy'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
@@ -49,5 +50,11 @@ build do
   command "#{install_dir}/embedded/bin/pip install" \
           " --build #{build_dir}/pybuild" \
           ' --requirement ./requirements.txt', env: env
+
+  command "rm -rf #{build_dir}/pybuild/*"
+
+  command "#{install_dir}/embedded/bin/pip3 install" \
+          " --build #{build_dir}/pybuild" \
+          ' --requirement ./server.txt', env: env
 
 end

@@ -50,7 +50,7 @@ fi
 
 #Download the Scalr Installer
 if [ ! -d "${WORKSPACE}/installer-ng" ]; then
-  git clone https://github.com/Scalr/installer-ng.git
+  git clone --recursive https://github.com/Scalr/installer-ng.git
 fi
 
 #Enter Installer Dir
@@ -77,7 +77,16 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
   if [ "${SCALR_REPO}" = "scalr" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
-    git clone "ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git"
+    cat > ~/.ssh/config <<EOL
+host github.com
+ HostName github.com
+ IdentityFile ${GITHUB_SECRET}
+ User git
+ StrictHostKeyChecking no
+ UserKnownHostsFile=/dev/null
+EOL
+
+    git clone git@github.com:Scalr/${SCALR_REPO}.git
   fi
 fi
 
@@ -90,6 +99,12 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Move to the specified branch
   git reset --hard "origin/${SCALR_BRANCH}"
+
+  #Update submodules
+  git submodule update --init --recursive
+
+  #Fetch python requirements file
+  cp ./app/python/fatmouse/infra/requirements/server.txt ./app/python/
 
   #Delete files that should not be in the package
   if [ -f '.releaseignore' ]; then

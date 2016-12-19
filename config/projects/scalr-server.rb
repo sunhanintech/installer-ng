@@ -23,6 +23,7 @@ dependency 'mysql-gem'          # We use it in embedded chef-solo
 dependency 'safe_yaml-gem'      # Same as above
 
 # Software we need to run
+dependency 'python3'
 dependency 'mysql'
 dependency 'mysql-utilities'
 dependency 'memcached'

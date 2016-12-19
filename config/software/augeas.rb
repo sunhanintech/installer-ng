@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2014 Chef Software, Inc.
+# Copyright 2012-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,30 +15,30 @@
 # limitations under the License.
 #
 
-name "setuptools"
-default_version "32.0.0"
+name 'augeas'
+default_version '1.4.0'
 
-dependency "python"
+source url: "http://download.augeas.net/augeas-#{version}.tar.gz"
 
-#source url: "https://pypi.python.org/packages/source/s/setuptools/setuptools-#{version}.tar.gz"
-source url: "https://pypi.python.org/packages/dc/37/f01d823fd312ba8ea6c3aea906d2d6ac9e9e8bf9e7853e34f296e94b0d0d/setuptools-#{version}.tar.gz"
-
-version '0.7.7' do
-  source md5: '0d7bc0e1a34b70a97e706ef74aa7f37f'
-  license url: "https://bitbucket.org/pypa/setuptools/src/#{version}/setup.py?at=default#cl-138"
+version '1.4.0' do
+  source md5: 'a2536a9c3d744dc09d234228fe4b0c93'
 end
 
-version '32.0.0' do
-  source md5: 'e5f513a5b53e843b361d663feec4f5fa'
-  license path: "LICENSE"
-end
+dependency 'libxml2'
+dependency 'readline'
 
-relative_path "setuptools-#{version}"
+relative_path "augeas-#{version}"
 
+license path: 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "#{install_dir}/embedded/bin/python setup.py install" \
+  command './configure' \
           " --prefix=#{install_dir}/embedded", env: env
+
+  make "-j #{workers}", env: env
+  make "-j #{workers} install", env: env
+
 end
+
