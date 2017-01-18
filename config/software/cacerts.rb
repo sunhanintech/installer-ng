@@ -16,7 +16,12 @@
 
 name "cacerts"
 
-default_version "2016.01.20"
+default_version "2017.01.17"
+
+version "2017.01.17" do
+  source md5: "82f3e6f791a767a6c1d3bebdbc09d595"
+  source url: "https://raw.githubusercontent.com/bagder/ca-bundle/d9785b19b9030c1a7985b614eb2cac428b346c0d/ca-bundle.crt"
+end
 
 version "2016.01.20" do
   source md5: "36eee0e80373937dd90a9a334ae42817"
