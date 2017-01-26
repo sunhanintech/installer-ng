@@ -50,4 +50,7 @@ build do
           " --build #{build_dir}/pybuild" \
           ' --requirement ./requirements.txt', env: env
 
+  # Make sure that the permissions are correct on the cacert
+  command "chmod 644 #{install_dir}/embedded/lib/python2.7/site-packages/httplib2/cacerts.txt"
+
 end
