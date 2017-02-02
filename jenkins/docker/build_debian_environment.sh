@@ -27,5 +27,5 @@ pip install gitpython
 
 gem install package_cloud bundler berkshelf
 
-bundle install --gemfile=/Gemfile
+#bundle install --gemfile=/Gemfile
 
