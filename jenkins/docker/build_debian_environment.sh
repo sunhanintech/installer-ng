@@ -17,15 +17,15 @@ apt-get clean
 
 easy_install pip==9.0.1
 
+pip install gitpython
+
 # Install RVM
 curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.0
 
 source /usr/local/rvm/scripts/rvm
 
-pip install gitpython
-
 #gem install package_cloud bundler berkshelf
-gem install bundler berkshelf
+#gem install bundler berkshelf
 
-bundle install --gemfile=/Gemfile
+#bundle install --gemfile=/Gemfile
