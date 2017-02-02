@@ -25,7 +25,7 @@ source /usr/local/rvm/scripts/rvm
 
 pip install gitpython
 
-gem install package_cloud bundler berkshelf
+#gem install package_cloud bundler berkshelf
+gem install bundler berkshelf
 
-#bundle install --gemfile=/Gemfile
-
+bundle install --gemfile=/Gemfile
