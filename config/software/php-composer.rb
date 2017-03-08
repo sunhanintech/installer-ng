@@ -1,7 +1,11 @@
 name 'php-composer'
-default_version '1.0.0-alpha10'
+default_version '1.3.1'
 
 source url: "https://getcomposer.org/download/#{version}/composer.phar"
+
+version '1.3.1' do
+  source md5: '6b1bd542ae9fcf88948c4088cd883e78'
+end
 
 version '1.0.0-alpha10' do
   source md5: 'dea8681b6f54dca9bb3a5b7deb179cca'

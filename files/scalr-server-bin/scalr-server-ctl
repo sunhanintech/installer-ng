@@ -19,12 +19,12 @@ check_file () {
     /opt/scalr-server/embedded/bin/ruby -c /etc/scalr-server/$1 >> $TMPFILE 2>&1 || FAILED=1
 
     if [ $FAILED -eq 1 ]; then
-      echo "[ \033[31mFAILED\033[0m ]"
+      echo -e "[ \033[31mFAILED\033[0m ]"
       cat $TMPFILE
       rm -f $TMPFILE
       exit 1
     else
-      echo "[ \033[32mOK\033[0m ]"
+      echo -e "[ \033[32mOK\033[0m ]"
       rm -f $TMPFILE
     fi
 }

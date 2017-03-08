@@ -56,3 +56,64 @@ process_module 'supervisor', nil
 all_modules.each do |mod|
   process_module mod, 'post'
 end
+
+# Do re-branding if needed
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/js/extjs-5.0/theme/images/topmenu/scalr-logo.png" do
+  description "UI Branding (scalr-logo.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/scalr-logo.png') }
+  source "file:///etc/scalr-server/styles/scalr-logo.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/js/extjs-5.0/theme/images/topmenu/scalr-logo-retina.png" do
+  description "UI Branding (scalr-logo-retina.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/scalr-logo-retina.png') }
+  source "file:///etc/scalr-server/styles/scalr-logo-retina.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/images/main-logo.png" do
+  description "UI Branding (main-logo.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/main-logo.png') }
+  source "file:///etc/scalr-server/styles/main-logo.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/images/main-logo-retina.png" do
+  description "UI Branding (main-logo-retina.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/main-logo-retina.png') }
+  source "file:///etc/scalr-server/styles/main-logo-retina.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/images/main-logo-bg.png" do
+  description "UI Branding (main-logo-bg.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/main-logo-bg.png') }
+  source "file:///etc/scalr-server/styles/main-logo-bg.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/images/main-logo-bg-retina.png" do
+  description "UI Branding (main-logo-bg-retina.png)"
+  only_if { ::File.exist?('/etc/scalr-server/styles/main-logo-bg-retina.png') }
+  source "file:///etc/scalr-server/styles/main-logo-bg-retina.png"
+  owner 'scalr-app'
+  group 'scalr-app'
+  mode '0755'
+  action :create
+end

@@ -90,6 +90,20 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Move to the specified branch
   git reset --hard "origin/${SCALR_BRANCH}"
+
+  #Delete files that should not be in the package
+  if [ -f '.releaseignore' ]; then
+    cat .releaseignore | while read file; do
+
+      if [ -f ".$file" ]; then
+          rm ".$file"
+      elif [ -d ".$file" ]; then
+          rm -fr ".$file"
+      fi
+
+    done
+  fi
+
 fi
 
 #Read data from Scalr source code
