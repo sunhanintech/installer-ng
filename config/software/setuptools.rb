@@ -16,22 +16,26 @@
 #
 
 name "setuptools"
-default_version "0.7.7"
+default_version "33.1.1"
 
 dependency "python"
 
-source url: "https://pypi.python.org/packages/source/s/setuptools/setuptools-#{version}.tar.gz"
+source url: "https://github.com/pypa/setuptools/archive/v#{version}.tar.gz"
 
-version '0.7.7' do
-  source md5: '0d7bc0e1a34b70a97e706ef74aa7f37f'
-  license url: "https://bitbucket.org/pypa/setuptools/src/#{version}/setup.py?at=default#cl-138"
+version '33.1.1' do
+  source md5: '6f325e870730cd90f3ac9608cdf6a82f'
 end
+
+license path: 'LICENSE'
 
 relative_path "setuptools-#{version}"
 
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
+
+  command "#{install_dir}/embedded/bin/python bootstrap.py" \
+          " --prefix=#{install_dir}/embedded", env: env
 
   command "#{install_dir}/embedded/bin/python setup.py install" \
           " --prefix=#{install_dir}/embedded", env: env
