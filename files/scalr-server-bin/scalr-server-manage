@@ -2,7 +2,18 @@
 
 set -o errexit
 
+CTL="scalr-server-ctl"
+PYTHON="/opt/scalr-server/embedded/bin/python"
+
 conf="/opt/scalr-server/etc/supervisor/supervisord.conf"
+
+handle_error () {
+    echo "An error occurred. There might be a typo in your config file, or another issue."
+    echo "Run '${CTL} show-attributes' to get a stacktrace."
+    echo "If you can't solve the problem, file an issue on GitHub:"
+    echo "https://github.com/Scalr/installer-ng/issues/"
+    exit 1
+}
 
 if [ ! -f "$conf" ]; then
     echo "Not available yet!"
@@ -10,7 +21,22 @@ if [ ! -f "$conf" ]; then
     exit 1
 fi
 
-if [ "x$1" = "xrestart" ] && [ "x$2" = "xall" ]; then
+if [ "x$1" = "x" ]; then
+
+    echo 'scalr-server-manage status               - Show the status of all Scalr components'
+    echo 'scalr-server-manage stop all             - Stop all Scalr components'
+    echo 'scalr-server-manage start all            - Start all Scalr components'
+    echo 'scalr-server-manage restart all          - Restart all Scalr components'
+    echo 'scalr-server-manage stop %component%     - Stop specified Scalr component'
+    echo 'scalr-server-manage start %component%    - Start specified Scalr component'
+    echo 'scalr-server-manage restart %component%  - Restart specified Scalr component'
+    echo 'scalr-server-manage agent-repo           - Control the embedded repository component'
+
+elif [ "x$1" = "xstatus" ]; then
+    /opt/scalr-server/embedded/bin/supervisorctl \
+    -c "$conf"
+
+elif [ "x$1" = "xrestart" ] && [ "x$2" = "xall" ]; then
     for service in $(scalr-server-manage status|awk '{print $1}'); do
         scalr-server-manage restart "${service}"
     done
@@ -19,7 +45,6 @@ elif [ "x$1" = "xrestart" ]; then
     scalr-server-manage start "$2"
 elif [ "x$1" = "xstop" ]; then
     echo -n "Stop $2 service(s) ... "
-
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \
     "stop $2" > /dev/null
@@ -37,7 +62,10 @@ elif [ "x$1" = "xstart" ]; then
 elif [ "x$1" = "xsync-shared-roles" ]; then
     echo "Syncing shared roles ... "
     /opt/scalr-server/embedded/bin/php /opt/scalr-server/embedded/scalr/app/tools/sync_shared_roles.php
-    echo ""
+    echo
+
+elif [ "x$1" = "xagent-repo" ]; then
+    /opt/scalr-server/bin/scalr-agent-repo "$@"
 else
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \

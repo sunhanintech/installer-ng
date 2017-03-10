@@ -31,6 +31,7 @@ build do
 
   command './configure' \
           ' --disable-static' \
+          " --libdir=#{install_dir}/embedded/lib" \
           " --prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env

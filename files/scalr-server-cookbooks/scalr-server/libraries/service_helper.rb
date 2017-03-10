@@ -283,6 +283,10 @@ module Scalr
         return false
       end
 
+      if mod == :repos
+        return node[:scalr_server][mod][:enable]
+      end
+
       # HTTPD is enabled if we have web or proxy or repos
       if mod == :httpd
         return enable_module?(node, :web) || enable_module?(node, :proxy) || enable_module?(node, :repos)
