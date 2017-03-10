@@ -2,7 +2,18 @@
 
 set -o errexit
 
+CTL="scalr-server-ctl"
+PYTHON="/opt/scalr-server/embedded/bin/python"
+
 conf="/opt/scalr-server/etc/supervisor/supervisord.conf"
+
+handle_error () {
+    echo "An error occurred. There might be a typo in your config file, or another issue."
+    echo "Run '${CTL} show-attributes' to get a stacktrace."
+    echo "If you can't solve the problem, file an issue on GitHub:"
+    echo "https://github.com/Scalr/installer-ng/issues/"
+    exit 1
+}
 
 if [ ! -f "$conf" ]; then
     echo "Not available yet!"
@@ -37,7 +48,138 @@ elif [ "x$1" = "xstart" ]; then
 elif [ "x$1" = "xsync-shared-roles" ]; then
     echo "Syncing shared roles ... "
     /opt/scalr-server/embedded/bin/php /opt/scalr-server/embedded/scalr/app/tools/sync_shared_roles.php
-    echo ""
+    echo
+
+elif [ "x$1" = "xagent-repo" ]; then
+
+    echo 'Reading Scalr configuration...'
+    ATTRS=$("${CTL}" show-attributes 2>/dev/null)
+    if [ $? -eq 1 ]; then
+        handle_error
+    fi
+
+    $(printf "%s" "${ATTRS}" | "${PYTHON}" -c '
+import sys
+import json
+
+attrs = json.load(sys.stdin)
+
+print "export SCALR_ENDPOINT=" + attrs["routing"]["endpoint_host"] + "\n"
+print "export SCALR_REPO_ROOT=" + attrs["repos"]["root"]
+')
+
+    if [ "x$2" = "xstatus" ]; then
+
+        echo 'Fetching data from remote server...'
+
+        declare -A REMOTE
+        while read line; do
+            json=$(/opt/scalr-server/embedded/bin/curl -s "http://snapshot.repo.scalr.net/scalarizr/current/win/${line}/index.json")
+            version=$(echo $json | grep -Po '(?<="version": ")[^"]*')
+            REMOTE[$line]=$version
+        done < <(/opt/scalr-server/embedded/bin/curl -s http://snapshot.repo.scalr.net/scalarizr/current/win/ | grep -o '<a href=['"'"'"][^"'"'"']*['"'"'"]' | sed -e 's/^<a href=["'"'"']//' -e 's/["'"'"']$//' | sed -n '1!p' | sed 's/\///g')
+
+        declare -A LOCAL
+        while read line; do
+            version=$(basename $(cd -P "$SCALR_REPO_ROOT/current/win/latest" && cd .. && pwd))
+            LOCAL[$line]=$version
+        done < <(ls "$SCALR_REPO_ROOT/current/win")
+
+        while read line; do
+
+            echo -n "$line"
+            if [ -d "$SCALR_REPO_ROOT/$line" ]; then
+                echo -n " (pulled)"
+            fi
+
+            for key in "${!LOCAL[@]}"; do
+                if [ ! "${LOCAL[$key]}" = "$line" ]; then
+                    continue
+                fi
+
+                echo -n " [local/$key]"
+            done
+
+            for key in "${!REMOTE[@]}"; do
+                if [ ! "${REMOTE[$key]}" = "$line" ]; then
+                    continue
+                fi
+
+                echo -n " [remote/$key]"
+            done
+
+            echo
+
+        done < <(/opt/scalr-server/embedded/bin/curl -s http://snapshot.repo.scalr.net/scalarizr/all/ | grep -o '<a href=['"'"'"][^"'"'"']*['"'"'"]' | sed -e 's/^<a href=["'"'"']//' -e 's/["'"'"']$//' | sed -n '1!p' | sed 's/\///g')
+
+    elif [ "x$2" = "xpull" ]; then
+        if [ "x$3" = "x" ]; then
+            echo "Please specify remote version to pull. Use 'scalr-server-manage agent-repo status' to list available versions."
+            exit 1
+        fi
+
+        /opt/scalr-server/embedded/bin/wget -r -nH -np --cut-dirs=2 --reject html -P "$SCALR_REPO_ROOT/" http://snapshot.repo.scalr.net/scalarizr/all/$3/
+
+    elif [ "x$2" = "xdelete" ]; then
+
+        if [ "x$3" = "x" ]; then
+            echo "Please specify local version to delete. Use 'scalr-server-manage agent-repo status' to list available versions."
+            exit 1
+        fi
+
+        while read line; do
+            version=$(basename $(cd -P "$SCALR_REPO_ROOT/current/win/latest" && cd .. && pwd))
+            if [ "$version" = "$3" ]; then
+                echo "Unable to delete local version $version as it is used by local repo '$line'"
+                exit 1
+            fi
+        done < <(ls "$SCALR_REPO_ROOT/current/win")
+
+        rm -fr "$SCALR_REPO_ROOT/$3"
+        echo "Version $3 has been deleted"
+
+    elif [ "x$2" = "xlink" ]; then
+        if [ "x$3" = "x" ] || [ "x$4" = "x" ]; then
+            echo "Please specify local repo name and local version to link to. Use 'scalr-server-manage agent-repo status' to list available versions."
+            exit 1
+        fi
+
+        if [ ! -d "$SCALR_REPO_ROOT/$4" ]; then
+            echo "Specified version does not exist locally. Please pull the needed version before linking."
+            exit 1
+        fi
+
+        ln -fs "$SCALR_REPO_ROOT/$4/apt-plain" "$SCALR_REPO_ROOT/current/apt-plain/$3"
+        ln -fs "$SCALR_REPO_ROOT/$4/rpm" "$SCALR_REPO_ROOT/current/rpm/$3"
+        ln -fs "$SCALR_REPO_ROOT/$4/win" "$SCALR_REPO_ROOT/current/win/$3"
+
+        echo "Repo '$3' is now linked to version $4"
+        echo ''
+        echo 'Example scalr-server.rb config snippet to enable your repo:'
+        echo ''
+        echo 'app[:configuration] = { '
+        echo '  "scalr" => {'
+        echo '    "scalarizr_update" => {'
+        echo '      "mode" => "solo",'
+        echo "      \"default_repo\" => \"$3\","
+        echo '      "repos" => {'
+        echo "        \"$3\" => {"
+        echo "          \"rpm_repo_url\" => \"http://$SCALR_ENDPOINT/repos/rpm/$3/rhel/\$releasever/\$basearch\","
+        echo "          \"deb_repo_url\" => \"http://$SCALR_ENDPOINT/repos/apt-plain $3/\","
+        echo "          \"win_repo_url\" => \"http://$SCALR_ENDPOINT/repos/win/$3\""
+        echo '        }'
+        echo '      }'
+        echo '    }'
+        echo '  }'
+        echo '}'
+
+    else
+        echo 'scalr-server-manage agent-repo status                            - Shows available remote and local repos'
+        echo 'scalr-server-manage agent-repo pull %version%                    - Downloads specified remote repo'
+        echo 'scalr-server-manage agent-repo delete %version%                  - Delete specified local version'
+        echo 'scalr-server-manage agent-repo link %local_name% %local_version% - Links specified local repo name to existing local version'
+    fi
+
 else
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \
