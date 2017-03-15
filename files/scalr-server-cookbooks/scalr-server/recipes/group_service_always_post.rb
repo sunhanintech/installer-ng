@@ -16,7 +16,7 @@ enabled_services(node, :python).each do |svc|
                     ' --verbosity=INFO' \
                     " #{svc[:service_extra_args]}" \
                     # Note: 'start' is added by the proxy.
-    stdout_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.log"
+    stdout_logfile  "NONE"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/#{name}.err"
     autostart       true
     action          [:enable, :start]
