@@ -27,7 +27,7 @@ DOCKER_ID=$(docker run \
 -v ${DIRPATH}:/package \
 -v ${WORKSPACE}:/workspace \
 -e PKG_FILE=/package/${FILENAME} \
-"${DOCKER_IMG}" "/usr/sbin/init")
+"${DOCKER_IMG}" "init")
 
 # Run test
 docker exec ${DOCKER_ID} "/workspace/installer-ng/jenkins/docker/test_package.sh"
