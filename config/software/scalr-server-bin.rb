@@ -24,6 +24,8 @@ source path: File.expand_path('files/scalr-server-bin', Omnibus::Config.project_
 
 license path: 'LICENSE'
 
+dependency 'wget'
+
 build do
   # Shell commands imported from the repo
   command "rsync -a ./ #{install_dir}/bin"
