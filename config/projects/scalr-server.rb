@@ -47,6 +47,7 @@ dependency 'scalr-app'
 # App management
 dependency 'scalr-server-cookbooks'   # Cookbooks to configure Scalr
 dependency 'scalr-server-bin'         # CLIs
+dependency 'scalr-plugins-cli'
 
 # Version manifest file
 dependency 'finalize'

@@ -20,6 +20,7 @@
 
 ProxyPass /graphics           balancer://graphics/
 ProxyPass /load_statistics    balancer://plotter/
+ProxyPass /plugins            balancer://wsgi/
 ProxyPass /                   balancer://app/
 
 # Add X-Forwarded-For header, but discard anything coming from upstream.

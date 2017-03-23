@@ -216,6 +216,17 @@ default[:scalr_server][:proxy][:ssl_key_path] = nil   # Path to the SSL key that
 default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6270']
 default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6271']
 default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
+default[:scalr_server][:proxy][:wsgi_upstreams] = ['127.0.0.1:6300']
+
+
+########
+# WSGI #
+########
+
+# The host and port the wsgi should bind to
+default[:scalr_server][:wsgi][:enable] = false
+default[:scalr_server][:wsgi][:bind_host] = '0.0.0.0'
+default[:scalr_server][:wsgi][:bind_port] = 6300  # Setting this to anything but 80 isn't really supported at this time.
 
 
 #######
