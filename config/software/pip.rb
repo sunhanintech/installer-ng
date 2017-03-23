@@ -25,7 +25,6 @@ dependency "python3"
 #source url: "https://pypi.python.org/packages/source/p/pip/pip-#{version}.tar.gz"
 source url: "https://pypi.python.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-#{version}.tar.gz"
 
-
 version '1.3' do
   source md5: '918559b784e2aca9559d498050bb86e7'
 end
