@@ -33,10 +33,10 @@ if [ -z ${CRYPTO_KEY+x} ]; then
   fi
 fi
 
-if [ -z ${SCALR_CONFIG+x} ]; then
-  read -p "Enter the path to scalr-server.rb to use (leave empty for /opt/scalr-installer/scalr-server.rb)? # " SCALR_CONFIG
-  if [ -z ${SCALR_CONFIG} ]; then
-    SCALR_CONFIG="/opt/scalr-installer/scalr-server.rb"
+if [ -z ${TEST_CONFIG+x} ]; then
+  read -p "Enter the path to scalr-server.rb to use (leave empty for /opt/scalr-installer/scalr-server.rb)? # " TEST_CONFIG
+  if [ -z ${TEST_CONFIG} ]; then
+    TEST_CONFIG="/opt/scalr-installer/scalr-server.rb"
   fi
 fi
 
@@ -69,7 +69,7 @@ sed -i "/Install scalr package/a ADD scalr.deb /scalr.deb\nRUN dpkg -i /scalr.de
 cp ${GITHUB_SECRET} ./additions/root/.ssh/scalr
 cp ${CRYPTO_KEY} ./.cryptokey
 cp ${PKG_FILE} ./scalr.deb
-cp ${SCALR_CONFIG} ./scalr-server.rb
+cp ${TEST_CONFIG} ./scalr-server.rb
 
 IMAGE_TAG="${SCALR_BRANCH}"
 if [ "${IMAGE_TAG}" = "master" ]; then
