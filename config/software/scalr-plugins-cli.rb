@@ -17,7 +17,7 @@
 # NOLICENSE (Includes itself in the Python license report)
 
 name 'scalr-plugins-cli'
-default_version 'v0.0.2'
+default_version 'v0.0.3'
 
 dependency 'python'
 dependency 'pip'
