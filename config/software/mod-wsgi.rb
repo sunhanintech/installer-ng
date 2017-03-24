@@ -1,7 +1,7 @@
 name 'mod-wsgi'
 default_version '4.5.15'
 
-source url: "https://codeload.github.com/GrahamDumpleton/mod_wsgi/tar.gz/#{version}"
+source url: "https://github.com/GrahamDumpleton/mod_wsgi/archive/#{version}.tar.gz"
 
 version '4.5.15' do
     source md5: 'abebfc30a9d161ded03c458993f6be3e'
