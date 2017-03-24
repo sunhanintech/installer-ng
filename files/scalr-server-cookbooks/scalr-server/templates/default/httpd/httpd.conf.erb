@@ -204,10 +204,10 @@ KeepAliveTimeout 30
 <% if enable_module?(node, :wsgi) %>
     LoadModule wsgi_module embedded/modules/mod_wsgi.so
     Listen <%= node[:scalr_server][:wsgi][:bind_host] %>:<%= node[:scalr_server][:wsgi][:bind_port] %>
-    WSGISocketPrefix <%= run_dir_for node, wsgi %>
+    WSGISocketPrefix <%= run_dir_for node, 'wsgi' %>
     <VirtualHost <%= node[:scalr_server][:wsgi][:bind_host] %>:<%= node[:scalr_server][:wsgi][:bind_port] %>>
-      DocumentRoot <%= var_dir_for node, wsgi %>
-      <Directory <%= var_dir_for node, wsgi %>>
+      DocumentRoot <%= data_dir_for node, 'wsgi' %>
+      <Directory <%= data_dir_for node, 'wsgi' %>>
         <Files wsgi.py>
           Require all granted
         </Files>
