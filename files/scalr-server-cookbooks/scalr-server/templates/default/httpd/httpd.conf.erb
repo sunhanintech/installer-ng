@@ -192,4 +192,31 @@ KeepAliveTimeout 30
     <% end %>
     </Proxy>
 
+    <Proxy balancer://wsgi>
+    <% node[:scalr_server][:proxy][:wsgi_upstreams].each do |upstream| %>
+        BalancerMember http://<%= upstream %> connectiontimeout=10 timeout=90
+    <% end %>
+    </Proxy>
+
+<% end %>
+
+# WSGI #
+<% if enable_module?(node, :wsgi) %>
+    LoadModule wsgi_module embedded/modules/mod_wsgi.so
+    Listen <%= node[:scalr_server][:wsgi][:bind_host] %>:<%= node[:scalr_server][:wsgi][:bind_port] %>
+    WSGISocketPrefix <%= run_dir_for node, 'wsgi' %>
+    <VirtualHost <%= node[:scalr_server][:wsgi][:bind_host] %>:<%= node[:scalr_server][:wsgi][:bind_port] %>>
+      DocumentRoot <%= data_dir_for node, 'wsgi' %>
+      <Directory <%= data_dir_for node, 'wsgi' %>>
+        <Files wsgi.py>
+          Require all granted
+        </Files>
+      </Directory>
+      ErrorLog  <%= log_dir_for node, 'httpd' %>/web.wsgi.error.log
+      <IfModule log_config_module>
+            CustomLog <%= log_dir_for node, 'httpd' %>/web.wsgi.access.log combined
+      </IfModule>
+      IncludeOptional <%= etc_dir_for(node, 'httpd') %>/plugins/*/*.conf
+      <%= node[:scalr_server][:wsgi][:apache_config] %>
+    </VirtualHost>
 <% end %>

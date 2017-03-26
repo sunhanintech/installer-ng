@@ -19,13 +19,18 @@ default_version '3.9.1'
 
 dependency 'libpopt'
 
-source url: "https://fedorahosted.org/releases/l/o/logrotate/logrotate-#{version}.tar.gz"
+# the following line should replace the uncommented one the day we switch to a more recent version:
+#source url: "https://github.com/logrotate/logrotate/releases/download/#{version}/logrotate-#{version}.tar.gz"
+# the 3.9.1 URL is left hardcoded because the 3.9.1 release has a dumb version tag with dashes on github but newer ones use the format above
+source url: "https://github.com/logrotate/logrotate/archive/r3-9-1.tar.gz"
 
 version '3.9.1' do
-  source md5: '4492b145b6d542e4a2f41e77fa199ab0'
+  source md5: '8572b7c2cf9ade09a8a8e10098500fb3'
 end
 
-relative_path "logrotate-#{version}"
+# Same as before
+#relative_path "logrotate-#{version}"
+relative_path "logrotate-r3-9-1"
 
 license path: 'COPYING'
 

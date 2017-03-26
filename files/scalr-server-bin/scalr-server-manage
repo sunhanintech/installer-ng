@@ -38,6 +38,10 @@ elif [ "x$1" = "xsync-shared-roles" ]; then
     echo "Syncing shared roles ... "
     /opt/scalr-server/embedded/bin/php /opt/scalr-server/embedded/scalr/app/tools/sync_shared_roles.php
     echo ""
+
+elif [ "x$1" = "xplugins" ]; then
+    /opt/scalr-server/embedded/bin/scalr-server-plugins "${@:2}"
+
 else
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf" \

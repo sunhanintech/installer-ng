@@ -19,7 +19,7 @@ name "libuuid"
 default_version "2.21"
 
 # We use the version in util-linux, and only build the libuuid subdirectory
-source url: "ftp://ftp.kernel.org/pub/linux/utils/util-linux/v#{version}/util-linux-#{version}.tar.gz"
+source url: "https://www.kernel.org/pub/linux/utils/util-linux/v#{version}/util-linux-#{version}.tar.gz"
 
 version '2.21' do
   source md5: "4222aa8c2a1b78889e959a4722f1881a"
