@@ -48,6 +48,7 @@ if enabled_services(node, :php).any?
                     " #{scalr_bundle_path node}/app/cron/service.php"
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.log"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/zmq_service.err"
+    environment     'BOTO_PATH' => ''
     autostart       true
     user            node[:scalr_server][:app][:user]
     action          [:enable, :start]
