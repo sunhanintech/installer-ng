@@ -18,6 +18,7 @@
 </LocationMatch>
 <% end %>
 
+ProxyPass /repos              balancer://repos/
 ProxyPass /graphics           balancer://graphics/
 ProxyPass /load_statistics    balancer://plotter/
 ProxyPass /                   balancer://app/
