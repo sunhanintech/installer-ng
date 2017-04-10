@@ -216,7 +216,7 @@ default[:scalr_server][:proxy][:ssl_key_path] = nil   # Path to the SSL key that
 default[:scalr_server][:proxy][:app_upstreams] = ['127.0.0.1:6270']
 default[:scalr_server][:proxy][:graphics_upstreams] = ['127.0.0.1:6271']
 default[:scalr_server][:proxy][:plotter_upstreams] = ['127.0.0.1:6272']
-
+default[:scalr_server][:proxy][:repos_upstreams] = ['127.0.0.1:6273']
 
 #######
 # Web #
@@ -240,6 +240,20 @@ default[:scalr_server][:web][:app_bind_port] = 6270
 default[:scalr_server][:web][:graphics_bind_host] = '127.0.0.1'
 default[:scalr_server][:web][:graphics_bind_port] = 6271
 
+
+#########
+# repos #
+#########
+
+# Whether to enable the Scalr agent repos.
+default[:scalr_server][:repos][:enable] = false
+
+# The host and port the repos should be served on. Those settings should match proxy[:repos_upstreams]
+default[:scalr_server][:repos][:bind_host] = '127.0.0.1'
+default[:scalr_server][:repos][:bind_port] = 6273
+
+# The root for the repo files
+default[:scalr_server][:repos][:root] = "#{node.scalr_server.install_root}/var/lib/repos"
 
 #########
 # MySQL #
