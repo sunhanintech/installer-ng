@@ -74,6 +74,7 @@ if node[:scalr_server][:service][:enable] and not node[:scalr_server][:service][
     stdout_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.log"
     stderr_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.err"
     autostart       true
+    environment     'PYTHONPATH' => "#{node[:scalr_server][:install_root]}/embedded/scalr/app/python/fatmouse"
     user            node[:scalr_server][:app][:user]
     action          [:enable, :start]
     subscribes      :restart, 'file[scalr_config]' if service_is_up?(node, 'license-manager')
