@@ -77,7 +77,7 @@ if [ "${IMAGE_TAG}" = "master" ]; then
 fi
 
 IMAGE_TAG=$(echo "${IMAGE_TAG}" | awk '{print tolower($0)}' | sed -e 's/[^a-z0-9]/-/g')
-IMAGE_TAG="gcr.io/scalr-labs/scalr/${SCALR_BRANCH_TAG}/scalr-container:latest"
+IMAGE_TAG="gcr.io/scalr-labs/scalr/${IMAGE_TAG}/scalr-container:latest"
 
 TEMP_IMAGE="scalr-dev-engineering"
 IMAGE_ID=$(docker images | grep -E "^${TEMP_IMAGE}" | awk -e '{print $3}')
