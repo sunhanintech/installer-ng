@@ -64,3 +64,20 @@ else
     action service_exists?(node, 'zmq_service') ? [:stop, :disable] : [:disable]
   end
 end
+
+# Always enable license manager
+supervisor_service "license-manager" do
+  description     "License manager"
+  command         "#{node[:scalr_server][:install_root]}/embedded/bin/python3" \
+                  ' -m server.license_manager.app'
+  stdout_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.log"
+  stderr_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.err"
+  autostart       true
+  user            node[:scalr_server][:app][:user]
+  action          [:enable, :start]
+  subscribes      :restart, 'file[scalr_config]' if service_is_up?(node, 'license-manager')
+  subscribes      :restart, 'file[scalr_code]' if service_is_up?(node, 'license-manager')
+  subscribes      :restart, 'file[scalr_cryptokey]' if service_is_up?(node, 'license-manager')
+  subscribes      :restart, 'file[scalr_id]' if service_is_up?(node, 'license-manager')
+end
+
