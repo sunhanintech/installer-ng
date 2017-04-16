@@ -168,4 +168,5 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
+-e CACHE_PATH="${CACHE_PATH}" \
 "${DOCKER_IMG}" "${WORKSPACE}/installer-ng/jenkins/docker/omnibus_build.sh"
