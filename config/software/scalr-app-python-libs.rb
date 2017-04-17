@@ -35,7 +35,6 @@ dependency 'libyaml'
 
 # Separately installed dep
 dependency 'python-m2crypto'
-dependency 'python-mitmproxy'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
@@ -55,7 +54,7 @@ build do
 
   command "#{install_dir}/embedded/bin/pip3 install" \
           " --build #{build_dir}/pybuild" \
-          ' --requirement ./server.txt', env: env
+          ' --requirement ./server-all.txt', env: env
 
   # Make sure that the permissions are correct on the cacert
   command "chmod 644 #{install_dir}/embedded/lib/python2.7/site-packages/httplib2/cacerts.txt"

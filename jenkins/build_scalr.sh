@@ -104,7 +104,7 @@ if [ ! -z ${SCALR_BRANCH} ]; then
   git submodule update --init --recursive
 
   #Fetch python requirements file
-  cp ./app/python/fatmouse/infra/requirements/server.txt ./app/python/
+  cp ./app/python/fatmouse/infra/requirements/server-all.txt ./app/python/
 
   #Delete files that should not be in the package
   if [ -f '.releaseignore' ]; then
@@ -143,12 +143,6 @@ sed -i "s|__SCALR_REQUIREMENTS_PATH__|${WORKSPACE}/${SCALR_REPO}/app/python|g" "
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-cookbooks.rb"
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-bin.rb"
 
-#This one seems to kill the cache :(
-#sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
-
-#Dont cache scalr-app because of php-composer
-echo "#NOCACHE-$(date +%s)" >> "./config/software/scalr-app.rb"
-
 #Get UID of jenkins user
 JENKINS_UID=1
 if id "jenkins" >/dev/null 2>&1; then
@@ -157,10 +151,8 @@ fi
 
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
--v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
--v ${FULL_CACHE_DIR}:${FULL_CACHE_DIR} \
--v ${WORKSPACE}/package:${WORKSPACE}/package \
--v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
+-v ${WORKSPACE}:${WORKSPACE} \
+-v ${CACHE_PATH}:${CACHE_PATH} \
 -e OMNIBUS_BASE_DIR=${FULL_CACHE_DIR} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \

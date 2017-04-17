@@ -64,8 +64,8 @@ if enabled_services(node, :php).any?
     description     "License Manager"
     command         "#{node[:scalr_server][:install_root]}/embedded/bin/python3" \
                     ' -m server.license_manager.app'
-    stdout_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.log"
-    stderr_logfile  "#{log_dir_for node, 'supervisor'}/license-manager.err"
+    stdout_logfile  "#{log_dir_for node, 'service'}/license-manager.log"
+    redirect_stderr true
     autostart       true
     environment     'PYTHONPATH' => "#{node[:scalr_server][:install_root]}/embedded/scalr/app/python/fatmouse"
     user            node[:scalr_server][:app][:user]
