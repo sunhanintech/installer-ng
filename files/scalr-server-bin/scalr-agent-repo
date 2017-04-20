@@ -1,0 +1,281 @@
+#!/bin/bash
+
+set -o errexit
+
+CTL="scalr-server-ctl"
+PYTHON="/opt/scalr-server/embedded/bin/python"
+
+function getDirectories {
+    /opt/scalr-server/embedded/bin/curl -s "$1" | grep -o '<a href=['"'"'"][^"'"'"']*['"'"'"]' | sed -e 's/^<a href=["'"'"']//' -e 's/["'"'"']$//' | sed -n '1!p' | sed 's/\///g'
+}
+
+echo 'Reading Scalr configuration...'
+
+ATTRS=$("${CTL}" show-attributes 2>/dev/null)
+if [ $? -eq 1 ]; then
+    echo "An error occurred. There might be a typo in your config file, or another issue."
+    echo "Run '${CTL} show-attributes' to get a stacktrace."
+    echo "If you can't solve the problem, file an issue on GitHub:"
+    echo "https://github.com/Scalr/installer-ng/issues/"
+    exit 1
+fi
+
+$(printf "%s" "${ATTRS}" | "${PYTHON}" -c '
+import sys
+import json
+
+attrs = json.load(sys.stdin)
+
+print "export SCALR_REPO_ENABLED=" + str(int(attrs["repos"]["enable"])) + "\n"
+print "export SCALR_ENDPOINT=" + attrs["routing"]["endpoint_host"] + "\n"
+print "export SCALR_REPO_ROOT=" + attrs["repos"]["root"]
+')
+
+if [ "$SCALR_REPO_ENABLED" = "0" ]; then
+    echo "Please enable the repo component before using this tool."
+    exit 1
+fi
+
+if [ "x$2" = "xstatus" ]; then
+
+    echo 'Fetching data from remote server...'
+
+    declare -A REMOTE
+    while read line; do
+        json=$(/opt/scalr-server/embedded/bin/curl -s "http://snapshot.repo.scalr.net/scalarizr/current/win/${line}/index.json")
+        version=$(echo $json | grep -Po '(?<="version": ")[^"]*')
+        REMOTE[$line]=$version
+    done < <(getDirectories 'http://snapshot.repo.scalr.net/scalarizr/current/win/')
+
+    declare -A LOCAL
+    if [ -d "$SCALR_REPO_ROOT/current/win" ]; then
+        while read line; do
+            version=$(basename $(cd -P "$SCALR_REPO_ROOT/current/win/$line" && cd .. && pwd))
+            LOCAL[$line]=$version
+        done < <(ls "$SCALR_REPO_ROOT/current/win")
+    fi
+
+    declare -A REMOTE_MINOR
+    while read line; do
+
+        IFS='.' read -ra PARTS <<< "$line"
+
+        BIG="${PARTS[0]}.${PARTS[1]}"
+        SMALL="${PARTS[2]}"
+
+        if [ ! ${REMOTE_MINOR[$BIG]+x} ]; then
+            REMOTE_MINOR[$BIG]=$SMALL
+        else
+            if [ "$SMALL" > "${REMOTE_MINOR[$BIG]}" ]; then
+                REMOTE_MINOR[$BIG]=$SMALL
+            fi
+        fi
+
+    done < <(getDirectories 'http://snapshot.repo.scalr.net/scalarizr/all/')
+
+    declare -a REMOTE_FILTER
+    for i in "${!REMOTE_MINOR[@]}"; do
+        REMOTE_FILTER+=("$i.${REMOTE_MINOR[$i]}")
+    done
+
+    IFS=$'\n' REMOTE_SORTED=($(sort -V <<<"${REMOTE_FILTER[*]}"))
+
+    GREEN=${REMOTE_SORTED[${#REMOTE_SORTED[@]}-2]}
+    YELLOW=${REMOTE_SORTED[${#REMOTE_SORTED[@]}-4]}
+
+    echo 'Remote versions [linked repo]:'
+
+    for line in "${REMOTE_SORTED[@]}"; do
+
+        echo -n "$line"
+
+        for key in "${!REMOTE[@]}"; do
+            if [ ! "${REMOTE[$key]}" = "$line" ]; then
+                continue
+            fi
+
+            if [ "$GREEN" = $(echo -e "$GREEN\n$line" | sort -V | head -n1) ]; then
+                echo -ne " [\033[32m$key\033[0m]"
+            elif [ "$YELLOW" = $(echo -e "$YELLOW\n$line" | sort -V | head -n1) ]; then
+                echo -ne " [\033[33m$key\033[0m]"
+            else
+                echo -ne " [\033[31m$key\033[0m]"
+            fi
+        done
+
+        echo
+
+    done
+
+    echo
+
+    echo 'Local versions [linked repo]:'
+
+    declare -a OLD
+    FOUND=0
+    while read line; do
+        FOUND=$((FOUND+1))
+        echo -n "$line"
+
+        for key in "${!LOCAL[@]}"; do
+            if [ ! "${LOCAL[$key]}" = "$line" ]; then
+                continue
+            fi
+
+            if [ "$GREEN" = $(echo -e "$GREEN\n$line" | sort -V | head -n1) ]; then
+                echo -ne " [\033[32m$key\033[0m]"
+            elif [ "$YELLOW" = $(echo -e "$YELLOW\n$line" | sort -V | head -n1) ]; then
+                echo -ne " [\033[33m$key\033[0m]"
+            else
+                echo -ne " [\033[31m$key\033[0m]"
+                OLD+=$key
+            fi
+        done
+
+        echo
+
+    done < <(ls "$SCALR_REPO_ROOT" | grep -v 'current')
+
+    if [ "$FOUND" -eq 0 ]; then
+        echo
+        echo -e "\033[31mNo local versions where found. Use 'scalr-server-manage agent-repo pull %version%' to download.\033[0m"
+    fi
+
+    if [ "${#LOCAL[@]}" -eq 0 ]; then
+        echo
+        echo -e "\033[31mNo local repos where found. Use 'scalr-server-manage agent-repo link %name% %version%' to create.\033[0m"
+    fi
+
+    if [ ${#OLD[@]} -gt 0 ]; then
+        echo -e "\033[31m"
+        echo 'Some local repos currently links to very old versions of Scalarizr, which might cause unexpected compatibility issues.'
+        echo -n 'Please check the following local repos:'
+        for key in "${OLD[@]}"; do
+            echo -n " [$key]"
+        done
+        echo -e "\033[0m"
+    fi
+
+elif [ "x$2" = "xpull" ]; then
+    if [ "x$3" = "x" ]; then
+        echo "Please specify remote version to pull. Use 'scalr-server-manage agent-repo status' to list available versions."
+        exit 1
+    fi
+
+    PULL="$3"
+    while read line; do
+        json=$(/opt/scalr-server/embedded/bin/curl -s "http://snapshot.repo.scalr.net/scalarizr/current/win/${line}/index.json")
+        version=$(echo $json | grep -Po '(?<="version": ")[^"]*')
+        if [ "$PULL" = "$line" ]; then
+            PULL=$version
+            break
+        fi
+    done < <(getDirectories 'http://snapshot.repo.scalr.net/scalarizr/current/win/')
+
+    echo -n "Pulling $PULL RPM packages... "
+    /opt/scalr-server/embedded/bin/wget -q -r -nH -np --cut-dirs=6 --reject html -P "$SCALR_REPO_ROOT/$PULL/rpm/rhel/5/" http://snapshot.repo.scalr.net/scalarizr/all/$PULL/rpm/rhel/5/
+
+    BASE=5
+    VERSION=$(echo "$PULL" | sed 's/\.//g')
+    if [ "$VERSION" -gt "536" ]; then
+        /opt/scalr-server/embedded/bin/wget -q -r -nH -np --cut-dirs=6 --reject html -P "$SCALR_REPO_ROOT/$PULL/rpm/rhel/6/" http://snapshot.repo.scalr.net/scalarizr/all/$PULL/rpm/rhel/6/
+        BASE=6
+    else
+        ln -s "$SCALR_REPO_ROOT/$PULL/rpm/rhel/5" "$SCALR_REPO_ROOT/$PULL/rpm/rhel/6"
+    fi
+
+    ln -s "$SCALR_REPO_ROOT/$PULL/rpm/rhel/6" "$SCALR_REPO_ROOT/$PULL/rpm/rhel/7"
+    ln -s "$SCALR_REPO_ROOT/$PULL/rpm/rhel/5" "$SCALR_REPO_ROOT/$PULL/rpm/rhel/5Server"
+
+    while read line; do
+        if [ -d "$SCALR_REPO_ROOT/$PULL/rpm/rhel/${line}" ]; then
+            continue
+        fi
+
+        ln -s "$SCALR_REPO_ROOT/$PULL/rpm/rhel/${BASE}" "$SCALR_REPO_ROOT/$PULL/rpm/rhel/${line}"
+    done < <(getDirectories "http://snapshot.repo.scalr.net/scalarizr/all/$PULL/rpm/rhel/")
+
+    echo -e "[ \033[32mDONE\033[0m ]"
+
+    echo -n "Pulling $PULL DEB packages... "
+    /opt/scalr-server/embedded/bin/wget -q -r -nH -np --cut-dirs=4 --reject html -P "$SCALR_REPO_ROOT/$PULL/apt-plain/" http://snapshot.repo.scalr.net/scalarizr/all/$PULL/apt-plain/
+    echo -e "[ \033[32mDONE\033[0m ]"
+
+    echo -n "Pulling $PULL WIN packages... "
+    /opt/scalr-server/embedded/bin/wget -q -r -nH -np --cut-dirs=4 --reject html -P "$SCALR_REPO_ROOT/$PULL/win/" http://snapshot.repo.scalr.net/scalarizr/all/$PULL/win/
+    echo -e "[ \033[32mDONE\033[0m ]"
+
+
+elif [ "x$2" = "xdelete" ]; then
+
+    if [ "x$3" = "x" ]; then
+        echo "Please specify local version to delete. Use 'scalr-server-manage agent-repo status' to list available versions."
+        exit 1
+    fi
+
+    while read line; do
+        version=$(basename $(cd -P "$SCALR_REPO_ROOT/current/win/$line" && cd .. && pwd))
+        if [ "$version" = "$3" ]; then
+            echo "Unable to delete local version $version as it is used by local repo '$line'"
+            exit 1
+        fi
+    done < <(ls "$SCALR_REPO_ROOT/current/win")
+
+    rm -fr "$SCALR_REPO_ROOT/$3"
+    echo "Version $3 has been deleted"
+
+elif [ "x$2" = "xlink" ]; then
+    if [ "x$3" = "x" ] || [ "x$4" = "x" ]; then
+        echo "Please specify local repo name and local version to link to. Use 'scalr-server-manage agent-repo status' to list available versions."
+        exit 1
+    fi
+
+    if [ ! -d "$SCALR_REPO_ROOT/$4" ]; then
+        echo "Specified version does not exist locally. Please pull the needed version before linking."
+        exit 1
+    fi
+
+    ln -sfn "$SCALR_REPO_ROOT/$4/apt-plain" "$SCALR_REPO_ROOT/current/apt-plain/$3"
+    ln -sfn "$SCALR_REPO_ROOT/$4/rpm" "$SCALR_REPO_ROOT/current/rpm/$3"
+    ln -sfn "$SCALR_REPO_ROOT/$4/win" "$SCALR_REPO_ROOT/current/win/$3"
+
+    echo "Repo '$3' is now linked to version $4"
+    echo ''
+    echo 'Example scalr-server.rb config snippet to enable your repo:'
+    echo ''
+    echo 'app[:configuration] = { '
+    echo '  "scalr" => {'
+    echo '    "scalarizr_update" => {'
+    echo '      "mode" => "solo",'
+    echo "      \"default_repo\" => \"$3\","
+    echo '      "repos" => {'
+    echo "        \"$3\" => {"
+    echo "          \"rpm_repo_url\" => \"http://$SCALR_ENDPOINT/repos/rpm/$3/rhel/\$releasever/\$basearch\","
+    echo "          \"deb_repo_url\" => \"http://$SCALR_ENDPOINT/repos/apt-plain $3/\","
+    echo "          \"win_repo_url\" => \"http://$SCALR_ENDPOINT/repos/win/$3\""
+    echo '        }'
+    echo '      }'
+    echo '    }'
+    echo '  }'
+    echo '}'
+
+elif [ "x$2" = "xunlink" ]; then
+    if [ "x$3" = "x" ]; then
+        echo "Please specify local repo name to unlink. Use 'scalr-server-manage agent-repo status' to list available versions."
+        exit 1
+    fi
+
+    unlink "$SCALR_REPO_ROOT/current/apt-plain/$3"
+    unlink "$SCALR_REPO_ROOT/current/rpm/$3"
+    unlink "$SCALR_REPO_ROOT/current/win/$3"
+
+    echo "Repo '$3' has been removed"
+
+else
+    echo 'scalr-server-manage agent-repo status                            - Shows available remote and local repos'
+    echo 'scalr-server-manage agent-repo pull %version%                    - Downloads specified remote repo'
+    echo 'scalr-server-manage agent-repo delete %version%                  - Delete specified local version'
+    echo 'scalr-server-manage agent-repo link %local_name% %local_version% - Links specified local repo name to existing local version'
+    echo 'scalr-server-manage agent-repo unlink %local_name%               - Unlinks specified local repo'
+fi
+
