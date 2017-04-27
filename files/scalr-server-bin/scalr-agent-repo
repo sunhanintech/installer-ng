@@ -138,12 +138,12 @@ if [ "x$2" = "xstatus" ]; then
 
     if [ "$FOUND" -eq 0 ]; then
         echo
-        echo -e "\033[31mNo local versions where found. Use 'scalr-server-manage agent-repo pull %version%' to download.\033[0m"
+        echo -e "\033[31mNo local versions were found. Use 'scalr-server-manage agent-repo pull %version%' to download.\033[0m"
     fi
 
     if [ "${#LOCAL[@]}" -eq 0 ]; then
         echo
-        echo -e "\033[31mNo local repos where found. Use 'scalr-server-manage agent-repo link %name% %version%' to create.\033[0m"
+        echo -e "\033[31mNo local repos were found. Use 'scalr-server-manage agent-repo link %name% %version%' to create.\033[0m"
     fi
 
     if [ ${#OLD[@]} -gt 0 ]; then
