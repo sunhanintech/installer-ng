@@ -19,6 +19,8 @@ name "pip"
 default_version "9.0.1"
 
 dependency "setuptools"
+dependency "python"
+dependency "python3"
 
 #source url: "https://pypi.python.org/packages/source/p/pip/pip-#{version}.tar.gz"
 source url: "https://pypi.python.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-#{version}.tar.gz"
@@ -43,6 +45,10 @@ license path: 'LICENSE.txt'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  command "#{install_dir}/embedded/bin/python3 setup.py install" \
+          " --prefix=#{install_dir}/embedded", env: env
+
   command "#{install_dir}/embedded/bin/python setup.py install" \
           " --prefix=#{install_dir}/embedded", env: env
+
 end

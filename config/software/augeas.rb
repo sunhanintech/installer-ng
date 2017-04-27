@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2014 Chef Software, Inc.
+# Copyright 2012-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +15,30 @@
 # limitations under the License.
 #
 
-name "setuptools"
-default_version "33.1.1"
+name 'augeas'
+default_version '1.4.0'
 
-dependency "python"
+source url: "http://download.augeas.net/augeas-#{version}.tar.gz"
 
-source url: "https://github.com/pypa/setuptools/archive/v#{version}.tar.gz"
-
-version '33.1.1' do
-  source md5: '6f325e870730cd90f3ac9608cdf6a82f'
+version '1.4.0' do
+  source md5: 'a2536a9c3d744dc09d234228fe4b0c93'
 end
 
-license path: 'LICENSE'
+dependency 'libxml2'
+dependency 'readline'
 
-relative_path "setuptools-#{version}"
+relative_path "augeas-#{version}"
+
+license path: 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "#{install_dir}/embedded/bin/python bootstrap.py" \
+  command './configure' \
           " --prefix=#{install_dir}/embedded", env: env
 
-  command "#{install_dir}/embedded/bin/python setup.py install" \
-          " --prefix=#{install_dir}/embedded", env: env
+  make "-j #{workers}", env: env
+  make "-j #{workers} install", env: env
+
 end
+

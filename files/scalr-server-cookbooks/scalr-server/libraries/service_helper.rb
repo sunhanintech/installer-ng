@@ -292,6 +292,11 @@ module Scalr
         return enable_module?(node, :web) || enable_module?(node, :proxy) || enable_module?(node, :repos)
       end
 
+      # Cloud Service Gateway must be explicitly enabled
+      if mod == :csg
+        return node[:scalr_server][mod][:enable]
+      end
+
       # Ordering matters a lot in the line below. We want to return the module's own enable settings so that if it's
       # not set to false, we get that one back (instead of a generic `true`). This then used in _filter enabled above.
       node[:scalr_server][mod][:enable] || node[:scalr_server][:enable_all]

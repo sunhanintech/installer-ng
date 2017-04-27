@@ -77,6 +77,14 @@ module Scalr
             # Actual configuration generated here.
             config = {
                 :scalr => {
+                    :csg => {
+                        :mysql => scalr_conn_details.clone,
+                        :logger => {
+                            :enabled => true,
+                            :tag => 'csg'
+                        }
+                    },
+
                     :connections => {
                         :mysql => scalr_conn_details.clone  # Ruby wants to use '1' as an alias, and PHP doesn't accept it..
                     },

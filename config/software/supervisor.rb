@@ -1,6 +1,6 @@
 name 'supervisor'
 description 'Process manager'
-default_version '3.1.3'
+default_version '3.3.1'
 
 dependency 'python'
 dependency 'pip'

@@ -59,9 +59,32 @@ if enabled_services(node, :php).any?
     subscribes      :restart, 'template[php_ini]' if should_restart
     subscribes      :restart, 'template[ldap_conf]' if should_restart
   end
+
+  # Always enable license manager
+  supervisor_service "license-manager" do
+    description     "License Manager"
+    command         "#{node[:scalr_server][:install_root]}/embedded/bin/python3" \
+                    ' -m server.license_manager.app'
+    stdout_logfile  "#{log_dir_for node, 'service'}/license-manager.log"
+    redirect_stderr true
+    autostart       true
+    environment     'PYTHONPATH' => "#{node[:scalr_server][:install_root]}/embedded/scalr/app/python/fatmouse"
+    user            node[:scalr_server][:app][:user]
+    action          [:enable, :start]
+    subscribes      :restart, 'file[scalr_config]' if service_is_up?(node, 'license-manager')
+    subscribes      :restart, 'file[scalr_code]' if service_is_up?(node, 'license-manager')
+    subscribes      :restart, 'file[scalr_cryptokey]' if service_is_up?(node, 'license-manager')
+    subscribes      :restart, 'file[scalr_id]' if service_is_up?(node, 'license-manager')
+  end
+
 else
   supervisor_service zmq_name do
     description "Stop zmq service"
     action service_exists?(node, 'zmq_service') ? [:stop, :disable] : [:disable]
+  end
+
+  supervisor_service "license-manager" do
+    description "Stop License Manager"
+    action service_exists?(node, 'license-manager') ? [:stop, :disable] : [:disable]
   end
 end
