@@ -1,8 +1,8 @@
 name 'php-ssh2'
-default_version '0.12'
+default_version '1.0'
 
 source url: "http://pecl.php.net/get/ssh2-#{version}.tgz",
-  md5: '409b91678a842bb0ff56f2cf018b9160'
+  md5: '1f84d2d0621933dce06eedeffe54ebd0'
 
 relative_path "ssh2-#{version}"
 

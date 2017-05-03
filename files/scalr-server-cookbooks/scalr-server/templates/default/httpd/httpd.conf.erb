@@ -28,7 +28,7 @@ LoadModule autoindex_module         embedded/modules/mod_autoindex.so
 LoadModule dir_module               embedded/modules/mod_dir.so
 LoadModule alias_module             embedded/modules/mod_alias.so
 <% if enable_module?(node, :app) %>
-LoadModule php5_module              embedded/modules/libphp5.so
+LoadModule php7_module              embedded/modules/libphp7.so
 <% end %>
 
 <IfModule unixd_module>

@@ -1,10 +1,14 @@
 name 'php-propro'
-default_version '1.0.0'
+default_version '2.0.1'
 
 source url: "https://pecl.php.net/get/propro-#{version}.tgz"
 
 version '1.0.0' do
   source md5: '9c775035fd17c65f0162b7eb1b4f8564'
+end
+
+version '2.0.1' do
+  source md5: '19f9517210a87e18cc09faed262e1522'
 end
 
 dependency 'php'

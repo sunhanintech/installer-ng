@@ -1,10 +1,14 @@
 name 'php-raphf'
-default_version '1.1.0'
+default_version '2.0.0'
 
 source url: "https://pecl.php.net/get/raphf-#{version}.tgz"
 
 version '1.1.0' do
   source md5: '4d95c44dc28be089ce59bceb647b8db2'
+end
+
+version '2.0.0' do
+  source md5: 'bc465eb5caa9d0f09cced121a8ac2e8e'
 end
 
 dependency 'php'

@@ -1,8 +1,8 @@
 name 'php-zmq'
-default_version '1.1.2'
+default_version '1.1.3'
 
 source url: "http://pecl.php.net/get/zmq-#{version}.tgz",
-  md5: '74da2fc1aa83e6fa27acffb9a37596b9'
+  md5: '9c638df5a6347a0fefb0d43d780e6480'
 
 relative_path "zmq-#{version}"
 

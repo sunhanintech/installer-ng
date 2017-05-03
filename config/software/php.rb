@@ -17,7 +17,7 @@
 
 
 name 'php'
-default_version '5.6.30'
+default_version '7.1.4'
 
 dependency 'zlib'
 dependency 'libedit'
@@ -83,6 +83,10 @@ version '5.6.30' do
         source md5: '8c7ef86c259abad33f213405a35a13c2'
 end
 
+version '7.1.4' do
+        source md5: '47e7d116553a879ff957ef2684987c23'
+end
+
 
 relative_path "php-#{version}"
 
@@ -92,7 +96,7 @@ license path: 'LICENSE'
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "./configure" \
+command "./configure" \
           ' --enable-debug' \
           " --prefix=#{install_dir}/embedded" \
           " --without-pear" \
@@ -100,13 +104,12 @@ build do
           " --with-pcre-regex=#{install_dir}/embedded" \
           " --with-xsl=#{install_dir}/embedded" \
           " --with-libxml-dir=#{install_dir}/embedded" \
-          " --with-iconv=#{install_dir}/embedded" \
+          " --with-iconv-dir=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded" \
-          " --with-libedit-dir=#{install_dir}/embedded" \
+          " --with-libedit=#{install_dir}/embedded" \
           ' --enable-sockets' \
           " --with-curl=#{install_dir}/embedded" \
           " --with-gettext=#{install_dir}/embedded" \
-          " --with-mysql=#{install_dir}/embedded" \
           " --with-mysqli=#{install_dir}/embedded/bin/mysql_config" \
           " --with-pdo-mysql=#{install_dir}/embedded" \
           " --with-mcrypt=#{install_dir}/embedded" \
@@ -118,7 +121,6 @@ build do
           ' --enable-soap' \
           " --with-ldap=#{install_dir}/embedded" \
           " --with-ldap-sasl=#{install_dir}/embedded" \
-          ' --enable-opcache' \
           " --with-apxs2=#{install_dir}/embedded/bin/apxs" \
           ' --enable-fpm' \
           " --with-config-file-path=#{install_dir}/etc/php" \
@@ -130,12 +132,3 @@ build do
   make "-j #{workers}", env: env
   make 'install', env: env
 end
-
-#'./configure --enable-opcache --prefix=/opt/php
-#--with-apxs2=/usr/bin/apxs2 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pgsql=/usr
-#--with-tidy=/usr --with-curl=/usr/bin --with-openssl-dir=/usr --with-zlib-dir=/usr
-#--with-xpm-dir=/usr --with-pdo-pgsql=/usr --with-pdo-mysql=mysqlnd --with-xsl=/usr
-#--with-ldap --with-xmlrpc --with-iconv-dir=/usr --with-snmp=/usr --enable-exif --enable-calendar
-#--with-bz2=/usr --with-mcrypt=/usr --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr
-#--with-freetype-dir=/usr --enable-mbstring --enable-zip --with-pear --with-libdir=/lib/x86_64-linux-gnu
-#--with-config-file-path=/opt'

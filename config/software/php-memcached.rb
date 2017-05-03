@@ -1,10 +1,14 @@
 name 'php-memcached'
-default_version '2.2.0'
+default_version '3.0.3'
 
 source url: "http://pecl.php.net/get/memcached-#{version}.tgz"
 
 version '2.2.0' do
   source md5: '28937c6144f734e000c6300242f44ce6'
+end
+
+version '3.0.3' do
+  source md5: '001341afeded3724c19a740148737444'
 end
 
 dependency 'zlib'
@@ -21,7 +25,7 @@ build do
   env = with_standard_compiler_flags(with_embedded_path)
 
   # https://github.com/Scalr/scalr/issues/61#issuecomment-88185134
-  patch source: 'detailed-session-error-logging.patch'
+  #patch source: 'detailed-session-error-logging.patch'
 
   command "#{install_dir}/embedded/bin/phpize"
   command './configure' \
