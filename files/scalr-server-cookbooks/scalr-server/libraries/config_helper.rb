@@ -186,13 +186,13 @@ module Scalr
                                 :deb_repo_url => 'http://repo.scalr.net/apt-plain stable/',
                                 :rpm_repo_url => 'http://repo.scalr.net/rpm/stable/rhel/$releasever/$basearch',
                                 :win_repo_url => 'http://repo.scalr.net/win/stable',
-                                :docker_repo_url => 'docker.io/scalr/scalarizr',
+                                :docker_repo_url => 'docker.io/scalr/scalarizr-stable',
                             },
                             :latest => {
                                 :deb_repo_url => 'http://repo.scalr.net/apt-plain latest/',
                                 :rpm_repo_url => 'http://repo.scalr.net/rpm/latest/rhel/$releasever/$basearch',
                                 :win_repo_url => 'http://repo.scalr.net/win/latest',
-                                :docker_repo_url => 'docker.io/scalr/scalarizr',
+                                :docker_repo_url => 'docker.io/scalr/scalarizr-latest',
                             },
                         }
                     }
