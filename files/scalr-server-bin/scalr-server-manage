@@ -31,8 +31,9 @@ if [ "x$1" = "x" ]; then
     echo 'scalr-server-manage start %component%    - Start specified Scalr component'
     echo 'scalr-server-manage restart %component%  - Restart specified Scalr component'
     echo 'scalr-server-manage agent-repo           - Control the embedded repository component'
+    echo 'scalr-server-manage supervisord-console  - Enter Supervisord console'
 
-elif [ "x$1" = "xstatus" ]; then
+elif [ "x$1" = "xsupervisord-console" ]; then
     /opt/scalr-server/embedded/bin/supervisorctl \
     -c "$conf"
 
