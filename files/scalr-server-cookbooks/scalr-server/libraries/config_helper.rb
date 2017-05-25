@@ -77,6 +77,13 @@ module Scalr
             # Actual configuration generated here.
             config = {
                 :scalr => {
+                    :csg => {
+                        :mysql => scalr_conn_details.clone,
+                        :endpoint => {
+                            :host => node[:scalr_server][:csg][:bind_host],
+                            :port => node[:scalr_server][:csg][:bind_port]
+                        }
+                    },
 
                     :connections => {
                         :mysql => scalr_conn_details.clone  # Ruby wants to use '1' as an alias, and PHP doesn't accept it..
