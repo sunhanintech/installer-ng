@@ -1,5 +1,4 @@
 #
-# Copyright 2013-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+name 'libnettle'
+default_version '3.3'
 
-name "setuptools"
-default_version "33.1.1"
+source url: "https://ftp.gnu.org/gnu/nettle/nettle-#{version}.tar.gz"
 
-dependency "python"
-
-source url: "https://github.com/pypa/setuptools/archive/v#{version}.tar.gz"
-
-version '33.1.1' do
-  source md5: '6f325e870730cd90f3ac9608cdf6a82f'
+version '3.3' do
+  source md5: '10f969f78a463704ae73529978148dbe'
 end
 
-license path: 'LICENSE'
+relative_path "nettle-#{version}"
 
-relative_path "setuptools-#{version}"
+license path: 'COPYINGv3'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "#{install_dir}/embedded/bin/python bootstrap.py" \
+  command './configure' \
+          ' --disable-static' \
+          " --libdir=#{install_dir}/embedded/lib" \
           " --prefix=#{install_dir}/embedded", env: env
 
-  command "#{install_dir}/embedded/bin/python setup.py install" \
-          " --prefix=#{install_dir}/embedded", env: env
+  make "-j #{workers}", env: env
+  make 'install', env: env
 end

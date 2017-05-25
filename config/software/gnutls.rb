@@ -1,5 +1,4 @@
 #
-# Copyright 2013-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+name 'gnutls'
+default_version '3.5.9'
 
-name "setuptools"
-default_version "33.1.1"
+dependency 'libnettle'
 
-dependency "python"
+source url: "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.5/gnutls-#{version}.tar.xz"
 
-source url: "https://github.com/pypa/setuptools/archive/v#{version}.tar.gz"
-
-version '33.1.1' do
-  source md5: '6f325e870730cd90f3ac9608cdf6a82f'
+version '3.5.9' do
+  source md5: '0ab25eb6a1509345dd085bc21a387951'
 end
 
-license path: 'LICENSE'
+relative_path "gnutls-#{version}"
 
-relative_path "setuptools-#{version}"
+license path: 'LICENSE'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "#{install_dir}/embedded/bin/python bootstrap.py" \
-          " --prefix=#{install_dir}/embedded", env: env
+  command './configure' \
+          " --prefix=#{install_dir}/embedded" \
+          ' --with-included-libtasn1' \
+          ' --with-included-unistring' \
+          ' --without-p11-kit', env: env
 
-  command "#{install_dir}/embedded/bin/python setup.py install" \
-          " --prefix=#{install_dir}/embedded", env: env
+  make "-j #{workers}", env: env
+  make 'install', env: env
 end

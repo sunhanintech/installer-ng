@@ -15,8 +15,8 @@
 # limitations under the License.
 #
 
-name 'python'
-default_version '2.7.11'
+name 'python3'
+default_version '3.5.2'
 
 dependency 'gdbm'
 dependency 'ncurses'
@@ -26,24 +26,18 @@ dependency 'bzip2'
 dependency 'expat'
 dependency 'libffi'
 dependency 'sqlite'
+dependency 'augeas'
 
 source url: "https://www.python.org/ftp/python/#{version}/Python-#{version}.tgz"
 
-version '2.7.8' do
-  source md5: 'd4bca0159acb0b44a781292b5231936f'
-end
-
-version '2.7.9' do
-  source md5: '5eebcaa0030dc4061156d3429657fb83'
-end
-
-version '2.7.11' do
-  source md5: '6b6076ec9e93f05dd63e47eb9c15728b'
+version '3.5.2' do
+  source md5: '3fe8434643a78630c61c6464fe2e7e72'
 end
 
 relative_path "Python-#{version}"
 
 license path: 'LICENSE'
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
@@ -51,17 +45,19 @@ build do
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded" \
-          ' --enable-shared' \
           ' --with-system-expat' \
           ' --with-system-ffi' \
+          ' --enable-shared' \
+          ' --enable-unicode=ucs4' \
           ' --with-dbmliborder=gdbm', env: env
 
   make "-j #{workers}", env: env
   make 'install', env: env
 
   # There exists no configure flag to tell Python to not compile readline
-  #delete "#{install_dir}/embedded/lib/python2.7/lib-dynload/readline.*"
+  #delete "#{install_dir}/embedded/lib/python3.5/lib-dynload/readline.*"
 
   # Remove unused extension which is known to make healthchecks fail on CentOS 6
-  delete "#{install_dir}/embedded/lib/python2.7/lib-dynload/_bsddb.*"
+  delete "#{install_dir}/embedded/lib/python3.5/lib-dynload/_bsddb.*"
+
 end

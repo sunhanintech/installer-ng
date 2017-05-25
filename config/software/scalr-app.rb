@@ -1,13 +1,7 @@
 name 'scalr-app'
 default_version '__SCALR_APP_REVISION__'
 
-source :git => '__SCALR_APP_PATH__'
-
-[
-  ['adodb5', '18', 'license.txt']
-].each do |dep_name, dep_version, dep_license|
-  license path: "app/src/externals/#{dep_name}-#{dep_version}/#{dep_license}", name: dep_name, version: dep_version
-end
+source :path => '__SCALR_APP_PATH__'
 
 # Manually composer licenses
 license path: "vendor/google/apiclient/LICENSE"
@@ -19,9 +13,12 @@ build do
   # Install dependencies using composer
   command "#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar install --no-dev"
 
+  # Update code version
+  command "#{install_dir}/embedded/bin/php ./app/bin/update-code-version.php"
+
   # Copy the code to the ./scalr dir.
   command "mkdir -p #{install_dir}/embedded/scalr"
-  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=.drone.yml --exclude=installer-ng --exclude=pybuild ./ #{install_dir}/embedded/scalr"
+  command "rsync -a --delete --exclude=.git --exclude=.gitignore --exclude=.drone.yml --exclude=installer-ng --exclude=.releaseignore --exclude=pybuild ./ #{install_dir}/embedded/scalr"
 
   # Dump configuration information to a JSON file
   block do

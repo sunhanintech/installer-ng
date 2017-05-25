@@ -1,5 +1,5 @@
 name 'httpd'
-default_version '2.4.23'
+default_version '2.4.25'
 
 source url: "http://www.us.apache.org/dist/httpd/httpd-#{version}.tar.bz2"
 
@@ -14,6 +14,10 @@ end
 
 version '2.4.23' do
   source md5: '04f19c60e810c028f5240a062668a688'
+end
+
+version '2.4.25' do
+  source md5: '2826f49619112ad5813c0be5afcc7ddb'
 end
 
 dependency 'apr'

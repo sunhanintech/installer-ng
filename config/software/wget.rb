@@ -1,5 +1,4 @@
 #
-# Copyright 2013-2014 Chef Software, Inc.
 # Copyright 2015 Scalr, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+name 'wget'
+default_version '1.18'
 
-name "setuptools"
-default_version "33.1.1"
+dependency 'gnutls'
 
-dependency "python"
+source url: "http://ftp.gnu.org/gnu/wget/wget-#{version}.tar.gz"
 
-source url: "https://github.com/pypa/setuptools/archive/v#{version}.tar.gz"
-
-version '33.1.1' do
-  source md5: '6f325e870730cd90f3ac9608cdf6a82f'
+version '1.18' do
+  source md5: 'fc2debd8399e3b933a9b226794e2a886'
 end
 
-license path: 'LICENSE'
+relative_path "wget-#{version}"
 
-relative_path "setuptools-#{version}"
+license path: 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  command "#{install_dir}/embedded/bin/python bootstrap.py" \
+  command './configure' \
           " --prefix=#{install_dir}/embedded", env: env
 
-  command "#{install_dir}/embedded/bin/python setup.py install" \
-          " --prefix=#{install_dir}/embedded", env: env
+  make "-j #{workers}", env: env
+  make 'install', env: env
 end

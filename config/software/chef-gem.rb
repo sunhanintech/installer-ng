@@ -29,6 +29,21 @@ license url: "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  gem 'install ohai' \
+      " --version '8.23.0'" \
+      " --bindir '#{install_dir}/embedded/bin'" \
+      " --no-ri --no-rdoc", env: env
+
+  gem 'install net-ssh' \
+      " --version '2.6.5'" \
+      " --bindir '#{install_dir}/embedded/bin'" \
+      " --no-ri --no-rdoc", env: env
+
+  gem 'install net-ssh-gateway' \
+      " --version '1.2.0'" \
+      " --bindir '#{install_dir}/embedded/bin'" \
+      " --no-ri --no-rdoc", env: env
+
   gem 'install rack' \
       " --version '1.6.4'" \
       " --bindir '#{install_dir}/embedded/bin'" \

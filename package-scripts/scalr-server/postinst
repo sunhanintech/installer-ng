@@ -18,6 +18,20 @@ for binary in ${binaries}; do
   ln -sf "/opt/scalr-server/bin/scalr-server-${binary}" "/usr/bin" || error_exit "Cannot link scalr-server-${binary} in /usr/bin"
 done
 
+# Clear cache
+rm -rf /opt/scalr-server/embedded/scalr/app/cache/{.routing-table,.config}
+
+if [ -f "/etc/scalr-server/scalr-server-secrets.json" ];
+then
+  echo -e "\033[1mThank you for updating Scalr!\033[0m"
+  echo
+  echo "The next step in the update process is to run:"
+  echo
+  echo -e "\033[1msudo scalr-server-ctl reconfigure\033[0m"
+
+  exit 0
+fi
+
 echo -e "\033[1mThank you for installing Scalr!\033[0m"
 echo
 echo "The next step in the install process is to run:"

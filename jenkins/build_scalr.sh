@@ -50,7 +50,7 @@ fi
 
 #Download the Scalr Installer
 if [ ! -d "${WORKSPACE}/installer-ng" ]; then
-  git clone https://github.com/Scalr/installer-ng.git
+  git clone --recursive https://github.com/Scalr/installer-ng.git
 fi
 
 #Enter Installer Dir
@@ -77,7 +77,16 @@ if [ ! -d "${WORKSPACE}/${SCALR_REPO}" ]; then
   if [ "${SCALR_REPO}" = "scalr" ]; then
     git clone "https://github.com/Scalr/${SCALR_REPO}.git"
   else
-    git clone "ext::ssh -o StrictHostKeyChecking=no -i ${GITHUB_SECRET} git@github.com %S /Scalr/${SCALR_REPO}.git"
+    cat > ~/.ssh/config <<EOL
+host github.com
+ HostName github.com
+ IdentityFile ${GITHUB_SECRET}
+ User git
+ StrictHostKeyChecking no
+ UserKnownHostsFile=/dev/null
+EOL
+
+    git clone git@github.com:Scalr/${SCALR_REPO}.git
   fi
 fi
 
@@ -90,6 +99,12 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Move to the specified branch
   git reset --hard "origin/${SCALR_BRANCH}"
+
+  #Update submodules
+  git submodule update --init --recursive
+
+  #Fetch python requirements file
+  cp ./app/python/fatmouse/infra/requirements/server-all.txt ./app/python/
 
   #Delete files that should not be in the package
   if [ -f '.releaseignore' ]; then
@@ -128,12 +143,6 @@ sed -i "s|__SCALR_REQUIREMENTS_PATH__|${WORKSPACE}/${SCALR_REPO}/app/python|g" "
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-cookbooks.rb"
 sed -i "s|__INSTALLER_REVISION__|${INSTALLER_REVISION}|g" "./config/software/scalr-server-bin.rb"
 
-#This one seems to kill the cache :(
-#sed -i "s|build_iteration 1|build_iteration ${BUILD_NUMBER}|g" "./config/projects/scalr-server.rb"
-
-#Dont cache scalr-app because of php-composer
-echo "#NOCACHE-$(date +%s)" >> "./config/software/scalr-app.rb"
-
 #Get UID of jenkins user
 JENKINS_UID=1
 if id "jenkins" >/dev/null 2>&1; then
@@ -142,10 +151,8 @@ fi
 
 #Compile the Scalr package
 docker run --rm --name="${CONTAINER}" \
--v ${WORKSPACE}/installer-ng:${WORKSPACE}/installer-ng \
--v ${FULL_CACHE_DIR}:${FULL_CACHE_DIR} \
--v ${WORKSPACE}/package:${WORKSPACE}/package \
--v ${WORKSPACE}/${SCALR_REPO}:${WORKSPACE}/${SCALR_REPO} \
+-v ${WORKSPACE}:${WORKSPACE} \
+-v ${CACHE_PATH}:${CACHE_PATH} \
 -e OMNIBUS_BASE_DIR=${FULL_CACHE_DIR} \
 -e OMNIBUS_PACKAGE_DIR=${WORKSPACE}/package \
 -e OMNIBUS_LOG_LEVEL=info \
@@ -153,4 +160,5 @@ docker run --rm --name="${CONTAINER}" \
 -e OMNIBUS_PROJECT_DIR=${WORKSPACE}/installer-ng \
 -e SCALR_VERSION="${SCALR_VERSION}.${PACKAGE_NAME}" \
 -e JENKINS_UID=${JENKINS_UID} \
+-e CACHE_PATH="${CACHE_PATH}" \
 "${DOCKER_IMG}" "${WORKSPACE}/installer-ng/jenkins/docker/omnibus_build.sh"
