@@ -270,6 +270,8 @@ default[:scalr_server][:csg][:key] = ''
 # The port the Cloud Service Gateway should be served on.
 default[:scalr_server][:csg][:bind_port] = 3128
 
+# The IP the Cloud Service Gateway should be served on.
+default[:scalr_server][:csg][:bind_host] = default_endpoint
 
 #########
 # MySQL #

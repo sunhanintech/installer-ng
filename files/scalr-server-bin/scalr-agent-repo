@@ -66,7 +66,7 @@ if [ "x$2" = "xstatus" ]; then
         if [ ! ${REMOTE_MINOR[$BIG]+x} ]; then
             REMOTE_MINOR[$BIG]=$SMALL
         else
-            if [ "$SMALL" > "${REMOTE_MINOR[$BIG]}" ]; then
+            if (("$SMALL" > "${REMOTE_MINOR[$BIG]}")); then
                 REMOTE_MINOR[$BIG]=$SMALL
             fi
         fi
@@ -251,7 +251,7 @@ elif [ "x$2" = "xlink" ]; then
     echo '      "repos" => {'
     echo "        \"$3\" => {"
     echo "          \"rpm_repo_url\" => \"http://$SCALR_ENDPOINT/repos/rpm/$3/rhel/\$releasever/\$basearch\","
-    echo "          \"deb_repo_url\" => \"http://$SCALR_ENDPOINT/repos/apt-plain $3/\","
+    echo "          \"deb_repo_url\" => \"http://$SCALR_ENDPOINT/repos/apt-plain/$3 /\","
     echo "          \"win_repo_url\" => \"http://$SCALR_ENDPOINT/repos/win/$3\""
     echo '        }'
     echo '      }'

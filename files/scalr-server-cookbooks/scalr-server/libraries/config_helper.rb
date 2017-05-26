@@ -79,9 +79,9 @@ module Scalr
                 :scalr => {
                     :csg => {
                         :mysql => scalr_conn_details.clone,
-                        :logger => {
-                            :enabled => true,
-                            :tag => 'csg'
+                        :endpoint => {
+                            :host => node[:scalr_server][:csg][:bind_host],
+                            :port => node[:scalr_server][:csg][:bind_port]
                         }
                     },
 

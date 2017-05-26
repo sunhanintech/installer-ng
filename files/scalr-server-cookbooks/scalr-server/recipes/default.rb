@@ -117,3 +117,36 @@ remote_file "#{node[:scalr_server][:install_root]}/embedded/scalr/app/www/ui2/im
   mode '0755'
   action :create
 end
+
+#Link mail templates
+ruby_block 'mail_templates' do
+  description 'Generate mail templates'
+  block do
+
+    FileUtils.rm_rf("#{node[:scalr_server][:install_root]}/embedded/scalr/app/templates")
+
+    Dir.glob("#{node[:scalr_server][:install_root]}/embedded/scalr/app/templates.org/**/").each { |x|
+      FileUtils.mkpath x.sub('templates.org', 'templates')
+    }
+
+    Dir.glob("#{node[:scalr_server][:install_root]}/embedded/scalr/app/templates.org/**/*").each { |x|
+      if File.directory?(x)
+        next
+      end
+
+      target = x.sub("#{node[:scalr_server][:install_root]}/embedded/scalr/app/templates.org", "/opt/scalr-server/embedded/scalr/app/templates")
+      custom = x.sub("#{node[:scalr_server][:install_root]}/embedded/scalr/app/templates.org", "/etc/scalr-server/templates")
+
+      if File.file?(custom)
+        source = custom
+      else
+        source = x
+      end
+
+      File.symlink source, target
+    }
+
+  end
+  action :run
+end
+
