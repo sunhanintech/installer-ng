@@ -78,6 +78,7 @@ module Scalr
             config = {
                 :scalr => {
                     :csg => {
+                        :enabled => node[:scalr_server][:csg][:enable],
                         :mysql => scalr_conn_details.clone,
                         :endpoint => {
                             :host => node[:scalr_server][:csg][:bind_host],
@@ -177,8 +178,7 @@ module Scalr
                     },
 
                     :ui => {
-                        :mindterm_enabled => true,
-                        :csg_enabled => node[:scalr_server][:csg][:enable]
+                        :mindterm_enabled => true
                     },
 
                     :scalarizr_update => {
