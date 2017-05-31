@@ -176,7 +176,10 @@ module Scalr
                         :services => cron_services
                     },
 
-                    :ui => { :mindterm_enabled => true },
+                    :ui => {
+                        :mindterm_enabled => true,
+                        :csg_enabled => node[:scalr_server][:csg][:enable]
+                    },
 
                     :scalarizr_update => {
                         :mode => 'client',
