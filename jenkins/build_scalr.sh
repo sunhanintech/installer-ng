@@ -105,6 +105,7 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Fetch python requirements file
   cp ./app/python/fatmouse/infra/requirements/server-all.txt ./app/python/
+  cp ./app/python/fatmouse/infra/requirements/scalrpy.txt ./app/python/
 
   #Delete files that should not be in the package
   if [ -f '.releaseignore' ]; then
