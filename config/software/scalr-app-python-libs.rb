@@ -48,7 +48,7 @@ build do
   # Then, install the rest
   command "#{install_dir}/embedded/bin/pip install" \
           " --build #{build_dir}/pybuild" \
-          ' --requirement ./requirements.txt', env: env
+          ' --requirement ./scalrpy.txt', env: env
 
   command "rm -rf #{build_dir}/pybuild/*"
 
