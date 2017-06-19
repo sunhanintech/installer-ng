@@ -27,3 +27,9 @@ ProxyPass /                   balancer://app/
 # TODO - Make this configurable
 RequestHeader unset X-Forwarded-For
 ProxyAddHeaders On
+
+Header add strict-transport-security "max-age=31536000; includeSubDomains"
+Header add x-frame-options "SAMEORIGIN"
+Header add X-Content-Type-Options "nosniff"
+Header add X-XSS-Protection "1; mode=block"
+Header add Referrer-Policy "same-origin"
