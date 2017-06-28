@@ -16,7 +16,7 @@
 #
 
 name 'python3'
-default_version '3.5.2'
+default_version '3.5.3'
 
 dependency 'gdbm'
 dependency 'ncurses'
@@ -32,6 +32,10 @@ source url: "https://www.python.org/ftp/python/#{version}/Python-#{version}.tgz"
 
 version '3.5.2' do
   source md5: '3fe8434643a78630c61c6464fe2e7e72'
+end
+
+version '3.5.3' do
+  source md5: '6192f0e45f02575590760e68c621a488'
 end
 
 relative_path "Python-#{version}"
