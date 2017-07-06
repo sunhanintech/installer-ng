@@ -98,21 +98,22 @@ mysql_database_user node[:scalr_server][:mysql][:scalr_user] do
   action            :create
 end
 
-mysql_database_user node[:scalr_server][:mysql][:repl_user] do
-  description       "Create MySQL replication user"
-  connection        mysql_admin_params(node)
-  password          node[:scalr_server][:mysql][:repl_password]
-  host              node[:scalr_server][:mysql][:repl_allow_connections_from]
-  action            :create
-end
+#THIS IS AUTOMATICALLY CREATED BY THE KICKSTART-MYSQL-REPLICATION SCRIPT
+#mysql_database_user node[:scalr_server][:mysql][:repl_user] do
+#  description       "Create MySQL replication user"
+#  connection        mysql_admin_params(node)
+#  password          node[:scalr_server][:mysql][:repl_password]
+#  host              node[:scalr_server][:mysql][:repl_allow_connections_from]
+#  action            :create
+#end
 
-mysql_database 'grant_replication_permissions' do
-  description     "Enable replication permission to replication user"
-  connection      mysql_admin_params(node)
-  database_name   'mysql'
-  sql             "GRANT REPLICATION SLAVE ON *.* TO '#{node[:scalr_server][:mysql][:repl_user]}'@'#{node[:scalr_server][:mysql][:repl_allow_connections_from]}'; FLUSH PRIVILEGES;"
-  action          :query
-end
+#mysql_database 'grant_replication_permissions' do
+#  description     "Enable replication permission to replication user"
+#  connection      mysql_admin_params(node)
+#  database_name   'mysql'
+#  sql             "GRANT REPLICATION SLAVE ON *.* TO '#{node[:scalr_server][:mysql][:repl_user]}'@'#{node[:scalr_server][:mysql][:repl_allow_connections_from]}'; FLUSH PRIVILEGES;"
+#  action          :query
+#end
 
 # The analytics database is not useful on an old Scalr version, but that's
 # fine -- we create it anyway so that we don't need to know which version
