@@ -19,13 +19,13 @@ default_version '3.12.2'
 
 dependency 'libpopt'
 
-source url: "https://fedorahosted.org/releases/l/o/logrotate/logrotate-#{version}.tar.gz"
-
 version '3.12.2' do
-  source md5: 'de8c41a263cf2fcf3fc1416a337a1637'
+  source ur: 'https://github.com/logrotate/logrotate/releases/download/3.12.2/logrotate-3.12.2.tar.xz'
+  source md5: '923e753825405280aebcc4e73b4b2b55'
 end
 
 version '3.9.1' do
+  source url: "https://fedorahosted.org/releases/l/o/logrotate/logrotate-#{version}.tar.gz"
   source md5: '4492b145b6d542e4a2f41e77fa199ab0'
 end
 
