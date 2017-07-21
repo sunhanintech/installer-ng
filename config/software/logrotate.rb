@@ -20,7 +20,7 @@ default_version '3.12.2'
 dependency 'libpopt'
 
 version '3.12.2' do
-  source ur: 'https://github.com/logrotate/logrotate/releases/download/3.12.2/logrotate-3.12.2.tar.xz'
+  source url: 'https://github.com/logrotate/logrotate/releases/download/3.12.2/logrotate-3.12.2.tar.xz'
   source md5: '923e753825405280aebcc4e73b4b2b55'
 end
 
