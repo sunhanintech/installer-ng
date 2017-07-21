@@ -40,12 +40,14 @@ build do
 
   configure_command = "./configure" \
                       " --prefix=#{install_dir}/embedded"
-  if aix?
-    patch_env = env.dup
-    patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
-    patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch', env: patch_env
-  else
-    patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch'
+  if version == '1.14'
+    if aix?
+      patch_env = env.dup
+      patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
+      patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch', env: patch_env
+    else 
+      patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch'
+    end
   end
 
   command configure_command, env: env
