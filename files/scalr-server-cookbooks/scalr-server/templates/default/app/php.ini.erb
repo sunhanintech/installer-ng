@@ -1953,12 +1953,6 @@ session.save_path = <%= memcached_servers(node).join(', ') %>
 
 memcached.sess_binary = On
 
-<% if memcached_enable_sasl?(node) %>
-memcached.use_sasl = On
-memcached.sess_sasl_username = <%= node[:scalr_server][:memcached][:username] %>
-memcached.sess_sasl_password = <%= node[:scalr_server][:memcached][:password] %>
-<% end %>
-
 <% if memcached_servers(node).length > 1 %>
 memcached.sess_remove_failed = 1
 <% end %>

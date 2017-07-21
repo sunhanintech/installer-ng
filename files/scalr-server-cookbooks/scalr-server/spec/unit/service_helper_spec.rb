@@ -158,32 +158,6 @@ describe Scalr::ServiceHelper do
     end
   end
 
-  describe '#memcached_enable_sasl?' do
-    it 'should be enabled by the override' do
-      node.set[:scalr_server][:memcached][:enable_sasl] = true
-      node.set[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
-      expect(dummy_class.new.memcached_enable_sasl?(node)).to be_truthy
-    end
-
-    it 'should be disabled by the override' do
-      node.set[:scalr_server][:memcached][:enable_sasl] = false
-      node.set[:scalr_server][:memcached][:bind_host] = '0.0.0.0'
-      expect(dummy_class.new.memcached_enable_sasl?(node)).to be_falsey
-    end
-
-    it 'should be enabled if there is no override and Memcached is binding on a public IP' do
-      node.set[:scalr_server][:memcached][:enable_sasl] = nil
-      node.set[:scalr_server][:memcached][:bind_host] = '0.0.0.0'
-      expect(dummy_class.new.memcached_enable_sasl?(node)).to be_truthy
-    end
-
-    it 'should be disabled if there is no override and Memcached is binding on 127.0.0.1' do
-      node.set[:scalr_server][:memcached][:enable_sasl] = nil
-      node.set[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
-      expect(dummy_class.new.memcached_enable_sasl?(node)).to be_falsey
-    end
-  end
-
   describe '#graphics_scheme' do
     it 'should default to the endpoint_scheme' do
       node.set[:scalr_server][:routing][:endpoint_scheme] = 'https'

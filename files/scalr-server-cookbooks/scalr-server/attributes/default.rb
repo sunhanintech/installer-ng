@@ -370,17 +370,8 @@ default[:scalr_server][:memcached][:enable] = false
 default[:scalr_server][:memcached][:bind_host] = '127.0.0.1'
 default[:scalr_server][:memcached][:bind_port] = 6281
 
-# The username / password Scalr and Memcached should use (this uses SASL authentication). Note that the password is
-# auto-generated and placed into the secrets file.
-default[:scalr_server][:memcached][:username] = 'scalr'
-default[:scalr_server][:memcached][:password] = 'CHANGEME'  # /!\ IGNORED. Place it under `memcached.password`.
-
 # The UNIX user Memcached should run as.
 default[:scalr_server][:memcached][:user] = 'scalr-memcached'
-
-# Whether to enable SASL in memcached (true) or not (false), or default to whatever the installer sets (nil)
-# NOTE: if this is nil, the installer will automatically enable SASL if Memcached is binding on an IP other than 127.0.0.1
-default[:scalr_server][:memcached][:enable_sasl] = nil
 
 
 ##############

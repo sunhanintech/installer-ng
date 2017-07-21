@@ -337,12 +337,6 @@ module Scalr
       end
     end
 
-    def memcached_enable_sasl?(node)
-      if node[:scalr_server][:memcached][:enable_sasl].nil?
-        return node[:scalr_server][:memcached][:bind_host] != '127.0.0.1'
-      end
-      !! node[:scalr_server][:memcached][:enable_sasl]
-    end
 
     #################
     # MySQL helpers #
