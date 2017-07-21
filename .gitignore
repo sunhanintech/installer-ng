@@ -19,3 +19,7 @@ bin/*
 
 # Python
 *.pyc
+
+# MacOS
+.DS_Store
+
