@@ -1,8 +1,15 @@
 name 'glib'
-default_version '2.42.1'
+default_version '2.52.2'
 
-source url: "http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-#{version}.tar.xz",
-       md5: '89c4119e50e767d3532158605ee9121a'
+version '2.42.1' do
+  source url: "http://ftp.gnome.org/pub/gnome/sources/glib/2.42/glib-#{version}.tar.xz"
+  source md5: '89c4119e50e767d3532158605ee9121a'
+end
+
+version '2.52.2' do
+  source url: "http://ftp.gnome.org/pub/gnome/sources/glib/2.52/glib-2.52.2.tar.xz"
+  source md5: 'ec099bce26ce6a85104ed1d89bb45856'
+end
 
 # See: https://developer.gnome.org/glib/2.42/glib-building.html
 dependency 'libiconv'

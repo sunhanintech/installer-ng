@@ -1,8 +1,15 @@
 name 'gettext'
-default_version '0.18.3.1'
+default_version '0.19.8.1'
 
-source url: "http://archive.ubuntu.com/ubuntu/pool/main/g/gettext/gettext_#{version}.orig.tar.gz",
-       md5: '3fc808f7d25487fc72b5759df7419e02'
+version '0.18.3.1' do
+  source url: "http://archive.ubuntu.com/ubuntu/pool/main/g/gettext/gettext_#{version}.orig.tar.gz"
+  source md5: '3fc808f7d25487fc72b5759df7419e02'
+end
+
+version '0.19.8.1' do
+  source url: "http://archive.ubuntu.com/ubuntu/pool/main/g/gettext/gettext_0.19.8.1.orig.tar.xz"
+  source md5: 'df3f5690eaa30fd228537b00cb7b7590'
+end
 
 dependency 'libiconv'
 dependency 'ncurses'

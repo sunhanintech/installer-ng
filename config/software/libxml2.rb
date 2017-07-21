@@ -30,7 +30,6 @@ end
 
 dependency "zlib"
 dependency "libiconv"
-dependency "liblzma"
 
 relative_path "libxml2-#{version}"
 
@@ -44,6 +43,7 @@ build do
           " --with-zlib=#{install_dir}/embedded" \
           " --with-iconv=#{install_dir}/embedded" \
           " --without-python" \
+          " --without-lzma" \
           " --without-icu", env: env
 
   make "-j #{workers}", env: env

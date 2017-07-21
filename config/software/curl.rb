@@ -18,7 +18,7 @@
 # TODO - Consider whether it'd be nice to actually have libssh2 here.
 # TODO - Check whether this still links against libgcrypt
 name 'curl'
-default_version '7.22.0'
+default_version '7.36.0'
 
 dependency 'zlib'
 dependency 'openssl'

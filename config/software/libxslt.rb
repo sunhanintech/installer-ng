@@ -25,7 +25,6 @@ version '1.1.28' do
 end
 
 dependency 'libxml2'
-dependency 'liblzma'
 
 relative_path "libxslt-#{version}"
 

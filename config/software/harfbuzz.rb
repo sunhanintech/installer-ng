@@ -1,10 +1,14 @@
 name 'harfbuzz'
-default_version '0.9.37'
+default_version '1.4.6'
 
 source url: "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-#{version}.tar.bz2"
 
 version '0.9.37' do
   source md5: 'bfe733250e34629a188d82e3b971bc1e'
+end
+
+version '1.4.6' do
+  source md5: 'e246c08a3bac98e31e731b2a1bf97edf'
 end
 
 dependency 'glib'

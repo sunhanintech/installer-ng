@@ -1,5 +1,5 @@
 name 'sqlite'
-default_version '3080900'  # 3.8.9.0
+default_version '3180200'  # 3.18.2.0
 
 year = nil
 
@@ -11,6 +11,11 @@ end
 version '3080900' do
   year = 2015
   source md5: '6a18d4609852f4b63f812a1059df468f'
+end
+
+version '3180200' do
+  year = 2017
+  source md5: '63a09edda18306de934634b781cadf9d'
 end
 
 source url: "http://www.sqlite.org/#{year}/sqlite-autoconf-#{version}.tar.gz"
