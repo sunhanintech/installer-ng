@@ -24,7 +24,7 @@ dependency 'pango'
 relative_path "rrdtool-#{version}"
 
 # TODO There is another one for the libs
-license path: 'COPYING'
+license path: 'LICENSE'
 
 
 build do
