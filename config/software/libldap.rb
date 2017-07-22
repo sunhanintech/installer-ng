@@ -14,7 +14,7 @@ end
 dependency 'openssl'
 dependency 'libsasl'
 
-relative_path "openldap_#{version}.orig"
+relative_path "openldap-#{version}+dfsg"
 
 license path: 'LICENSE'
 
