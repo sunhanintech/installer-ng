@@ -29,6 +29,7 @@ build do
   command './configure' \
           " --prefix=#{install_dir}/embedded" \
           ' --with-libiconv=gnu' \
+          ' --disable-libmount' \
           ' --disable-selinux' \
           ' --disable-dtrace' \
           ' --disable-systemtap', env: env
