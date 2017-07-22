@@ -26,6 +26,8 @@ relative_path "nettle-#{version}"
 
 license path: 'COPYINGv3'
 
+dependency 'libgmp'
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

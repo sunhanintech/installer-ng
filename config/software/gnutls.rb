@@ -16,6 +16,7 @@
 name 'gnutls'
 default_version '3.5.9'
 
+dependency 'libgmp'
 dependency 'libnettle'
 
 source url: "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.5/gnutls-#{version}.tar.xz"
