@@ -28,8 +28,6 @@ relative_path "gmp-#{version}"
 
 license path: 'COPYING'
 
-dependency 'm4'
-
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

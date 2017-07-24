@@ -29,6 +29,16 @@ license url: "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
+  gem 'install ffi-yajl' \
+      " --version '2.2.3'" \
+      " --bindir '#{install_dir}/embedded/bin'" \
+      " --no-ri --no-rdoc", env: env
+
+  gem 'install mixlib-shellout' \
+      " --version '2.2.7'" \
+      " --bindir '#{install_dir}/embedded/bin'" \
+      " --no-ri --no-rdoc", env: env
+
   gem 'install ohai' \
       " --version '8.23.0'" \
       " --bindir '#{install_dir}/embedded/bin'" \

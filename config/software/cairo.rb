@@ -1,8 +1,15 @@
 name 'cairo'
-default_version '1.12.18'
+default_version '1.14.8'
 
-source url: "http://cairographics.org/releases/cairo-#{version}.tar.xz",
-       md5: '8e4ff32b82c3b39387eb6f5c59ef848e'
+source url: "http://cairographics.org/releases/cairo-#{version}.tar.xz"
+
+version '1.12.18' do
+  source md5: '8e4ff32b82c3b39387eb6f5c59ef848e'
+end
+
+version '1.14.8' do
+  source md5: '4ef0db2eacb271c74f8a3fd87822aa98'
+end
 
 dependency 'pixman'
 dependency 'libpng'

@@ -16,12 +16,16 @@
 #
 
 name "pcre"
-default_version "8.31"
+default_version "8.40"
 
 source url: "http://iweb.dl.sourceforge.net/project/pcre/pcre/#{version}/pcre-#{version}.tar.gz"
 
 version '8.31' do
   source md5: "fab1bb3b91a4c35398263a5c1e0858c1"
+end
+
+version '8.40' do
+  source md5: "890c808122bd90f398e6bc40ec862102"
 end
 
 dependency "libedit"

@@ -16,9 +16,13 @@
 #
 
 name "libpng"
-default_version "1.5.17"
+default_version "1.6.29"
 
 source url: "http://downloads.sourceforge.net/libpng/libpng-#{version}.tar.gz"
+
+version "1.6.29" do
+  source md5: "68553080685f812d1dd7a6b8215c37d8"
+end
 
 version "1.5.17" do
   source md5: "d2e27dbd8c6579d1582b3f128fd284b4"

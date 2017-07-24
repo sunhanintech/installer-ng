@@ -3,10 +3,17 @@
 # NOLICENSE (freetype is the one included)
 
 name 'freetype_pre'
-default_version '2.5.5'
+default_version '2.7.1'
 
-source url: "http://download.savannah.gnu.org/releases/freetype/freetype-#{version}.tar.bz2",
-       md5: '2a7a314927011d5030903179cf183be0'
+source url: "http://download.savannah.gnu.org/releases/freetype/freetype-#{version}.tar.bz2"
+
+version '2.5.5' do
+  source md5: '2a7a314927011d5030903179cf183be0'
+end
+
+version '2.7.1' do
+  source md5: 'b3230110e0cab777e0df7631837ac36e'
+end
 
 relative_path "freetype-#{version}"
 

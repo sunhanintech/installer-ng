@@ -16,7 +16,7 @@
 #
 
 name "libiconv"
-default_version "1.14"
+default_version "1.15"
 
 dependency "patch" if solaris2?
 
@@ -24,6 +24,10 @@ source url: "http://ftp.gnu.org/pub/gnu/libiconv/libiconv-#{version}.tar.gz"
 
 version '1.14' do
   source md5: 'e34509b1623cec449dfeb73d7ce9c6c6'
+end
+
+version '1.15' do
+  source md5: 'ace8b5f2db42f7b3b3057585e80d9808'
 end
 
 relative_path "libiconv-#{version}"
@@ -36,12 +40,14 @@ build do
 
   configure_command = "./configure" \
                       " --prefix=#{install_dir}/embedded"
-  if aix?
-    patch_env = env.dup
-    patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
-    patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch', env: patch_env
-  else
-    patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch'
+  if version == '1.14'
+    if aix?
+      patch_env = env.dup
+      patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
+      patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch', env: patch_env
+    else 
+      patch source: 'libiconv-1.14_srclib_stdio.in.h-remove-gets-declarations.patch'
+    end
   end
 
   command configure_command, env: env

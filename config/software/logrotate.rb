@@ -15,13 +15,17 @@
 #
 
 name 'logrotate'
-default_version '3.9.1'
+default_version '3.12.2'
 
 dependency 'libpopt'
 
-source url: "https://fedorahosted.org/releases/l/o/logrotate/logrotate-#{version}.tar.gz"
+version '3.12.2' do
+  source url: 'https://github.com/logrotate/logrotate/releases/download/3.12.2/logrotate-3.12.2.tar.xz'
+  source md5: '923e753825405280aebcc4e73b4b2b55'
+end
 
 version '3.9.1' do
+  source url: "https://fedorahosted.org/releases/l/o/logrotate/logrotate-#{version}.tar.gz"
   source md5: '4492b145b6d542e4a2f41e77fa199ab0'
 end
 
@@ -36,12 +40,12 @@ build do
   # Including the version in the name ensures we regenerate the configure script and others if you upgrade logrotate.
   # The configure script can be generated using a recent system (e.g. Ubuntu 14.04 as of this writing)
   # using ./autogen.sh; provided the appropriate software (automake, libtool) is installed.
-  patch source: "0001-add-autogen-#{version}.patch"
+  #patch source: "0001-add-autogen-#{version}.patch"
 
   # Patch doesn't take modes into account. Change those that must be changed
-  %w{compile depcomp install-sh missing configure}.each do |bin|
-    command "chmod 755 #{project_dir}/#{bin}"
-  end
+  #%w{compile depcomp install-sh missing configure}.each do |bin|
+  #  command "chmod 755 #{project_dir}/#{bin}"
+  #end
 
   command './configure' \
           ' --without-selinux' \

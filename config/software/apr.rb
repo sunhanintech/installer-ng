@@ -1,8 +1,15 @@
 name 'apr'
-default_version '1.5.1'
+default_version '1.5.2'
 
-source url: "http://www.us.apache.org/dist/apr/apr-#{version}.tar.bz2",
-       md5: '5486180ec5a23efb5cae6d4292b300ab'
+source url: "http://www.us.apache.org/dist/apr/apr-#{version}.tar.bz2"
+
+version '1.5.1' do
+  source md5: '5486180ec5a23efb5cae6d4292b300ab'
+end
+
+version '1.5.2' do
+  source md5: '4e9769f3349fe11fc0a5e1b224c236aa'
+end
 
 relative_path "apr-#{version}"
 

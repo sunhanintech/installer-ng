@@ -1,16 +1,20 @@
 name 'libldap'
-default_version '2.4.40'
+default_version '2.4.44'
 
-source url: "http://ftp.debian.org/debian/pool/main/o/openldap/openldap_#{version}.orig.tar.gz"
+source url: "http://ftp.debian.org/debian/pool/main/o/openldap/openldap_#{version}+dfsg.orig.tar.gz"
 
 version '2.4.40' do
   source md5: '03a8658e62131c0cdbf85dd604e498db'
 end
 
+version '2.4.44' do
+  source md5: '7c6887479d87e1500906181f8d98668c'
+end
+
 dependency 'openssl'
 dependency 'libsasl'
 
-relative_path "openldap_#{version}.orig"
+relative_path "openldap-#{version}+dfsg"
 
 license path: 'LICENSE'
 

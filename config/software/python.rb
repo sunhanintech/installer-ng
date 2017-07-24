@@ -26,6 +26,7 @@ dependency 'bzip2'
 dependency 'expat'
 dependency 'libffi'
 dependency 'sqlite'
+dependency 'libgmp'
 
 source url: "https://www.python.org/ftp/python/#{version}/Python-#{version}.tgz"
 

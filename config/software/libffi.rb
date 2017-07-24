@@ -16,10 +16,17 @@
 #
 
 name 'libffi'
-default_version '3.0.13'
+default_version '3.2.1'
 
-source url: "ftp://sourceware.org/pub/libffi/libffi-#{version}.tar.gz",
-       md5: '45f3b6dbc9ee7c7dfbbbc5feba571529'
+source url: "ftp://sourceware.org/pub/libffi/libffi-#{version}.tar.gz"
+
+version '3.0.13' do
+  source md5: '45f3b6dbc9ee7c7dfbbbc5feba571529'
+end
+
+version '3.2.1' do
+  source md5: '83b89587607e3eb65c70d361f13bab43'
+end
 
 relative_path "libffi-#{version}"
 

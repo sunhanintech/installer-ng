@@ -102,6 +102,8 @@ if [ ! -z ${SCALR_BRANCH} ]; then
 
   #Update submodules
   git submodule update --init --recursive
+  #Discard changes if any
+  git submodule foreach --recursive git reset --hard
 
   #Fetch python requirements file
   cp ./app/python/fatmouse/infra/requirements/server-all.txt ./app/python/
