@@ -50,6 +50,8 @@ build do
     command "rm -rf '#{install_dir}/embedded/#{dir}'"
   end
 
+  delete "#{install_dir}/etc/php"
+
   # Version Manifest
   block do
     File.open("#{install_dir}/version-manifest.txt", 'w') do |f|
