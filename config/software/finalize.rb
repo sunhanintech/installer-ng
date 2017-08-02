@@ -59,6 +59,10 @@ build do
     end
   end
 
+  # License manifest
+  license_dir = "#{install_dir}/embedded/LICENSES"
+  mkdir license_dir
+
   command "#{install_dir}/embedded/bin/python" \
           ' ./python-licenses.py' \
           " #{license_dir}/python-lib-licenses.txt", env: env
