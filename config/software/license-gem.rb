@@ -22,6 +22,8 @@ default_version '0.2.1'
 dependency 'ruby'
 dependency 'rubygems'
 
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

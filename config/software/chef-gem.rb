@@ -25,6 +25,7 @@ dependency 'libffi'
 
 license 'Apache-2.0'
 license_file "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
+skip_transitive_dependency_licensing true
 
 
 build do

@@ -4,7 +4,9 @@ default_version '2.9.1'
 dependency 'ruby'
 dependency 'rubygems'
 
-license url: "https://raw.githubusercontent.com/luislavena/mysql-gem/v#{version.gsub('.', '_')}/COPYING"
+license 'Ruby'
+license_file "https://raw.githubusercontent.com/luislavena/mysql-gem/v#{version.gsub('.', '_')}/COPYING"
+skip_transitive_dependency_licensing true
 
 
 build do
