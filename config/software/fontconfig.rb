@@ -11,7 +11,7 @@ dependency 'libiconv'
 dependency 'expat'
 
 license ''
-licens_file 'COPYING'
+license_file 'COPYING'
 
 
 build do
