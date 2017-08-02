@@ -9,7 +9,8 @@ end
 
 relative_path "pixman-#{version}"
 
-license path: 'COPYING'
+license 'MIT'
+license_file 'COPYING'
 
 
 build do

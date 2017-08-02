@@ -29,7 +29,8 @@ dependency 'readline'
 
 relative_path "augeas-#{version}"
 
-license path: 'COPYING'
+license 'LGPL-2.1'
+license_file 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

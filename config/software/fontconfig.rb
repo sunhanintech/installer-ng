@@ -10,7 +10,8 @@ relative_path "fontconfig-#{version}"
 dependency 'libiconv'
 dependency 'expat'
 
-license path: 'COPYING'
+license ''
+licens_file 'COPYING'
 
 
 build do

@@ -18,7 +18,8 @@ dependency 'libffi'
 
 relative_path "glib-#{version}"
 
-license path: 'COPYING'
+license 'LGPL-2.1'
+license_file 'COPYING'
 
 
 build do

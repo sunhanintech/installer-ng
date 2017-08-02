@@ -33,7 +33,8 @@ dependency "libiconv"
 
 relative_path "libxml2-#{version}"
 
-license path: 'COPYING'
+license 'MIT'
+license_file 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

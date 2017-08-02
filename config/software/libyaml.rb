@@ -26,7 +26,8 @@ end
 
 relative_path "yaml-#{version}"
 
-license path: 'LICENSE'
+license 'MIT'
+license_file 'LICENSE'
 
 
 build do

@@ -9,7 +9,8 @@ end
 
 relative_path "dejavu-sans-ttf-#{version}"
 
-license path: 'LICENSE'
+license ''
+license_file 'LICENSE'
 
 
 build do

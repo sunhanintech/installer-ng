@@ -26,7 +26,8 @@ end
 
 relative_path "gdbm-#{version}"
 
-license path: 'COPYING'
+license 'GPL-3.0'
+license_file 'COPYING'
 
 
 build do

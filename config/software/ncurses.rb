@@ -30,7 +30,8 @@ end
 
 relative_path "ncurses-#{version}"
 
-license path: 'AUTHORS'
+license 'MIT'
+license_file 'AUTHORS'
 
 ########################################################################
 #

@@ -11,7 +11,8 @@ dependency 'sqlite'
 
 relative_path "apr-util-#{version}"
 
-license path: 'LICENSE'
+license 'Apache-2.0'
+license_file 'LICENSE'
 
 
 build do

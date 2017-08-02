@@ -29,7 +29,8 @@ dependency 'libxml2'
 
 relative_path "httpd-#{version}"
 
-license path: 'LICENSE'
+license 'Apache-2.0'
+license_file 'LICENSE'
 
 
 build do

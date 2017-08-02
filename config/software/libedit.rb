@@ -40,7 +40,8 @@ source url: "http://www.thrysoee.dk/editline/libedit-#{version}.tar.gz"
 
 relative_path "libedit-#{version}"
 
-license path: 'COPYING'
+license 'BSD-3-Clause'
+license_file 'COPYING'
 
 
 build do

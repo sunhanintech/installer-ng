@@ -26,7 +26,8 @@ end
 
 relative_path "wget-#{version}"
 
-license path: 'COPYING'
+license 'GPL-3.0'
+license_file 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -16,7 +16,8 @@ relative_path "yaml-#{version}"
 dependency 'libyaml'
 dependency 'php'
 
-license path: 'LICENSE'
+license 'MIT'
+license_file 'LICENSE'
 
 
 build do

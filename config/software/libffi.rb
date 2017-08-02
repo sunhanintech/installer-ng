@@ -30,7 +30,8 @@ end
 
 relative_path "libffi-#{version}"
 
-license path: 'LICENSE'
+license 'MIT'
+license_file 'LICENSE'
 
 
 build do

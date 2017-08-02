@@ -17,7 +17,8 @@ end
 
 relative_path "putty-#{version}"
 
-license path: 'LICENCE'
+license 'MIT'
+license_file 'LICENCE'
 
 
 build do

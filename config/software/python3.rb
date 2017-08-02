@@ -36,7 +36,8 @@ end
 
 relative_path "Python-#{version}"
 
-license path: 'LICENSE'
+license 'Pytnon-2.0'
+license_file 'LICENSE'
 
 
 build do

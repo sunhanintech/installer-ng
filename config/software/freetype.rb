@@ -19,7 +19,8 @@ dependency 'harfbuzz'
 
 relative_path "freetype-#{version}"
 
-license path: 'docs/FTL.TXT', encoding: Encoding::ISO_8859_1
+license 'FTL'
+license_file 'docs/FTL.TXT'
 
 
 build do

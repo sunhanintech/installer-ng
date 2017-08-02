@@ -29,7 +29,8 @@ dependency 'cacerts'
 
 relative_path "ssmtp-#{version}"
 
-license path: 'COPYING'
+license 'GPL-2.0'
+license_file 'COPYING'
 
 
 build do

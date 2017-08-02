@@ -11,7 +11,8 @@ dependency 'memcached'
 
 relative_path "libmemcached-#{version}"
 
-license path: 'COPYING'
+license 'BSD-3-Clause'
+license_file 'COPYING'
 
 
 build do

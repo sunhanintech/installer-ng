@@ -64,7 +64,8 @@ end
 
 relative_path "rubygems-#{version}"
 
-license path: 'LICENSE.txt'
+license 'MIT'
+license_file 'LICENSE.txt'
 
 
 build do

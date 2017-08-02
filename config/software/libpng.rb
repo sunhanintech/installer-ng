@@ -36,7 +36,8 @@ dependency "zlib"
 
 relative_path "libpng-#{version}"
 
-license path: 'LICENSE'
+license 'libpng'
+license_file 'LICENSE'
 
 
 build do

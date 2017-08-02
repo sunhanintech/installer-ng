@@ -17,7 +17,8 @@ end
 
 relative_path "libgpg-error-#{version}"
 
-license path: 'COPYING.LIB'
+license 'LGPL-2.1'
+license_file 'COPYING.LIB'
 
 
 build do

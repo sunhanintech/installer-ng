@@ -13,6 +13,9 @@ end
 
 dependency 'php'
 
+license 'MIT'
+license_file "https://raw.githubusercontent.com/composer/composer/#{version}/LICENSE"
+
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 

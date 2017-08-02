@@ -35,7 +35,8 @@ end
 
 relative_path "curl-#{version}"
 
-license path: 'COPYING'
+license 'MIT'
+license_file 'COPYING'
 
 
 build do

@@ -86,7 +86,8 @@ end
 
 relative_path "php-#{version}"
 
-license path: 'LICENSE'
+license 'PHP-3.0'
+license_file 'LICENSE'
 
 
 build do

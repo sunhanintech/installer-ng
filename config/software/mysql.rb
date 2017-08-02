@@ -26,7 +26,8 @@ dependency 'perl'
 
 relative_path "mysql-#{version}"
 
-license path: 'COPYING'
+license 'GPL-2.0'
+license_file 'COPYING'
 
 
 # View: http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html

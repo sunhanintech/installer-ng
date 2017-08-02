@@ -39,7 +39,8 @@ end
 
 relative_path "pip-#{version}"
 
-license path: 'LICENSE.txt'
+license 'MIT'
+license_file 'LICENSE.txt'
 
 
 build do

@@ -26,7 +26,8 @@ version '33.1.1' do
   source md5: '6f325e870730cd90f3ac9608cdf6a82f'
 end
 
-license path: 'LICENSE'
+license 'MIT'
+license_file 'LICENSE'
 
 relative_path "setuptools-#{version}"
 

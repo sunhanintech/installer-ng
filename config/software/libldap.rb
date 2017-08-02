@@ -16,7 +16,8 @@ dependency 'libsasl'
 
 relative_path "openldap-#{version}+dfsg"
 
-license path: 'LICENSE'
+license 'OpenLDAP'
+license_file 'LICENSE'
 
 
 build do

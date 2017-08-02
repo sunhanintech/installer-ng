@@ -77,7 +77,8 @@ end
 
 relative_path "openssl-#{version}"
 
-license path: 'LICENSE'
+license 'openssl'
+license_file 'LICENSE'
 
 
 build do

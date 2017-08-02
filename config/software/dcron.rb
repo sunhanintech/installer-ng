@@ -6,7 +6,8 @@ source url: "http://www.jimpryor.net/linux/releases/dcron-#{version}.tar.gz",
 
 relative_path "#{name}-#{version}"
 
-license url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+license 'GPL-3.0'
+license_file 'https://www.gnu.org/licenses/gpl-3.0.txt'
 
 
 build do

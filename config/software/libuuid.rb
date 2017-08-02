@@ -27,7 +27,8 @@ end
 
 relative_path "util-linux-#{version}"
 
-license path: 'COPYING'
+license 'GPL-2.0'
+license_file 'COPYING'
 
 
 build do

@@ -11,7 +11,8 @@ dependency 'php'
 
 relative_path "propro-#{version}"
 
-license path: 'LICENSE'
+license 'BSD-2-Clause'
+license_file 'LICENSE'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

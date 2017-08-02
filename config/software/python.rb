@@ -44,7 +44,8 @@ end
 
 relative_path "Python-#{version}"
 
-license path: 'LICENSE'
+license 'Python-2.0'
+license_file 'LICENSE'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

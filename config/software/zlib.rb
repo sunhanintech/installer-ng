@@ -26,7 +26,8 @@ source url: "http://downloads.sourceforge.net/project/libpng/zlib/#{version}/zli
 
 relative_path "zlib-#{version}"
 
-license path: 'README', cue: 'Copyright notice'
+license 'Zlib'
+license_file 'https://www.zlib.net/zlib_license.html'
 
 
 build do

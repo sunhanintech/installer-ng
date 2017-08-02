@@ -17,7 +17,8 @@ dependency 'cairo'
 
 relative_path "harfbuzz-#{version}"
 
-license path: 'COPYING'
+license 'Old-MIT'
+license_file 'COPYING'
 
 
 build do

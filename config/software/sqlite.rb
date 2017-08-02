@@ -23,7 +23,8 @@ source url: "http://www.sqlite.org/#{year}/sqlite-autoconf-#{version}.tar.gz"
 
 relative_path "sqlite-autoconf-#{version}"
 
-license url: 'https://www.sqlite.org/copyright.html'
+license 'Public-Domain'
+license_file 'https://www.sqlite.org/copyright.html'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

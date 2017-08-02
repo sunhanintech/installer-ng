@@ -18,7 +18,8 @@ dependency 'libxml2'
 
 relative_path "gettext-#{version}"
 
-license path: 'COPYING'
+license 'GPL-3.0'
+license_file 'COPYING'
 
 
 build do

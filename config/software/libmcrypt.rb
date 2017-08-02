@@ -12,7 +12,8 @@ end
 
 relative_path "libmcrypt-#{version}"
 
-license path: 'COPYING.LIB'
+license 'LGPL-2.1'
+license_file 'COPYING.LIB'
 
 
 build do

@@ -14,7 +14,8 @@ dependency 'php'
 
 relative_path "memcached-#{version}"
 
-license path: 'LICENSE'
+license 'PHP-3.0'
+license_file 'LICENSE'
 
 
 build do

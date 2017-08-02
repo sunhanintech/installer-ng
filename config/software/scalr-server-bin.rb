@@ -22,7 +22,8 @@ name 'scalr-server-bin'
 
 source path: File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
 
-license path: 'LICENSE'
+license 'Apache-2.0'
+license_file 'LICENSE'
 
 dependency 'wget'
 

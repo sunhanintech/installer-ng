@@ -45,7 +45,8 @@ source url: "http://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[
 
 relative_path "ruby-#{version}"
 
-license path: 'COPYING'
+license 'BSD-2-Clause'
+license_file 'COPYING'
 
 
 env = with_standard_compiler_flags(with_embedded_path)

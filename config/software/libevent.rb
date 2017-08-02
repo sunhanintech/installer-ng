@@ -11,7 +11,8 @@ dependency 'openssl'
 
 relative_path "libevent-#{version}"
 
-license path: 'LICENSE'
+license 'BSD-3-Clause'
+license_file 'LICENSE'
 
 
 build do

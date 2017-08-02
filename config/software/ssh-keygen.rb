@@ -28,7 +28,8 @@ end
 
 relative_path "openssh-#{version}"
 
-license path: 'LICENCE', encoding: Encoding::ISO_8859_1
+license 'BSD'
+license_file 'LICENCE'
 
 
 build do

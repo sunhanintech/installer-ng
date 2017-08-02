@@ -28,7 +28,8 @@ dependency 'libxml2'
 
 relative_path "libxslt-#{version}"
 
-license path: 'COPYING'
+license 'MIT'
+license_file 'COPYING'
 
 
 build do

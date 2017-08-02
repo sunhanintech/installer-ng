@@ -23,7 +23,8 @@ dependency 'ruby'
 dependency 'rubygems'
 dependency 'libffi'
 
-license url: "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
+license 'Apache-2.0'
+license_file "https://raw.githubusercontent.com/chef/chef/#{version}/LICENSE"
 
 
 build do

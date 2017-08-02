@@ -6,7 +6,8 @@ source url: "ftp://ftp.astron.com/pub/file/file-#{version}.tar.gz",
 
 relative_path "file-#{version}"
 
-license path: 'COPYING'
+license 'BSD-2-clause'
+license_file 'COPYING'
 
 
 build do

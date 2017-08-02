@@ -19,7 +19,8 @@ dependency 'fontconfig'
 
 relative_path "cairo-#{version}"
 
-license path: 'COPYING-MPL-1.1'
+license 'MPL-1.1'
+license_file 'COPYING-MPL-1.1'
 
 
 build do

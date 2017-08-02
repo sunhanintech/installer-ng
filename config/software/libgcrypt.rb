@@ -16,7 +16,8 @@ dependency 'libgpg-error'
 relative_path "libgcrypt-#{version}"
 
 # TODO - There is a secondary license in 'LICENSES'
-license path: 'COPYING.LIB'
+license 'LGPL-2.1'
+license_file 'COPYING.LIB'
 
 
 build do

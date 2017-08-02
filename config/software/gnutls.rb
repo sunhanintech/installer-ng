@@ -27,7 +27,8 @@ end
 
 relative_path "gnutls-#{version}"
 
-license path: 'LICENSE'
+license 'LGPL-2.1'
+license_file 'LICENSE'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

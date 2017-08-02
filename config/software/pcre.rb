@@ -33,7 +33,8 @@ dependency "ncurses"
 
 relative_path "pcre-#{version}"
 
-license path: 'LICENCE'
+license 'BSD-3-Clause'
+license_file 'LICENCE'
 
 
 build do

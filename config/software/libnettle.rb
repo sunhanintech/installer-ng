@@ -24,7 +24,8 @@ end
 
 relative_path "nettle-#{version}"
 
-license path: 'COPYINGv3'
+license 'LGPL-3.0'
+license_file 'COPYING.LESSERv3'
 
 dependency 'libgmp'
 

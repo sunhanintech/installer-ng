@@ -30,7 +30,8 @@ end
 
 relative_path "perl-#{version}"
 
-license path: 'Copying'
+license 'GPL-1.0'
+license_file 'Copying'
 
 
 build do

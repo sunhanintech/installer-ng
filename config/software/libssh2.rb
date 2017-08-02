@@ -13,7 +13,8 @@ dependency 'libgcrypt'
 
 relative_path "libssh2-#{version}"
 
-license path: 'COPYING'
+license 'BSD-3-Clause'
+license_file 'COPYING'
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

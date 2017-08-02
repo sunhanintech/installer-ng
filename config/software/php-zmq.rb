@@ -9,7 +9,8 @@ relative_path "zmq-#{version}"
 dependency 'libzmq'
 dependency 'php'
 
-license path: 'LICENSE'
+license 'BSD-3-Clause'
+license_file 'LICENSE'
 
 
 build do

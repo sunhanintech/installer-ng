@@ -12,7 +12,8 @@ dependency 'openssl'
 
 relative_path "cyrus-sasl-#{version}"
 
-license path: 'COPYING'
+license 'CMU'
+license_file 'COPYING'
 
 
 build do

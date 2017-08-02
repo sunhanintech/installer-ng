@@ -28,7 +28,8 @@ source url: "http://www.bzip.org/#{version}/#{name}-#{version}.tar.gz",
 
 relative_path "#{name}-#{version}"
 
-license path: 'LICENSE'
+license 'BSD-4-Clause'
+license_file 'LICENSE'
 
 
 build do

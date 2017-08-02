@@ -28,7 +28,8 @@ end
 
 relative_path "zeromq-#{version}"
 
-license path: 'COPYING.LESSER'
+license 'LGPL-3.0'
+license_file 'COPYING.LESSER'
 
 
 build do
