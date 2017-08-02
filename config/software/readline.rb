@@ -12,7 +12,7 @@ source :url => "ftp://ftp.gnu.org/gnu/readline/readline-#{version}.tar.gz",
 
 relative_path "readline-#{version}"
 
-licence 'GPL-3.0'
+license 'GPL-3.0'
 license_file 'COPYING'
 
 build do
