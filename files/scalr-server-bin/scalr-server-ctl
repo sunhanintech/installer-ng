@@ -35,7 +35,7 @@ config_test () {
 }
 
 memory_test () {
-    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 3700000 ]; then
+    if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 3600000 ]; then
         echo "Scalr requires a minimum of 4GB RAM to run."
         exit 1
     fi
