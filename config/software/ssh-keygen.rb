@@ -30,6 +30,7 @@ relative_path "openssh-#{version}"
 
 license 'BSD'
 license_file 'LICENCE'
+skip_transitive_dependency_licensing true
 
 
 build do

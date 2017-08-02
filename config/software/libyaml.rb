@@ -28,6 +28,7 @@ relative_path "yaml-#{version}"
 
 license 'MIT'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

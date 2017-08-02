@@ -7,6 +7,7 @@ dependency 'pip'
 
 license ''
 license_file "https://raw.githubusercontent.com/Supervisor/supervisor/#{version}/LICENSES.txt"
+skip_transitive_dependency_licensing true
 
 
 build do

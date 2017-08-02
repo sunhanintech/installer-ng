@@ -18,6 +18,9 @@
 
 name 'scalr-app-php-libs'
 
+skip_transitive_dependency_licensing true
+
+
 dependency 'php-memcached'
 dependency 'php-pecl_http'
 dependency 'php-ssh2'

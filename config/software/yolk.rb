@@ -22,6 +22,8 @@ default_version '0.8.6'
 dependency 'python'
 dependency 'pip'
 
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

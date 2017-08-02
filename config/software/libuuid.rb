@@ -29,6 +29,7 @@ relative_path "util-linux-#{version}"
 
 license 'GPL-2.0'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

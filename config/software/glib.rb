@@ -20,6 +20,7 @@ relative_path "glib-#{version}"
 
 license 'LGPL-2.1'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

@@ -28,6 +28,7 @@ relative_path "zlib-#{version}"
 
 license 'Zlib'
 license_file 'https://www.zlib.net/zlib_license.html'
+skip_transitive_dependency_licensing true
 
 
 build do

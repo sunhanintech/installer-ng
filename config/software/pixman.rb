@@ -11,6 +11,7 @@ relative_path "pixman-#{version}"
 
 license 'MIT'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

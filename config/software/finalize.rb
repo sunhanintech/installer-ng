@@ -60,7 +60,7 @@ build do
   end
 
   # License manifest
-  license_dir = "#{install_dir}/embedded/LICENSES"
+  license_dir = "#{install_dir}/LICENSES"
   mkdir license_dir
 
   command "#{install_dir}/embedded/bin/python" \

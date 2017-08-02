@@ -33,6 +33,8 @@ relative_path "logrotate-#{version}"
 
 license 'GPL-2.0'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -15,6 +15,7 @@ relative_path "apr-#{version}"
 
 license 'Apache-2.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

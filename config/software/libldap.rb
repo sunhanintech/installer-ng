@@ -18,6 +18,7 @@ relative_path "openldap-#{version}+dfsg"
 
 license 'OpenLDAP'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

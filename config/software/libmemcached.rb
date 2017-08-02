@@ -13,6 +13,7 @@ relative_path "libmemcached-#{version}"
 
 license 'BSD-3-Clause'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

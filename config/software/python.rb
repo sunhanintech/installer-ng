@@ -46,6 +46,8 @@ relative_path "Python-#{version}"
 
 license 'Python-2.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -88,6 +88,7 @@ relative_path "php-#{version}"
 
 license 'PHP-3.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

@@ -30,6 +30,7 @@ relative_path "#{name}-#{version}"
 
 license 'BSD-4-Clause'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

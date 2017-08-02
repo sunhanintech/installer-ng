@@ -12,6 +12,7 @@ dependency 'expat'
 
 license ''
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

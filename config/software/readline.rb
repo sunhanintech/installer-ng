@@ -14,6 +14,8 @@ relative_path "readline-#{version}"
 
 license 'GPL-3.0'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

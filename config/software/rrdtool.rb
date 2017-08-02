@@ -26,6 +26,7 @@ relative_path "rrdtool-#{version}"
 # TODO There is another one for the libs
 license 'GPL-2.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

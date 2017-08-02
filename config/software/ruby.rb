@@ -47,6 +47,7 @@ relative_path "ruby-#{version}"
 
 license 'BSD-2-Clause'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 env = with_standard_compiler_flags(with_embedded_path)

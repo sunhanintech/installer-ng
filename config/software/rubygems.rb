@@ -66,6 +66,7 @@ relative_path "rubygems-#{version}"
 
 license 'MIT'
 license_file 'LICENSE.txt'
+skip_transitive_dependency_licensing true
 
 
 build do

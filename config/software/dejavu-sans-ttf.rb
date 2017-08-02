@@ -11,6 +11,7 @@ relative_path "dejavu-sans-ttf-#{version}"
 
 license ''
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

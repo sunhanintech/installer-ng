@@ -8,6 +8,7 @@ relative_path "file-#{version}"
 
 license 'BSD-2-clause'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

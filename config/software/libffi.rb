@@ -32,6 +32,7 @@ relative_path "libffi-#{version}"
 
 license 'MIT'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

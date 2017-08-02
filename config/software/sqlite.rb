@@ -25,6 +25,8 @@ relative_path "sqlite-autoconf-#{version}"
 
 license 'Public-Domain'
 license_file 'https://www.sqlite.org/copyright.html'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

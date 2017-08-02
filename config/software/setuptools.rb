@@ -28,6 +28,8 @@ end
 
 license 'MIT'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
+
 
 relative_path "setuptools-#{version}"
 

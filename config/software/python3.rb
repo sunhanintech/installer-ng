@@ -38,6 +38,7 @@ relative_path "Python-#{version}"
 
 license 'Pytnon-2.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

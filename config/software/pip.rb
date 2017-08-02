@@ -41,6 +41,7 @@ relative_path "pip-#{version}"
 
 license 'MIT'
 license_file 'LICENSE.txt'
+skip_transitive_dependency_licensing true
 
 
 build do

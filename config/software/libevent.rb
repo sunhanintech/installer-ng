@@ -13,6 +13,7 @@ relative_path "libevent-#{version}"
 
 license 'BSD-3-Clause'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do

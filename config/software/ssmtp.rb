@@ -31,6 +31,7 @@ relative_path "ssmtp-#{version}"
 
 license 'GPL-2.0'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

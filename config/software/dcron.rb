@@ -8,6 +8,7 @@ relative_path "#{name}-#{version}"
 
 license 'GPL-3.0'
 license_file 'https://www.gnu.org/licenses/gpl-3.0.txt'
+skip_transitive_dependency_licensing true
 
 
 build do

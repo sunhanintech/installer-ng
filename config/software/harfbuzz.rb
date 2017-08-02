@@ -19,6 +19,7 @@ relative_path "harfbuzz-#{version}"
 
 license 'Old-MIT'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 build do

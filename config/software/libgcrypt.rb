@@ -18,6 +18,7 @@ relative_path "libgcrypt-#{version}"
 # TODO - There is a secondary license in 'LICENSES'
 license 'LGPL-2.1'
 license_file 'COPYING.LIB'
+skip_transitive_dependency_licensing true
 
 
 build do

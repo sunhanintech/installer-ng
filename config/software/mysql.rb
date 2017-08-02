@@ -28,6 +28,7 @@ relative_path "mysql-#{version}"
 
 license 'GPL-2.0'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
 
 
 # View: http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html

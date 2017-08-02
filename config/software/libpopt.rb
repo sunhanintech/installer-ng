@@ -27,6 +27,8 @@ relative_path "popt-#{version}"
 
 license 'MIT'
 license_file 'COPYING'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

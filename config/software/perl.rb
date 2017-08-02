@@ -32,6 +32,7 @@ relative_path "perl-#{version}"
 
 license 'GPL-1.0'
 license_file 'Copying'
+skip_transitive_dependency_licensing true
 
 
 build do

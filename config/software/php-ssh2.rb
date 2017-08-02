@@ -11,6 +11,8 @@ dependency 'php'
 
 license 'PHP-3.0'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

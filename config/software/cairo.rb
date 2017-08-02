@@ -21,6 +21,7 @@ relative_path "cairo-#{version}"
 
 license 'MPL-1.1'
 license_file 'COPYING-MPL-1.1'
+skip_transitive_dependency_licensing true
 
 
 build do

@@ -19,6 +19,7 @@ relative_path "putty-#{version}"
 
 license 'MIT'
 license_file 'LICENCE'
+skip_transitive_dependency_licensing true
 
 
 build do

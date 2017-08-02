@@ -32,6 +32,7 @@ relative_path "ncurses-#{version}"
 
 license 'MIT'
 license_file 'AUTHORS'
+skip_transitive_dependency_licensing true
 
 ########################################################################
 #

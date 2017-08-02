@@ -21,6 +21,8 @@ relative_path "freetype-#{version}"
 
 license 'FTL'
 license_file 'docs/FTL.TXT'
+skip_transitive_dependency_licensing true
+
 
 
 build do

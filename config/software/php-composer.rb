@@ -15,6 +15,8 @@ dependency 'php'
 
 license 'MIT'
 license_file "https://raw.githubusercontent.com/composer/composer/#{version}/LICENSE"
+skip_transitive_dependency_licensing true
+
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

@@ -30,6 +30,7 @@ relative_path "zeromq-#{version}"
 
 license 'LGPL-3.0'
 license_file 'COPYING.LESSER'
+skip_transitive_dependency_licensing true
 
 
 build do

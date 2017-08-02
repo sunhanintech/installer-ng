@@ -35,6 +35,7 @@ relative_path "pcre-#{version}"
 
 license 'BSD-3-Clause'
 license_file 'LICENCE'
+skip_transitive_dependency_licensing true
 
 
 build do

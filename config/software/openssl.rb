@@ -79,6 +79,7 @@ relative_path "openssl-#{version}"
 
 license 'openssl'
 license_file 'LICENSE'
+skip_transitive_dependency_licensing true
 
 
 build do
