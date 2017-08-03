@@ -32,7 +32,7 @@ dependency_licenses [
     version: 'dev-master#47bd188',
     dependency_manager: 'Composer',
     license: 'BSD-3-Clause',
-    license_files: ['vendor/adodb/adodb-php/LICENCE.md']
+    license_files: ['vendor/adodb/adodb-php/LICENSE.md']
   },
   {
     name: 'google/apiclient',
