@@ -33,6 +33,7 @@ dependency 'libxml2'
 dependency 'rrdtool'
 dependency 'libyaml'
 
+license :project_license
 skip_transitive_dependency_licensing true
 
 

@@ -22,8 +22,7 @@ name 'scalr-server-bin'
 
 source path: File.expand_path('files/scalr-server-bin', Omnibus::Config.project_root)
 
-license 'Apache-2.0'
-license_file 'LICENSE'
+license :project_license
 skip_transitive_dependency_licensing true
 
 

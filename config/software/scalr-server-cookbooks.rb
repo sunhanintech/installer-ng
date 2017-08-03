@@ -22,8 +22,7 @@ name 'scalr-server-cookbooks'
 
 source path: File.expand_path('files/scalr-server-cookbooks', Omnibus::Config.project_root)
 
-license 'Apache-2.0'
-license_file 'LICENSE'
+license :project_license
 skip_transitive_dependency_licensing true
 
 

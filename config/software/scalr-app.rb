@@ -3,6 +3,7 @@ default_version '__SCALR_APP_REVISION__'
 
 source :path => '__SCALR_APP_PATH__'
 
+license :project_license
 # Manually add composer licenses
 dependency_licenses [
   {

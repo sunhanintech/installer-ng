@@ -18,6 +18,7 @@
 
 name 'scalr-app-php-libs'
 
+license :project_license
 skip_transitive_dependency_licensing true
 
 
