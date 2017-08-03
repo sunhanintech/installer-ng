@@ -3,13 +3,47 @@ default_version '__SCALR_APP_REVISION__'
 
 source :path => '__SCALR_APP_PATH__'
 
-# Manually composer licenses
-license_file "vendor/google/apiclient/LICENSE"
-license_file "vendor/onelogin/php-saml/LICENSE"
+# Manually add composer licenses
+dependency_licenses [
+  {
+    dependency_name: 'onelogin/php-saml',
+    dependency_manager: 'Composer',
+    license: 'MIT',
+    license_file: 'vendor/onelogin/php-saml/LICENSE'
+  },
+    {
+    dependency_name: 'justinrainbow/json-schema',
+    dependency_manager: 'Composer',
+    license: 'MIT',
+    license_file: 'vendor/justinrainbow/json-schema/LICENSE'
+  },
+    {
+    dependency_name: 'php-amqplib',
+    dependency_manager: 'Composer',
+    license: 'LGPL-2.1',
+    license_file: 'vendor/php-amqplib/php-amqplib/LICENSE'
+  },
+  {
+    dependency_name: 'adodb/adodp-php',
+    dependency_manager: 'Composer',
+    license: 'BSD-3-Clause',
+    license_file: 'vendor/adodb/adodb-php/LICENCE.md'
+  },
+  {
+    dependency_name: 'google/apiclient',
+    dependency_manager: 'Composer',
+    license: 'Apache-2.0',
+    license_file: 'vendor/google/apiclient/LICENSE'
+  },
+  {
+    dependency_name: 'psr/cache',
+    dependency_manager: 'Composer',
+    license: 'MIT',
+    license_file: 'vendor/psr/cache/LICENSE.txt'
+  }
+]
 
 dependency 'php-composer'
-
-skip_transitive_dependency_licensing true
 
 
 build do
