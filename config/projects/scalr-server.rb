@@ -6,7 +6,7 @@ description 'Full stack Scalr Server'
 
 install_dir "#{default_root}/#{name}"
 
-if ENV['EDITION'] == "opensource"
+if ENV['EDITION'] == "enterprise"
   license 'Commercial'
   license_file 'files/SCALR_EE_LICENSE'
 else
