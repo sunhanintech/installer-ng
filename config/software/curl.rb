@@ -18,7 +18,7 @@
 # TODO - Consider whether it'd be nice to actually have libssh2 here.
 # TODO - Check whether this still links against libgcrypt
 name 'curl'
-default_version '7.22.0'
+default_version '7.54.1'
 
 dependency 'zlib'
 dependency 'openssl'
@@ -31,6 +31,10 @@ end
 
 version '7.36.0' do
   source md5: "643a7030b27449e76413d501d4b8eb57"
+end
+
+version '7.54.1' do
+  source md5: '21a6e5658fd55103a90b11de7b2a8a8c'
 end
 
 relative_path "curl-#{version}"
