@@ -7,14 +7,14 @@ license :project_license
 # Manually add composer licenses
 dependency_licenses [
   {
-    name: 'onelogin/php-saml',
+    name: 'onelogin-php-saml',
     version: '2.10.4',
     dependency_manager: 'Composer',
     license: 'MIT',
     license_files: ['vendor/onelogin/php-saml/LICENSE']
   },
   {
-    name: 'justinrainbow/json-schema',
+    name: 'justinrainbow-json-schema',
     version: '3.0.1',
     dependency_manager: 'Composer',
     license: 'MIT',
@@ -28,21 +28,21 @@ dependency_licenses [
     license_files: ['vendor/php-amqplib/php-amqplib/LICENSE']
   },
   {
-    name: 'adodb/adodp-php',
+    name: 'adodp-php',
     version: 'dev-master#47bd188',
     dependency_manager: 'Composer',
     license: 'BSD-3-Clause',
     license_files: ['vendor/adodb/adodb-php/LICENSE.md']
   },
   {
-    name: 'google/apiclient',
+    name: 'google-apiclient',
     version: '2.2.0',
     dependency_manager: 'Composer',
     license: 'Apache-2.0',
     license_files: ['vendor/google/apiclient/LICENSE']
   },
   {
-    name: 'psr/cache',
+    name: 'psr-cache',
     version: '1.0.1',
     dependency_manager: 'Composer',
     license: 'MIT',
