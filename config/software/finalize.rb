@@ -75,12 +75,14 @@ build do
           " #{license_dir}/ruby-lib-licenses.txt", env: env
 
   block do
+    ENV['COMPOSER_ALLOW_SUPERUSER'] = '1'
+    composer = "#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar --working-dir=#{install_dir}/embedded/scalr/"
     File.open("#{license_dir}/php-lib-licenses.txt", 'w') do |f|
-      php_packages = `#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar show -N`.lines
+      php_packages = `#{composer} show -N`.lines
       php_packages.each do |package|
         package = package.strip
-        version = `#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar show #{package} |grep '^version' |cut -d: -f2-`.strip
-        license = `#{install_dir}/embedded/bin/php #{install_dir}/embedded/bin/composer.phar show #{package} |grep '^license' |cut -d: -f2-`.strip
+        version = `#{composer} show #{package} |grep '^version' |cut -d: -f2-`.strip
+        license = `#{composer} show #{package} |grep '^license' |cut -d: -f2-`.strip
         f.puts "This project includes the PHP package #{package} version #{version},"
         f.puts "available under the following license(s):"
         f.puts license
