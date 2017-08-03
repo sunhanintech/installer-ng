@@ -49,7 +49,7 @@ build do
       'sql-bench',        # MySQL benchmark
       'php/man',          # PHP man pages
   ].each do |dir|
-    command "rm -rf '#{install_dir}/embedded/#{dir}'"
+    delete "#{install_dir}/embedded/#{dir}"
   end
 
   # Version Manifest

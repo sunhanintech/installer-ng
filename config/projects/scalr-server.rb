@@ -6,6 +6,14 @@ description 'Full stack Scalr Server'
 
 install_dir "#{default_root}/#{name}"
 
+if ENV['EDITION'] == "opensource"
+  license 'Commercial'
+  license_file 'files/SCALR_EE_LICENSE'
+else
+  license 'Apache-2.0'
+  license_file 'LICENSE'
+end
+
 # Defauts
 build_version Omnibus::BuildVersion.semver
 build_iteration 1
