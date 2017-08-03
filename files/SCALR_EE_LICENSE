@@ -1,0 +1,281 @@
+SOFTWARE LICENSE AND SUPPORT AGREEMENT
+
+PLEASE READ THIS AGREEMENT CAREFULLY BEFORE USING THIS SERVICE.
+ 
+BY USING THE SOFTWARE OR CLICKING AGREE CUSTOMER IS AGREEING TO BE BOUND BY
+THIS AGREEMENT. IF YOU ARE AGREEING TO THIS AGREEMENT ON BEHALF OF OR FOR THE
+BENEFIT OF YOUR EMPLOYER OR A THIRD PARTY, THEN YOU REPRESENT AND WARRANT THAT
+YOU HAVE THE NECESSARY AUTHORITY TO AGREE TO THIS AGREEMENT ON YOUR EMPLOYER'S
+OR THAT THIRD PARTY'S BEHALF.
+
+This agreement is between Scalr, Inc. a Delaware corporation (Scalr) and you,
+the customer entering into this agreement (Customer). The Scalr software,
+updates, documentation and license keys provided to Customer (Software) are
+licensed and are not sold.
+
+1.  SCOPE. This agreement describes the licensing of the Software and support
+provided to Customer for evaluation licenses and fee licenses under an order
+between the parties or purchase order (collectively, Order).
+
+2.  LICENSE. Subject to the other terms of this agreement, Scalr grants
+Customer, under an Order, a term non-exclusive, non-transferable license, up
+to the number of Endpoints Under Management purchased, to:
+ - Use the Software only in Customer’s internal business operations; and
+ - Make one copy of the Software for archival and backup purposes.
+
+Requirement: Customer must license the Software for all Endpoints Under
+Management.
+ - Managed Endpoints means the number of Virtual Machines, Virtual Cloud
+   Instances, Cloud Services[1] or Bare Metal Servers[2] managed by the Scalr
+   software.
+ - Managed Endpoint licenses are for 'concurrent’ Managed Endpoints (not
+   'unique’ Managed Endpoints).
+ - Concurrent Calculation: The concurrent Managed Endpoints measurement is
+   calculated as the 95th percentile of samples taken hourly over the month.
+
+      For example, during a 30 day month, the hourly sampling of concurrent
+      Managed Endpoints results in 720 hourly data samples collected, and the
+      samples taken during the 36 hours with the highest concurrent Managed
+      Endpoint values will be discarded for being in top 5% of samples taken,
+      and the highest remaining value is taken and retained.
+
+[1] Cloud Services are broken into two tiers: 
+ - First Tier Cloud Services: Support built into Scalr for commonly deployed
+   cloud services and licensed as Managed Endpoints.
+ - Second Tier Cloud Services: Support available for other, less common cloud
+   services via Scalr’s CSG (Cloud Service Gateway)available for Enterprise
+   Scalr customers with Premium Support at no charge.
+
+[2] Bare Metal Servers are licensed as Managed Endpoints when supported by
+Scalr directly through a Cloud Infrastructure Platform, such as Openstack or 
+Cloudstack (where a hypervisor is not installed on the servers).
+
+Usage Reporting.  Upon request, Customer must run a license usage report and
+send it to Scalr.
+
+3.  RESTRICTIONS. Customer may not: 
+
+ a. Transfer, assign, sublicense, rent, create derivative works of the
+    Software, or use it in any type of service provider environment (unless
+    otherwise authorized by Scalr in writing);
+
+ b. Reverse engineer, decompile, disassemble, or translate the Software; or
+ 
+ c. Evaluate the Software for the purpose of competing with Scalr.
+
+4.  EVALUATION LICENSES. This Section applies to you if the Software is
+licensed to you for evaluation or demonstration purposes. You are permitted to
+use the Software for evaluation or demonstration purposes only. The Software
+may contain an automatic disabling mechanism. Your right to use the Software
+is limited in accordance with the terms under which you received the Software.
+The Software is provided AS IS, with no warranty during this time period. If
+no period of use is specified, then your right to use the Software shall
+terminate thirty (30) days from receipt of the Software, at which time you
+must return or destroy the Software unless granted an extension by Scalr in
+writing.
+
+5.  PAYMENT. Customer will pay all fees (USD) due within 30 days of the
+invoice date, unless otherwise provided on an Order, plus applicable sales,
+use and other similar taxes.  All subscription fees are paid annually in
+advance.
+
+ a. Taxes. In the event that any withholding, sales or use taxes or other
+    taxes or government fees, assessments or charges are payable for any
+    license of the Software, or because of any payment by you, then you shall
+    pay such taxes, fees, assessments and charges in addition to all other
+    payments.
+
+6.  PROPRIETARY RIGHTS AND MUTUAL CONFIDENTIALITY.
+
+ a. Proprietary Rights. The Software, workflow processes, user interface,
+    designs, and other technologies provided by Scalr as part of the Software
+    are the proprietary property of Scalr and its licensors, and all right,
+    title and interest in and to such items, including all associated
+    intellectual property rights, remain only with Scalr and its licensors.
+    The Software is protected by applicable copyright and other intellectual
+    property laws (unless otherwise authorized by Scalr in writing). Customer
+    may not remove any product identification, copyright, trademark or other
+    notice from the Software. Scalr reserves all rights not expressly granted.
+
+ b. Mutual Confidentiality. Recipient may not disclose Confidential
+    Information of Discloser to any third party or use the Confidential
+    Information in violation of this agreement.
+
+    Confidential Information means all information that is disclosed to the
+    recipient (Recipient) by the discloser (Discloser), and includes, among
+    other things:
+     - any and all information relating to products or services provided by a
+       Discloser, software code, flow charts, techniques, specifications,
+       development and marketing plans, strategies, and forecasts;
+     - as to Scalr the Software and the terms of this agreement, including
+       without limitation, all pricing information.
+
+    Confidential Information excludes information that: 
+     - was rightfully in Recipient's possession without any obligation of
+       confidentiality before receipt from the Discloser;
+     - is or becomes a matter of public knowledge through no fault of
+       Recipient;
+     - is rightfully received by Recipient from a third party without
+       violation of a duty of confidentiality; or
+     - is independently developed by or for Recipient without use or access to
+       the Confidential Information.
+
+    Recipient may disclose Confidential Information if required by law, but it
+    will attempt to provide notice to the Discloser in advance so it may seek
+    a protective order. Each party acknowledges that any misuse of the other
+    party’s Confidential Information may cause irreparable harm for which
+    there is no adequate remedy at law. Either party may seek immediate
+    injunctive relief in such event.
+
+7.  WARRANTY, REMEDY and DISCLAIMER. For new license purchases, Scalr warrants
+that the Software will perform in substantial accordance with its accompanying
+product documentation for a period of 90 days from the date of the order.
+This warranty will not apply to any problems caused by software not licensed
+to Customer by Scalr, use other than in accordance with the technical
+documentation, or misuse of the Software. The warranty only covers problems
+reported to Scalr during the warranty period (if Customer does not report the
+claim within the warranty period, Customer may report such claims within 30
+days after the end of the warranty period).  Customer will cooperate with
+Scalr in resolving any warranty claim.
+
+A.  EXCLUSIVE REMEDY AND SOLE LIABILITY. Scalr will use commercially
+reasonable efforts to remedy covered warranty claims within a reasonable
+period of time or replace the Software, or if Scalr cannot do so it will
+refund the license fee paid to Customer. THIS REMEDY IS CUSTOMER’S EXCLUSIVE
+REMEDY, AND SCALR’S SOLE LIABILITY FOR THESE WARRANTY CLAIMS.
+
+B.  DISCLAIMER OF WARRANTIES. SCALR DISCLAIMS ALL OTHER EXPRESS AND IMPLIED
+WARRANTIES, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTY OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  CUSTOMER UNDERSTANDS
+THAT THE SOFTWARE MAY NOT BE ERROR FREE, AND USE MAY BE INTERRUPTED.
+
+8.  TERMINATION.
+
+ a. Order Renewals. Each Order auto renews for the same duration as the
+    original 1 or 3-year subscription term under the applicable Order, unless
+    either party provides the other party with at least 60 days’ advance
+    written notice of termination, prior to the renewal date.
+
+ b. Agreement Term. This agreement expires at the end of the license period
+    specified in the accompanying Order.
+
+ c. Termination. Either party may terminate this agreement upon a material
+    breach of the other party after a 30 days notice/cure period, if the
+    breach is not cured during such time period. Upon termination of this
+    agreement or a license, Customer must discontinue using the Software, de-
+    install and destroy or return the Software and all copies, within 5 days.
+    Upon Scalr' request, Customer will provide written certification of such
+    compliance.
+
+9.  ANNUAL SUPPORT. Scalr’s annual technical support and maintenance services
+(Support) is included with license purchases for the license period specified
+in the Order.  Support is provided under the Support policies then in effect.
+Scalr may change its Support terms, but Support will not materially degrade
+during any Support term. More details on Support are located at
+http://www.scalr.com/policies.
+
+10. LIMIT ON LIABILITY. There may be situations in which (as a result of
+material breach or other liability) Customer is entitled to make a claim
+against Scalr.  In each situation (regardless of the form of the legal action
+(e.g. contract or tort claims)), Scalr is not responsible for any damage and
+does not have any liability beyond the greater of the amount paid or payable
+by Customer to Scalr within the 12 months prior to the event that gave rise to
+the claim. Even if it knows of the possibility of such damage or liability, in
+no circumstance is Scalr responsible for any: loss of, or damage to, data or
+information; lost profits, revenue, or productivity; or other special,
+consequential, incidental or indirect damages.
+ 
+11. INTELLECTUAL PROPERTY INDEMNITY.
+
+ a. Defense of Third Party Claims. Scalr will defend or settle any third party
+    claim against Customer to the extent that such claim alleges that the
+    Software violates a copyright, patent, trademark or other intellectual
+    property right, if Customer, promptly notifies Scalr of the claim in
+    writing, cooperates with Scalr in the defense, and allows Scalr to solely
+    control the defense or settlement of the claim.  Costs. Scalr will pay
+    infringement claim defense costs incurred as part of its obligations
+    above, and Scalr negotiated settlement amounts, and court awarded damages.
+    Process. If such a claim appears likely, then Scalr may modify the
+    Software, procure the necessary rights, or replace it with the functional
+    equivalent. If Scalr determines that none of these are reasonably
+    available, then Scalr may terminate the Software and refund (as
+    applicable) any prepaid and unused service and license fees.. Exclusions.
+    Scalr has no obligation for any claim arising from: Scalr’s compliance
+    with Customer’s specifications; a combination of the Software with other
+    technology or aspects where the infringement would not occur but for the
+    combination; or technology or aspects not provided by Scalr. THIS SECTION
+    CONTAINS CUSTOMER’S EXCLUSIVE REMEDIES AND CMPY’S SOLE LIABILITY FOR
+    INTELLECTUAL PROPERTY INFRINGEMENT CLAIMS.
+
+12. GOVERNING LAW AND EXCLUSIVE FORUM. This agreement is governed by the laws
+of the State of California (without regard to conflicts of law principles) for
+any dispute between the parties or relating in any way to the subject matter
+of this agreement.  Any suit or legal proceeding must be exclusively brought
+in the federal or state courts for [county, state], and Customer submits to
+this personal jurisdiction and venue.  Nothing in this agreement prevents
+either party from seeking injunctive relief in a court of competent
+jurisdiction.  The prevailing party in litigation is entitled to recover its
+attorneys’ fees and costs from the other party.
+
+13. OTHER TERMS. 
+
+ a. Entire Agreement. This agreement and the Order constitute the entire
+    agreement between the parties and supersede any prior or contemporaneous
+    negotiations or agreements, whether oral or written, related to this
+    subject matter.  Customer is not relying on any representation concerning
+    this subject matter, oral or written, not included in this agreement. No
+    representation, promise or inducement not included in this agreement is
+    binding.
+
+b.  Non-Assignment. Neither party may assign or transfer this agreement to a
+    third party, nor delegate any duty, except that the agreement and all
+    Orders may be assigned, without the consent of the other party, as part of
+    a merger, or sale of all or substantially all of the business or assets,
+    of a party.
+
+ c. Open Source Software Licenses. The Software may contain embedded open
+    source software components, which are provided as part of the Software and
+    for which additional terms may be included in the technical documentation.
+
+ d. Independent Contractors. The parties are independent contractors with
+    respect to each other.
+
+ e. Enforceability. If any term of this agreement is invalid or unenforceable,
+    the other terms remain in effect.
+
+ f. Survival of Terms. Any terms that by their nature survive termination of
+    this agreement for a party to assert its rights and receive the
+    protections of this agreement, will survive (including without limitation,
+    the confidentiality terms). The UN Convention on Contracts for the
+    International Sale of Goods does not apply.
+
+ g. Compliance Audit.  No more than once in any 12-month period and upon at
+    least 30 days advance notice, Scalr (or its representative) may audit
+    Customer’s usage of the Software at any Customer facility. Customer will
+    cooperate with such audit. Customer agrees to pay within 30 days of
+    written notification any fees applicable to Customer’s use of the Software
+    in excess of the license.
+
+ h. Modification Only in Writing. No modification or waiver of any term of
+    this agreement is effective unless signed by both parties.
+
+ i. Export Compliance. Customer must comply with all applicable export control
+    laws of the United States, foreign jurisdictions and other applicable laws
+    and regulations.
+
+ j. US GOVERNMENT RESTRICTED RIGHTS. If Customer is a United States government
+    agency or acquired the license to the Software hereunder pursuant to a
+    government contract or with government funds, then as defined in FAR
+    §2.101, DFAR §252.227-7014(a)(1) and DFAR §252.227-7014(a)(5) or
+    otherwise, all Software provided in connection with this agreement are
+    “commercial items,” “commercial computer software” or “commercial computer
+    software documentation.” Consistent with DFAR §227.7202 and FAR §12.212,
+    any use, modification, reproduction, release, performance, display,
+    disclosure or distribution by or for the United States government is
+    governed solely by the terms of this agreement and is prohibited except to
+    the extent permitted by the terms of this agreement.
+
+ k. No PO Terms. Scalr rejects additional or conflicting terms of a Customer’s
+    form-purchasing document.
+
+Ver. July 31, 2017
