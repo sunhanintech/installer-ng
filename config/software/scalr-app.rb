@@ -4,52 +4,8 @@ default_version '__SCALR_APP_REVISION__'
 source :path => '__SCALR_APP_PATH__'
 
 license :project_license
-# Manually add composer licenses
-# Todo: get these automatically from Composer?
-dependency_licenses [
-  {
-    name: 'onelogin-php-saml',
-    version: '2.10.4',
-    dependency_manager: 'Composer',
-    license: 'MIT',
-    license_files: ['vendor/onelogin/php-saml/LICENSE']
-  },
-  {
-    name: 'justinrainbow-json-schema',
-    version: '3.0.1',
-    dependency_manager: 'Composer',
-    license: 'MIT',
-    license_files: ['vendor/justinrainbow/json-schema/LICENSE']
-  },
-  {
-    name: 'php-amqplib',
-    version: '2.6.3',
-    dependency_manager: 'Composer',
-    license: 'LGPL-2.1',
-    license_files: ['vendor/php-amqplib/php-amqplib/LICENSE']
-  },
-  {
-    name: 'adodp-php',
-    version: 'dev-master#47bd188',
-    dependency_manager: 'Composer',
-    license: 'BSD-3-Clause',
-    license_files: ['vendor/adodb/adodb-php/LICENSE.md']
-  },
-  {
-    name: 'google-apiclient',
-    version: '2.2.0',
-    dependency_manager: 'Composer',
-    license: 'Apache-2.0',
-    license_files: ['vendor/google/apiclient/LICENSE']
-  },
-  {
-    name: 'psr-cache',
-    version: '1.0.1',
-    dependency_manager: 'Composer',
-    license: 'MIT',
-    license_files: ['vendor/psr/cache/LICENSE.txt']
-  }
-]
+skip_transitive_dependency_licensing true
+
 
 dependency 'php-composer'
 
