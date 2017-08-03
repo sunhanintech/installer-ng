@@ -6,7 +6,7 @@ source url: "ftp://ftp.astron.com/pub/file/file-#{version}.tar.gz",
 
 relative_path "file-#{version}"
 
-license 'BSD-2-clause'
+license 'BSD-2-Clause'
 license_file 'COPYING'
 skip_transitive_dependency_licensing true
 

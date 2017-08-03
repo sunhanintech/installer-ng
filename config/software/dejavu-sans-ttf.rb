@@ -9,7 +9,7 @@ end
 
 relative_path "dejavu-sans-ttf-#{version}"
 
-license ''
+license 'free'
 license_file 'LICENSE'
 skip_transitive_dependency_licensing true
 

@@ -28,7 +28,7 @@ end
 
 relative_path "openssh-#{version}"
 
-license 'BSD'
+license '0BSD'
 license_file 'LICENCE'
 skip_transitive_dependency_licensing true
 

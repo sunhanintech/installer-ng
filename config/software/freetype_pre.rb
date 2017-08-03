@@ -17,6 +17,9 @@ end
 
 relative_path "freetype-#{version}"
 
+license :project_license
+skip_transitive_dependency_licensing true
+
 
 dependency 'zlib'
 dependency 'bzip2'

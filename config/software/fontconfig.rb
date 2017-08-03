@@ -10,7 +10,7 @@ relative_path "fontconfig-#{version}"
 dependency 'libiconv'
 dependency 'expat'
 
-license ''
+license 'fontconfig'
 license_file 'COPYING'
 skip_transitive_dependency_licensing true
 

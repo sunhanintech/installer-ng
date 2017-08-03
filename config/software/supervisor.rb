@@ -5,7 +5,7 @@ default_version '3.3.1'
 dependency 'python'
 dependency 'pip'
 
-license ''
+license 'BSD-derived'
 license_file "https://raw.githubusercontent.com/Supervisor/supervisor/#{version}/LICENSES.txt"
 skip_transitive_dependency_licensing true
 
