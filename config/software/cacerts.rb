@@ -23,6 +23,10 @@ version "2017-01-18" do
   source url: "https://curl.haxx.se/ca/cacert-#{version}.pem"
 end
 
+license :project_license
+skip_transitive_dependency_licensing true
+
+
 relative_path "cacerts-#{version}"
 
 build do

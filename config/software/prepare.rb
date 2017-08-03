@@ -21,6 +21,7 @@ name 'prepare'
 description 'the steps required to prepare the build'
 default_version '1.0.0'
 
+license :project_license
 skip_transitive_dependency_licensing true
 
 

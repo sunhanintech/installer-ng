@@ -26,6 +26,7 @@ source :path => File.expand_path('files/license-scripts', Omnibus::Config.projec
 dependency 'yolk'
 dependency 'license-gem'
 
+license :project_license
 skip_transitive_dependency_licensing true
 
 

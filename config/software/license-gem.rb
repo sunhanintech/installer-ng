@@ -22,6 +22,8 @@ default_version '0.2.1'
 dependency 'ruby'
 dependency 'rubygems'
 
+license 'MIT'
+license_file "https://raw.githubusercontent.com/dblock/gem-licenses/#{version}/LICENSE"
 skip_transitive_dependency_licensing true
 
 
