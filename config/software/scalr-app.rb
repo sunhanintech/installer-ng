@@ -5,6 +5,7 @@ source :path => '__SCALR_APP_PATH__'
 
 license :project_license
 # Manually add composer licenses
+# Todo: get these automatically from Composer?
 dependency_licenses [
   {
     name: 'onelogin-php-saml',
