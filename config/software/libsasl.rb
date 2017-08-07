@@ -27,10 +27,6 @@ build do
           " --with-configdir=#{install_dir}/embedded/lib/sasl2 " \
           " --with-plugindir=#{install_dir}/embedded/lib/sasl2 " \
           ' --without-saslauthd' \
-          ' --enable-auth-sasldb' \
-          " --with-dbpath=#{install_dir}/embedded/etc/sasldb2" \
-          ' --with-dblib=gdbm' \
-          " --with-gdbm=#{install_dir}/embedded" \
           " --with-openssl=#{install_dir}/embedded", env: env
 
   make env: env  # -j N is not reliable
